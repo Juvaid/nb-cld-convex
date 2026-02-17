@@ -99,3 +99,13 @@ export const remove = mutation({
         await ctx.db.delete(args.id);
     },
 });
+
+export const listNames = query({
+    handler: async (ctx) => {
+        const products = await ctx.db.query("products").collect();
+        return products.map((p) => ({
+            _id: p._id,
+            name: p.name,
+        }));
+    },
+});
