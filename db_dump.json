@@ -1,0 +1,38 @@
+[
+  {
+    "_id": "j973308jsspd0xm51vz55sgtqn8169za",
+    "path": "/",
+    "title": "Home",
+    "rootTitle": "Nature's Boon | Home",
+    "firstBlockType": "ModernHero",
+    "badgeText": "15+ Years of Manufacturing Excellence",
+    "heroTitle": "Your Global Partner in"
+  },
+  {
+    "_id": "j971y8b2gmh5fftvvv5fyramxd816h45",
+    "path": "/services",
+    "title": "Services",
+    "rootTitle": "Our Services",
+    "firstBlockType": "AboutHero",
+    "badgeText": "What We Offer",
+    "heroTitle": "End-to-End Solutions for Your Personal Care Brand"
+  },
+  {
+    "_id": "j97fm365m715fgjp46a8mx14z9817cfd",
+    "path": "/about",
+    "title": "About Us",
+    "rootTitle": "About Us",
+    "firstBlockType": "AboutHero",
+    "badgeText": "Our Story",
+    "heroTitle": "About Nature's Boon"
+  },
+  {
+    "_id": "j976ev126x17w04tdpnrr4w7jd8176gd",
+    "path": "/contact",
+    "title": "Contact Us",
+    "rootTitle": "Contact Us",
+    "firstBlockType": "AboutHero",
+    "badgeText": "Contact Us",
+    "heroTitle": "Let's Build Something Great Together"
+  }
+]

@@ -10,7 +10,28 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-nb-green: #047857;
+  --color-nb-green-light: #10b981;
+  --color-nb-dark: #111827;
+  --color-nb-slate: #1e293b;
+  --color-nb-gray: #f8fafc;
 }
+
+@layer utilities {
+  .bg-grid-dots {
+    background-image: radial-gradient(circle at 1px 1px, #15803d 1px, transparent 0);
+    background-size: 32px 32px;
+  }
+
+  .delay-3000 {
+    animation-delay: 3s;
+  }
+
+  .bg-dynamic {
+    background-color: var(--dynamic-bg);
+  }
+}
+
 
 @media (prefers-color-scheme: dark) {
   :root {

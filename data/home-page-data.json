@@ -1,0 +1,161 @@
+{
+    "root": {
+        "props": {
+            "title": "Nature's Boon | Home"
+        },
+        "header": {
+            "logoText": "Nature's Boon",
+            "contactText": "Expert Advice",
+            "links": [
+                {
+                    "label": "Home",
+                    "href": "/"
+                },
+                {
+                    "label": "Services",
+                    "href": "/services"
+                },
+                {
+                    "label": "Products",
+                    "href": "/products"
+                },
+                {
+                    "label": "About",
+                    "href": "/about"
+                },
+                {
+                    "label": "Blogs",
+                    "href": "/blogs"
+                }
+            ]
+        },
+        "footer": {
+            "copyrightText": "© 2026 Nature's Boon Manufacturing. All rights reserved."
+        }
+    },
+    "content": [
+        {
+            "type": "ModernHero",
+            "props": {
+                "id": "ModernHero-home",
+                "badgeText": "15+ Years of Manufacturing Excellence",
+                "title": "Your Global Partner in",
+                "titleGradient": "Personal Care Excellence",
+                "description": "From formulation to finished product — we manufacture premium personal care products for world-class brands. OEM, Private Label & Contract Manufacturing.",
+                "primaryButtonText": "Inquire Now",
+                "primaryButtonHref": "/contact",
+                "secondaryButtonText": "View Products Range",
+                "secondaryButtonHref": "/products",
+                "stats": [
+                    {
+                        "value": "750+",
+                        "label": "Tons Capacity"
+                    },
+                    {
+                        "value": "200+",
+                        "label": "SKUs"
+                    },
+                    {
+                        "value": "20+",
+                        "label": "Global Clients"
+                    }
+                ],
+                "cards": [
+                    {
+                        "icon": "Factory",
+                        "title": "OEM Manufacturing",
+                        "desc": "Precision production"
+                    },
+                    {
+                        "icon": "FlaskConical",
+                        "title": "Private Label",
+                        "desc": "Tailored for your brand"
+                    },
+                    {
+                        "icon": "ShieldCheck",
+                        "title": "Quality Assurance",
+                        "desc": "ISO global standards"
+                    },
+                    {
+                        "icon": "Award",
+                        "title": "R&D Innovation",
+                        "desc": "Herbal formulations"
+                    }
+                ]
+            }
+        },
+        {
+            "type": "ModernStats",
+            "props": {
+                "id": "ModernStats-home",
+                "stats": [
+                    {
+                        "value": "15+",
+                        "label": "Years of Experience"
+                    },
+                    {
+                        "value": "65+",
+                        "label": "Strong Family"
+                    },
+                    {
+                        "value": "200+",
+                        "label": "SKUs Produced Annually"
+                    },
+                    {
+                        "value": "75+",
+                        "label": "Products by In-house R&D"
+                    },
+                    {
+                        "value": "20+",
+                        "label": "Happy Clients"
+                    },
+                    {
+                        "value": "750+",
+                        "label": "Tons Annual Capacity"
+                    }
+                ]
+            }
+        },
+        {
+            "type": "ModernServices",
+            "props": {
+                "id": "ModernServices-home",
+                "badgeText": "Our Expertise",
+                "heading": "Comprehensive Manufacturing Solutions",
+                "subheading": "We offer end-to-end solutions for all your personal care manufacturing needs.",
+                "services": [
+                    {
+                        "icon": "Palette",
+                        "title": "Private Label",
+                        "description": "Launch your own brand with our ready-to-market formulations and custom packaging solutions."
+                    },
+                    {
+                        "icon": "FlaskConical",
+                        "title": "Custom Formulation",
+                        "description": "Our R&D team develops unique, high-performance formulas tailored to your specific requirements."
+                    },
+                    {
+                        "icon": "BadgeCheck",
+                        "title": "Quality Assurance",
+                        "description": "Rigorous quality control at every stage ensures products meet the highest international standards."
+                    },
+                    {
+                        "icon": "Megaphone",
+                        "title": "Contract Manufacturing",
+                        "description": "Large-scale production capabilities to meet the demands of established global brands."
+                    }
+                ]
+            }
+        },
+        {
+            "type": "CallToAction",
+            "props": {
+                "id": "CallToAction-home",
+                "heading": "Ready to Scale Your Brand?",
+                "description": "Partner with Nature's Boon for world-class manufacturing excellence.",
+                "buttonText": "Get a Quote",
+                "buttonLink": "/contact"
+            }
+        }
+    ]
+}

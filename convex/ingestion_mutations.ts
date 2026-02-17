@@ -1,0 +1,85 @@
+import { v } from "convex/values";
+import { mutation } from "./_generated/server";
+
+export const saveIngestedPage = mutation({
+    args: {
+        path: v.string(),
+        title: v.string(),
+        description: v.optional(v.string()),
+        data: v.string(), // Puck JSON data
+    },
+    handler: async (ctx, args) => {
+        const existing = await ctx.db
+            .query("pages")
+            .withIndex("by_path", (q) => q.eq("path", args.path))
+            .unique();
+
+        if (existing) {
+            await ctx.db.patch(existing._id, {
+                title: args.title,
+                description: args.description,
+                data: args.data,
+                status: existing.status || "draft",
+                lastModified: Date.now(),
+            });
+        } else {
+            await ctx.db.insert("pages", {
+                path: args.path,
+                title: args.title,
+                description: args.description,
+                data: args.data,
+                status: "draft",
+                lastModified: Date.now(),
+            });
+        }
+    },
+});
+
+export const saveIngestedProduct = mutation({
+    args: {
+        name: v.string(),
+        slug: v.string(),
+        description: v.string(),
+        price: v.optional(v.number()),
+        images: v.optional(v.array(v.string())),
+        status: v.optional(v.union(v.literal("active"), v.literal("draft"), v.literal("archived"))),
+        tags: v.optional(v.array(v.string())),
+        meta: v.optional(v.any()),
+        categoryId: v.optional(v.id("categories")),
+    },
+    handler: async (ctx, args) => {
+        const { ...fields } = args;
+        const insertData = {
+            ...fields,
+            images: fields.images || [],
+            status: fields.status || "active",
+            tags: fields.tags || [],
+            description: fields.description || "",
+        } as any;
+
+        const existing = await ctx.db
+            .query("products")
+            .withIndex("by_slug", (q) => q.eq("slug", args.slug))
+            .unique();
+
+        if (existing) {
+            await ctx.db.patch(existing._id, insertData);
+        } else {
+            await ctx.db.insert("products", insertData);
+        }
+    },
+});
+
+export const forceDeletePage = mutation({
+    args: { path: v.string() },
+    handler: async (ctx, args) => {
+        const existing = await ctx.db
+            .query("pages")
+            .withIndex("by_path", (q) => q.eq("path", args.path))
+            .unique();
+
+        if (existing) {
+            await ctx.db.delete(existing._id);
+        }
+    },
+});
