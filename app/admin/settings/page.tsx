@@ -30,7 +30,7 @@ export default function SettingsPage() {
     const [isSavingSite, setIsSavingSite] = useState(false);
 
     // Snapshots State
-    const snapshots = useQuery(api.theme.listThemeSnapshots);
+    const snapshots = useQuery(api.theme.listThemeSnapshots, {});
     const createSnapshot = useMutation(api.theme.createThemeSnapshot);
     const deleteSnapshot = useMutation(api.theme.deleteThemeSnapshot);
     const restoreSnapshot = useMutation(api.theme.restoreThemeSnapshot);
