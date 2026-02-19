@@ -10,6 +10,8 @@ import { useRouter } from "next/navigation";
 export default function PagesAdmin() {
     const pages = useQuery(api.pages.listPages);
     const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [statusFilter, setStatusFilter] = useState<"all" | "published" | "draft">("all");
     const createPage = useMutation(api.pages.createPageFromTemplate);
     const toggleStatus = useMutation(api.pages.updatePageStatus);
     const router = useRouter();
@@ -25,6 +27,19 @@ export default function PagesAdmin() {
 
         router.push(`/admin/editor?path=/${pagePath}`);
     };
+
+    const filteredPages = pages?.filter((page: any) => {
+        const matchesSearch =
+            page.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            page.path.toLowerCase().includes(searchQuery.toLowerCase());
+
+        const matchesStatus =
+            statusFilter === "all" ||
+            (statusFilter === "published" && page.status === "published") ||
+            (statusFilter === "draft" && (!page.status || page.status === "draft"));
+
+        return matchesSearch && matchesStatus;
+    });
 
     return (
         <div className="space-y-6">
@@ -42,6 +57,35 @@ export default function PagesAdmin() {
                 </button>
             </div>
 
+            {/* Search and Filters */}
+            <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+                <div className="relative w-full sm:max-w-md">
+                    <Plus className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 rotate-45" size={18} />
+                    <input
+                        type="text"
+                        placeholder="Search pages by title or path..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-nb-green/20 focus:border-nb-green transition-all text-sm"
+                    />
+                </div>
+
+                <div className="flex items-center gap-2 p-1 bg-slate-50 rounded-xl border border-slate-100 w-full sm:w-auto">
+                    {(["all", "published", "draft"] as const).map((status) => (
+                        <button
+                            key={status}
+                            onClick={() => setStatusFilter(status)}
+                            className={`px-4 py-1.5 rounded-lg text-xs font-bold capitalize transition-all ${statusFilter === status
+                                ? "bg-white text-nb-green shadow-sm"
+                                : "text-slate-500 hover:text-slate-900"
+                                }`}
+                        >
+                            {status}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
             <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
                 <table className="w-full text-left border-collapse">
                     <thead>
@@ -53,7 +97,7 @@ export default function PagesAdmin() {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                        {pages?.map((page: any) => (
+                        {filteredPages?.map((page: any) => (
                             <tr key={page._id} className="hover:bg-slate-50/50 transition-colors">
                                 <td className="px-6 py-4">
                                     <div className="flex items-center gap-3">
@@ -104,6 +148,28 @@ export default function PagesAdmin() {
                         {!pages && (
                             <tr>
                                 <td colSpan={4} className="px-6 py-12 text-center text-slate-400">Loading pages...</td>
+                            </tr>
+                        )}
+                        {pages && filteredPages?.length === 0 && (
+                            <tr>
+                                <td colSpan={4} className="px-6 py-12 text-center">
+                                    <div className="flex flex-col items-center gap-2 text-slate-400">
+                                        <FileText size={40} className="opacity-20 mb-2" />
+                                        <p className="font-bold text-slate-600">No pages found</p>
+                                        <p className="text-sm">Try adjusting your search or filters.</p>
+                                        {(searchQuery || statusFilter !== "all") && (
+                                            <button
+                                                onClick={() => {
+                                                    setSearchQuery("");
+                                                    setStatusFilter("all");
+                                                }}
+                                                className="mt-4 text-nb-green text-sm font-bold hover:underline"
+                                            >
+                                                Clear all filters
+                                            </button>
+                                        )}
+                                    </div>
+                                </td>
                             </tr>
                         )}
                         {pages?.length === 0 && (

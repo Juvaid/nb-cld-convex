@@ -12,6 +12,61 @@ import { Loader2, Save, Undo, Plus, Trash2, ArrowUp, ArrowDown, Clock, RotateCcw
 import { ImagePicker } from "@/components/ImagePicker";
 import { FontPicker } from "@/components/admin/FontPicker";
 
+const PRESETS = [
+    {
+        name: "Forest Emerald",
+        colors: {
+            primary: "#16a34a",
+            secondary: "#0f172a",
+            accent: "#22c55e",
+            background: "#ffffff",
+            backgroundAlt: "#f8fafc",
+            text: "#0f172a",
+            textMuted: "#64748b",
+            border: "#e2e8f0",
+        }
+    },
+    {
+        name: "Royal Midnight",
+        colors: {
+            primary: "#1e40af",
+            secondary: "#0f172a",
+            accent: "#3b82f6",
+            background: "#ffffff",
+            backgroundAlt: "#f1f5f9",
+            text: "#0f172a",
+            textMuted: "#64748b",
+            border: "#e2e8f0",
+        }
+    },
+    {
+        name: "Organic Earth",
+        colors: {
+            primary: "#0d9488",
+            secondary: "#134e4a",
+            accent: "#2dd4bf",
+            background: "#ffffff",
+            backgroundAlt: "#f0fdfa",
+            text: "#042f2e",
+            textMuted: "#5da399",
+            border: "#ccfbf1",
+        }
+    },
+    {
+        name: "Sleek Onyx",
+        colors: {
+            primary: "#18181b",
+            secondary: "#000000",
+            accent: "#3f3f46",
+            background: "#ffffff",
+            backgroundAlt: "#f4f4f5",
+            text: "#09090b",
+            textMuted: "#71717a",
+            border: "#e4e4e7",
+        }
+    }
+];
+
 export default function SettingsPage() {
     const { theme, saveAll, reset } = useTheme();
     const [localTheme, setLocalTheme] = useState<any>(theme);
@@ -22,6 +77,7 @@ export default function SettingsPage() {
     const siteSettings = useQuery(api.siteSettings.getSiteSettings);
     const updateSiteSetting = useMutation(api.siteSettings.updateSiteSetting);
     const [logoText, setLogoText] = useState("");
+    const [logoImage, setLogoImage] = useState("");
     const [contactText, setContactText] = useState("");
     const [footerDescription, setFooterDescription] = useState("");
     const [footerCopyrightText, setFooterCopyrightText] = useState("");
@@ -47,6 +103,7 @@ export default function SettingsPage() {
     useEffect(() => {
         if (siteSettings) {
             setLogoText(siteSettings.logoText || "NatureBoon");
+            setLogoImage(siteSettings.logoImage || "");
             setContactText(siteSettings.contactText || "Contact Us");
             setFooterDescription(siteSettings.footerDescription || "A global leader in personal care manufacturing, specializing in OEM, Private Label, and innovative R&D solutions.");
             setFooterCopyrightText(siteSettings.footerCopyrightText || `© ${new Date().getFullYear()} NatureBoon. All rights reserved.`);
@@ -74,12 +131,41 @@ export default function SettingsPage() {
         }));
     };
 
-    const handleSaveTheme = async () => {
+    const applyPreset = (presetColors: any) => {
+        setLocalTheme((prev: any) => ({
+            ...prev,
+            colors: {
+                ...prev.colors,
+                ...presetColors
+            },
+            // Also update buttons primaryBg just in case
+            buttons: {
+                ...prev.buttons,
+                primaryBg: presetColors.primary
+            }
+        }));
+    };
+
+    const handleSaveAll = async () => {
         setIsSaving(true);
+        setIsSavingSite(true);
         try {
-            await saveAll({ settings: localTheme });
+            await Promise.all([
+                saveAll({ settings: localTheme }),
+                updateSiteSetting({ key: "logoText", value: logoText }),
+                updateSiteSetting({ key: "logoImage", value: logoImage }),
+                updateSiteSetting({ key: "contactText", value: contactText }),
+                updateSiteSetting({ key: "footerDescription", value: footerDescription }),
+                updateSiteSetting({ key: "footerCopyrightText", value: footerCopyrightText }),
+                updateSiteSetting({ key: "navLinks", value: navLinks }),
+                updateSiteSetting({ key: "socialLinks", value: socialLinks }),
+            ]);
+        } catch (error) {
+            console.error(error);
+            alert("Failed to save settings");
         } finally {
             setIsSaving(false);
+            setIsSavingSite(false);
         }
     };
 
@@ -90,25 +176,6 @@ export default function SettingsPage() {
             await reset();
         } finally {
             setIsDoomed(false);
-        }
-    };
-
-    const handleSaveSiteSettings = async () => {
-        setIsSavingSite(true);
-        try {
-            await Promise.all([
-                updateSiteSetting({ key: "logoText", value: logoText }),
-                updateSiteSetting({ key: "contactText", value: contactText }),
-                updateSiteSetting({ key: "footerDescription", value: footerDescription }),
-                updateSiteSetting({ key: "footerCopyrightText", value: footerCopyrightText }),
-                updateSiteSetting({ key: "navLinks", value: navLinks }),
-                updateSiteSetting({ key: "socialLinks", value: socialLinks }),
-            ]);
-        } catch (error) {
-            console.error(error);
-            alert("Failed to save site settings");
-        } finally {
-            setIsSavingSite(false);
         }
     };
 
@@ -166,11 +233,6 @@ export default function SettingsPage() {
         }
     };
 
-    const handleUpdateSnapshot = useMutation(api.theme.createThemeSnapshot); // Re-using insert for update if needed or just patch
-    // Actually schema allows patching isPreset. Let's add a toggle.
-    // I need a separate mutation for patch or update if I want to edit existing.
-    // For now, I'll add isPreset support to the list.
-
     const handleRestoreSnapshot = async (snapshot: any) => {
         if (!confirm(`Are you sure you want to restore "${snapshot.name}"? Current unsaved changes will be lost.`)) return;
         setRestoringId(snapshot._id);
@@ -190,385 +252,401 @@ export default function SettingsPage() {
     if (!localTheme) return <div>Loading...</div>;
 
     return (
-        <div className="space-y-12 pb-20">
-            {/* Theme Settings Section */}
-            <div className="space-y-6">
-                <div className="flex justify-between items-center">
-                    <div>
-                        <h1 className="text-3xl font-bold tracking-tight">Theme Settings</h1>
-                        <p className="text-muted-foreground">Customize the visual appearance.</p>
-                    </div>
-                    <div className="flex gap-2">
-                        <Button variant="outline" onClick={handleResetTheme} disabled={isSaving || isDoomed}>
-                            {isDoomed ? <Loader2 className="w-4 h-4 animate-spin" /> : <Undo className="w-4 h-4 mr-2" />}
-                            Reset Defaults
-                        </Button>
-                        <Button onClick={handleSaveTheme} disabled={isSaving || isDoomed}>
-                            {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-                            Save Theme
-                        </Button>
-                    </div>
+        <div className="space-y-4 pb-20 max-w-[1600px] mx-auto">
+            {/* Header Area */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white/50 p-4 rounded-2xl border border-white/20 backdrop-blur-sm sticky top-0 z-50">
+                <div>
+                    <h1 className="text-2xl font-black tracking-tight flex items-center gap-2">
+                        <div className="w-2 h-8 bg-nb-green rounded-full animate-pulse" />
+                        Site Intelligence
+                    </h1>
+                    <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest ml-4">Core visual & functional controls</p>
                 </div>
+                <div className="flex gap-2 w-full md:w-auto">
+                    <Button variant="outline" size="sm" onClick={handleResetTheme} disabled={isSaving || isDoomed} className="flex-1 md:flex-none">
+                        {isDoomed ? <Loader2 className="w-4 h-4 animate-spin" /> : <Undo className="w-3 h-3 mr-2" />}
+                        Reset
+                    </Button>
+                    <Button size="sm" onClick={handleSaveAll} disabled={isSaving || isSavingSite || isDoomed} className="flex-1 md:flex-none">
+                        {(isSaving || isSavingSite) ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-3 h-3 mr-2" />}
+                        Save Changes
+                    </Button>
+                </div>
+            </div>
 
-                <div className="grid gap-6 md:grid-cols-2">
-                    {/* Colors */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Colors</CardTitle>
-                            <CardDescription>Brand and interface colors.</CardDescription>
+            <div className="grid gap-4 lg:grid-cols-12">
+                {/* Row 1: Visual & Layout Logic */}
+                <div className="lg:col-span-4 space-y-4">
+                    {/* Theme Presets */}
+                    <Card className="shadow-sm border-none bg-nb-green/5 overflow-hidden">
+                        <CardHeader className="p-4 pb-0 flex flex-row items-center justify-between space-y-0">
+                            <CardTitle className="text-[10px] font-black uppercase tracking-widest text-nb-green">Quick Styles</CardTitle>
                         </CardHeader>
-                        <CardContent className="space-y-4">
-                            {Object.entries(localTheme.colors || {}).map(([key, value]) => (
-                                <div key={key} className="grid grid-cols-4 items-center gap-4">
-                                    <label className="text-sm font-medium leading-none capitalize">{key.replace(/-/g, " ")}</label>
-                                    <div className="col-span-3 flex gap-2">
-                                        <div className="flex-1">
+                        <CardContent className="p-4 pt-4">
+                            <div className="grid grid-cols-2 gap-2">
+                                {PRESETS.map((p) => (
+                                    <button
+                                        key={p.name}
+                                        onClick={() => applyPreset(p.colors)}
+                                        className="flex flex-col items-start p-2.5 rounded-xl bg-white border border-nb-green/10 hover:border-nb-green/40 transition-all text-left group"
+                                    >
+                                        <div className="flex gap-1 mb-2">
+                                            <div className="w-3 h-3 rounded-full border border-black/5" style={{ backgroundColor: p.colors.primary }} />
+                                            <div className="w-3 h-3 rounded-full border border-black/5" style={{ backgroundColor: p.colors.accent }} />
+                                            <div className="w-3 h-3 rounded-full border border-black/5" style={{ backgroundColor: p.colors.secondary }} />
+                                        </div>
+                                        <span className="text-[10px] font-black tracking-tight text-slate-700">{p.name}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    {/* Colors - Compact Grid */}
+                    <Card className="h-full shadow-sm border-none bg-white/80 backdrop-blur-sm overflow-hidden">
+                        <CardHeader className="p-4 flex flex-row items-center justify-between space-y-0">
+                            <CardTitle className="text-sm font-black uppercase tracking-wider flex items-center gap-2">
+                                <Star className="w-4 h-4 text-nb-green" />
+                                Palette
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-2 pt-0">
+                            <div className="grid grid-cols-2 gap-1.5 font-sans">
+                                {Object.entries(localTheme.colors || {})
+                                    .map(([key, value]) => (
+                                        <div key={key} className="flex flex-col p-2 rounded-xl bg-slate-50 border border-slate-100/50 hover:bg-white transition-all group relative">
+                                            <label className="text-[9px] font-black text-slate-400 uppercase tracking-tighter mb-1 truncate">{key.replace(/-/g, " ")}</label>
                                             <ColorPicker
                                                 value={value as string}
                                                 onChange={(c) => updateSetting("colors", key, c)}
                                             />
                                         </div>
+                                    ))}
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                <div className="lg:col-span-5">
+                    {/* Geometry & Typography */}
+                    <Card className="h-full shadow-sm border-none bg-white/80 backdrop-blur-sm overflow-hidden">
+                        <CardHeader className="p-4 flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-black uppercase tracking-wider flex items-center gap-2">
+                                <Layout className="w-4 h-4 text-nb-green" />
+                                System Geometry
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-4 pt-0 space-y-4">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-1.5">
+                                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Button Radius</label>
+                                    <div className="relative group">
                                         <Input
-                                            value={value as string}
-                                            onChange={(e) => updateSetting("colors", key, e.target.value)}
-                                            className="w-24 hidden sm:block"
+                                            type="number"
+                                            value={localTheme.buttons?.borderRadius || "12"}
+                                            onChange={(e) => updateSetting("buttons", "borderRadius", e.target.value)}
+                                            className="h-10 text-sm font-black bg-slate-50 border-none transition-all focus-visible:bg-white focus-visible:ring-nb-green/20"
+                                        />
+                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-300 pointer-events-none group-focus-within:text-nb-green/40 transition-colors uppercase">px</span>
+                                    </div>
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Max Width</label>
+                                    <div className="relative group">
+                                        <Input
+                                            type="number"
+                                            value={localTheme.spacing?.containerMaxWidth || "1280"}
+                                            onChange={(e) => updateSetting("spacing", "containerMaxWidth", e.target.value)}
+                                            className="h-10 text-sm font-black bg-slate-50 border-none transition-all focus-visible:bg-white focus-visible:ring-nb-green/20"
+                                        />
+                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-300 pointer-events-none group-focus-within:text-nb-green/40 transition-colors uppercase">px</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="grid gap-3">
+                                <div className="p-3 rounded-2xl bg-slate-50/50 border border-slate-100/50 space-y-3">
+                                    <div className="flex items-center justify-between">
+                                        <div className="p-1.5 bg-white rounded-lg shadow-sm">
+                                            <Star className="w-3 h-3 text-slate-400" />
+                                        </div>
+                                        <span className="text-[8px] font-bold text-slate-300 uppercase tracking-widest leading-none">Headings</span>
+                                    </div>
+                                    <FontPicker
+                                        value={localTheme.typography?.headingFont || "system-ui"}
+                                        onChange={(f) => updateSetting("typography", "headingFont", f)}
+                                    />
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <select
+                                            value={localTheme.typography?.headingWeight || "700"}
+                                            onChange={(e) => updateSetting("typography", "headingWeight", e.target.value)}
+                                            className="h-8 rounded-xl bg-white border-none text-[10px] font-bold text-slate-600 px-3 shadow-sm focus:ring-1 focus:ring-nb-green/20 cursor-pointer"
+                                            title="Heading Weight"
+                                        >
+                                            <option value="400">Regular</option>
+                                            <option value="600">Semi-Bold</option>
+                                            <option value="700">Bold</option>
+                                            <option value="900">Black</option>
+                                        </select>
+                                        <Input
+                                            value={localTheme.typography?.headingLetterSpacing || "0em"}
+                                            onChange={(e) => updateSetting("typography", "headingLetterSpacing", e.target.value)}
+                                            className="h-8 text-[10px] font-bold bg-white border-none shadow-sm px-3 focus-visible:ring-1 focus-visible:ring-nb-green/20"
+                                            placeholder="Spacing"
                                         />
                                     </div>
                                 </div>
-                            ))}
-                        </CardContent>
-                    </Card>
 
-                    {/* Layout & Typography */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Layout & Style</CardTitle>
-                            <CardDescription>Global spacing and border styles.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-6">
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium leading-none">Border Radius</label>
-                                <Input
-                                    value={localTheme.layout?.borderRadius || ""}
-                                    onChange={(e) => updateSetting("layout", "borderRadius", e.target.value)}
-                                    placeholder="e.g. 12px"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium leading-none">Container Width</label>
-                                <Input
-                                    value={localTheme.layout?.containerWidth || ""}
-                                    onChange={(e) => updateSetting("layout", "containerWidth", e.target.value)}
-                                    placeholder="e.g. 1280px"
-                                />
-                            </div>
-
-                            <hr className="border-slate-100 my-4" />
-
-                            <div className="space-y-4">
-                                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400">Typography</h3>
-                                <FontPicker
-                                    label="Heading Font"
-                                    value={localTheme.typography?.headingFont || "Inter"}
-                                    onChange={(val) => updateSetting("typography", "headingFont", val)}
-                                />
-                                <FontPicker
-                                    label="Body Font"
-                                    value={localTheme.typography?.bodyFont || "Inter"}
-                                    onChange={(val) => updateSetting("typography", "bodyFont", val)}
-                                />
+                                <div className="p-3 rounded-2xl bg-slate-50/50 border border-slate-100/50 space-y-3">
+                                    <div className="flex items-center justify-between">
+                                        <div className="p-1.5 bg-white rounded-lg shadow-sm">
+                                            <Star className="w-3 h-3 text-slate-400" />
+                                        </div>
+                                        <span className="text-[8px] font-bold text-slate-300 uppercase tracking-widest leading-none">Body</span>
+                                    </div>
+                                    <FontPicker
+                                        value={localTheme.typography?.bodyFont || "system-ui"}
+                                        onChange={(f) => updateSetting("typography", "bodyFont", f)}
+                                    />
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <select
+                                            value={localTheme.typography?.bodyWeight || "400"}
+                                            onChange={(e) => updateSetting("typography", "bodyWeight", e.target.value)}
+                                            className="h-8 rounded-xl bg-white border-none text-[10px] font-bold text-slate-600 px-3 shadow-sm focus:ring-1 focus:ring-nb-green/20 cursor-pointer"
+                                            title="Body Weight"
+                                        >
+                                            <option value="300">Light</option>
+                                            <option value="400">Regular</option>
+                                            <option value="500">Medium</option>
+                                            <option value="600">Semi-Bold</option>
+                                        </select>
+                                        <Input
+                                            value={localTheme.typography?.lineHeight || "1.5"}
+                                            onChange={(e) => updateSetting("typography", "lineHeight", e.target.value)}
+                                            className="h-8 text-[10px] font-bold bg-white border-none shadow-sm px-3 focus-visible:ring-1 focus-visible:ring-nb-green/20"
+                                            placeholder="Line Height"
+                                        />
+                                    </div>
+                                </div>
                             </div>
                         </CardContent>
                     </Card>
                 </div>
-            </div>
 
-            <hr className="border-slate-200" />
+                <div className="lg:col-span-3">
+                    {/* Snapshot Area */}
+                    <div className="h-full flex flex-col gap-4">
+                        <Card className="shadow-sm border-none bg-nb-green/5 overflow-hidden">
+                            <CardHeader className="p-4 pb-2">
+                                <CardTitle className="text-xs font-black uppercase tracking-wider text-nb-green">Quick Snap</CardTitle>
+                            </CardHeader>
+                            <CardContent className="p-4 pt-0 space-y-2">
+                                <Input
+                                    placeholder="Snapshot label..."
+                                    value={snapshotName}
+                                    onChange={(e) => setSnapshotName(e.target.value)}
+                                    className="h-10 text-xs font-bold bg-white border-none shadow-sm focus-visible:ring-nb-green/20"
+                                />
+                                <Button
+                                    className="w-full bg-nb-green hover:bg-nb-green/90 text-[10px] h-10 font-black uppercase tracking-widest text-white shadow-lg shadow-nb-green/20 border-nb-green"
+                                    onClick={() => handleCreateSnapshot(false)}
+                                    disabled={isCreatingSnapshot || !snapshotName}
+                                >
+                                    {isCreatingSnapshot ? <Loader2 className="w-3 h-3 animate-spin mr-2" /> : <Clock className="w-3 h-3 mr-2" />}
+                                    Snap Backup
+                                </Button>
+                            </CardContent>
+                        </Card>
 
-            {/* Site Settings Section */}
-            <div className="space-y-6">
-                <div className="flex justify-between items-center">
-                    <div>
-                        <h1 className="text-3xl font-bold tracking-tight">Site Settings</h1>
-                        <p className="text-muted-foreground">Manage global content and navigation.</p>
+                        <Card className="flex-1 shadow-sm border-none bg-white/50 backdrop-blur-sm overflow-hidden flex flex-col">
+                            <CardHeader className="p-4 pb-2">
+                                <CardTitle className="text-xs font-black uppercase tracking-widest text-slate-400">History</CardTitle>
+                            </CardHeader>
+                            <CardContent className="p-2 pt-0 flex-1 overflow-y-auto">
+                                <div className="space-y-1.5">
+                                    {snapshots?.map((snap) => (
+                                        <div key={snap._id} className="group p-2.5 rounded-xl bg-white border border-slate-100 hover:border-nb-green/30 transition-all flex items-center justify-between">
+                                            <div className="flex flex-col">
+                                                <span className="text-[10px] font-black text-slate-700 tracking-tight">{snap.name}</span>
+                                                <span className="text-[8px] font-bold text-slate-300 uppercase tracking-tighter">
+                                                    {new Date(snap._creationTime).toLocaleDateString()}
+                                                </span>
+                                            </div>
+                                            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <button
+                                                    onClick={() => handleRestoreSnapshot(snap)}
+                                                    className="p-1 text-slate-300 hover:text-nb-green"
+                                                    title="Restore"
+                                                >
+                                                    <RotateCcw size={12} />
+                                                </button>
+                                                <button
+                                                    onClick={() => deleteSnapshot({ id: snap._id })}
+                                                    className="p-1 text-slate-300 hover:text-red-400"
+                                                    title="Delete"
+                                                >
+                                                    <Trash2 size={12} />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    {snapshots?.length === 0 && (
+                                        <div className="py-8 text-center text-[10px] font-bold text-slate-300 italic">No backups found</div>
+                                    )}
+                                </div>
+                            </CardContent>
+                        </Card>
                     </div>
-                    <Button onClick={handleSaveSiteSettings} disabled={isSavingSite} className="bg-nb-green hover:bg-nb-green/90 text-slate-900 font-bold">
-                        {isSavingSite ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-                        Save Site Settings
-                    </Button>
                 </div>
 
-                <div className="grid gap-6 md:grid-cols-2">
-                    {/* General Settings */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>General Branding</CardTitle>
-                            <CardDescription>Logo, contact info, and footer text.</CardDescription>
+                {/* Row 2: Site Intelligence & Management */}
+                <div className="lg:col-span-4">
+                    {/* Branding Info */}
+                    <Card className="h-full shadow-sm border-none bg-white/80 backdrop-blur-sm">
+                        <CardHeader className="p-4 pt-3 flex flex-row items-center justify-between space-y-0">
+                            <CardTitle className="text-sm font-black uppercase tracking-wider">Branding</CardTitle>
                         </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium leading-none">Logo Text</label>
+                        <CardContent className="p-4 pt-0 space-y-4 font-sans">
+                            <div className="space-y-1.5">
+                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Logo Text</label>
                                 <Input
                                     value={logoText}
                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLogoText(e.target.value)}
-                                    placeholder="NatureBoon"
+                                    className="bg-slate-50 border-none font-bold text-sm h-10"
                                 />
                             </div>
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium leading-none">Contact Button Text</label>
+                            <div className="space-y-1.5">
+                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Logo Image / SVG</label>
+                                <ImagePicker
+                                    value={logoImage}
+                                    onChange={setLogoImage}
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">CTA Text</label>
                                 <Input
                                     value={contactText}
                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setContactText(e.target.value)}
-                                    placeholder="Contact Us"
+                                    className="bg-slate-50 border-none font-bold text-sm h-10"
                                 />
                             </div>
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium leading-none">Footer Description</label>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                <div className="lg:col-span-4">
+                    {/* Footer Controls */}
+                    <Card className="h-full shadow-sm border-none bg-white/80 backdrop-blur-sm">
+                        <CardHeader className="p-4 pt-3 flex flex-row items-center justify-between space-y-0">
+                            <CardTitle className="text-sm font-black uppercase tracking-wider">Footer Intelligence</CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-4 pt-0 space-y-4 font-sans">
+                            <div className="space-y-1.5">
+                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Description</label>
                                 <textarea
-                                    className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                     value={footerDescription}
                                     onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFooterDescription(e.target.value)}
-                                    placeholder="Footer description..."
+                                    className="w-full min-h-[80px] p-4 text-xs font-black rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-nb-green/10 resize-none transition-all"
+                                    placeholder="Company footer description..."
                                 />
                             </div>
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium leading-none">Copyright Text</label>
-                                <Input
-                                    value={footerCopyrightText}
-                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFooterCopyrightText(e.target.value)}
-                                    placeholder="Copyright notice..."
-                                />
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    {/* Social Links */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Social Links</CardTitle>
-                            <CardDescription>Configure social media icons in the footer.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            {socialLinks.map((link, i) => (
-                                <div key={i} className="flex gap-2 items-start">
-                                    <div className="grid grid-cols-2 gap-2 flex-1">
-                                        <select
-                                            aria-label="Social platform"
-                                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                            value={link.platform}
-                                            onChange={(e) => {
-                                                const newLinks = [...socialLinks];
-                                                newLinks[i] = { ...newLinks[i], platform: e.target.value };
-                                                setSocialLinks(newLinks);
-                                            }}
-                                        >
-                                            <option value="linkedin">LinkedIn</option>
-                                            <option value="instagram">Instagram</option>
-                                            <option value="facebook">Facebook</option>
-                                            <option value="twitter">Twitter</option>
-                                            <option value="github">GitHub</option>
-                                        </select>
-                                        <Input
-                                            value={link.href}
-                                            placeholder="URL"
-                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                                const newLinks = [...socialLinks];
-                                                newLinks[i] = { ...newLinks[i], href: e.target.value };
-                                                setSocialLinks(newLinks);
-                                            }}
-                                        />
-                                    </div>
+                            <div className="space-y-1.5">
+                                <div className="flex items-center justify-between mb-2">
+                                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Social Graph</label>
                                     <button
-                                        onClick={() => {
-                                            const newLinks = [...socialLinks];
-                                            newLinks.splice(i, 1);
-                                            setSocialLinks(newLinks);
-                                        }}
-                                        className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors mt-0.5"
-                                        title="Remove Social Link"
+                                        onClick={() => setSocialLinks([...socialLinks, { platform: "linkedin", href: "" }])}
+                                        className="text-[9px] font-black text-nb-green flex items-center gap-1 hover:underline"
                                     >
-                                        <Trash2 size={16} />
+                                        <Plus size={10} /> Add Account
                                     </button>
                                 </div>
-                            ))}
-                            <Button
-                                variant="outline"
-                                onClick={() => setSocialLinks([...socialLinks, { platform: "linkedin", href: "#" }])}
-                                className="w-full border-dashed"
-                            >
-                                <Plus size={16} className="mr-2" />
-                                Add Social Link
+                                <div className="flex flex-wrap gap-2">
+                                    {socialLinks.map((link, i) => (
+                                        <div key={i} className="flex items-center gap-1.5 p-2 rounded-xl bg-slate-50 border border-slate-100/50">
+                                            <select
+                                                value={link.platform}
+                                                onChange={(e) => {
+                                                    const newLinks = [...socialLinks];
+                                                    newLinks[i].platform = e.target.value;
+                                                    setSocialLinks(newLinks);
+                                                }}
+                                                className="bg-transparent border-none text-[10px] font-black uppercase text-nb-green/60 p-0 focus:ring-0 cursor-pointer"
+                                                title="Social Platform"
+                                            >
+                                                <option value="linkedin">LinkedIn</option>
+                                                <option value="instagram">Instagram</option>
+                                                <option value="facebook">Facebook</option>
+                                                <option value="twitter">Twitter</option>
+                                            </select>
+                                            <div className="w-px h-3 bg-slate-200" />
+                                            <button
+                                                onClick={() => {
+                                                    const newLinks = [...socialLinks];
+                                                    newLinks.splice(i, 1);
+                                                    setSocialLinks(newLinks);
+                                                }}
+                                                className="text-slate-300 hover:text-red-400 transition-colors"
+                                                title="Remove Account"
+                                            >
+                                                <Trash2 size={10} />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                <div className="lg:col-span-4">
+                    {/* Navigation - Site Map */}
+                    <Card className="h-full shadow-sm border-none bg-white/80 backdrop-blur-sm overflow-hidden">
+                        <CardHeader className="p-4 pt-3 flex flex-row items-center justify-between space-y-0">
+                            <CardTitle className="text-sm font-black uppercase tracking-wider">Navigation</CardTitle>
+                            <Button variant="ghost" size="sm" onClick={addLink} className="h-7 px-2 text-[10px] font-black uppercase text-slate-500 hover:text-nb-green">
+                                <Plus className="w-3 h-3 mr-1" /> Add Node
                             </Button>
-                        </CardContent>
-                    </Card>
-
-                    {/* Navigation Links */}
-                    <Card className="md:col-span-2">
-                        <CardHeader>
-                            <CardTitle>Navigation</CardTitle>
-                            <CardDescription>Manage header navigation links.</CardDescription>
                         </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                                {navLinks.map((link, i) => (
-                                    <div key={i} className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-3 group relative">
-                                        <div className="flex justify-between items-center">
-                                            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Link #{i + 1}</span>
-                                            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <button onClick={() => moveLink(i, 'up')} disabled={i === 0} className="p-1 hover:bg-white rounded shadow-sm disabled:opacity-30" title="Move Up"><ArrowUp size={14} /></button>
-                                                <button onClick={() => moveLink(i, 'down')} disabled={i === navLinks.length - 1} className="p-1 hover:bg-white rounded shadow-sm disabled:opacity-30" title="Move Down"><ArrowDown size={14} /></button>
-                                                <button onClick={() => removeLink(i)} className="p-1 text-red-500 hover:bg-red-50 rounded shadow-sm" title="Remove"><Trash2 size={14} /></button>
-                                            </div>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Input
-                                                value={link.label}
-                                                placeholder="Label (e.g. Home)"
-                                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateLink(i, "label", e.target.value)}
-                                            />
-                                            <Input
-                                                value={link.href}
-                                                placeholder="URL (e.g. /)"
-                                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateLink(i, "href", e.target.value)}
-                                            />
-                                        </div>
-                                    </div>
-                                ))}
-                                <button
-                                    onClick={addLink}
-                                    className="p-8 rounded-xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center gap-2 text-slate-400 hover:text-nb-green hover:border-nb-green hover:bg-nb-green/5 transition-all"
-                                >
-                                    <Plus size={24} />
-                                    <span className="font-bold text-sm">Add New Link</span>
-                                </button>
+                        <CardContent className="p-2 pt-0">
+                            <div className="rounded-xl border border-slate-100 overflow-hidden bg-white">
+                                <table className="w-full text-left text-[10px]">
+                                    <thead className="bg-slate-50 border-b border-slate-100 uppercase tracking-widest text-[8px] font-black text-slate-400">
+                                        <tr>
+                                            <th className="px-3 py-2">Label</th>
+                                            <th className="px-3 py-2">Path</th>
+                                            <th className="px-3 py-2 text-right"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-50">
+                                        {navLinks.map((link, i) => (
+                                            <tr key={i} className="group hover:bg-slate-50/50 transition-colors">
+                                                <td className="p-1 px-3">
+                                                    <Input
+                                                        className="h-7 text-[10px] font-black bg-transparent border-none p-0 focus-within:ring-0"
+                                                        value={link.label}
+                                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateLink(i, "label", e.target.value)}
+                                                    />
+                                                </td>
+                                                <td className="p-1 px-3">
+                                                    <Input
+                                                        className="h-7 text-[10px] font-bold text-slate-400 bg-transparent border-none p-0 focus-within:ring-0"
+                                                        value={link.href}
+                                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateLink(i, "href", e.target.value)}
+                                                    />
+                                                </td>
+                                                <td className="p-1 px-3 text-right">
+                                                    <div className="flex justify-end gap-1 opacity-10 group-hover:opacity-100 transition-opacity">
+                                                        <button onClick={() => moveLink(i, 'up')} disabled={i === 0} className="p-1 text-slate-400 hover:text-slate-600 disabled:opacity-0" title="Move Up"><ArrowUp size={10} /></button>
+                                                        <button onClick={() => removeLink(i)} className="p-1 text-red-300 hover:text-red-500" title="Remove Node"><Trash2 size={10} /></button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
                             </div>
                         </CardContent>
                     </Card>
-                </div>
-            </div>
-
-            <hr className="border-slate-200" />
-
-            {/* Theme Backups Section */}
-            <div className="space-y-6">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Theme Library</h1>
-                    <p className="text-muted-foreground">Manage your visual presets and backups.</p>
-                </div>
-
-                {/* Theme Gallery (Presets) */}
-                <div className="space-y-4">
-                    <div className="flex items-center gap-2 text-nb-green">
-                        <Star className="w-5 h-5 fill-current" />
-                        <h2 className="text-xl font-bold">Theme Gallery</h2>
-                    </div>
-                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                        {snapshots?.filter((s: any) => s.isPreset).map((snapshot: any) => (
-                            <Card key={snapshot._id} className="overflow-hidden border-2 border-nb-green/20 hover:border-nb-green transition-all group">
-                                <div className="aspect-video bg-slate-100 relative overflow-hidden flex items-center justify-center">
-                                    {snapshot.image && typeof snapshot.image === 'string' && snapshot.image !== "[object Object]" ? (
-                                        <img
-                                            src={snapshot.image.startsWith('http') ? snapshot.image : `/api/storage/${snapshot.image}`}
-                                            alt={snapshot.name}
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                        />
-                                    ) : (
-                                        <div className="text-slate-300 flex flex-col items-center gap-2">
-                                            <Layout size={48} />
-                                            <span className="text-xs font-bold uppercase tracking-widest">No Preview</span>
-                                        </div>
-                                    )}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
-                                        <Button
-                                            size="sm"
-                                            className="w-full bg-nb-green text-slate-900 font-bold"
-                                            onClick={() => handleRestoreSnapshot(snapshot)}
-                                        >
-                                            Apply Theme
-                                        </Button>
-                                    </div>
-                                </div>
-                                <CardHeader className="p-4">
-                                    <CardTitle className="text-lg">{snapshot.name}</CardTitle>
-                                    <CardDescription>{new Date(snapshot.createdAt).toLocaleDateString()}</CardDescription>
-                                </CardHeader>
-                            </Card>
-                        ))}
-                    </div>
-                </div>
-
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Create Snapshot</CardTitle>
-                        <CardDescription>Save the current theme and site settings as a backup.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-4">
-                            <div className="flex gap-4">
-                                <Input
-                                    placeholder="Backup Name (e.g. 'Before Redesign')"
-                                    value={snapshotName}
-                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSnapshotName(e.target.value)}
-                                />
-                                <div className="flex gap-2">
-                                    <Button onClick={() => handleCreateSnapshot(false)} disabled={!snapshotName || isCreatingSnapshot} variant="outline">
-                                        {isCreatingSnapshot ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-                                        Backup
-                                    </Button>
-                                    <Button onClick={() => handleCreateSnapshot(true)} disabled={!snapshotName || isCreatingSnapshot} className="bg-nb-green text-slate-900 font-bold">
-                                        <Star className="w-4 h-4 mr-2 fill-current" />
-                                        Save as Preset
-                                    </Button>
-                                </div>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <div className="space-y-4">
-                    <h3 className="text-lg font-semibold">Previous Backups</h3>
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                        {snapshots?.map((snapshot: any) => (
-                            <Card key={snapshot._id}>
-                                <CardHeader className="pb-3">
-                                    <div className="flex justify-between items-start">
-                                        <CardTitle className="text-base font-bold">{snapshot.name}</CardTitle>
-                                        <Clock size={16} className="text-muted-foreground" />
-                                    </div>
-                                    <CardDescription>
-                                        {new Date(snapshot.createdAt).toLocaleDateString()} at {new Date(snapshot.createdAt).toLocaleTimeString()}
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="flex gap-2">
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            className="w-full"
-                                            onClick={() => handleRestoreSnapshot(snapshot)}
-                                            disabled={!!restoringId}
-                                        >
-                                            {restoringId === snapshot._id ? <Loader2 className="w-3 h-3 animate-spin" /> : <RotateCcw className="w-3 h-3 mr-2" />}
-                                            Restore
-                                        </Button>
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                                            onClick={() => deleteSnapshot({ id: snapshot._id })}
-                                        >
-                                            <Trash2 size={16} />
-                                        </Button>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        ))}
-                        {snapshots?.length === 0 && (
-                            <div className="col-span-full text-center py-8 text-muted-foreground bg-slate-50 rounded-xl border border-dashed">
-                                No backups found. Create one above!
-                            </div>
-                        )}
-                    </div>
                 </div>
             </div>
         </div>

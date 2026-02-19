@@ -45,7 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const result = await loginMutation({ email, password });
         localStorage.setItem("auth_token", result.token);
         setToken(result.token);
-        router.push("/admin/editor");
+        router.push("/admin");
     };
 
     const logout = async () => {

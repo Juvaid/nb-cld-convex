@@ -51,5 +51,9 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
         console.error("Failed to parse blog content", e);
     }
 
-    return <PuckRenderer data={parsedData} />;
+    return (
+        <div className="bg-slate-50 min-h-screen">
+            <PuckRenderer data={parsedData} />
+        </div>
+    );
 }

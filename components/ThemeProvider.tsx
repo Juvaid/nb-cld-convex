@@ -6,7 +6,7 @@ import { ReactNode, useEffect, useState } from "react";
 
 const defaultTheme = {
   colors: {
-    primary: "#2bee6c",
+    primary: "#16a34a",
     secondary: "#0f172a",
     accent: "#22c55e",
     background: "#ffffff",
@@ -19,13 +19,15 @@ const defaultTheme = {
     headingFont: "system-ui",
     bodyFont: "system-ui",
     headingWeight: "700",
+    headingLetterSpacing: "0em",
     bodyWeight: "400",
+    bodyLineHeight: "1.5",
   },
   buttons: {
     borderRadius: "12",
     paddingX: "24",
     paddingY: "12",
-    primaryBg: "#2bee6c",
+    primaryBg: "#16a34a",
     primaryText: "#0f172a",
   },
   spacing: {
@@ -36,6 +38,9 @@ const defaultTheme = {
     shadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
     transition: "0.2s",
   },
+  layout: {
+    borderRadius: "12px"
+  }
 };
 
 function flattenToCssVars(obj: any, prefix = "--nb-"): string {
@@ -103,6 +108,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
           ${cssVars || flattenToCssVars(defaultTheme)}
           --color-nb-green: var(--nb-colors-primary);
           --color-nb-green-light: var(--nb-colors-accent);
+          
+          /* Derived Dynamic Gradients */
+          --color-nb-green-soft: color-mix(in srgb, var(--nb-colors-primary), white 25%);
+          --color-nb-green-deep: color-mix(in srgb, var(--nb-colors-primary), black 15%);
+          --color-nb-accent-soft: color-mix(in srgb, var(--nb-colors-accent), white 25%);
+          
           --color-nb-dark: var(--nb-colors-secondary);
           --background: var(--nb-colors-background);
           --foreground: var(--nb-colors-text);
@@ -114,16 +125,29 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
         h1, h2, h3, h4, h5, h6 {
             font-family: var(--font-heading) !important;
-            font-weight: var(--nb-typography-headingWeight, 900) !important;
+            font-weight: var(--nb-typography-headingWeight, 700) !important;
+            letter-spacing: var(--nb-typography-headingLetterSpacing, 0em) !important;
         }
 
         body {
             font-family: var(--font-sans) !important;
             font-weight: var(--nb-typography-bodyWeight, 400) !important;
+            line-height: var(--nb-typography-bodyLineHeight, 1.5) !important;
         }
 
         button {
-            border-radius: calc(var(--nb-buttons-borderRadius, 16) * 1px) !important;
+            border-radius: calc(var(--nb-buttons-borderRadius, 12) * 1px) !important;
+        }
+
+        .container {
+            max-width: calc(var(--nb-spacing-containerMaxWidth, 1280) * 1px) !important;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        section {
+            padding-top: calc(var(--nb-spacing-sectionPaddingY, 64) * 1px) !important;
+            padding-bottom: calc(var(--nb-spacing-sectionPaddingY, 64) * 1px) !important;
         }
       `}</style>
       {children}

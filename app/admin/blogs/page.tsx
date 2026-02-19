@@ -1,18 +1,51 @@
 "use client";
 
-import { useQuery } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { Plus, Search, PenTool, Loader2, MoreVertical, Eye, Trash2 } from "lucide-react";
+import { Plus, Search, PenTool, Loader2, Eye, Trash2, Globe, Lock } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function BlogsAdmin() {
-    const blogs = useQuery(api.blogs.listAll); // Assuming this will be created
+    const blogs = useQuery(api.blogs.listAll);
+    const updateBlog = useMutation(api.blogs.updateBlog);
+    const deleteBlog = useMutation(api.blogs.deleteBlog);
+    const router = useRouter();
+
     const [searchQuery, setSearchQuery] = useState("");
+    const [isProcessing, setIsProcessing] = useState<string | null>(null);
 
     const filteredBlogs = blogs?.filter(blog =>
         blog.title.toLowerCase().includes(searchQuery.toLowerCase())
     ) || [];
+
+    const handleToggleStatus = async (blog: any) => {
+        setIsProcessing(blog._id);
+        const newStatus = blog.status === "published" ? "draft" : "published";
+        try {
+            await updateBlog({
+                id: blog._id,
+                status: newStatus
+            });
+        } catch (error) {
+            console.error("Failed to toggle blog status:", error);
+        } finally {
+            setIsProcessing(null);
+        }
+    };
+
+    const handleDelete = async (id: any) => {
+        if (!confirm("Are you sure you want to delete this post? This action cannot be undone.")) return;
+        setIsProcessing(id);
+        try {
+            await deleteBlog({ id });
+        } catch (error) {
+            console.error("Failed to delete blog:", error);
+        } finally {
+            setIsProcessing(null);
+        }
+    };
 
     return (
         <div className="space-y-6 font-outfit">
@@ -60,31 +93,52 @@ export default function BlogsAdmin() {
                 <div className="grid gap-4">
                     {filteredBlogs.map((blog) => (
                         <div key={blog._id} className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex items-center justify-between group">
-                            <div className="flex items-center gap-6">
-                                <div className="w-16 h-16 bg-slate-50 rounded-xl flex items-center justify-center text-slate-200 border border-slate-100 overflow-hidden">
+                            <Link href={`/admin/blogs/${blog._id}`} className="flex items-center gap-6 flex-1">
+                                <div className="w-16 h-16 bg-slate-50 rounded-xl flex items-center justify-center text-slate-200 border border-slate-100 overflow-hidden shrink-0">
                                     {blog.coverImage ? (
                                         <img src={blog.coverImage} className="w-full h-full object-cover" alt="" />
                                     ) : (
                                         <PenTool size={24} />
                                     )}
                                 </div>
-                                <div>
-                                    <h3 className="text-lg font-black text-slate-900 mb-1 group-hover:text-nb-green transition-colors">{blog.title}</h3>
+                                <div className="min-w-0">
+                                    <h3 className="text-lg font-black text-slate-900 mb-1 group-hover:text-nb-green transition-colors truncate">{blog.title}</h3>
                                     <div className="flex items-center gap-3">
                                         <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest ${blog.status === 'published' ? 'bg-nb-green/10 text-nb-green' : 'bg-slate-100 text-slate-400'
                                             }`}>
                                             {blog.status}
                                         </span>
-                                        <span className="text-xs text-slate-400 font-medium italic">By {blog.author}</span>
+                                        <span className="text-xs text-slate-400 font-medium italic truncate">By {blog.author}</span>
                                     </div>
                                 </div>
-                            </div>
+                            </Link>
 
-                            <div className="flex items-center gap-2">
-                                <button className="p-2.5 text-slate-900 bg-white border border-slate-200 hover:text-nb-green hover:bg-nb-green/5 hover:border-nb-green/20 rounded-xl transition-all shadow-sm" title="View Post">
-                                    <Eye size={20} />
+                            <div className="flex items-center gap-2 ml-4">
+                                <button
+                                    onClick={() => handleToggleStatus(blog)}
+                                    disabled={isProcessing === blog._id}
+                                    className={`p-2.5 rounded-xl transition-all shadow-sm border ${blog.status === 'published'
+                                        ? 'text-nb-green bg-nb-green/5 border-nb-green/20 hover:bg-nb-green/10'
+                                        : 'text-slate-400 bg-white border-slate-200 hover:text-nb-green hover:border-nb-green/20 hover:bg-nb-green/5'
+                                        }`}
+                                    title={blog.status === 'published' ? "Set to Draft" : "Publish Story"}
+                                >
+                                    {isProcessing === blog._id ? <Loader2 size={20} className="animate-spin" /> : (blog.status === 'published' ? <Globe size={20} /> : <Lock size={20} />)}
                                 </button>
-                                <button className="p-2.5 text-slate-900 bg-white border border-slate-200 hover:text-red-500 hover:bg-red-50 hover:border-red-200 rounded-xl transition-all shadow-sm" title="Delete Post">
+                                <Link
+                                    href={`/blogs/blog/${blog.slug}`}
+                                    target="_blank"
+                                    className="p-2.5 text-slate-900 bg-white border border-slate-200 hover:text-nb-green hover:bg-nb-green/5 hover:border-nb-green/20 rounded-xl transition-all shadow-sm"
+                                    title="View Public Post"
+                                >
+                                    <Eye size={20} />
+                                </Link>
+                                <button
+                                    onClick={() => handleDelete(blog._id)}
+                                    disabled={isProcessing === blog._id}
+                                    className="p-2.5 text-slate-900 bg-white border border-slate-200 hover:text-red-500 hover:bg-red-50 hover:border-red-200 rounded-xl transition-all shadow-sm disabled:opacity-50"
+                                    title="Delete Post"
+                                >
                                     <Trash2 size={20} />
                                 </button>
                             </div>
@@ -95,8 +149,7 @@ export default function BlogsAdmin() {
 
             <div className="bg-nb-green/5 border border-nb-green/10 rounded-3xl p-8 text-center ring-1 ring-nb-green/20">
                 <p className="text-slate-500 font-bold text-sm">
-                    Blog system is in early scaffolding phase.
-                    {blogs ? ` Found ${filteredBlogs.length} articles.` : ""}
+                    {blogs ? `Found ${filteredBlogs.length} nature-focused articles.` : ""}
                 </p>
             </div>
         </div>

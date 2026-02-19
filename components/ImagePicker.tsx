@@ -4,6 +4,7 @@ import { useState, useMemo, useRef } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Search, Image as ImageIcon, X, Loader2, UploadCloud, Check, ArrowUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { useUpload } from "@/hooks/useUpload";
 
 interface ImagePickerProps {
@@ -61,28 +62,98 @@ export function ImagePicker({ value, onChange }: ImagePickerProps) {
         setIsOpen(false);
     };
 
+    const [editingMetadata, setEditingMetadata] = useState<{ id: string; alt: string; caption: string } | null>(null);
+
+    const handleSaveMetadata = async () => {
+        if (!editingMetadata) return;
+        // In a real app, you would save this to the database
+        console.log("Saving metadata:", editingMetadata);
+        setEditingMetadata(null);
+    };
+
     return (
-        <div className="space-y-2">
+        <div className="flex flex-col gap-2 relative">
             <div
                 onClick={() => setIsOpen(true)}
-                className="group relative aspect-video bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl overflow-hidden cursor-pointer hover:border-nb-green/50 transition-all shadow-sm flex items-center justify-center p-2"
+                className={cn(
+                    "group relative w-full h-32 rounded-xl border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-all overflow-hidden",
+                    value ? "border-nb-green bg-nb-green/5" : "border-slate-200 hover:border-nb-green hover:bg-slate-50"
+                )}
             >
                 {value ? (
                     <>
                         <img src={value} alt="Selected" className="w-full h-full object-contain rounded-lg" />
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                            <span className="bg-white text-slate-900 px-3 py-1.5 rounded-lg text-xs font-black shadow-lg">Change Image</span>
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                            <button
+                                onClick={(e) => { e.stopPropagation(); setIsOpen(true); }}
+                                className="bg-white text-slate-900 px-3 py-1.5 rounded-lg text-[10px] font-black shadow-lg hover:scale-105 transition-transform"
+                            >
+                                Change
+                            </button>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setEditingMetadata({ id: "current", alt: "", caption: "" });
+                                }}
+                                className="bg-nb-green text-slate-900 px-3 py-1.5 rounded-lg text-[10px] font-black shadow-lg hover:scale-105 transition-transform"
+                            >
+                                SEO/Alt
+                            </button>
                         </div>
                     </>
                 ) : (
-                    <div className="text-center">
+                    <div className="text-center font-inter">
                         <div className="w-10 h-10 bg-nb-green/10 text-nb-green rounded-full flex items-center justify-center mx-auto mb-2">
                             <ImageIcon size={20} />
                         </div>
-                        <p className="text-xs font-bold text-slate-500">Click to select asset</p>
+                        <p className="text-xs font-bold text-slate-500">Pick Brand Asset</p>
                     </div>
                 )}
             </div>
+
+            {/* Metadata Editor Popup */}
+            {editingMetadata && (
+                <div className="absolute top-0 right-full mr-4 w-64 bg-white rounded-2xl shadow-2xl border border-slate-100 p-4 z-[2000] animate-in slide-in-from-right-4 duration-200">
+                    <div className="flex items-center justify-between mb-4">
+                        <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Image Metadata</h4>
+                        <button
+                            onClick={() => setEditingMetadata(null)}
+                            className="text-slate-400 hover:text-slate-600"
+                            title="Close metadata editor"
+                        >
+                            <X size={14} />
+                        </button>
+                    </div>
+
+                    <div className="space-y-4">
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] font-bold text-slate-500 uppercase">Alt Text (SEO)</label>
+                            <input
+                                type="text"
+                                value={editingMetadata.alt}
+                                onChange={(e) => setEditingMetadata({ ...editingMetadata, alt: e.target.value })}
+                                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold focus:border-nb-green focus:outline-none"
+                                placeholder="Describe the image..."
+                            />
+                        </div>
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] font-bold text-slate-500 uppercase">Caption</label>
+                            <textarea
+                                value={editingMetadata.caption}
+                                onChange={(e) => setEditingMetadata({ ...editingMetadata, caption: e.target.value })}
+                                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold focus:border-nb-green focus:outline-none min-h-[60px]"
+                                placeholder="Display caption..."
+                            />
+                        </div>
+                        <button
+                            onClick={handleSaveMetadata}
+                            className="w-full bg-slate-900 text-white py-2 rounded-lg text-[10px] font-black hover:bg-slate-800 transition-colors"
+                        >
+                            Save Metadata
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {isOpen && (
                 <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 sm:p-12">

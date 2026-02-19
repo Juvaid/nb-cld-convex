@@ -1,4 +1,4 @@
-import { query } from "./_generated/server";
+import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 
 export interface PageTemplate {
@@ -405,5 +405,39 @@ export const getTemplate = query({
   args: { templateId: v.string() },
   handler: async (ctx, args) => {
     return templates[args.templateId] || null;
+  },
+});
+
+// --- Saved Blocks (Component Templates) ---
+
+export const saveSavedBlock = mutation({
+  args: {
+    name: v.string(),
+    componentType: v.string(),
+    props: v.any(),
+    category: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const templateId = await ctx.db.insert("componentTemplates", {
+      name: args.name,
+      componentType: args.componentType,
+      props: args.props,
+      category: args.category,
+      createdAt: Date.now(),
+    });
+    return templateId;
+  },
+});
+
+export const listSavedBlocks = query({
+  handler: async (ctx) => {
+    return await ctx.db.query("componentTemplates").order("desc").collect();
+  },
+});
+
+export const deleteSavedBlock = mutation({
+  args: { id: v.id("componentTemplates") },
+  handler: async (ctx, args) => {
+    await ctx.db.delete(args.id);
   },
 });

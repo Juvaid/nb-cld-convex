@@ -7,7 +7,10 @@ import {
     Image as ImageIcon,
     Settings,
     LogOut,
-    PenTool
+    PenTool,
+    Layout,
+    Mail,
+    Globe
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -16,10 +19,12 @@ import { useAuth } from "@/lib/auth-context";
 
 const navItems = [
     { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+    { name: "Visual Editor", href: "/admin/editor", icon: Layout },
     { name: "Pages", href: "/admin/pages", icon: FileText },
     { name: "Blogs", href: "/admin/blogs", icon: PenTool },
     { name: "Products", href: "/admin/products", icon: Package },
     { name: "Media", href: "/admin/media", icon: ImageIcon },
+    { name: "Inquiries", href: "/admin/inquiries", icon: Mail },
     { name: "Settings", href: "/admin/settings", icon: Settings },
 ];
 

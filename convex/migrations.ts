@@ -72,3 +72,48 @@ export const migrateBlogPaths = mutation({
         };
     }
 });
+
+export const syncPuckToProducts = mutation({
+    args: {},
+    handler: async (ctx) => {
+        const pages = await ctx.db.query("pages").collect();
+        const products = await ctx.db.query("products").collect();
+
+        let updateCount = 0;
+
+        for (const page of pages) {
+            try {
+                const data = JSON.parse(page.data);
+                // Puck data structure usually has 'content' array
+                const blocks = data.content || [];
+
+                for (const block of blocks) {
+                    if (block.type === "ProductBrowser") {
+                        const categories = block.props.categories || [];
+                        for (const cat of categories) {
+                            const productsInCat = cat.products || [];
+                            for (const p of productsInCat) {
+                                // Find product in DB by slug or name
+                                const dbProduct = products.find(dp => dp.slug === p.slug || dp.name === p.name);
+                                if (dbProduct) {
+                                    const updates: any = {};
+                                    if (p.sku && !dbProduct.sku) updates.sku = p.sku;
+                                    if (p.usp && !dbProduct.usp) updates.usp = p.usp;
+
+                                    if (Object.keys(updates).length > 0) {
+                                        await ctx.db.patch(dbProduct._id, updates);
+                                        updateCount++;
+                                        console.log(`Updated product ${dbProduct.name} with ${JSON.stringify(updates)}`);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error(`Failed to parse page data for ${page.path}`, e);
+            }
+        }
+        return `Successfully synced ${updateCount} product fields from Puck data.`;
+    }
+});

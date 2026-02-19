@@ -11,6 +11,7 @@ export interface ProductItem {
     name: string;
     usp: string;
     slug: string;
+    sku?: string;
     images?: string[];
 }
 
@@ -46,8 +47,9 @@ export default function ProductBrowser({ categories: initialCategories = [], use
                 .filter(p => p.categoryId === cat._id)
                 .map(p => ({
                     name: p.name,
-                    usp: p.tags && p.tags.length > 0 ? p.tags[0] : "Premium",
+                    usp: p.usp || "",
                     slug: p.slug,
+                    sku: p.sku,
                     images: p.images
                 }))
         })).filter(cat => cat.products.length > 0);
@@ -103,7 +105,7 @@ export default function ProductBrowser({ categories: initialCategories = [], use
                                     <a
                                         key={cat.slug}
                                         href={`#${cat.slug}`}
-                                        className="px-5 py-2.5 text-sm font-bold rounded-full border border-slate-900/5 hover:border-[#16a34a] hover:bg-[#16a34a]/5 hover:text-[#16a34a] transition-all text-slate-600 bg-slate-50"
+                                        className="px-5 py-2.5 text-sm font-bold rounded-full border border-slate-900/5 hover:border-nb-green hover:bg-nb-green/5 hover:text-nb-green transition-all text-slate-600 bg-slate-50"
                                     >
                                         {cat.name}
                                     </a>
@@ -113,13 +115,13 @@ export default function ProductBrowser({ categories: initialCategories = [], use
 
                         {/* Search Bar */}
                         <div className="relative flex-1 max-w-sm md:max-w-xs group">
-                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-[#16a34a] transition-colors" />
+                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-nb-green transition-colors" />
                             <input
                                 type="text"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="Search range..."
-                                className="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-900/5 rounded-2xl focus:outline-none focus:ring-4 focus:ring-[#16a34a]/10 bg-slate-50 focus:bg-white transition-all font-medium"
+                                className="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-900/5 rounded-2xl focus:outline-none focus:ring-4 focus:ring-nb-green/10 bg-slate-50 focus:bg-white transition-all font-medium"
                             />
                             {searchQuery && (
                                 <button
@@ -148,15 +150,15 @@ export default function ProductBrowser({ categories: initialCategories = [], use
                                             key={cat.slug}
                                             href={`#${cat.slug}`}
                                             onClick={() => setIsFilterOpen(false)}
-                                            className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-900/5 text-slate-900 font-bold hover:bg-white hover:border-[#16a34a] transition-all group"
+                                            className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-900/5 text-slate-900 font-bold hover:bg-white hover:border-nb-green transition-all group"
                                         >
                                             <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 rounded-xl bg-white flex items-center justify-center text-[#16a34a] shadow-sm border border-slate-900/5">
+                                                <div className="w-8 h-8 rounded-xl bg-white flex items-center justify-center text-nb-green shadow-sm border border-slate-900/5">
                                                     <Package className="w-4 h-4" />
                                                 </div>
                                                 {cat.name}
                                             </div>
-                                            <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-[#16a34a] group-hover:translate-x-1 transition-all" />
+                                            <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-nb-green group-hover:translate-x-1 transition-all" />
                                         </a>
                                     ))}
                                 </div>
@@ -167,8 +169,8 @@ export default function ProductBrowser({ categories: initialCategories = [], use
             </section>
 
             {/* Product categories */}
-            <section className="py-20 bg-white">
-                <div className="max-w-7xl mx-auto space-y-20 px-4">
+            <section className="py-12 bg-white">
+                <div className="max-w-7xl mx-auto space-y-12 px-4">
                     {categories.length > 0 ? (
                         categories.map((cat) => (
                             <div key={cat.slug} id={cat.slug} className="scroll-mt-40">
@@ -182,7 +184,7 @@ export default function ProductBrowser({ categories: initialCategories = [], use
                                         <Link
                                             key={idx}
                                             href={`/products/${product.slug}`}
-                                            className="group rounded-[32px] border border-slate-900/5 bg-white hover:shadow-2xl hover:shadow-[#16a34a]/10 transition-all duration-500 hover:-translate-y-2 overflow-hidden flex flex-col"
+                                            className="group rounded-[32px] border border-slate-900/5 bg-white hover:shadow-2xl hover:shadow-nb-green/10 transition-all duration-500 hover:-translate-y-2 overflow-hidden flex flex-col"
                                         >
                                             <div className="aspect-square bg-slate-50 flex items-center justify-center relative overflow-hidden h-64 sm:h-auto">
                                                 {product.images && product.images.length > 0 && typeof product.images[0] === 'string' && product.images[0] !== "[object Object]" ? (
@@ -194,19 +196,26 @@ export default function ProductBrowser({ categories: initialCategories = [], use
                                                 ) : (
                                                     <span className="text-4xl opacity-30 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">🌿</span>
                                                 )}
-                                                <div className="absolute inset-0 bg-gradient-to-br from-nb-green/5 to-nb-green/10 opacity-50" />
+                                                <div className="absolute inset-0 bg-gradient-to-br from-nb-green-soft/10 to-nb-green-deep/10 opacity-50" />
                                             </div>
                                             <div className="p-6 sm:p-7 flex flex-col flex-1">
                                                 <div className="flex-1">
-                                                    <span className="inline-block px-3 py-1 text-[10px] font-black text-[#16a34a] bg-[#16a34a]/5 rounded-full mb-3 tracking-widest uppercase border border-[#16a34a]/10">
-                                                        {product.usp}
-                                                    </span>
-                                                    <h3 className="text-lg font-black text-slate-900 mb-4 line-clamp-2 leading-snug">
+                                                    {product.usp && (
+                                                        <span className="inline-block px-3 py-1 text-[10px] font-black text-nb-green bg-nb-green/5 rounded-full mb-3 tracking-widest uppercase border border-nb-green/10">
+                                                            {product.usp}
+                                                        </span>
+                                                    )}
+                                                    <h3 className="text-lg font-black text-slate-900 mb-1 line-clamp-2 leading-snug">
                                                         {product.name}
                                                     </h3>
+                                                    {product.sku && (
+                                                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">
+                                                            SKU: {product.sku}
+                                                        </div>
+                                                    )}
                                                 </div>
                                                 <div
-                                                    className="inline-flex items-center h-12 gap-2 text-sm font-black text-white bg-slate-900 px-6 rounded-2xl hover:bg-[#16a34a] hover:shadow-xl hover:shadow-[#16a34a]/20 transition-all w-full justify-center group/btn"
+                                                    className="inline-flex items-center h-12 gap-2 text-sm font-black text-white bg-slate-900 px-6 rounded-2xl hover:bg-gradient-to-r hover:from-nb-green hover:to-nb-green-deep hover:shadow-xl hover:shadow-nb-green/20 transition-all w-full justify-center group/btn"
                                                 >
                                                     Details
                                                     <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
@@ -224,7 +233,7 @@ export default function ProductBrowser({ categories: initialCategories = [], use
                             <p className="text-slate-500">Try adjusting your search terms or browse categories</p>
                             <button
                                 onClick={() => setSearchQuery("")}
-                                className="mt-6 text-[#16a34a] font-black hover:underline"
+                                className="mt-6 text-nb-green font-black hover:underline"
                             >
                                 Clear search
                             </button>

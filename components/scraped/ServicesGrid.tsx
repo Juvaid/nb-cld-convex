@@ -9,6 +9,7 @@ export interface ServiceItem {
 }
 
 export interface ServicesGridProps {
+    id?: string;
     badgeText?: string;
     heading?: string;
     subheading?: string;
@@ -23,6 +24,7 @@ const iconMap: Record<string, LucideIcon> = {
 };
 
 export default function ServicesGrid({
+    id,
     badgeText = "Our Capability",
     heading = "Expert Solutions for Your Brand",
     subheading = "We provide comprehensive, end-to-end manufacturing services to help you build a world-class personal care brand.",
@@ -54,10 +56,10 @@ export default function ServicesGrid({
     ]
 }: ServicesGridProps) {
     return (
-        <section className="py-20 sm:py-32 bg-slate-50 relative overflow-hidden">
+        <section id={id} className="py-12 sm:py-20 bg-slate-50 relative overflow-hidden">
             <div className="max-w-7xl mx-auto px-6 sm:px-8 relative z-10">
                 <div className="text-center mb-16 sm:mb-24">
-                    <div className="inline-block px-4 sm:px-5 py-1.5 sm:py-2 rounded-full bg-[#16a34a]/5 text-[#16a34a] text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] leading-none mb-4 sm:mb-6">
+                    <div className="inline-block px-4 sm:px-5 py-1.5 sm:py-2 rounded-full bg-nb-green/5 text-nb-green text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] leading-none mb-4 sm:mb-6">
                         {badgeText}
                     </div>
                     <h2 className="text-3xl sm:text-5xl md:text-6xl font-black text-slate-900 tracking-tight leading-[1.1]">{heading}</h2>
@@ -72,16 +74,24 @@ export default function ServicesGrid({
                         return (
                             <div
                                 key={service.slug || i}
-                                className="group relative bg-white rounded-[32px] sm:rounded-[48px] p-8 sm:p-10 hover:-translate-y-4 transition-all duration-700 border border-slate-900/5 hover:border-[#16a34a]/20 hover:shadow-[0_30px_70px_-20px_rgba(21,128,61,0.15)]"
+                                className="group relative bg-white rounded-[32px] sm:rounded-[48px] p-8 sm:p-10 hover:-translate-y-4 transition-all duration-700 border border-slate-900/5 hover:border-nb-green/20 hover:shadow-2xl hover:shadow-nb-green/15"
                             >
-                                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-[24px] bg-gradient-to-br from-[#16a34a]/10 to-[#2bee6c]/5 flex items-center justify-center mb-6 sm:mb-10 border border-[#16a34a]/10 group-hover:scale-110 group-hover:bg-[#16a34a] group-hover:shadow-2xl group-hover:shadow-[#16a34a]/40 transition-all duration-700">
-                                    <IconComponent className="w-8 h-8 sm:w-10 sm:h-10 text-[#16a34a] group-hover:text-white transition-colors" />
+                                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-[24px] bg-gradient-to-br from-nb-green/10 to-nb-green-light/5 flex items-center justify-center mb-6 sm:mb-10 border border-nb-green/10 group-hover:scale-110 group-hover:bg-nb-green group-hover:shadow-2xl group-hover:shadow-nb-green/40 transition-all duration-700 overflow-hidden">
+                                    {iconMap[service.icon] ? (
+                                        <IconComponent className="w-8 h-8 sm:w-10 sm:h-10 text-nb-green group-hover:text-white transition-colors" />
+                                    ) : (
+                                        <img
+                                            src={service.icon?.startsWith('http') ? service.icon : `/api/storage/${service.icon}`}
+                                            className="w-full h-full object-cover"
+                                            alt={service.title}
+                                        />
+                                    )}
                                 </div>
                                 <h3 className="font-black text-xl sm:text-2xl text-slate-900 mb-3 sm:mb-5 leading-tight">{service.title}</h3>
                                 <p className="text-slate-500 text-sm sm:text-base leading-relaxed mb-6 sm:mb-10 font-medium opacity-80 hidden sm:block">{service.description}</p>
                                 <Link
                                     href={`/services#${service.slug}`}
-                                    className="inline-flex items-center gap-2 text-xs sm:text-sm font-black text-[#16a34a] group-hover:text-slate-900 transition-all"
+                                    className="inline-flex items-center gap-2 text-xs sm:text-sm font-black text-nb-green group-hover:text-slate-900 transition-all"
                                 >
                                     Explore Service
                                     <ArrowRight className="w-4 h-4 translate-y-[1px] group-hover:translate-x-2 transition-transform" />
@@ -89,7 +99,7 @@ export default function ServicesGrid({
 
                                 {/* Decorative background element on hover */}
                                 <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-5 transition-opacity duration-700 pointer-events-none">
-                                    <IconComponent className="w-16 h-16 sm:w-24 sm:h-24 text-[#16a34a] rotate-12" />
+                                    <IconComponent className="w-16 h-16 sm:w-24 sm:h-24 text-nb-green rotate-12" />
                                 </div>
                             </div>
                         );

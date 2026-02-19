@@ -11,7 +11,7 @@ import { api } from "@/convex/_generated/api";
 interface NatureBoonHeroProps {
     title?: string;
     subtitle?: string;
-    description?: string;
+    description?: any;
     buttonText?: string;
     buttonHref?: string;
     image?: string;
@@ -27,7 +27,7 @@ export const NatureBoonHero = ({
     buttonText = "Get Quote",
     buttonHref = "#",
     image,
-    paddingTop = "24",
+    paddingTop = "12",
     paddingBottom = "24",
     backgroundVariant = "white",
 }: NatureBoonHeroProps) => {
@@ -45,21 +45,21 @@ export const NatureBoonHero = ({
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-nb-green/5 rounded-full blur-[120px] -z-10 translate-x-1/4 -translate-y-1/4" />
 
             <Flex direction="row" mobileDirection="col" align="center" justify="between" gap="16">
-                <div className="flex-1 max-w-2xl space-y-8">
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-nb-green/10 border border-nb-green/20">
-                        <div className="w-2 h-2 rounded-full bg-nb-green animate-pulse" />
-                        <span className="text-xs font-black uppercase tracking-widest text-nb-green">
+                <div className="flex-1 max-w-2xl space-y-6 md:space-y-8">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-nb-green/10 border border-nb-green/20">
+                        <div className="w-1.5 h-1.5 rounded-full bg-nb-green animate-pulse" />
+                        <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-nb-green">
                             {finalSubtitle}
                         </span>
                     </div>
 
-                    <h1 className="text-5xl md:text-7xl font-black text-slate-900 leading-[1.1] tracking-tight">
+                    <h1 className="text-[2.75rem] md:text-7xl font-black text-slate-900 leading-[1.1] md:leading-[1.1] tracking-tight">
                         {title}
                     </h1>
 
-                    <p className="text-lg md:text-xl text-slate-600 leading-relaxed max-w-xl">
+                    <div className="text-sm md:text-xl text-slate-600 leading-relaxed max-w-xl font-medium" puck-editable="description">
                         {description}
-                    </p>
+                    </div>
 
                     <div className="flex items-center gap-4 pt-4">
                         <Link href={buttonHref}>

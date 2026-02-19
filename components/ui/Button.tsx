@@ -14,7 +14,7 @@ interface ButtonProps extends HTMLMotionProps<"button"> {
 }
 
 const variantClasses = {
-    primary: 'bg-nb-green text-slate-900 shadow-[0_15px_30px_color-mix(in_srgb,var(--nb-colors-primary),transparent_70%)] hover:shadow-[0_20px_40px_color-mix(in_srgb,var(--nb-colors-primary),transparent_60%)]',
+    primary: 'bg-nb-green text-white shadow-[0_15px_30px_color-mix(in_srgb,var(--nb-colors-primary),transparent_70%)] hover:shadow-[0_20px_40px_color-mix(in_srgb,var(--nb-colors-primary),transparent_60%)]',
     secondary: 'bg-slate-900 text-white shadow-xl hover:bg-slate-800',
     outline: 'bg-transparent border-2 border-slate-900 text-slate-900 hover:bg-slate-900 hover:text-white',
     ghost: 'bg-transparent text-slate-600 hover:bg-slate-50',

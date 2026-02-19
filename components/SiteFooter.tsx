@@ -1,5 +1,9 @@
+"use client";
+
 import Link from 'next/link';
 import { Leaf, Mail, Phone, MapPin, Linkedin, Instagram, ArrowUpRight, Facebook, Twitter, Github } from 'lucide-react';
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 export interface SiteFooterProps {
     logoText?: string;
@@ -23,27 +27,34 @@ const SocialIcon = ({ platform }: { platform: string }) => {
 };
 
 export function SiteFooter({
-    logoText = "Nature's Boon",
-    logoImage,
-    description = "A global leader in personal care manufacturing, specializing in OEM, Private Label, and innovative R&D solutions.",
-    copyrightText = `© ${new Date().getFullYear()} NatureBoon. All rights reserved.`,
+    logoText: propLogoText,
+    logoImage: propLogoImage,
+    description: propDescription,
+    copyrightText: propCopyrightText,
     backgroundColor = "bg-slate-900",
     textColor = "text-white",
-    socialLinks = [
+    socialLinks: propSocialLinks,
+}: SiteFooterProps) {
+    const siteSettings = useQuery(api.siteSettings.getSiteSettings);
+
+    const logoText = siteSettings?.logoText ?? propLogoText ?? "Nature's Boon";
+    const logoImage = siteSettings?.logoImage ?? propLogoImage;
+    const description = siteSettings?.footerDescription ?? propDescription ?? "A global leader in personal care manufacturing, specializing in OEM, Private Label, and innovative R&D solutions.";
+    const copyrightText = siteSettings?.footerCopyrightText ?? propCopyrightText ?? `© ${new Date().getFullYear()} NatureBoon. All rights reserved.`;
+    const socialLinks = siteSettings?.socialLinks ?? propSocialLinks ?? [
         { platform: "linkedin", href: "#" },
         { platform: "instagram", href: "#" }
-    ]
-}: SiteFooterProps) {
+    ];
     const currentYear = new Date().getFullYear();
 
     // Determine hover color based on text color (simplified logic)
-    const hoverColor = textColor.includes('slate-900') ? 'hover:text-nb-green' : 'hover:text-[#16a34a]';
+    const hoverColor = textColor.includes('slate-900') ? 'hover:text-nb-green' : 'hover:text-nb-green';
     const subTextColor = textColor.includes('text-white') ? 'text-white/60' : 'text-slate-500';
 
     return (
         <footer className={`${backgroundColor} ${textColor} pt-20 sm:pt-24 pb-12 overflow-hidden relative transition-colors duration-300`}>
             {/* Decorative background blur - adjust opacity based on background */}
-            <div className={`absolute top-0 right-0 w-[40%] h-[40%] bg-[#16a34a]/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 ${backgroundColor === 'bg-white' ? 'opacity-60' : 'opacity-30'}`} />
+            <div className={`absolute top-0 right-0 w-[40%] h-[40%] bg-nb-green/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 ${backgroundColor === 'bg-white' ? 'opacity-60' : 'opacity-30'}`} />
 
             <div className="max-w-7xl mx-auto px-6 sm:px-8 relative z-10">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 sm:gap-16 mb-16 sm:mb-20">
@@ -53,7 +64,7 @@ export function SiteFooter({
                             {logoImage ? (
                                 <img src={logoImage} alt={logoText} className="h-10 sm:h-12 w-auto object-contain" />
                             ) : (
-                                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-[#16a34a] to-[#2bee6c] flex items-center justify-center shadow-lg group-hover:rotate-12 transition-transform">
+                                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-nb-green-soft to-nb-green-deep flex items-center justify-center shadow-lg group-hover:rotate-12 transition-transform">
                                     <Leaf className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                                 </div>
                             )}
@@ -66,12 +77,12 @@ export function SiteFooter({
                             {description}
                         </p>
                         <div className="flex gap-4">
-                            {socialLinks.map((link, i) => (
+                            {socialLinks.map((link: { platform: string; href: string }, i: number) => (
                                 <a
                                     key={i}
                                     href={link.href}
                                     aria-label={`Follow us on ${link.platform}`}
-                                    className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center transition-all group ${backgroundColor === 'bg-white' ? 'bg-slate-100 hover:bg-[#16a34a] hover:text-white' : 'bg-white/5 hover:bg-[#16a34a] text-white'}`}
+                                    className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center transition-all group ${backgroundColor === 'bg-white' ? 'bg-slate-100 hover:bg-nb-green hover:text-white' : 'bg-white/5 hover:bg-nb-green text-white'}`}
                                 >
                                     <SocialIcon platform={link.platform} />
                                 </a>
@@ -87,7 +98,7 @@ export function SiteFooter({
                                 const href = link === 'Home' ? '/' : `/${link.toLowerCase().replace(' ', '-').replace('our-', '')}`;
                                 return (
                                     <li key={link}>
-                                        <Link href={href} className={`${subTextColor} hover:text-[#16a34a] transition-colors font-semibold flex items-center gap-2 group text-xs sm:text-sm`}>
+                                        <Link href={href} className={`${subTextColor} hover:text-nb-green transition-colors font-semibold flex items-center gap-2 group text-xs sm:text-sm`}>
                                             {link}
                                             <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-all -translate-x-1 group-hover:translate-x-0" />
                                         </Link>
@@ -103,7 +114,7 @@ export function SiteFooter({
                         <ul className="space-y-3 sm:space-y-4 text-xs sm:text-sm">
                             {['OEM Manufacturing', 'Private Labeling', 'Formulation R&D', 'Packaging Design', 'Contract Manufacturing'].map((link) => (
                                 <li key={link}>
-                                    <Link href="/services" className={`${subTextColor} hover:text-[#16a34a] transition-colors font-semibold flex items-center gap-2 group`}>
+                                    <Link href="/services" className={`${subTextColor} hover:text-nb-green transition-colors font-semibold flex items-center gap-2 group`}>
                                         {link}
                                         <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-all -translate-x-1 group-hover:translate-x-0" />
                                     </Link>
@@ -122,8 +133,8 @@ export function SiteFooter({
                                 { icon: MapPin, text: 'Ludhiana, Punjab, India', sub: 'H.O. & Manufacturing' },
                             ].map((item, i) => (
                                 <li key={i} className="flex gap-4 items-start group">
-                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${backgroundColor === 'bg-white' ? 'bg-slate-100 group-hover:bg-[#16a34a]/20' : 'bg-white/5 group-hover:bg-[#16a34a]/20'}`}>
-                                        <item.icon className="w-4 h-4 text-[#16a34a]" />
+                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${backgroundColor === 'bg-white' ? 'bg-slate-100 group-hover:bg-nb-green/20' : 'bg-white/5 group-hover:bg-nb-green/20'}`}>
+                                        <item.icon className="w-4 h-4 text-nb-green" />
                                     </div>
                                     <div>
                                         <span className={`block text-xs sm:text-sm font-black ${textColor}`}>{item.text}</span>

@@ -36,7 +36,7 @@ export default function AboutJourney({
     ]
 }: AboutJourneyProps) {
     return (
-        <section className="py-20 sm:py-32 bg-white">
+        <section className="py-12 sm:py-20 bg-white">
             <div className="max-w-7xl mx-auto px-6 sm:px-8">
                 <div className="grid lg:grid-cols-2 gap-16 items-start">
                     <div>
@@ -54,8 +54,16 @@ export default function AboutJourney({
                             const IconComp = iconMap[item.icon] || Factory;
                             return (
                                 <div key={item.title} className="flex gap-4 p-5 rounded-[24px] bg-white border border-slate-100 hover:border-[#16a34a]/30 hover:shadow-lg transition-all">
-                                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#16a34a] to-[#2bee6c] flex items-center justify-center shrink-0 shadow-md shadow-[#16a34a]/20">
-                                        <IconComp className="w-6 h-6 text-white" />
+                                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#16a34a] to-[#2bee6c] flex items-center justify-center shrink-0 shadow-lg shadow-[#16a34a]/20 overflow-hidden">
+                                        {iconMap[item.icon] ? (
+                                            <IconComp className="w-8 h-8 text-white" />
+                                        ) : (
+                                            <img
+                                                src={item.icon?.startsWith('http') ? item.icon : `/api/storage/${item.icon}`}
+                                                className="w-full h-full object-cover"
+                                                alt={item.title}
+                                            />
+                                        )}
                                     </div>
                                     <div>
                                         <h3 className="font-bold text-slate-900 mb-1">{item.title}</h3>

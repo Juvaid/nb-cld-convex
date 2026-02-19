@@ -65,6 +65,7 @@ export const create = mutation({
         categoryId: v.optional(v.id("categories")),
         status: v.union(v.literal("active"), v.literal("draft"), v.literal("archived")),
         sku: v.optional(v.string()),
+        usp: v.optional(v.string()),
         tags: v.array(v.string()),
     },
     handler: async (ctx, args) => {
@@ -85,6 +86,7 @@ export const update = mutation({
         categoryId: v.optional(v.id("categories")),
         status: v.optional(v.union(v.literal("active"), v.literal("draft"), v.literal("archived"))),
         sku: v.optional(v.string()),
+        usp: v.optional(v.string()),
         tags: v.optional(v.array(v.string())),
     },
     handler: async (ctx, args) => {

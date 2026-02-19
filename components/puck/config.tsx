@@ -1,24 +1,31 @@
-import { Config } from "@measured/puck";
-import { ImagePicker } from "@/components/ImagePicker";
-import { Section } from "@/components/ui/Section";
-import { Flex } from "@/components/ui/Flex";
-import { Typography } from "@/components/ui/Typography";
-import { Button } from "@/components/ui/Button";
+import { Config } from "@puckeditor/core";
 import { SiteHeader } from "@/components/SiteHeader";
-import { SiteFooter } from "@/components/SiteFooter";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
+// Shared Fields
+import { sharedFields } from "./fields/shared";
+
+// Modular Blocks
+import { SectionBlockConfig } from "./blocks/SectionBlock";
+import { DynamicLayoutBlockConfig } from "./blocks/DynamicLayoutBlock";
+import { ServiceGridBlockConfig } from "./blocks/ServiceGridBlock";
+import { CTABlockConfig } from "./blocks/CTABlock";
+import { IconBenefitsBlockConfig } from "./blocks/IconBenefitsBlock";
+import { ProcessTimelineBlockConfig } from "./blocks/ProcessTimelineBlock";
+import { FAQAccordionBlockConfig } from "./blocks/FAQAccordionBlock";
+import { SuccessStoryBlockConfig } from "./blocks/SuccessStoryBlock";
+import { BlogPostStoryBlockConfig } from "./blocks/BlogPostStoryBlock";
+import { FeatureGridBlockConfig } from "./blocks/FeatureGridBlock";
+import { ModernHeroBlockConfig } from "./blocks/ModernHeroBlock";
+import { ModernServicesBlockConfig } from "./blocks/ModernServicesBlock";
+
+// Components that still need minimal config or are handled specifically
 import { NatureBoonHero } from "@/components/sections/NatureBoonHero";
 import { NatureBoonExpertise } from "@/components/sections/NatureBoonExpertise";
 import { NatureBoonStats } from "@/components/sections/NatureBoonStats";
 import { CategoryPortfolio } from "@/components/sections/CategoryPortfolio";
 import { PagePicker } from "@/components/PagePicker";
-import { theme } from "@/src/theme";
-import { FeatureGrid, FeatureGridProps } from "@/components/sections/FeatureGrid";
-import ModernHero from '../scraped/Hero';
-import ModernServices from '../scraped/ServicesGrid';
-import ModernStats from '../scraped/StatsCounter';
-import ModernTestimonials from '../scraped/TestimonialSlider';
+import { ImagePicker } from "@/components/ImagePicker";
 import AboutHero from '../scraped/AboutHero';
 import AboutJourney from '../scraped/AboutJourney';
 import WhyChooseUs from '../scraped/WhyChooseUs';
@@ -27,240 +34,23 @@ import CallToAction from '../scraped/CallToAction';
 import ServiceDetailList from '../scraped/ServiceDetailList';
 import ProcessSteps from '../scraped/ProcessSteps';
 import ContactSection from '../scraped/ContactSection';
-import { ProductSelector } from "./ProductSelector";
+import ModernStats from '../scraped/StatsCounter';
+import ModernTestimonials from '../scraped/TestimonialSlider';
 import ProductCard from "../scraped/ProductCard";
+import { ProductSelector } from "./ProductSelector";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Footer } from "./blocks/Footer";
-import { DynamicLayout } from "./blocks/DynamicLayout";
-
-import Link from "next/link";
-
-export const sharedFields = {
-    paddingTop: {
-        type: "select" as const,
-        options: [
-            { label: "X-Large (128px)", value: "32" },
-            { label: "Large (96px)", value: "24" },
-            { label: "Medium (64px)", value: "16" },
-            { label: "Small (48px)", value: "12" },
-            { label: "X-Small (32px)", value: "8" },
-            { label: "None", value: "0" }
-        ]
-    },
-    paddingBottom: {
-        type: "select" as const,
-        options: [
-            { label: "X-Large (128px)", value: "32" },
-            { label: "Large (96px)", value: "24" },
-            { label: "Medium (64px)", value: "16" },
-            { label: "Small (48px)", value: "12" },
-            { label: "X-Small (32px)", value: "8" },
-            { label: "None", value: "0" }
-        ]
-    },
-    backgroundVariant: {
-        type: "select" as const,
-        options: [
-            { label: "White", value: "white" },
-            { label: "Slate 50", value: "slate-50" },
-            { label: "Slate 900", value: "slate-900" },
-            { label: "Brand Green", value: "nb-green" },
-            { label: "Glass White", value: "glass-white" },
-            { label: "Glass Dark", value: "glass-dark" }
-        ]
-    },
-    // Flex Controls
-    flexDirection: {
-        type: "select" as const,
-        options: [
-            { label: "Horizontal (Row)", value: "row" },
-            { label: "Vertical (Column)", value: "col" },
-            { label: "Reverse Row", value: "row-reverse" },
-            { label: "Reverse Column", value: "col-reverse" }
-        ]
-    },
-    flexAlign: {
-        type: "select" as const,
-        options: [
-            { label: "Start", value: "start" },
-            { label: "Center", value: "center" },
-            { label: "End", value: "end" },
-            { label: "Stretch", value: "stretch" }
-        ]
-    },
-    flexJustify: {
-        type: "select" as const,
-        options: [
-            { label: "Start", value: "start" },
-            { label: "Center", value: "center" },
-            { label: "End", value: "end" },
-            { label: "Space Between", value: "between" },
-            { label: "Space Evenly", value: "evenly" }
-        ]
-    },
-    gap: {
-        type: "select" as const,
-        options: [
-            { label: "None", value: "0" },
-            { label: "X-Small", value: "4" },
-            { label: "Small", value: "8" },
-            { label: "Medium", value: "12" },
-            { label: "Large", value: "16" },
-            { label: "X-Large", value: "20" }
-        ]
-    },
-    // Custom Background & Effects
-    backgroundColor: { type: "text" }, // For hex/css colors
-    isGlass: { type: "radio", options: [{ label: "Solid", value: false }, { label: "Glass", value: true }] },
-    blur: {
-        type: "select" as const,
-        options: [
-            { label: "None", value: "0" },
-            { label: "Small (4px)", value: "blur-sm" },
-            { label: "Medium (8px)", value: "blur-md" },
-            { label: "Large (16px)", value: "blur-lg" },
-            { label: "X-Large (24px)", value: "blur-xl" }
-        ]
-    },
-    animation: {
-        type: "select" as const,
-        options: [
-            { label: "None", value: "none" },
-            { label: "Fade Up", value: "fade-up" },
-            { label: "Fade In", value: "fade-in" },
-            { label: "Slide Left", value: "slide-left" },
-            { label: "Slide Right", value: "slide-right" },
-        ],
-    },
-    // Professional Design Controls
-    shadowIntensity: {
-        type: "select" as const,
-        options: [
-            { label: "None", value: "none" },
-            { label: "Soft (Low)", value: "shadow-sm" },
-            { label: "Medium", value: "shadow-md" },
-            { label: "Large", value: "shadow-lg" },
-            { label: "X-Large", value: "shadow-xl" },
-            { label: "Intense (2XL)", value: "shadow-2xl" },
-            { label: "Inner", value: "shadow-inner" },
-        ]
-    },
-    borderWidth: {
-        type: "select" as const,
-        options: [
-            { label: "None", value: "0" },
-            { label: "Thin (1px)", value: "1" },
-            { label: "Medium (2px)", value: "2" },
-            { label: "Thick (4px)", value: "4" },
-            { label: "Heavy (8px)", value: "8" },
-        ]
-    },
-    borderColor: { type: "text" }, // Hex or tailwind class
-    borderRadius: {
-        type: "select" as const,
-        options: [
-            { label: "Default", value: "" },
-            { label: "None", value: "rounded-none" },
-            { label: "Small", value: "rounded-sm" },
-            { label: "Medium", value: "rounded-md" },
-            { label: "Large", value: "rounded-lg" },
-            { label: "X-Large", value: "rounded-xl" },
-            { label: "Full (Pill)", value: "rounded-full" },
-            { label: "Premium (32px)", value: "rounded-[32px]" },
-            { label: "Ultra (48px)", value: "rounded-[48px]" },
-        ]
-    },
-    marginTop: {
-        type: "select" as const,
-        options: [
-            { label: "None", value: "0" },
-            { label: "Small (16px)", value: "4" },
-            { label: "Medium (32px)", value: "8" },
-            { label: "Large (64px)", value: "16" },
-            { label: "X-Large (128px)", value: "32" },
-        ]
-    },
-    marginBottom: {
-        type: "select" as const,
-        options: [
-            { label: "None", value: "0" },
-            { label: "Small (16px)", value: "4" },
-            { label: "Medium (32px)", value: "8" },
-            { label: "Large (64px)", value: "16" },
-            { label: "X-Large (128px)", value: "32" },
-        ]
-    },
-    // Finer Typography Controls
-    textColor: { type: "text" },
-    fontSize: {
-        type: "select" as const,
-        options: [
-            { label: "Default", value: "" },
-            { label: "XS (12px)", value: "text-xs" },
-            { label: "SM (14px)", value: "text-sm" },
-            { label: "Base (16px)", value: "text-base" },
-            { label: "LG (18px)", value: "text-lg" },
-            { label: "XL (20px)", value: "text-xl" },
-            { label: "2XL (24px)", value: "text-2xl" },
-            { label: "3XL (30px)", value: "text-3xl" },
-            { label: "4XL (36px)", value: "text-4xl" },
-            { label: "5XL (48px)", value: "text-5xl" },
-            { label: "6XL (60px)", value: "text-6xl" },
-        ]
-    },
-    fontWeight: {
-        type: "select" as const,
-        options: [
-            { label: "Default", value: "" },
-            { label: "Thin (100)", value: "font-thin" },
-            { label: "Light (300)", value: "font-light" },
-            { label: "Regular (400)", value: "font-normal" },
-            { label: "Medium (500)", value: "font-medium" },
-            { label: "SemiBold (600)", value: "font-semibold" },
-            { label: "Bold (700)", value: "font-bold" },
-            { label: "ExtraBold (800)", value: "font-extrabold" },
-            { label: "Black (900)", value: "font-black" },
-        ]
-    },
-    lineHeight: {
-        type: "select" as const,
-        options: [
-            { label: "Default", value: "" },
-            { label: "None (1)", value: "leading-none" },
-            { label: "Tight (1.25)", value: "leading-tight" },
-            { label: "Snug (1.375)", value: "leading-snug" },
-            { label: "Normal (1.5)", value: "leading-normal" },
-            { label: "Relaxed (1.625)", value: "leading-relaxed" },
-            { label: "Loose (2)", value: "leading-loose" },
-        ]
-    },
-    letterSpacing: {
-        type: "select" as const,
-        options: [
-            { label: "Default", value: "" },
-            { label: "Tighter", value: "tracking-tighter" },
-            { label: "Tight", value: "tracking-tight" },
-            { label: "Normal", value: "tracking-normal" },
-            { label: "Wide", value: "tracking-wide" },
-            { label: "Wider", value: "tracking-wider" },
-            { label: "Widest", value: "tracking-widest" },
-        ]
-    },
-    textTransform: {
-        type: "select" as const,
-        options: [
-            { label: "None", value: "normal-case" },
-            { label: "Uppercase", value: "uppercase" },
-            { label: "Lowercase", value: "lowercase" },
-            { label: "Capitalize", value: "capitalize" },
-        ]
-    }
-};
+import { Section } from "../ui/Section";
+import LogoMarquee from '../scraped/LogoMarquee';
+import ImageCarousel from '../scraped/ImageCarousel';
+import VideoCarousel from '../scraped/VideoCarousel';
 
 export const config: Config = {
     root: {
         fields: {
+            inquiryEmail: { type: "text", label: "Inquiry Notification Email" },
+            enableInquiryNotifications: { type: "radio", label: "Enable Email Alerts", options: [{ label: "Yes", value: true }, { label: "No", value: false }] }
         },
         render: ({ children }: any) => {
             return (
@@ -276,62 +66,24 @@ export const config: Config = {
         }
     },
     categories: {
+        "Carousel & Marquee": { components: ["LogoMarquee", "ImageCarousel", "VideoCarousel"] },
         Hero: { components: ["NatureBoonHero", "ModernHero"] },
         Themed: { components: ["NatureBoonExpertise", "NatureBoonStats", "CategoryPortfolio"] },
         "Modern Blocks": { components: ["FeatureGrid", "ModernHero", "ModernServices", "ModernStats", "ModernTestimonials", "AboutHero", "AboutJourney", "WhyChooseUs", "ProductBrowser", "CallToAction", "ServiceDetailList", "ProcessSteps", "ContactSection", "ProductShowcase"] },
         Layout: { components: ["DynamicLayout", "Section"] },
         Marketing: { components: ["ServiceGrid", "CTA", "SuccessStory", "IconBenefits"] },
-        Content: { components: ["FeatureGridLegacy", "ProcessTimeline", "FAQAccordion", "Section"] },
+        Blog: { components: ["BlogPostStory"] },
+        Content: { components: ["ProcessTimeline", "FAQAccordion", "Section"] },
         Footer: { components: ["Footer"] },
     },
     components: {
-        Section: {
-            fields: {
-                heading: { type: "text" },
-                subheading: { type: "text" },
-                ...sharedFields
-            },
-            render: ({ children, ...props }: any) => <Section {...props}>{children}</Section>
-        },
-        DynamicLayout: {
-            fields: {
-                type: {
-                    type: "radio",
-                    options: [
-                        { label: "Grid", value: "grid" },
-                        { label: "Flex", value: "flex" }
-                    ]
-                },
-                columns: {
-                    type: "number",
-                    label: "Columns (Desktop)",
-                },
-                justify: {
-                    type: "select",
-                    options: [
-                        { label: "Start", value: "start" },
-                        { label: "Center", value: "center" },
-                        { label: "End", value: "end" },
-                        { label: "Between", value: "between" },
-                        { label: "Evenly", value: "evenly" }
-                    ]
-                },
-                ...sharedFields
-            },
-            defaultProps: {
-                type: "grid",
-                columns: 3,
-                gap: "8",
-                paddingTop: "16",
-                paddingBottom: "16"
-            },
-            render: (props: any) => <DynamicLayout {...props} />
-        },
+        Section: SectionBlockConfig,
+        DynamicLayout: DynamicLayoutBlockConfig,
         NatureBoonHero: {
             fields: {
                 title: { type: "text" },
                 subtitle: { type: "text" },
-                description: { type: "textarea" },
+                description: { type: "richtext" },
                 buttonText: { type: "text" },
                 buttonHref: {
                     type: "custom",
@@ -390,7 +142,13 @@ export const config: Config = {
                     arrayFields: {
                         title: { type: "text" },
                         description: { type: "textarea" },
-                        tags: { type: "array", arrayFields: { type: "text" } as any },
+                        tags: {
+                            type: "array",
+                            getItemSummary: (tag: any) => tag.name || "Tag",
+                            arrayFields: {
+                                name: { type: "text" }
+                            }
+                        },
                         image: {
                             type: "custom",
                             render: ({ value, onChange }: any) => (
@@ -404,534 +162,16 @@ export const config: Config = {
             },
             render: (props: any) => <CategoryPortfolio {...props} />
         },
-        ServiceGrid: {
-            fields: {
-                title: { type: "text" },
-                items: {
-                    type: "array",
-                    getItemSummary: (item: any) => item.title || "Service Item",
-                    arrayFields: {
-                        title: { type: "text" },
-                        description: { type: "text" },
-                    }
-                },
-                ...sharedFields
-            },
-            render: (props: any) => (
-                <Section
-                    variant={props.backgroundVariant}
-                    paddingTop={props.paddingTop}
-                    paddingBottom={props.paddingBottom}
-                    backgroundColor={props.backgroundColor}
-                    isGlass={props.isGlass}
-                    blur={props.blur}
-                >
-                    <Flex direction="col" align="center" gap="12">
-                        <Flex direction="col" align="center" gap="4" className="max-w-3xl text-center">
-                            <Typography variant="h2" color="slate-900">
-                                {props.title || "Our Professional Services"}
-                            </Typography>
-                            <div className="w-24 h-2 bg-nb-green rounded-full shadow-sm" />
-                        </Flex>
-
-                        <Flex
-                            direction={props.flexDirection || "row"}
-                            justify={props.flexJustify || "center"}
-                            align={props.flexAlign || "stretch"}
-                            gap={props.gap || "8"}
-                            wrap
-                            className="w-full"
-                        >
-                            {(props.items || []).map((item: any, i: number) => (
-                                <Flex
-                                    key={i}
-                                    direction="col"
-                                    align="start"
-                                    gap="6"
-                                    className="bg-white p-6 md:p-10 rounded-[40px] border border-slate-50 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all flex-1 min-w-[280px]"
-                                >
-                                    <Flex align="center" justify="center" className="w-16 h-16 bg-nb-green/10 rounded-2xl text-nb-green font-black text-xl">
-                                        {i + 1}
-                                    </Flex>
-                                    <Typography variant="h4" color="slate-900">
-                                        {item.title}
-                                    </Typography>
-                                    <Typography variant="small" color="slate-500">
-                                        {item.description}
-                                    </Typography>
-                                </Flex>
-                            ))}
-                        </Flex>
-                    </Flex>
-                </Section>
-            )
-        },
-        CTA: {
-            fields: {
-                title: { type: "text" },
-                buttonText: { type: "text" },
-                buttonHref: {
-                    type: "custom",
-                    render: ({ value, onChange }: any) => (
-                        <PagePicker value={value} onChange={onChange} />
-                    )
-                },
-                ...sharedFields
-            },
-            render: (props: any) => (
-                <Section
-                    variant={props.backgroundVariant}
-                    paddingTop={props.paddingTop}
-                    paddingBottom={props.paddingBottom}
-                    backgroundColor={props.backgroundColor}
-                    isGlass={props.isGlass}
-                    blur={props.blur}
-                >
-                    <Flex
-                        direction={props.flexDirection || "col"}
-                        mobileDirection="col"
-                        align={props.flexAlign || "center"}
-                        justify={props.flexJustify || "center"}
-                        gap={props.gap || "12"}
-                        className="bg-slate-900 p-20 rounded-[80px] relative overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.3)] w-full text-center"
-                    >
-                        {/* Animated Bg Accents */}
-                        <div className="absolute top-0 right-0 w-80 h-80 bg-nb-green/10 rounded-full blur-[100px]" />
-                        <div className="absolute bottom-0 left-0 w-80 h-80 bg-nb-green/5 rounded-full blur-[100px]" />
-
-                        <Typography variant="h2" color="white" className="relative z-10 max-w-2xl">
-                            {props.title || "Ready to build your brand?"}
-                        </Typography>
-
-                        <Link href={props.buttonHref || "#"}>
-                            <Button variant="primary" size="xl" className="relative z-10">
-                                {props.buttonText || "Request Consultation"}
-                            </Button>
-                        </Link>
-                    </Flex>
-                </Section>
-            )
-        },
-        IconBenefits: {
-            fields: {
-                title: { type: "text" },
-                benefits: {
-                    type: "array",
-                    getItemSummary: (b: any) => b.title || "Benefit",
-                    arrayFields: {
-                        title: { type: "text" },
-                        description: { type: "textarea" },
-                    }
-                },
-                ...sharedFields
-            },
-            render: (props: any) => (
-                <Section
-                    variant={props.backgroundVariant}
-                    paddingTop={props.paddingTop}
-                    paddingBottom={props.paddingBottom}
-                    backgroundColor={props.backgroundColor}
-                    isGlass={props.isGlass}
-                    blur={props.blur}
-                >
-                    <Flex direction="col" align="center" gap="16">
-                        <Typography variant="h2" align="center" color="slate-900">
-                            {props.title || "Why Partner With Us?"}
-                        </Typography>
-
-                        <Flex
-                            direction={props.flexDirection || "row"}
-                            mobileDirection="col"
-                            justify={props.flexJustify || "center"}
-                            align={props.flexAlign || "stretch"}
-                            gap={props.gap || "10"}
-                            wrap
-                            className="w-full"
-                        >
-                            {(props.benefits || []).map((benefit: any, i: number) => (
-                                <Flex
-                                    key={i}
-                                    gap="6"
-                                    className="p-8 rounded-[32px] bg-white border border-slate-50 shadow-sm hover:border-nb-green/30 transition-all flex-1 min-w-[320px]"
-                                >
-                                    <Flex align="center" justify="center" className="w-14 h-14 bg-nb-green/10 rounded-full flex-shrink-0 text-nb-green shadow-inner">
-                                        <Flex align="center" justify="center" className="w-7 h-7 border-4 border-current rounded-full font-black text-xs">
-                                            {i + 1}
-                                        </Flex>
-                                    </Flex>
-                                    <Flex direction="col" gap="3">
-                                        <Typography variant="h6" color="slate-900">
-                                            {benefit.title}
-                                        </Typography>
-                                        <Typography variant="small" color="slate-500">
-                                            {benefit.description}
-                                        </Typography>
-                                    </Flex>
-                                </Flex>
-                            ))}
-                        </Flex>
-                    </Flex>
-                </Section>
-            )
-        },
-        ProcessTimeline: {
-            fields: {
-                title: { type: "text" },
-                steps: {
-                    type: "array",
-                    getItemSummary: (s: any) => s.title || "Timeline Step",
-                    arrayFields: {
-                        title: { type: "text" },
-                        description: { type: "textarea" },
-                    }
-                },
-                ...sharedFields
-            },
-            render: (props: any) => (
-                <Section
-                    variant={props.backgroundVariant}
-                    paddingTop={props.paddingTop}
-                    paddingBottom={props.paddingBottom}
-                >
-                    <Flex direction="col" align="center" gap="16">
-                        <Typography variant="h2" align="center" color="slate-900">
-                            {props.title || "Our Process"}
-                        </Typography>
-
-                        <Flex
-                            direction={props.flexDirection || "row"}
-                            mobileDirection="col"
-                            justify={props.flexJustify || "center"}
-                            align={props.flexAlign || "stretch"}
-                            gap={props.gap || "10"}
-                            wrap
-                            className="w-full"
-                        >
-                            {(props.steps || []).map((step: any, i: number) => (
-                                <Flex
-                                    key={i}
-                                    direction="col"
-                                    align="center"
-                                    gap="6"
-                                    className="text-center group flex-1 min-w-[280px]"
-                                >
-                                    <Flex
-                                        align="center"
-                                        justify="center"
-                                        className="w-20 h-20 bg-nb-green text-slate-900 shadow-[0_15px_30px_rgba(43,238,108,0.3)] rounded-full text-3xl font-black group-hover:scale-110 transition-transform ring-8 ring-white"
-                                    >
-                                        {i + 1}
-                                    </Flex>
-                                    <div className="space-y-3">
-                                        <Typography variant="h4" color="slate-900" className="group-hover:text-nb-green transition-colors">
-                                            {step.title}
-                                        </Typography>
-                                        <Typography variant="small" color="slate-500">
-                                            {step.description}
-                                        </Typography>
-                                    </div>
-                                </Flex>
-                            ))}
-                        </Flex>
-                    </Flex>
-                </Section>
-            )
-        },
-        FAQAccordion: {
-            fields: {
-                title: { type: "text" },
-                questions: {
-                    type: "array",
-                    getItemSummary: (q: any) => q.question || "FAQ Item",
-                    arrayFields: {
-                        question: { type: "text" },
-                        answer: { type: "textarea" },
-                    }
-                },
-                ...sharedFields
-            },
-            render: (props: any) => (
-                <Section
-                    variant={props.backgroundVariant}
-                    paddingTop={props.paddingTop}
-                    paddingBottom={props.paddingBottom}
-                >
-                    <Flex direction="col" align="center" gap="16" className="max-w-4xl mx-auto">
-                        <Flex direction="col" align="center" gap="4" className="text-center">
-                            <Typography variant="h2" color="slate-900">
-                                {props.title || "Industrial FAQ"}
-                            </Typography>
-                            <Typography variant="detail" color="slate-500">
-                                Everything you need to know about partnering with us
-                            </Typography>
-                        </Flex>
-
-                        <Flex
-                            direction="col"
-                            gap="4"
-                            className="w-full"
-                        >
-                            {(props.questions || []).map((item: any, i: number) => (
-                                <Flex
-                                    key={i}
-                                    direction="col"
-                                    align="stretch"
-                                    className="bg-white border border-slate-100 rounded-[32px] overflow-hidden group hover:border-nb-green transition-all shadow-sm"
-                                >
-                                    <Flex justify="between" className="p-10 cursor-pointer group-hover:text-nb-green transition-colors">
-                                        <Typography variant="h6">
-                                            {item.question}
-                                        </Typography>
-                                        <Flex align="center" justify="center" className="w-10 h-10 rounded-full bg-slate-50 text-nb-green font-light group-hover:bg-nb-green group-hover:text-slate-900 transition-all">
-                                            +
-                                        </Flex>
-                                    </Flex>
-                                    <div className="px-10 pb-10">
-                                        <Typography variant="small" color="slate-600">
-                                            {item.answer}
-                                        </Typography>
-                                    </div>
-                                </Flex>
-                            ))}
-                        </Flex>
-                    </Flex>
-                </Section>
-            )
-        },
-        SuccessStory: {
-            fields: {
-                title: { type: "text" },
-                stories: {
-                    type: "array",
-                    getItemSummary: (s: any) => s.brand || "Case Study",
-                    arrayFields: {
-                        brand: { type: "text" },
-                        metrics: { type: "text" },
-                        product: { type: "text" },
-                        description: { type: "textarea" },
-                    }
-                },
-                ...sharedFields
-            },
-            render: (props: any) => (
-                <Section
-                    variant={props.backgroundVariant}
-                    paddingTop={props.paddingTop}
-                    paddingBottom={props.paddingBottom}
-                >
-                    <Flex direction="col" gap="16">
-                        <Typography variant="h2" color="slate-900" className="max-w-xl">
-                            {props.title || "Helping Global Brands Redefine Beauty Standards"}
-                        </Typography>
-
-                        <Flex
-                            direction={props.flexDirection || "row"}
-                            justify={props.flexJustify || "center"}
-                            align={props.flexAlign || "stretch"}
-                            gap={props.gap || "10"}
-                            wrap
-                            className="w-full"
-                        >
-                            {(props.stories || []).map((story: any, i: number) => (
-                                <Flex
-                                    key={i}
-                                    direction="col"
-                                    justify="between"
-                                    className="bg-white p-12 rounded-[48px] shadow-sm hover:shadow-2xl border border-slate-50 transition-all flex-1 min-w-[340px]"
-                                >
-                                    <Flex direction="col" gap="6">
-                                        <Flex align="center" gap="3">
-                                            <div className="w-8 h-[2px] bg-nb-green" />
-                                            <Typography variant="detail" color="nb-green">
-                                                {story.metrics}
-                                            </Typography>
-                                        </Flex>
-                                        <div className="space-y-2">
-                                            <Typography variant="h3" color="slate-900">
-                                                {story.brand}
-                                            </Typography>
-                                            <Typography variant="small" color="slate-400" className="italic font-bold">
-                                                {story.product}
-                                            </Typography>
-                                        </div>
-                                        <Typography variant="body" color="slate-600">
-                                            {story.description}
-                                        </Typography>
-                                    </Flex>
-                                    <div className="mt-10 pt-8 border-t border-slate-50">
-                                        <Button variant="ghost" size="sm" icon={<span className="text-lg">→</span>} className="text-nb-green p-0 hover:bg-transparent hover:translate-x-2">
-                                            EXPLORE CASE STUDY
-                                        </Button>
-                                    </div>
-                                </Flex>
-                            ))}
-                        </Flex>
-                    </Flex>
-                </Section>
-            )
-        },
-        FeatureGrid: {
-            fields: {
-                heading: { type: "text" },
-                subheading: { type: "text" },
-                columns: {
-                    type: "radio",
-                    options: [
-                        { label: "2 Columns", value: "2" },
-                        { label: "3 Columns", value: "3" },
-                        { label: "4 Columns", value: "4" },
-                    ],
-                },
-                features: {
-                    type: "array",
-                    getItemSummary: (item: any) => item.title || "Feature",
-                    arrayFields: {
-                        icon: { type: "text" },
-                        title: { type: "text" },
-                        description: { type: "textarea" },
-                    },
-                    defaultItemProps: {
-                        icon: "✨",
-                        title: "Amazing Feature",
-                        description: "Describe how this helps your users stand out.",
-                    },
-                },
-                ...sharedFields
-            },
-            defaultProps: {
-                heading: "Core Manufacturing Expertise",
-                subheading: "Leveraging state-of-the-art facilities and scientific precision to bring your vision to market.",
-                columns: "3",
-                features: [
-                    {
-                        icon: "🏭",
-                        title: "OEM Manufacturing",
-                        description: "Full-scale production using your proprietary formulations with rigorous quality control protocols.",
-                    },
-                    {
-                        icon: "🏷️",
-                        title: "Private Label Solutions",
-                        description: "Ready-to-market formulations tailored to your brand identity with customizable packaging options.",
-                    },
-                    {
-                        icon: "🔬",
-                        title: "R&D Innovation",
-                        description: "In-house scientists developing next-generation active ingredients and breakthrough textures.",
-                    },
-                ],
-            },
-            render: (props: any) => <FeatureGrid {...props} />
-        },
-        FeatureGridLegacy: {
-            fields: {
-                items: {
-                    type: "array",
-                    getItemSummary: (item: any) => item.title || "Feature Item",
-                    arrayFields: {
-                        title: { type: "text" },
-                        description: { type: "text" },
-                    }
-                },
-                ...sharedFields
-            },
-            render: (props: any) => (
-                <Section
-                    variant={props.backgroundVariant}
-                    paddingTop={props.paddingTop}
-                    paddingBottom={props.paddingBottom}
-                >
-                    <Flex
-                        direction={props.flexDirection || "row"}
-                        justify={props.flexJustify || "center"}
-                        align={props.flexAlign || "stretch"}
-                        gap={props.gap || "8"}
-                        wrap
-                        className="max-w-7xl mx-auto"
-                    >
-                        {(props.items || []).map((item: any, i: number) => (
-                            <Flex
-                                key={i}
-                                direction="col"
-                                gap="3"
-                                className="bg-white p-8 rounded-3xl border border-slate-50 shadow-sm flex-1 min-w-[280px]"
-                            >
-                                <Typography variant="h6" color="slate-900">
-                                    {item.title}
-                                </Typography>
-                                <Typography variant="small" color="slate-600">
-                                    {item.description}
-                                </Typography>
-                            </Flex>
-                        ))}
-                    </Flex>
-                </Section>
-            )
-        },
-        ModernHero: {
-            fields: {
-                badgeText: { type: "text" },
-                title: { type: "text" },
-                titleGradient: { type: "text" },
-                description: { type: "textarea" },
-                primaryButtonText: { type: "text" },
-                primaryButtonHref: { type: "text" },
-                secondaryButtonText: { type: "text" },
-                secondaryButtonHref: { type: "text" },
-                stats: {
-                    type: "array",
-                    getItemSummary: (s: any) => s.label || "Stat",
-                    arrayFields: {
-                        value: { type: "text" },
-                        label: { type: "text" },
-                    }
-                },
-                cards: {
-                    type: "array",
-                    getItemSummary: (c: any) => c.title || "Card",
-                    arrayFields: {
-                        icon: {
-                            type: "select",
-                            options: [
-                                { label: "Factory", value: "Factory" },
-                                { label: "Flask", value: "FlaskConical" },
-                                { label: "Shield", value: "ShieldCheck" },
-                                { label: "Award", value: "Award" },
-                                { label: "Zap", value: "Zap" },
-                            ]
-                        },
-                        title: { type: "text" },
-                        desc: { type: "text" },
-                    }
-                },
-            },
-            render: (props: any) => <ModernHero {...props} />
-        },
-        ModernServices: {
-            fields: {
-                badgeText: { type: "text" },
-                heading: { type: "text" },
-                subheading: { type: "textarea" },
-                services: {
-                    type: "array",
-                    getItemSummary: (s: any) => s.title || "Service",
-                    arrayFields: {
-                        title: { type: "text" },
-                        description: { type: "textarea" },
-                        icon: {
-                            type: "select",
-                            options: [
-                                { label: "Palette", value: "Palette" },
-                                { label: "Flask", value: "FlaskConical" },
-                                { label: "Badge", value: "BadgeCheck" },
-                                { label: "Megaphone", value: "Megaphone" },
-                            ]
-                        }
-                    }
-                },
-                ...sharedFields
-            },
-            render: (props: any) => <ModernServices {...props} />
-        },
+        ServiceGrid: ServiceGridBlockConfig,
+        CTA: CTABlockConfig,
+        IconBenefits: IconBenefitsBlockConfig,
+        ProcessTimeline: ProcessTimelineBlockConfig,
+        FAQAccordion: FAQAccordionBlockConfig,
+        SuccessStory: SuccessStoryBlockConfig,
+        BlogPostStory: BlogPostStoryBlockConfig,
+        FeatureGrid: FeatureGridBlockConfig,
+        ModernHero: ModernHeroBlockConfig,
+        ModernServices: ModernServicesBlockConfig,
         AboutHero: {
             fields: {
                 badgeText: { type: "text" },
@@ -956,13 +196,10 @@ export const config: Config = {
                     getItemSummary: (item: any) => item.title || "Journey Card",
                     arrayFields: {
                         icon: {
-                            type: "select",
-                            options: [
-                                { label: "Factory", value: "Factory" },
-                                { label: "Users", value: "Users" },
-                                { label: "Award", value: "Award" },
-                                { label: "Target", value: "Target" }
-                            ]
+                            type: "custom",
+                            render: ({ value, onChange }: any) => (
+                                <ImagePicker value={value} onChange={onChange} />
+                            )
                         },
                         title: { type: "text" },
                         desc: { type: "textarea" }
@@ -970,7 +207,7 @@ export const config: Config = {
                 },
                 ...sharedFields
             },
-            render: (props: any) => <AboutJourney {...props} />
+            render: (props: any) => <AboutJourney {...props} id={props.sectionId} />
         },
         WhyChooseUs: {
             fields: {
@@ -980,12 +217,10 @@ export const config: Config = {
                     getItemSummary: (item: any) => item.title || "Feature Item",
                     arrayFields: {
                         icon: {
-                            type: "select",
-                            options: [
-                                { label: "CheckCircle", value: "CheckCircle" },
-                                { label: "FlaskConical", value: "FlaskConical" },
-                                { label: "Factory", value: "Factory" }
-                            ]
+                            type: "custom",
+                            render: ({ value, onChange }: any) => (
+                                <ImagePicker value={value} onChange={onChange} />
+                            )
                         },
                         title: { type: "text" },
                         desc: { type: "textarea" }
@@ -993,7 +228,7 @@ export const config: Config = {
                 },
                 ...sharedFields
             },
-            render: (props: any) => <WhyChooseUs {...props} />
+            render: (props: any) => <WhyChooseUs {...props} id={props.sectionId} />
         },
         ProductBrowser: {
             fields: {
@@ -1011,13 +246,36 @@ export const config: Config = {
                             arrayFields: {
                                 name: { type: "text" },
                                 usp: { type: "text" },
-                                images: { type: "array", arrayFields: { type: "text" } as any }
+                                sku: { type: "text" },
+                                slug: { type: "text" },
+                                images: {
+                                    type: "array",
+                                    getItemSummary: (img: any) => img.url || "Image URL",
+                                    arrayFields: {
+                                        url: {
+                                            type: "custom",
+                                            render: ({ value, onChange }: any) => (
+                                                <ImagePicker value={value} onChange={onChange} />
+                                            )
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
                 }
             },
-            render: (props: any) => <ProductBrowser {...props} />
+            render: (props: any) => {
+                const transformedCategories = props.categories?.map((cat: any) => ({
+                    ...cat,
+                    products: cat.products?.map((prod: any) => ({
+                        ...prod,
+                        images: prod.images?.map((img: any) => img.url)
+                    }))
+                }));
+
+                return <ProductBrowser {...props} categories={transformedCategories} />;
+            }
         },
         CallToAction: {
             fields: {
@@ -1037,19 +295,17 @@ export const config: Config = {
                         title: { type: "text" },
                         description: { type: "textarea" },
                         icon: {
-                            type: "select",
-                            options: [
-                                { label: "Palette", value: "Palette" },
-                                { label: "Flask", value: "FlaskConical" },
-                                { label: "Badge", value: "BadgeCheck" },
-                                { label: "Megaphone", value: "Megaphone" },
-                            ]
+                            type: "custom",
+                            render: ({ value, onChange }: any) => (
+                                <ImagePicker value={value} onChange={onChange} />
+                            )
                         },
                         slug: { type: "text" }
                     }
-                }
+                },
+                ...sharedFields
             },
-            render: (props: any) => <ServiceDetailList {...props} />
+            render: (props: any) => <ServiceDetailList {...props} id={props.sectionId} />
         },
         ProcessSteps: {
             fields: {
@@ -1062,18 +318,16 @@ export const config: Config = {
                         title: { type: "text" },
                         description: { type: "textarea" },
                         icon: {
-                            type: "select",
-                            options: [
-                                { label: "Clipboard", value: "ClipboardList" },
-                                { label: "Beaker", value: "Beaker" },
-                                { label: "Factory", value: "Factory" },
-                                { label: "Rocket", value: "Rocket" },
-                            ]
+                            type: "custom",
+                            render: ({ value, onChange }: any) => (
+                                <ImagePicker value={value} onChange={onChange} />
+                            )
                         }
                     }
-                }
+                },
+                ...sharedFields
             },
-            render: (props: any) => <ProcessSteps {...props} />
+            render: (props: any) => <ProcessSteps {...props} id={props.sectionId} />
         },
         ContactSection: {
             fields: {
@@ -1085,13 +339,10 @@ export const config: Config = {
                         label: { type: "text" },
                         value: { type: "text" },
                         icon: {
-                            type: "select",
-                            options: [
-                                { label: "Phone", value: "Phone" },
-                                { label: "Mail", value: "Mail" },
-                                { label: "MapPin", value: "MapPin" },
-                                { label: "Clock", value: "Clock" },
-                            ]
+                            type: "custom",
+                            render: ({ value, onChange }: any) => (
+                                <ImagePicker value={value} onChange={onChange} />
+                            )
                         }
                     }
                 },
@@ -1102,9 +353,10 @@ export const config: Config = {
                         label: { type: "text" },
                         email: { type: "text" }
                     }
-                }
+                },
+                ...sharedFields
             },
-            render: (props: any) => <ContactSection {...props} />
+            render: (props: any) => <ContactSection {...props} id={props.sectionId} />
         },
         ModernStats: {
             fields: {
@@ -1114,10 +366,22 @@ export const config: Config = {
                     arrayFields: {
                         value: { type: "text" },
                         label: { type: "text" },
+                        icon: {
+                            type: "custom",
+                            render: ({ value, onChange }: any) => (
+                                <ImagePicker value={value} onChange={onChange} />
+                            )
+                        }
                     }
-                }
+                },
+                useGlobalStats: { type: "radio", label: "Use Global Company Stats", options: [{ label: "Yes", value: true }, { label: "No", value: false }] },
+                ...sharedFields
             },
-            render: (props: any) => <ModernStats {...props} />
+            render: (props: any) => {
+                const globalStats = useQuery(api.siteData.getStats);
+                const finalStats = props.useGlobalStats ? (globalStats || []) : props.stats;
+                return <ModernStats {...props} stats={finalStats as any} id={props.sectionId} />
+            }
         },
         ModernTestimonials: {
             fields: {
@@ -1136,6 +400,79 @@ export const config: Config = {
                 }
             },
             render: (props: any) => <ModernTestimonials {...props} />
+        },
+        LogoMarquee: {
+            fields: {
+                title: { type: "text" },
+                logos: {
+                    type: "array",
+                    getItemSummary: (l: any) => l.alt || "Logo",
+                    arrayFields: {
+                        url: {
+                            type: "custom",
+                            render: ({ value, onChange }: any) => (
+                                <ImagePicker value={value} onChange={onChange} />
+                            )
+                        },
+                        alt: { type: "text" }
+                    }
+                },
+                speed: { type: "number" },
+                direction: {
+                    type: "select",
+                    options: [
+                        { label: "Left", value: "left" },
+                        { label: "Right", value: "right" }
+                    ]
+                }
+            },
+            render: (props: any) => <LogoMarquee {...props} />
+        },
+        ImageCarousel: {
+            fields: {
+                items: {
+                    type: "array",
+                    getItemSummary: (i: any) => i.title || "Carousel Item",
+                    arrayFields: {
+                        url: {
+                            type: "custom",
+                            render: ({ value, onChange }: any) => (
+                                <ImagePicker value={value} onChange={onChange} />
+                            )
+                        },
+                        alt: { type: "text" },
+                        title: { type: "text" },
+                        subtitle: { type: "text" }
+                    }
+                },
+                autoPlay: { type: "radio", label: "Auto Play", options: [{ label: "Yes", value: true }, { label: "No", value: false }] },
+                interval: { type: "number", label: "Interval (ms)" },
+                showControls: { type: "radio", label: "Show Controls", options: [{ label: "Yes", value: true }, { label: "No", value: false }] },
+                showDots: { type: "radio", label: "Show Dots", options: [{ label: "Yes", value: true }, { label: "No", value: false }] }
+            },
+            render: (props: any) => <ImageCarousel {...props} />
+        },
+        VideoCarousel: {
+            fields: {
+                badgeText: { type: "text" },
+                title: { type: "text" },
+                videos: {
+                    type: "array",
+                    getItemSummary: (v: any) => v.title || "Video",
+                    arrayFields: {
+                        url: { type: "text", label: "YouTube/Direct URL" },
+                        title: { type: "text" },
+                        description: { type: "textarea" },
+                        thumbnail: {
+                            type: "custom",
+                            render: ({ value, onChange }: any) => (
+                                <ImagePicker value={value} onChange={onChange} />
+                            )
+                        }
+                    }
+                }
+            },
+            render: (props: any) => <VideoCarousel {...props} />
         },
         ProductShowcase: {
             fields: {
@@ -1223,6 +560,6 @@ export const config: Config = {
                 }
             },
             render: (props: any) => <Footer {...props} />
-        }
+        },
     },
 };

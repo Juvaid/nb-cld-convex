@@ -26,7 +26,7 @@ export default function ProductDetail({ slug, isModal = false, onClose }: Produc
     if (product === undefined) {
         return (
             <div className="flex items-center justify-center p-20">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#16a34a]" />
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-nb-green" />
             </div>
         );
     }
@@ -35,7 +35,7 @@ export default function ProductDetail({ slug, isModal = false, onClose }: Produc
         return (
             <div className="p-20 text-center">
                 <h1 className="text-2xl font-bold text-slate-900 mb-4">Product Not Found</h1>
-                <Link href="/products" className="text-[#16a34a] font-bold hover:underline">
+                <Link href="/products" className="text-nb-green font-bold hover:underline">
                     Back to Catalog
                 </Link>
             </div>
@@ -49,7 +49,7 @@ export default function ProductDetail({ slug, isModal = false, onClose }: Produc
                     {/* Media Gallery */}
                     <div className={`${isModal ? 'p-0 sm:p-0' : 'space-y-4 sm:space-y-6'}`}>
                         <div className={`aspect-square sm:aspect-[4/5] md:aspect-square overflow-hidden bg-slate-50 relative group ${isModal ? 'rounded-none sm:rounded-[32px]' : 'rounded-[32px] sm:rounded-[40px] border border-slate-900/5'}`}>
-                            <div className="absolute inset-0 bg-gradient-to-br from-[#16a34a]/5 to-[#2bee6c]/5 opacity-50" />
+                            <div className="absolute inset-0 bg-gradient-to-br from-nb-green/5 to-nb-green-light/5 opacity-50" />
                             {product.images && product.images.length > 0 && typeof product.images[0] === 'string' && product.images[0] !== "[object Object]" ? (
                                 <img
                                     src={product.images[0].startsWith('http') ? product.images[0] : `/api/storage/${product.images[0]}`}
@@ -93,6 +93,9 @@ export default function ProductDetail({ slug, isModal = false, onClose }: Produc
                                 </div>
                                 <ContactForm
                                     compact={true}
+                                    productId={product._id}
+                                    productName={product.name}
+                                    productCategory={product.tags?.[0]}
                                     initialMessage={`I am interested in bulk inquiry for ${product.name}. Please provide more details.`}
                                     onSuccess={() => {
                                         if (isModal && onClose) {
@@ -103,7 +106,7 @@ export default function ProductDetail({ slug, isModal = false, onClose }: Produc
                             </div>
                         ) : (
                             <div className="mb-6 sm:mb-8">
-                                <span className="inline-block px-3 py-1 text-[8px] sm:text-[10px] font-black tracking-widest uppercase bg-[#16a34a]/10 text-[#16a34a] rounded-full mb-3">
+                                <span className="inline-block px-3 py-1 text-[8px] sm:text-[10px] font-black tracking-widest uppercase bg-nb-green/10 text-nb-green rounded-full mb-3">
                                     {product.tags?.[0] || 'Personal Care'}
                                 </span>
                                 <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 mb-4 leading-tight">
@@ -111,7 +114,7 @@ export default function ProductDetail({ slug, isModal = false, onClose }: Produc
                                 </h1>
                                 <div className="flex flex-wrap items-center gap-4 sm:gap-6 mb-6 text-sm sm:text-base text-slate-500 font-medium">
                                     <div className="flex items-center gap-2">
-                                        <span className="w-2 h-2 rounded-full bg-[#16a34a]" />
+                                        <span className="w-2 h-2 rounded-full bg-nb-green" />
                                         In Stock
                                     </div>
                                     {product.sku && (
@@ -127,11 +130,11 @@ export default function ProductDetail({ slug, isModal = false, onClose }: Produc
                                 </p>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-8">
-                                    <div className="p-4 sm:p-5 rounded-2xl sm:rounded-[28px] bg-slate-50 border border-slate-900/5 hover:border-[#16a34a]/20 transition-colors">
+                                    <div className="p-4 sm:p-5 rounded-2xl sm:rounded-[28px] bg-slate-50 border border-slate-900/5 hover:border-nb-green/20 transition-colors">
                                         <h4 className="text-[8px] sm:text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Purity</h4>
                                         <p className="text-sm sm:text-base font-bold text-slate-900">100% Organic Extracts</p>
                                     </div>
-                                    <div className="p-4 sm:p-5 rounded-2xl sm:rounded-[28px] bg-slate-50 border border-slate-900/5 hover:border-[#16a34a]/20 transition-colors">
+                                    <div className="p-4 sm:p-5 rounded-2xl sm:rounded-[28px] bg-slate-50 border border-slate-900/5 hover:border-nb-green/20 transition-colors">
                                         <h4 className="text-[8px] sm:text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Standard</h4>
                                         <p className="text-sm sm:text-base font-bold text-slate-900">GMP & ISO Certified</p>
                                     </div>
@@ -140,7 +143,7 @@ export default function ProductDetail({ slug, isModal = false, onClose }: Produc
                                 <div className="flex flex-col gap-3 w-full">
                                     <button
                                         onClick={handleInquiry}
-                                        className="w-full inline-flex items-center justify-center gap-3 h-14 sm:h-16 rounded-2xl sm:rounded-[24px] bg-[#16a34a] text-white text-sm sm:text-base font-black hover:bg-[#15803d] transition-all shadow-xl shadow-[#16a34a]/20 group"
+                                        className="w-full inline-flex items-center justify-center gap-3 h-14 sm:h-16 rounded-2xl sm:rounded-[24px] bg-nb-green text-white text-sm sm:text-base font-black hover:bg-nb-green/90 transition-all shadow-xl shadow-nb-green/20 group"
                                     >
                                         Inquire for Bulk
                                         <ArrowRight className="w-4 sm:w-5 h-4 sm:h-5 group-hover:translate-x-1 transition-transform" />

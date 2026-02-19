@@ -13,6 +13,7 @@ export type FeatureItem = {
 };
 
 export type FeatureGridProps = {
+    id?: string;
     heading: string;
     subheading: string;
     features: FeatureItem[];

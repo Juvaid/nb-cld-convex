@@ -46,10 +46,11 @@ export function SiteHeader({
     const defaultContactText = "Contact Us";
 
     // Priority: DB Settings > Default Fallbacks (Props purely for visual overrides in editor)
-    const logoText = siteSettings?.logoText ?? propLogoText ?? defaultLogoText;
-    const logoImage = siteSettings?.logoImage ?? propLogoImage;
-    const links = siteSettings?.navLinks ?? propLinks ?? defaultLinks;
-    const contactText = siteSettings?.contactText ?? propContactText ?? defaultContactText;
+    // Priority: DB Settings > Default Fallbacks (Props purely for visual overrides in editor)
+    const logoText = siteSettings?.logoText || propLogoText || defaultLogoText;
+    const logoImage = siteSettings?.logoImage || propLogoImage;
+    const links = siteSettings?.navLinks || propLinks || defaultLinks;
+    const contactText = siteSettings?.contactText || propContactText || defaultContactText;
 
     return (
         <header className="bg-white/95 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100/50">
@@ -59,11 +60,11 @@ export function SiteHeader({
                         /* eslint-disable-next-line @next/next/no-img-element */
                         <img src={logoImage} alt={logoText} className="h-10 w-auto object-contain transition-transform group-hover:scale-105" />
                     ) : (
-                        <div className="w-10 h-10 bg-nb-green rounded-xl shadow-[0_4px_12px_rgba(45,90,67,0.2)] flex items-center justify-center text-white font-black">
+                        <div className="w-10 h-10 bg-gradient-to-br from-nb-green-soft to-nb-green-deep rounded-xl shadow-[0_4px_12px_rgba(45,90,67,0.2)] flex items-center justify-center text-white font-black group-hover:scale-105 transition-transform">
                             NB
                         </div>
                     )}
-                    <span className="hidden sm:inline bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+                    <span className="hidden sm:inline bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent font-black tracking-tight">
                         {logoText}
                     </span>
                 </Link>

@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@convex-dev/auth": "^0.0.90",
-    "@measured/puck": "^0.20.2",
+    "@puckeditor/core": "^0.21.1",
     "@types/bcryptjs": "^2.4.6",
     "bcryptjs": "^3.0.3",
     "clsx": "^2.1.1",

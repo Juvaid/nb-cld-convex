@@ -27,7 +27,7 @@ export default function WhyChooseUs({
     ]
 }: WhyChooseUsProps) {
     return (
-        <section className="py-20 sm:py-32 bg-slate-50">
+        <section className="py-12 sm:py-20 bg-slate-50">
             <div className="max-w-7xl mx-auto px-6 sm:px-8 text-center">
                 <h2 className="text-3xl font-black text-slate-900 mb-12 tracking-tight">{heading}</h2>
                 <div className="grid md:grid-cols-3 gap-8">
@@ -35,8 +35,16 @@ export default function WhyChooseUs({
                         const IconComp = iconMap[item.icon] || CheckCircle;
                         return (
                             <div key={item.title} className="bg-white rounded-[32px] p-8 shadow-sm hover:shadow-xl transition-shadow border border-slate-100">
-                                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#16a34a] to-[#2bee6c] flex items-center justify-center mx-auto mb-5 shadow-lg shadow-[#16a34a]/20">
-                                    <IconComp className="w-8 h-8 text-white" />
+                                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-nb-green-soft to-nb-green-deep flex items-center justify-center mx-auto mb-5 shadow-lg shadow-nb-green/20 overflow-hidden">
+                                    {iconMap[item.icon] ? (
+                                        <IconComp className="w-8 h-8 text-white" />
+                                    ) : (
+                                        <img
+                                            src={item.icon?.startsWith('http') ? item.icon : `/api/storage/${item.icon}`}
+                                            className="w-full h-full object-cover"
+                                            alt={item.title}
+                                        />
+                                    )}
                                 </div>
                                 <h3 className="font-black text-lg text-slate-900 mb-2">{item.title}</h3>
                                 <p className="text-slate-500 text-sm font-medium leading-relaxed">{item.desc}</p>

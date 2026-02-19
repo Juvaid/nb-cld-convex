@@ -6,15 +6,18 @@
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --color-background: var(--nb-colors-background);
+  --color-foreground: var(--nb-colors-text);
+  --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
-  --color-nb-green: #047857;
-  --color-nb-green-light: #10b981;
-  --color-nb-dark: #111827;
+  --color-nb-green: var(--nb-colors-primary);
+  --color-nb-green-light: var(--nb-colors-accent);
+  --color-nb-green-soft: var(--color-nb-green-soft);
+  --color-nb-green-deep: var(--color-nb-green-deep);
+  --color-nb-accent-soft: var(--color-nb-accent-soft);
+  --color-nb-dark: var(--nb-colors-secondary);
   --color-nb-slate: #1e293b;
-  --color-nb-gray: #f8fafc;
+  --color-nb-gray: var(--nb-colors-backgroundAlt);
 }
 
 @layer utilities {

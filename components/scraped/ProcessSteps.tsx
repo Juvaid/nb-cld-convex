@@ -7,6 +7,7 @@ export interface ProcessStepItem {
 }
 
 export interface ProcessStepsProps {
+    id?: string;
     heading?: string;
     subheading?: string;
     steps?: ProcessStepItem[];
@@ -20,6 +21,7 @@ const iconMap: Record<string, LucideIcon> = {
 };
 
 export default function ProcessSteps({
+    id,
     heading = "Our Process",
     subheading = "How It Works",
     steps = [
@@ -30,26 +32,34 @@ export default function ProcessSteps({
     ]
 }: ProcessStepsProps) {
     return (
-        <section className="py-20 bg-slate-50">
+        <section id={id} className="py-20 bg-slate-50">
             <div className="max-w-7xl mx-auto px-6 sm:px-8">
                 <div className="text-center mb-16">
-                    <span className="text-[#16a34a] font-bold text-sm tracking-widest uppercase">{subheading}</span>
+                    <span className="text-nb-green font-bold text-sm tracking-widest uppercase">{subheading}</span>
                     <h2 className="text-3xl md:text-4xl font-bold mt-2 text-slate-900">{heading}</h2>
                 </div>
 
                 <div className="grid md:grid-cols-4 gap-6">
                     {(steps || []).map((step, i) => {
-                        const IconComponent = iconMap[step.icon] || ClipboardList;
+                        const IconComponent = iconMap[step.icon];
                         return (
                             <div key={i} className="relative text-center group">
-                                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#16a34a] to-[#2bee6c] flex items-center justify-center mx-auto mb-4 shadow-lg shadow-[#16a34a]/20 group-hover:scale-110 transition-transform duration-300">
-                                    <IconComponent className="w-8 h-8 text-white" />
+                                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-nb-green-soft to-nb-green-deep flex items-center justify-center mx-auto mb-4 shadow-lg shadow-nb-green/20 group-hover:scale-110 transition-transform duration-300 overflow-hidden">
+                                    {IconComponent ? (
+                                        <IconComponent className="w-8 h-8 text-white" />
+                                    ) : (
+                                        <img
+                                            src={step.icon?.startsWith('http') ? step.icon : `/api/storage/${step.icon}`}
+                                            className="w-full h-full object-cover"
+                                            alt={step.title}
+                                        />
+                                    )}
                                 </div>
-                                <div className="text-xs font-bold text-[#16a34a] mb-2 uppercase tracking-wide">STEP {i + 1}</div>
+                                <div className="text-xs font-bold text-nb-green mb-2 uppercase tracking-wide">STEP {i + 1}</div>
                                 <h3 className="font-bold text-slate-900 mb-2">{step.title}</h3>
                                 <p className="text-slate-500 text-sm">{step.description}</p>
                                 {i < steps.length - 1 && (
-                                    <div className="hidden md:block absolute top-8 left-[60%] w-[80%] h-0.5 bg-gradient-to-r from-[#2bee6c] to-[#16a34a]/20" />
+                                    <div className="hidden md:block absolute top-8 left-[60%] w-[80%] h-0.5 bg-gradient-to-r from-nb-green-light to-nb-green/20" />
                                 )}
                             </div>
                         );

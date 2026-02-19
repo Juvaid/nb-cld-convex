@@ -9,12 +9,18 @@ export interface ContactFormProps {
     initialMessage?: string;
     onSuccess?: () => void;
     compact?: boolean;
+    productId?: string;
+    productName?: string;
+    productCategory?: string;
 }
 
 export default function ContactForm({
     initialMessage = '',
     onSuccess,
-    compact = false
+    compact = false,
+    productId,
+    productName,
+    productCategory
 }: ContactFormProps) {
     const [form, setForm] = useState({ name: '', email: '', phone: '', message: initialMessage });
     const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">('idle');
@@ -30,6 +36,9 @@ export default function ContactForm({
                 email: form.email,
                 phone: form.phone,
                 message: form.message,
+                productId,
+                productName,
+                productCategory,
             });
 
             setStatus('sent');
@@ -44,7 +53,7 @@ export default function ContactForm({
     };
 
     return (
-        <div className={`${compact ? 'p-0' : 'bg-slate-50 rounded-[32px] p-8 md:p-10 border border-slate-900/5'}`}>
+        <div className={`${compact ? 'p-0' : 'bg-slate-50 rounded-[24px] sm:rounded-[32px] p-6 md:p-10 border border-slate-900/5'}`}>
             {!compact && <h2 className="text-2xl font-bold text-slate-900 mb-6">Send Us a Message</h2>}
 
             <form onSubmit={handleSubmit} className="space-y-5">

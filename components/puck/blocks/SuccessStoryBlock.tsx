@@ -1,59 +1,55 @@
 import React from "react";
-import { Section, BackgroundVariant } from "../../ui/Section";
+import { ComponentConfig } from "@puckeditor/core";
+import { Section } from "../../ui/Section";
 import { Flex } from "../../ui/Flex";
 import { Typography } from "../../ui/Typography";
 import { Button } from "../../ui/Button";
+import { sharedFields, SharedFieldProps } from "../fields/shared";
 
-export interface SuccessStoryItem {
-    metrics: string;
-    brand: string;
-    product: string;
-    description: string;
-}
-
-export interface SuccessStoryProps {
+export interface SuccessStoryBlockProps extends SharedFieldProps {
     title?: string;
-    stories?: SuccessStoryItem[];
-    backgroundVariant?: BackgroundVariant;
-    paddingTop?: string;
-    paddingBottom?: string;
-    flexDirection?: "row" | "col" | "row-reverse" | "col-reverse";
-    flexJustify?: "start" | "end" | "center" | "between" | "around" | "evenly";
-    flexAlign?: "start" | "end" | "center" | "baseline" | "stretch";
-    gap?: string;
+    stories?: Array<{
+        brand?: string;
+        metrics?: string;
+        product?: string;
+        description?: string;
+    }>;
 }
 
-export const SuccessStory: React.FC<SuccessStoryProps> = ({
-    title = "Helping Global Brands Redefine Beauty Standards",
-    stories = [],
-    backgroundVariant,
-    paddingTop,
-    paddingBottom,
-    flexDirection = "row",
-    flexJustify = "center",
-    flexAlign = "stretch",
-    gap = "10",
-}) => {
-    return (
+export const SuccessStoryBlockConfig: ComponentConfig<SuccessStoryBlockProps> = {
+    fields: {
+        title: { type: "text" },
+        stories: {
+            type: "array",
+            getItemSummary: (s: any) => s.brand || "Case Study",
+            arrayFields: {
+                brand: { type: "text" },
+                metrics: { type: "text" },
+                product: { type: "text" },
+                description: { type: "textarea" },
+            }
+        },
+        ...sharedFields
+    },
+    render: (props: any) => (
         <Section
-            variant={backgroundVariant}
-            paddingTop={paddingTop}
-            paddingBottom={paddingBottom}
+            {...props}
+            id={props.sectionId}
         >
             <Flex direction="col" gap="16">
                 <Typography variant="h2" color="slate-900" className="max-w-xl">
-                    {title}
+                    {props.title || "Helping Global Brands Redefine Beauty Standards"}
                 </Typography>
 
                 <Flex
-                    direction={flexDirection}
-                    justify={flexJustify}
-                    align={flexAlign}
-                    gap={gap}
+                    direction={props.flexDirection || "row"}
+                    justify={props.flexJustify || "center"}
+                    align={props.flexAlign || "stretch"}
+                    gap={props.gap || "10"}
                     wrap
                     className="w-full"
                 >
-                    {stories.map((story, i) => (
+                    {(props.stories || []).map((story: any, i: number) => (
                         <Flex
                             key={i}
                             direction="col"
@@ -80,12 +76,7 @@ export const SuccessStory: React.FC<SuccessStoryProps> = ({
                                 </Typography>
                             </Flex>
                             <div className="mt-10 pt-8 border-t border-slate-50">
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    icon={<span className="text-lg">→</span>}
-                                    className="text-nb-green p-0 hover:bg-transparent hover:translate-x-2"
-                                >
+                                <Button variant="ghost" size="sm" icon={<span className="text-lg">→</span>} className="text-nb-green p-0 hover:bg-transparent hover:translate-x-2">
                                     EXPLORE CASE STUDY
                                 </Button>
                             </div>
@@ -94,5 +85,5 @@ export const SuccessStory: React.FC<SuccessStoryProps> = ({
                 </Flex>
             </Flex>
         </Section>
-    );
+    )
 };

@@ -22,6 +22,8 @@ import type * as migrations from "../migrations.js";
 import type * as pages from "../pages.js";
 import type * as product_mutations from "../product_mutations.js";
 import type * as products from "../products.js";
+import type * as seed from "../seed.js";
+import type * as siteData from "../siteData.js";
 import type * as siteSettings from "../siteSettings.js";
 import type * as templates from "../templates.js";
 import type * as theme from "../theme.js";
@@ -47,6 +49,8 @@ declare const fullApi: ApiFromModules<{
   pages: typeof pages;
   product_mutations: typeof product_mutations;
   products: typeof products;
+  seed: typeof seed;
+  siteData: typeof siteData;
   siteSettings: typeof siteSettings;
   templates: typeof templates;
   theme: typeof theme;

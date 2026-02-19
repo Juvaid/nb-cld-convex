@@ -5,7 +5,7 @@ import { api } from "@/convex/_generated/api";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
-import { Data } from "@measured/puck";
+import { Data } from "@puckeditor/core";
 import { CustomPuckEditor } from "@/components/puck/custom-puck-editor";
 import { aboutPageData } from "@/data/about-page-data";
 import { productsPageData } from "@/data/products-page-data";

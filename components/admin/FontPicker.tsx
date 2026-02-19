@@ -44,16 +44,22 @@ export function FontPicker({ value, onChange, label }: FontPickerProps) {
             {label && <label className="text-sm font-medium leading-none">{label}</label>}
 
             <div
-                className="flex items-center justify-between w-full h-10 px-3 py-2 text-sm bg-background border rounded-md cursor-pointer hover:bg-accent/50 transition-colors"
+                className="flex items-center justify-between w-full h-10 px-3 py-2 text-sm bg-slate-50/50 border border-slate-200 rounded-lg cursor-pointer hover:bg-nb-green/5 hover:border-nb-green/30 transition-all group"
                 onClick={() => setIsOpen(!isOpen)}
             >
-                <div className="flex items-center gap-2 overflow-hidden">
-                    <Type className="w-4 h-4 text-muted-foreground shrink-0" />
-                    <span className="truncate" style={{ fontFamily: value.includes("'") ? value : `'${value}', sans-serif` }}>
+                <div className="flex items-center gap-3 overflow-hidden">
+                    <div className="w-6 h-6 rounded flex items-center justify-center bg-white border border-slate-100 shadow-sm text-slate-400 group-hover:text-nb-green transition-colors">
+                        <Type className="w-3.5 h-3.5" />
+                    </div>
+                    <span
+                        className="truncate font-bold text-slate-700"
+                        style={{ fontFamily: "var(--selected-font)" } as React.CSSProperties}
+                    >
+                        <style dangerouslySetInnerHTML={{ __html: `:root { --selected-font: ${value.includes("'") ? value : `'${value}'`}, sans-serif; }` }} />
                         {selectedFont.name}
                     </span>
                 </div>
-                <Search className="w-4 h-4 text-muted-foreground shrink-0" />
+                <Search className="w-4 h-4 text-slate-300 group-hover:text-nb-green transition-colors shrink-0" />
             </div>
 
             {isOpen && (
@@ -90,7 +96,11 @@ export function FontPicker({ value, onChange, label }: FontPickerProps) {
                                             setSearch("");
                                         }}
                                     >
-                                        <span style={{ fontFamily: font.value.includes("'") ? font.value : `'${font.value}', sans-serif` }}>
+                                        <span
+                                            style={{ fontFamily: "var(--font-item)" } as React.CSSProperties & { "--font-item": string }}
+                                            className="font-preview"
+                                        >
+                                            <style dangerouslySetInnerHTML={{ __html: `.font-preview-${font.value.replace(/['\s]/g, '')} { --font-item: ${font.value.includes("'") ? font.value : `'${font.value}'`}, sans-serif; }` }} />
                                             {font.name}
                                         </span>
                                         {value === font.value && <Check className="w-4 h-4" />}

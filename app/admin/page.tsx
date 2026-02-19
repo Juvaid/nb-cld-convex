@@ -9,13 +9,15 @@ export default function AdminDashboard() {
     const pages = useQuery(api.pages.listPages) || [];
     const products = useQuery(api.product_mutations.listProducts) || [];
     const blogs = useQuery(api.blogs.listBlogs) || [];
+    const inquiries = useQuery(api.inquiries.list) || [];
     const mediaCount = 279;
 
     const stats = [
-        { label: "Site Pages", value: pages.length, icon: FileText, color: "text-blue-500", bg: "bg-blue-50", description: "Active landing pages" },
-        { label: "Inventory", value: products.length, icon: ShoppingBag, color: "text-[#2BEE6C]", bg: "bg-[#2BEE6C]/10", description: "B2B Product catalog" },
-        { label: "Assets", value: mediaCount, icon: ImageIcon, color: "text-purple-500", bg: "bg-purple-50", description: "Optimized media items" },
-        { label: "Articles", value: blogs.length, icon: PenTool, color: "text-orange-500", bg: "bg-orange-50", description: "Published blog posts" },
+        { label: "Site Pages", value: pages.length, icon: FileText, color: "text-blue-500", bg: "bg-blue-50", description: "Active landing pages", href: "/admin/pages" },
+        { label: "Inventory", value: products.length, icon: ShoppingBag, color: "text-[#2BEE6C]", bg: "bg-[#2BEE6C]/10", description: "B2B Product catalog", href: "/admin/products" },
+        { label: "Assets", value: mediaCount, icon: ImageIcon, color: "text-purple-500", bg: "bg-purple-50", description: "Optimized media items", href: "/admin/media" },
+        { label: "Articles", value: blogs.length, icon: PenTool, color: "text-orange-500", bg: "bg-orange-50", description: "Published blog posts", href: "/admin/blogs" },
+        { label: "Inquiries", value: inquiries.length, icon: FileText, color: "text-rose-500", bg: "bg-rose-50", description: "Customer leads", href: "/admin/inquiries" },
     ];
 
     return (
@@ -27,9 +29,13 @@ export default function AdminDashboard() {
             </div>
 
             {/* Bento Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
                 {stats.map((stat) => (
-                    <div key={stat.label} className="bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm group hover:shadow-xl hover:-translate-y-1 transition-all">
+                    <Link
+                        key={stat.label}
+                        href={stat.href}
+                        className="bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm group hover:shadow-xl hover:-translate-y-1 transition-all"
+                    >
                         <div className={`w-14 h-14 ${stat.bg} ${stat.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
                             <stat.icon size={28} />
                         </div>
@@ -38,7 +44,7 @@ export default function AdminDashboard() {
                             <div className="text-4xl font-black text-slate-900 tracking-tighter">{stat.value}</div>
                             <p className="text-xs font-bold text-slate-400 pt-2">{stat.description}</p>
                         </div>
-                    </div>
+                    </Link>
                 ))}
             </div>
 
@@ -74,7 +80,6 @@ export default function AdminDashboard() {
                         <h2 className="text-2xl font-black text-white tracking-tight mb-8">Quick Forge</h2>
                         <div className="grid grid-cols-1 gap-4">
                             {[
-                                { name: "New Page", icon: FileText, href: "/admin/editor?new=true" },
                                 { name: "Add Media", icon: ImageIcon, href: "/admin/media" },
                                 { name: "Write Blog", icon: PenTool, href: "/admin/blogs" },
                                 { name: "Sync Catalog", icon: ShoppingBag, href: "/admin/products" },

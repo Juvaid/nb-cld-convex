@@ -5,7 +5,7 @@ import { query, mutation } from "./_generated/server";
 
 const defaultThemeSettings = {
   colors: {
-    primary: "#2bee6c",
+    primary: "#16a34a",
     secondary: "#0f172a",
     accent: "#22c55e",
     background: "#ffffff",
@@ -18,7 +18,9 @@ const defaultThemeSettings = {
     headingFont: "system-ui",
     bodyFont: "system-ui",
     headingWeight: "700",
+    headingLetterSpacing: "0em",
     bodyWeight: "400",
+    bodyLineHeight: "1.5",
   },
   buttons: {
     borderRadius: "12",
@@ -35,6 +37,9 @@ const defaultThemeSettings = {
     shadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
     transition: "0.2s",
   },
+  layout: {
+    borderRadius: "12px"
+  }
 };
 
 export const getThemeSettings = query({

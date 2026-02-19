@@ -20,6 +20,8 @@ export interface ContactSectionProps {
     heading?: string;
     infoItems?: ContactInfoItem[];
     departmentEmails?: DepartmentEmail[];
+    productId?: string;
+    productName?: string;
 }
 
 const iconMap: Record<string, LucideIcon> = {
@@ -32,11 +34,13 @@ const iconMap: Record<string, LucideIcon> = {
 export default function ContactSection({
     heading = "Get in Touch",
     infoItems = [],
-    departmentEmails = []
+    departmentEmails = [],
+    productId,
+    productName
 }: ContactSectionProps) {
 
     return (
-        <section className="py-20 bg-white">
+        <section className="py-12 bg-white">
             <div className="max-w-7xl mx-auto px-6 sm:px-8">
                 <div className="grid lg:grid-cols-5 gap-12">
                     {/* Contact info */}
@@ -47,8 +51,16 @@ export default function ContactSection({
                             const IconComponent = iconMap[item.icon] || Mail;
                             return (
                                 <div key={item.label} className="flex gap-4 p-4 rounded-2xl bg-white border border-slate-900/5 shadow-sm">
-                                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#16a34a] to-[#2bee6c] flex items-center justify-center shrink-0 shadow-md shadow-[#16a34a]/20">
-                                        <IconComponent className="w-5 h-5 text-white" />
+                                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-nb-green to-nb-green-light flex items-center justify-center shrink-0 shadow-md shadow-nb-green/20 overflow-hidden">
+                                        {iconMap[item.icon] ? (
+                                            <IconComponent className="w-5 h-5 text-white" />
+                                        ) : (
+                                            <img
+                                                src={item.icon?.startsWith('http') ? item.icon : `/api/storage/${item.icon}`}
+                                                className="w-full h-full object-cover"
+                                                alt={item.label}
+                                            />
+                                        )}
                                     </div>
                                     <div>
                                         <p className="text-sm text-slate-500">{item.label}</p>
@@ -65,7 +77,7 @@ export default function ContactSection({
                                     {departmentEmails.map((dept, i) => (
                                         <li key={i} className="flex flex-col sm:flex-row sm:items-baseline gap-1">
                                             <span className="font-medium text-slate-900 min-w-[80px]">{dept.label}:</span>
-                                            <a href={`mailto:${dept.email}`} className="hover:text-[#16a34a] transition-colors">{dept.email}</a>
+                                            <a href={`mailto:${dept.email}`} className="hover:text-nb-green transition-colors">{dept.email}</a>
                                         </li>
                                     ))}
                                 </ul>
@@ -75,9 +87,7 @@ export default function ContactSection({
 
                     {/* Contact form */}
                     <div className="lg:col-span-3">
-                        <div className="bg-slate-50 rounded-[32px] p-8 md:p-10 border border-slate-900/5">
-                            <ContactForm />
-                        </div>
+                        <ContactForm productId={productId} productName={productName} />
                     </div>
                 </div>
             </div>

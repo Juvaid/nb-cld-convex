@@ -54,11 +54,27 @@ export default defineSchema({
     categoryId: v.optional(v.id("categories")), // Link to categories
     status: v.union(v.literal("active"), v.literal("draft"), v.literal("archived")),
     sku: v.optional(v.string()),
+    usp: v.optional(v.string()),
     tags: v.array(v.string()),
     meta: v.optional(v.any()), // For flexible structured data
   }).index("by_slug", ["slug"])
     .index("by_status", ["status"])
     .index("by_categoryId", ["categoryId"]),
+
+  stats: defineTable({
+    label: v.string(),
+    value: v.string(),
+    icon: v.optional(v.string()),
+    order: v.optional(v.number()),
+  }),
+
+  services: defineTable({
+    title: v.string(),
+    description: v.string(),
+    slug: v.string(),
+    icon: v.optional(v.string()), // Can be lucide icon name or storage ID
+    order: v.optional(v.number()),
+  }).index("by_slug", ["slug"]),
 
   media: defineTable({
     filename: v.string(), // Original local filename
@@ -104,7 +120,17 @@ export default defineSchema({
     email: v.string(),
     phone: v.optional(v.string()),
     message: v.string(),
+    productId: v.optional(v.string()),
+    productName: v.optional(v.string()),
+    productCategory: v.optional(v.string()),
     status: v.union(v.literal("new"), v.literal("read"), v.literal("replied")),
     submittedAt: v.number(),
   }).index("by_status", ["status"]),
+  componentTemplates: defineTable({
+    name: v.string(),
+    componentType: v.string(),
+    props: v.any(),
+    category: v.optional(v.string()),
+    createdAt: v.number(),
+  }).index("by_componentType", ["componentType"]),
 });

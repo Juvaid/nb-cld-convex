@@ -5,7 +5,7 @@ import { api } from "@/convex/_generated/api";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, ArrowLeft, Save, Globe } from "lucide-react";
-import { Data } from "@measured/puck";
+import { Data } from "@puckeditor/core";
 import { CustomPuckEditor } from "@/components/puck/custom-puck-editor";
 import { Id } from "@/convex/_generated/dataModel";
 
@@ -112,9 +112,23 @@ export function BlogEditorClient({ id }: BlogEditorClientProps) {
                 </div>
                 <div>
                     <div className="text-[10px] font-black uppercase tracking-widest text-slate-400">Editing Post</div>
-                    <div className="text-xs font-bold truncate max-w-[200px]">{blog.title}</div>
+                    <div className="text-xs font-bold truncate max-w-[150px]">{blog.title}</div>
                 </div>
-                <div className="w-px h-6 bg-slate-700 ml-2" />
+                <div className="w-px h-6 bg-slate-700" />
+                <div className="flex items-center gap-2">
+                    <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded ${blog.status === 'published' ? 'bg-nb-green/20 text-nb-green' : 'bg-slate-700 text-slate-400'}`}>
+                        {blog.status}
+                    </span>
+                    {blog.status === 'draft' && (
+                        <button
+                            onClick={() => handlePublish(data)}
+                            className="text-[10px] font-black uppercase tracking-widest bg-nb-green text-slate-900 px-2 py-0.5 rounded hover:bg-nb-green/90 transition-colors"
+                        >
+                            Publish Now
+                        </button>
+                    )}
+                </div>
+                <div className="w-px h-6 bg-slate-700" />
                 <div className={`text-[10px] font-black uppercase tracking-widest ${saveStatus === 'saved' ? 'text-nb-green' : 'text-amber-400 animate-pulse'}`}>
                     {saveStatus === 'saved' ? 'Synced' : 'Saving...'}
                 </div>
