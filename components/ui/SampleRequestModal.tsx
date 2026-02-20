@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 
 interface SampleRequestModalProps {
     productId: string;

@@ -39,3 +39,22 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# scraped data and local assets
+nb\ scraped\ data/
+db_dump.json
+
+# debug and logs
+*.log
+*-output.txt
+*_output.txt
+*-results.txt
+*-final.txt
+inspection_output.txt
+
+# local editors and IDEs
+.vscode/
+.idea/
+*.swp
+*.bak
+
