@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { query, mutation } from "./_generated/server";
+import { query, mutation, internalQuery } from "./_generated/server";
 
 export const getSiteSettings = query({
     handler: async (ctx) => {
@@ -28,5 +28,10 @@ export const updateSiteSetting = mutation({
         } else {
             await ctx.db.insert("siteSettings", { key: args.key, value: args.value });
         }
+    },
+});
+export const getInternal = internalQuery({
+    handler: async (ctx) => {
+        return await ctx.db.query("siteSettings").collect();
     },
 });

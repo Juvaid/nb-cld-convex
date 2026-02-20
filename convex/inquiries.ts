@@ -1,5 +1,6 @@
 import { v } from "convex/values";
-import { query, mutation } from "./_generated/server";
+import { query, mutation, internalQuery } from "./_generated/server";
+import { internal } from "./_generated/api";
 
 // Mutation to submit a new inquiry
 export const submit = mutation({
@@ -40,9 +41,23 @@ export const submit = mutation({
             status: "new",
             submittedAt: Date.now(),
         });
+
+        // Trigger Discord Notification
+        await ctx.scheduler.runAfter(0, internal.notifications.sendInquiryToDiscord, {
+            inquiryId,
+        });
+
         return inquiryId;
     },
 });
+
+export const getInternal = internalQuery({
+    args: { id: v.id("inquiries") },
+    handler: async (ctx, args) => {
+        return await ctx.db.get(args.id);
+    },
+});
+
 
 // Query to list all inquiries
 export const list = query({
