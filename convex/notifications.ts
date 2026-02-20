@@ -8,7 +8,7 @@ export const sendInquiryToDiscord = action({
     },
     handler: async (ctx, args) => {
         // 1. Fetch the inquiry details
-        const inquiry = await ctx.runQuery(internal.inquiries.getInternal, {
+        const inquiry = await ctx.runQuery((internal as any).inquiries.getInternal, {
             id: args.inquiryId,
         });
 
@@ -18,7 +18,7 @@ export const sendInquiryToDiscord = action({
         }
 
         // 2. Fetch the Discord Webhook URL from site settings
-        const settings = await ctx.runQuery(internal.siteSettings.getInternal);
+        const settings = await ctx.runQuery((internal as any).siteSettings.getInternal);
         const webhookUrl = settings.find((s: any) => s.key === "discord_webhook_url")?.value;
 
         if (!webhookUrl) {

@@ -43,7 +43,7 @@ export const submit = mutation({
         });
 
         // Trigger Discord Notification
-        await ctx.scheduler.runAfter(0, internal.notifications.sendInquiryToDiscord, {
+        await ctx.scheduler.runAfter(0, (internal as any).notifications.sendInquiryToDiscord, {
             inquiryId,
         });
 
