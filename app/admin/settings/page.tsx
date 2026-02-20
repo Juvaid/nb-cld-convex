@@ -84,6 +84,7 @@ export default function SettingsPage() {
     const [footerCopyrightText, setFooterCopyrightText] = useState("");
     const [navLinks, setNavLinks] = useState<any[]>([]);
     const [socialLinks, setSocialLinks] = useState<any[]>([]);
+    const [discordWebhookUrl, setDiscordWebhookUrl] = useState("");
     const [isSavingSite, setIsSavingSite] = useState(false);
 
     // Snapshots State
@@ -120,8 +121,10 @@ export default function SettingsPage() {
                 { platform: "linkedin", href: "#" },
                 { platform: "instagram", href: "#" }
             ]);
+            setDiscordWebhookUrl(siteSettings.discord_webhook_url || "");
         }
     }, [siteSettings]);
+
 
     const updateSetting = (section: string, key: string, value: any) => {
         setLocalTheme((prev: any) => ({
@@ -170,7 +173,9 @@ export default function SettingsPage() {
                 updateSiteSetting({ key: "footerCopyrightText", value: footerCopyrightText }),
                 updateSiteSetting({ key: "navLinks", value: navLinks }),
                 updateSiteSetting({ key: "socialLinks", value: socialLinks }),
+                updateSiteSetting({ key: "discord_webhook_url", value: discordWebhookUrl }),
             ]);
+
         } catch (error) {
             console.error(error);
             alert("Failed to save settings");
@@ -548,7 +553,18 @@ export default function SettingsPage() {
                                     className="bg-slate-50 border-none font-bold text-sm h-10"
                                 />
                             </div>
+                            <div className="space-y-1.5 pt-2 border-t border-nb-green/10">
+                                <label className="text-[9px] font-black text-nb-green uppercase tracking-widest">Discord Webhook Notification</label>
+                                <Input
+                                    value={discordWebhookUrl}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDiscordWebhookUrl(e.target.value)}
+                                    placeholder="https://discord.com/api/webhooks/..."
+                                    className="bg-nb-green/5 border-none font-medium text-xs h-10"
+                                />
+                                <p className="text-[8px] text-slate-400 font-bold uppercase italic">Inquiries will be sent here</p>
+                            </div>
                         </CardContent>
+
                     </Card>
                 </div>
 
