@@ -18,6 +18,7 @@ const defaultTheme = {
   typography: {
     headingFont: "system-ui",
     bodyFont: "system-ui",
+    logoFont: "Inter",
     headingWeight: "700",
     headingLetterSpacing: "0em",
     bodyWeight: "400",
@@ -69,7 +70,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     if (themeData?.typography) {
       const fontsToLoad = [
         themeData.typography.headingFont,
-        themeData.typography.bodyFont
+        themeData.typography.bodyFont,
+        themeData.typography.logoFont
       ].filter(f => f && f !== "system-ui");
 
       if (fontsToLoad.length > 0) {
@@ -100,6 +102,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const headingFont = themeData?.typography?.headingFont || defaultTheme.typography.headingFont;
   const bodyFont = themeData?.typography?.bodyFont || defaultTheme.typography.bodyFont;
+  const logoFont = themeData?.typography?.logoFont || defaultTheme.typography.logoFont;
 
   return (
     <>
@@ -121,6 +124,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
           /* Typography Mapping */
           --font-sans: ${bodyFont.includes("'") ? bodyFont : `'${bodyFont}'`}, system-ui;
           --font-heading: ${headingFont.includes("'") ? headingFont : `'${headingFont}'`}, var(--font-sans);
+          --font-logo: ${logoFont.includes("'") ? logoFont : `'${logoFont}'`}, var(--font-heading);
         }
 
         h1, h2, h3, h4, h5, h6 {
@@ -133,6 +137,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
             font-family: var(--font-sans) !important;
             font-weight: var(--nb-typography-bodyWeight, 400) !important;
             line-height: var(--nb-typography-bodyLineHeight, 1.5) !important;
+        }
+
+        .font-logo {
+            font-family: var(--font-logo) !important;
         }
 
         button {

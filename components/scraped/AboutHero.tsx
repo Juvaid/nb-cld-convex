@@ -12,7 +12,7 @@ export default function AboutHero({
     description = "A legacy of excellence in personal care manufacturing since 2006."
 }: AboutHeroProps) {
     return (
-        <section className="relative pt-24 pb-16 bg-slate-900 overflow-hidden">
+        <section className="relative pt-8 md:pt-14 pb-0 md:pb-6 bg-slate-900 overflow-hidden">
             <div className="absolute top-20 right-20 w-72 h-72 bg-gradient-to-br from-nb-green/20 to-nb-green-deep/20 rounded-full blur-3xl animate-float" />
             <div className="max-w-7xl mx-auto px-6 sm:px-8 relative">
                 <span className="text-nb-green font-semibold text-sm tracking-widest uppercase">{badgeText}</span>

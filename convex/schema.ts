@@ -57,6 +57,24 @@ export default defineSchema({
     usp: v.optional(v.string()),
     tags: v.array(v.string()),
     meta: v.optional(v.any()), // For flexible structured data
+
+    // B2B Wholesale Fields
+    moq: v.optional(v.number()),
+    pricingTiers: v.optional(v.array(v.object({
+      minQty: v.number(),
+      price: v.number()
+    }))),
+
+    // Technical Specifications
+    botanicalName: v.optional(v.string()),
+    extractionMethod: v.optional(v.string()),
+    activeCompounds: v.optional(v.string()),
+
+    // Secure Document Storage (CoAs, SDS, etc)
+    documents: v.optional(v.array(v.object({
+      name: v.string(),
+      storageId: v.string()
+    }))),
   }).index("by_slug", ["slug"])
     .index("by_status", ["status"])
     .index("by_categoryId", ["categoryId"]),
@@ -123,6 +141,12 @@ export default defineSchema({
     productId: v.optional(v.string()),
     productName: v.optional(v.string()),
     productCategory: v.optional(v.string()),
+
+    // B2B Lead Qualification
+    companyType: v.optional(v.string()),
+    annualVolume: v.optional(v.string()),
+    isHighValue: v.optional(v.boolean()),
+
     status: v.union(v.literal("new"), v.literal("read"), v.literal("replied")),
     submittedAt: v.number(),
   }).index("by_status", ["status"]),

@@ -48,15 +48,12 @@ export default function LogoMarquee({
 
             {/* Marquee container with CSS mask for center-focus effect */}
             <div
-                className="relative"
+                className="relative [mask-image:var(--marquee-mask)] [webkit-mask-image:var(--marquee-mask)]"
                 style={{
-                    maskImage: isMobile
+                    "--marquee-mask": isMobile
                         ? 'linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)'
-                        : 'linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%)',
-                    WebkitMaskImage: isMobile
-                        ? 'linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)'
-                        : 'linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%)',
-                }}
+                        : 'linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%)'
+                } as React.CSSProperties}
             >
                 <motion.div
                     className="flex gap-8 sm:gap-20 items-center whitespace-nowrap"

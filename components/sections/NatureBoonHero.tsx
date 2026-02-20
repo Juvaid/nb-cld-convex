@@ -72,7 +72,7 @@ export const NatureBoonHero = ({
                         </Button>
                     </div>
 
-                    <div className="flex items-center gap-8 pt-8 border-t border-slate-100">
+                    <div className="flex items-center gap-8 pt-4 border-t border-slate-100">
                         <div>
                             <div className="text-2xl font-black text-slate-900">750+</div>
                             <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">Tons Capacity</div>

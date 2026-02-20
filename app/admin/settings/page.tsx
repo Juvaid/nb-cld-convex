@@ -78,6 +78,7 @@ export default function SettingsPage() {
     const updateSiteSetting = useMutation(api.siteSettings.updateSiteSetting);
     const [logoText, setLogoText] = useState("");
     const [logoImage, setLogoImage] = useState("");
+    const [logoFont, setLogoFont] = useState("");
     const [contactText, setContactText] = useState("");
     const [footerDescription, setFooterDescription] = useState("");
     const [footerCopyrightText, setFooterCopyrightText] = useState("");
@@ -104,6 +105,7 @@ export default function SettingsPage() {
         if (siteSettings) {
             setLogoText(siteSettings.logoText || "NatureBoon");
             setLogoImage(siteSettings.logoImage || "");
+            setLogoFont(localTheme.typography?.logoFont || "Inter");
             setContactText(siteSettings.contactText || "Contact Us");
             setFooterDescription(siteSettings.footerDescription || "A global leader in personal care manufacturing, specializing in OEM, Private Label, and innovative R&D solutions.");
             setFooterCopyrightText(siteSettings.footerCopyrightText || `© ${new Date().getFullYear()} NatureBoon. All rights reserved.`);
@@ -150,8 +152,17 @@ export default function SettingsPage() {
         setIsSaving(true);
         setIsSavingSite(true);
         try {
+            // Update logoFont in theme settings
+            const updatedTheme = {
+                ...localTheme,
+                typography: {
+                    ...localTheme.typography,
+                    logoFont: logoFont
+                }
+            };
+
             await Promise.all([
-                saveAll({ settings: localTheme }),
+                saveAll({ settings: updatedTheme }),
                 updateSiteSetting({ key: "logoText", value: logoText }),
                 updateSiteSetting({ key: "logoImage", value: logoImage }),
                 updateSiteSetting({ key: "contactText", value: contactText }),
@@ -291,9 +302,9 @@ export default function SettingsPage() {
                                         className="flex flex-col items-start p-2.5 rounded-xl bg-white border border-nb-green/10 hover:border-nb-green/40 transition-all text-left group"
                                     >
                                         <div className="flex gap-1 mb-2">
-                                            <div className="w-3 h-3 rounded-full border border-black/5" style={{ backgroundColor: p.colors.primary }} />
-                                            <div className="w-3 h-3 rounded-full border border-black/5" style={{ backgroundColor: p.colors.accent }} />
-                                            <div className="w-3 h-3 rounded-full border border-black/5" style={{ backgroundColor: p.colors.secondary }} />
+                                            <div className="w-3 h-3 rounded-full border border-black/5 bg-[var(--p-color)]" style={{ "--p-color": p.colors.primary } as React.CSSProperties} />
+                                            <div className="w-3 h-3 rounded-full border border-black/5 bg-[var(--a-color)]" style={{ "--a-color": p.colors.accent } as React.CSSProperties} />
+                                            <div className="w-3 h-3 rounded-full border border-black/5 bg-[var(--s-color)]" style={{ "--s-color": p.colors.secondary } as React.CSSProperties} />
                                         </div>
                                         <span className="text-[10px] font-black tracking-tight text-slate-700">{p.name}</span>
                                     </button>
@@ -520,6 +531,13 @@ export default function SettingsPage() {
                                 <ImagePicker
                                     value={logoImage}
                                     onChange={setLogoImage}
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Logo Font</label>
+                                <FontPicker
+                                    value={logoFont}
+                                    onChange={setLogoFont}
                                 />
                             </div>
                             <div className="space-y-1.5">

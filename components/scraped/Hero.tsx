@@ -60,7 +60,7 @@ export default function Hero({
     };
 
     return (
-        <section id={id} className="relative min-h-[90vh] flex items-center pt-0 sm:pt-16 md:pt-20 pb-8 sm:pb-16 overflow-hidden bg-white">
+        <section id={id} className="relative min-h-0 lg:min-h-[90vh] flex items-center pt-12 sm:pt-16 md:pt-20 pb-10 sm:pb-16 overflow-hidden bg-white">
             {/* Background Gradient & Pattern */}
             <div className="absolute inset-0 z-0 overflow-hidden">
                 <div className="absolute top-0 right-0 w-[80%] h-[80%] bg-nb-green/10 rounded-full blur-[120px] -translate-y-1/3 translate-x-1/4 animate-float opacity-60" />
@@ -106,8 +106,8 @@ export default function Hero({
                             </Link>
                         </div>
 
-                        {/* Quick stats with glass background */}
-                        <div className="flex gap-4 sm:gap-12 mt-6 sm:mt-12 p-3.5 sm:p-6 rounded-[32px] sm:rounded-[40px] bg-white/40 backdrop-blur-md max-w-fit border border-white/60 mx-auto lg:mx-0">
+                        {/* Quick stats with glass background - Hidden on mobile */}
+                        <div className="hidden lg:flex gap-4 sm:gap-12 mt-6 sm:mt-12 p-3.5 sm:p-6 rounded-[32px] sm:rounded-[40px] bg-white/40 backdrop-blur-md max-w-fit border border-white/60 mx-auto lg:mx-0">
                             {(stats || []).map((stat) => (
                                 <div key={stat.label}>
                                     <div className="text-xl sm:text-4xl font-black text-slate-900 tracking-tighter">{stat.value}</div>
@@ -117,8 +117,8 @@ export default function Hero({
                         </div>
                     </div>
 
-                    {/* Right — Refined Glassmorphism cards */}
-                    <div className="relative group lg:block lg:mt-0">
+                    {/* Right — Refined Glassmorphism cards - Hidden on mobile */}
+                    <div className="hidden lg:block relative group lg:mt-0">
                         <div className={`grid grid-cols-2 gap-3 sm:gap-4 max-w-lg ${containerAlignmentClasses[alignment]}`}>
                             {(cards || []).map((card, i) => {
                                 const IconComp = iconMap[card.icon] || Factory;

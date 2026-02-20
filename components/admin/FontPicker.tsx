@@ -52,8 +52,7 @@ export function FontPicker({ value, onChange, label }: FontPickerProps) {
                         <Type className="w-3.5 h-3.5" />
                     </div>
                     <span
-                        className="truncate font-bold text-slate-700"
-                        style={{ fontFamily: "var(--selected-font)" } as React.CSSProperties}
+                        className="truncate font-bold text-slate-700 font-[family:var(--selected-font)]"
                     >
                         <style dangerouslySetInnerHTML={{ __html: `:root { --selected-font: ${value.includes("'") ? value : `'${value}'`}, sans-serif; }` }} />
                         {selectedFont.name}
@@ -97,8 +96,7 @@ export function FontPicker({ value, onChange, label }: FontPickerProps) {
                                         }}
                                     >
                                         <span
-                                            style={{ fontFamily: "var(--font-item)" } as React.CSSProperties & { "--font-item": string }}
-                                            className="font-preview"
+                                            className="font-preview font-[family:var(--font-item)]"
                                         >
                                             <style dangerouslySetInnerHTML={{ __html: `.font-preview-${font.value.replace(/['\s]/g, '')} { --font-item: ${font.value.includes("'") ? font.value : `'${font.value}'`}, sans-serif; }` }} />
                                             {font.name}

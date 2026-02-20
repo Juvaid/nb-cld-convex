@@ -11,8 +11,21 @@ export const submit = mutation({
         productId: v.optional(v.string()),
         productName: v.optional(v.string()),
         productCategory: v.optional(v.string()),
+        companyType: v.optional(v.string()),
+        annualVolume: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
+        // Lead Qualification Logic
+        const highVolumeThreshold = 500; // kg or units
+        let isHighValue = false;
+
+        if (args.annualVolume) {
+            const volumeNum = parseInt(args.annualVolume.replace(/[^0-9]/g, ''));
+            if (!isNaN(volumeNum) && volumeNum >= highVolumeThreshold) {
+                isHighValue = true;
+            }
+        }
+
         const inquiryId = await ctx.db.insert("inquiries", {
             name: args.name,
             email: args.email,
@@ -21,6 +34,9 @@ export const submit = mutation({
             productId: args.productId,
             productName: args.productName,
             productCategory: args.productCategory,
+            companyType: args.companyType,
+            annualVolume: args.annualVolume,
+            isHighValue: isHighValue,
             status: "new",
             submittedAt: Date.now(),
         });

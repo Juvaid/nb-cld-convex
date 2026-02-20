@@ -35,8 +35,9 @@ async function ingestFile(filename) {
     const slug = filename.replace(/\.txt$/, '');
     const urlPath = `/${slug}`;
 
-    // First paragraph for meta description
-    const metaDescription = paragraphs[0].trim().substring(0, 160) + (paragraphs[0].length > 160 ? "..." : "");
+    // B2B Focused Meta Generation
+    const b2bTitle = `${title} Bulk Supplier & Wholesale - Nature's Boon`;
+    const metaDescription = `Premium ${title} for B2B procurement. We offer bulk manufacturing, standardized extracts, and full documentation (CoA/SDS). Request a 50g sample today.`;
 
     // Combine all content for the page body (simple approach for now)
     const fullDescription = paragraphs.join("\n\n");
@@ -64,7 +65,7 @@ async function ingestFile(filename) {
                 }
             }
         ],
-        root: { props: { title: `${title} - Nature's Boon` } }
+        root: { props: { title: b2bTitle } }
     };
 
     const payload = {

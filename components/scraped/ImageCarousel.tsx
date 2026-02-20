@@ -99,8 +99,8 @@ export default function ImageCarousel({
                 >
                     {currentItem.url ? (
                         <div
-                            className="absolute inset-0 bg-cover bg-center"
-                            style={{ backgroundImage: `url(${currentItem.url})` }}
+                            className="absolute inset-0 bg-cover bg-center bg-[image:var(--carousel-bg)]"
+                            style={{ "--carousel-bg": `url(${currentItem.url})` } as React.CSSProperties}
                         />
                     ) : (
                         <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">

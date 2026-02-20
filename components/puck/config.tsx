@@ -45,6 +45,8 @@ import { Section } from "../ui/Section";
 import LogoMarquee from '../scraped/LogoMarquee';
 import ImageCarousel from '../scraped/ImageCarousel';
 import VideoCarousel from '../scraped/VideoCarousel';
+import { QuickOrderPad } from "./blocks/QuickOrderPad";
+import { ComplianceBadges } from "./blocks/ComplianceBadges";
 
 export const config: Config = {
     root: {
@@ -72,6 +74,7 @@ export const config: Config = {
         "Modern Blocks": { components: ["FeatureGrid", "ModernHero", "ModernServices", "ModernStats", "ModernTestimonials", "AboutHero", "AboutJourney", "WhyChooseUs", "ProductBrowser", "CallToAction", "ServiceDetailList", "ProcessSteps", "ContactSection", "ProductShowcase"] },
         Layout: { components: ["DynamicLayout", "Section"] },
         Marketing: { components: ["ServiceGrid", "CTA", "SuccessStory", "IconBenefits"] },
+        B2B: { components: ["QuickOrderPad", "ComplianceBadges"] },
         Blog: { components: ["BlogPostStory"] },
         Content: { components: ["ProcessTimeline", "FAQAccordion", "Section"] },
         Footer: { components: ["Footer"] },
@@ -560,6 +563,12 @@ export const config: Config = {
                 }
             },
             render: (props: any) => <Footer {...props} />
+        },
+        QuickOrderPad: {
+            render: () => <QuickOrderPad />
+        },
+        ComplianceBadges: {
+            render: () => <ComplianceBadges />
         },
     },
 };

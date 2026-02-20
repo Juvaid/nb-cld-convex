@@ -6,8 +6,21 @@ export const listAll = query({
         status: v.optional(v.union(v.literal("active"), v.literal("draft"), v.literal("archived"))),
         categoryId: v.optional(v.id("categories")),
         search: v.optional(v.string()),
+        token: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
+        // Auth check for gated pricing
+        let isAuthorized = false;
+        if (args.token) {
+            const session = await ctx.db.query("sessions").withIndex("by_token", q => q.eq("token", args.token as string)).first();
+            if (session && session.expiresAt > Date.now()) {
+                const user = await ctx.db.get(session.userId);
+                if (user && (user.role === "admin" || user.role === "client")) {
+                    isAuthorized = true;
+                }
+            }
+        }
+
         let productsQuery = ctx.db.query("products");
 
         // Simple filtering (Note: dynamic multiple filters on indexed fields is limited in Convex,
@@ -33,7 +46,14 @@ export const listAll = query({
             );
         }
 
-        return products;
+        // Apply gating to pricingTiers
+        return products.map(p => {
+            if (!isAuthorized) {
+                const { pricingTiers, ...rest } = p;
+                return rest;
+            }
+            return p;
+        });
     },
 });
 
@@ -45,12 +65,33 @@ export const getById = query({
 });
 
 export const getBySlug = query({
-    args: { slug: v.string() },
+    args: { slug: v.string(), token: v.optional(v.string()) },
     handler: async (ctx, args) => {
-        return await ctx.db
+        const product = await ctx.db
             .query("products")
             .withIndex("by_slug", (q) => q.eq("slug", args.slug))
             .unique();
+
+        if (!product) return null;
+
+        // Auth check for gated pricing
+        let isAuthorized = false;
+        if (args.token) {
+            const session = await ctx.db.query("sessions").withIndex("by_token", q => q.eq("token", args.token as string)).first();
+            if (session && session.expiresAt > Date.now()) {
+                const user = await ctx.db.get(session.userId);
+                if (user && (user.role === "admin" || user.role === "client")) {
+                    isAuthorized = true;
+                }
+            }
+        }
+
+        if (!isAuthorized) {
+            const { pricingTiers, ...rest } = product as any;
+            return rest;
+        }
+
+        return product;
     },
 });
 
@@ -67,6 +108,12 @@ export const create = mutation({
         sku: v.optional(v.string()),
         usp: v.optional(v.string()),
         tags: v.array(v.string()),
+        moq: v.optional(v.number()),
+        pricingTiers: v.optional(v.array(v.object({ minQty: v.number(), price: v.number() }))),
+        botanicalName: v.optional(v.string()),
+        extractionMethod: v.optional(v.string()),
+        activeCompounds: v.optional(v.string()),
+        documents: v.optional(v.array(v.object({ name: v.string(), storageId: v.string() }))),
     },
     handler: async (ctx, args) => {
         const id = await ctx.db.insert("products", args);
@@ -88,6 +135,12 @@ export const update = mutation({
         sku: v.optional(v.string()),
         usp: v.optional(v.string()),
         tags: v.optional(v.array(v.string())),
+        moq: v.optional(v.number()),
+        pricingTiers: v.optional(v.array(v.object({ minQty: v.number(), price: v.number() }))),
+        botanicalName: v.optional(v.string()),
+        extractionMethod: v.optional(v.string()),
+        activeCompounds: v.optional(v.string()),
+        documents: v.optional(v.array(v.object({ name: v.string(), storageId: v.string() }))),
     },
     handler: async (ctx, args) => {
         const { id, ...rest } = args;

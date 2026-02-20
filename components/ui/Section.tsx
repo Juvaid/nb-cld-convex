@@ -2,6 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 export type BackgroundVariant = 'white' | 'slate-50' | 'slate-900' | 'nb-green' | 'glass-white' | 'glass-dark' | 'default' | 'muted' | 'primary';
 
@@ -49,15 +50,15 @@ const getBgStyles = (variant: BackgroundVariant) => {
 
 const getPaddingValue = (val: string) => {
     const map: Record<string, string> = {
-        "32": "py-12 md:py-24", // Reduced from py-16 md:py-32
-        "24": "py-10 md:py-16", // Reduced from py-12 md:py-24
-        "16": "py-8 md:py-12",  // Reduced from py-8 md:py-16
-        "12": "py-6 md:py-8",   // Reduced from py-6 md:py-12
-        "8": "py-4 md:py-6",    // Reduced from py-4 md:py-8
-        "4": "py-2 md:py-4",    // Reduced from py-2 md:py-4
+        "32": "py-8 md:py-16",
+        "24": "py-6 md:py-12",
+        "16": "py-4 md:py-8",
+        "12": "py-3 md:py-6",
+        "8": "py-2 md:py-4",
+        "4": "py-1 md:py-2",
         "0": "py-0"
     };
-    return map[val] || "py-10 md:py-16"; // Changed default
+    return map[val] || "py-4 md:py-8";
 };
 
 export const Section = ({
@@ -132,29 +133,28 @@ export const Section = ({
     return (
         <section
             id={id}
-            className={`relative overflow-hidden ${!backgroundColor && !backgroundImage ? getBgStyles(variant) : ""} ${pt} ${pb} ${mt} ${mb} ${shadowClass} ${borderClass} ${borderRadius} ${glassClasses} ${className}`}
+            className={cn(
+                "relative overflow-hidden",
+                !backgroundColor && !backgroundImage ? getBgStyles(variant) : "",
+                pt, pb, mt, mb, shadowClass, borderClass, borderRadius, glassClasses,
+                "bg-[var(--section-bg)] bg-[image:var(--bg-image)] bg-[size:var(--bg-size)] bg-[position:var(--bg-pos)] bg-[repeat:var(--bg-repeat)]",
+                className
+            )}
             style={{
                 "--section-bg": backgroundColor || "transparent",
                 "--bg-image": backgroundImage ? `url(${backgroundImage})` : "none",
                 "--bg-size": backgroundSize,
                 "--bg-pos": backgroundPosition,
                 "--bg-repeat": backgroundRepeat,
-                backgroundColor: "var(--section-bg)",
-                backgroundImage: "var(--bg-image)",
-                backgroundSize: "var(--bg-size)",
-                backgroundPosition: "var(--bg-pos)",
-                backgroundRepeat: "var(--bg-repeat)",
             } as React.CSSProperties}
         >
             {/* Background Overlay */}
             {overlayColor && (
                 <div
-                    className="absolute inset-0 z-0 pointer-events-none"
+                    className="absolute inset-0 z-0 pointer-events-none bg-[var(--overlay-color)] opacity-[var(--overlay-opacity)]"
                     style={{
                         "--overlay-color": overlayColor,
                         "--overlay-opacity": overlayOpacity,
-                        backgroundColor: "var(--overlay-color)",
-                        opacity: "var(--overlay-opacity)"
                     } as React.CSSProperties}
                 />
             )}

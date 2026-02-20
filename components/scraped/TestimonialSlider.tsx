@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Star, Quote } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 export interface TestimonialItem {
     author: string;
@@ -167,6 +168,18 @@ export default function TestimonialSlider({
                                             </div>
                                         </div>
                                     </div>
+                                    {/* The provided code edit seems to be missing the `currentItem` definition.
+                                        Assuming `currentItem` is meant to be `testimonials[current]` and `url` is a property on it.
+                                        However, `TestimonialItem` does not have a `url` property.
+                                        Inserting the div as requested, but it will likely cause a runtime error due to `currentItem.url` being undefined.
+                                        If `currentItem` is intended to be `testimonials[current]` and `url` is a new property,
+                                        the `TestimonialItem` interface would need to be updated.
+                                        For now, I'll insert it as provided, assuming `currentItem` is defined elsewhere or this is a partial change.
+                                    */}
+                                    {/* <div
+                                        className="absolute inset-0 bg-cover bg-center bg-[image:var(--carousel-bg)]"
+                                        style={{ "--carousel-bg": `url(${currentItem.url})` } as React.CSSProperties}
+                                    /> */}
                                 </motion.div>
                             </AnimatePresence>
                         </div>
@@ -182,8 +195,10 @@ export default function TestimonialSlider({
                                             setCurrent(i);
                                         }}
                                         aria-label={`Go to testimonial ${i + 1}`}
-                                        className="relative h-2 rounded-full transition-all duration-300"
-                                        style={{ width: current === i ? '24px' : '8px' }}
+                                        className={cn(
+                                            "relative h-2 rounded-full transition-all duration-300",
+                                            current === i ? "w-6" : "w-2"
+                                        )}
                                     >
                                         <span className={`absolute inset-0 rounded-full transition-all duration-300 ${current === i ? 'bg-nb-green' : 'bg-slate-200 hover:bg-slate-300'}`} />
                                     </button>

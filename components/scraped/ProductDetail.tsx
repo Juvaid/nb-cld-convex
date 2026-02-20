@@ -47,7 +47,7 @@ export default function ProductDetail({ slug, isModal = false, onClose }: Produc
             <div className={`mx-auto ${isModal ? 'max-w-5xl px-0 sm:px-6 py-0 sm:py-12' : 'max-w-6xl px-4 sm:px-6'}`}>
                 <div className={`grid grid-cols-1 md:grid-cols-2 ${isModal ? 'gap-0 md:gap-12 lg:gap-16' : 'gap-8 sm:gap-12 lg:gap-20'}`}>
                     {/* Media Gallery */}
-                    <div className={`${isModal ? 'p-0 sm:p-0' : 'space-y-4 sm:space-y-6'}`}>
+                    <div className={`${isModal ? 'p-0 sm:p-0' : 'space-y-4 sm:space-y-6'} relative`}>
                         <div className={`aspect-square sm:aspect-[4/5] md:aspect-square overflow-hidden bg-slate-50 relative group ${isModal ? 'rounded-none sm:rounded-[32px]' : 'rounded-[32px] sm:rounded-[40px] border border-slate-900/5'}`}>
                             <div className="absolute inset-0 bg-gradient-to-br from-nb-green/5 to-nb-green-light/5 opacity-50" />
                             {product.images && product.images.length > 0 && typeof product.images[0] === 'string' && product.images[0] !== "[object Object]" ? (
@@ -63,7 +63,7 @@ export default function ProductDetail({ slug, isModal = false, onClose }: Produc
 
                         {product.images && product.images.length > 1 && (
                             <div className="grid grid-cols-4 gap-3 mt-4 sm:mt-6">
-                                {product.images.slice(1).map((img, i) => (
+                                {product.images.slice(1).map((img: string | any, i: number) => (
                                     <div key={i} className="aspect-square rounded-xl sm:rounded-2xl overflow-hidden border border-slate-900/5 bg-slate-50">
                                         <img
                                             src={typeof img === 'string' && img.startsWith('http') ? img : `/api/storage/${img}`}
@@ -105,55 +105,71 @@ export default function ProductDetail({ slug, isModal = false, onClose }: Produc
                                 />
                             </div>
                         ) : (
-                            <div className="mb-6 sm:mb-8">
-                                <span className="inline-block px-3 py-1 text-[8px] sm:text-[10px] font-black tracking-widest uppercase bg-nb-green/10 text-nb-green rounded-full mb-3">
-                                    {product.tags?.[0] || 'Personal Care'}
-                                </span>
-                                <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 mb-4 leading-tight">
-                                    {product.name}
-                                </h1>
-                                <div className="flex flex-wrap items-center gap-4 sm:gap-6 mb-6 text-sm sm:text-base text-slate-500 font-medium">
-                                    <div className="flex items-center gap-2">
-                                        <span className="w-2 h-2 rounded-full bg-nb-green" />
-                                        In Stock
+                            <div className="space-y-6">
+                                <div>
+                                    <div className="flex flex-wrap items-center gap-2 mb-5">
+                                        <span className="inline-flex items-center px-4 py-1.5 text-[9px] font-black tracking-wider uppercase bg-nb-green/5 text-nb-green rounded-full border border-nb-green/10 whitespace-nowrap">
+                                            {product.tags?.[0] || 'Personal Care'}
+                                        </span>
+                                        <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 bg-slate-50 px-3 py-1.5 rounded-full border border-slate-900/5 whitespace-nowrap">
+                                            <span className="relative flex h-2 w-2 flex-shrink-0">
+                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-nb-green opacity-75"></span>
+                                                <span className="relative inline-flex rounded-full h-2 w-2 bg-nb-green"></span>
+                                            </span>
+                                            In Stock
+                                        </div>
                                     </div>
+
+                                    <h1 className="text-3xl sm:text-5xl font-black text-slate-900 mb-2 leading-[1.1] tracking-tight">
+                                        {product.name}
+                                    </h1>
+
                                     {product.sku && (
-                                        <div className="flex items-center gap-2">
-                                            <span className="w-2 h-2 rounded-full bg-slate-200" />
+                                        <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-3">
                                             SKU: {product.sku}
                                         </div>
                                     )}
                                 </div>
 
-                                <p className="text-base sm:text-lg text-slate-600 leading-relaxed mb-8 font-medium">
+                                <p className="text-base sm:text-lg text-slate-600 leading-relaxed font-medium">
                                     {product.description}
                                 </p>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-8">
-                                    <div className="p-4 sm:p-5 rounded-2xl sm:rounded-[28px] bg-slate-50 border border-slate-900/5 hover:border-nb-green/20 transition-colors">
-                                        <h4 className="text-[8px] sm:text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Purity</h4>
-                                        <p className="text-sm sm:text-base font-bold text-slate-900">100% Organic Extracts</p>
-                                    </div>
-                                    <div className="p-4 sm:p-5 rounded-2xl sm:rounded-[28px] bg-slate-50 border border-slate-900/5 hover:border-nb-green/20 transition-colors">
-                                        <h4 className="text-[8px] sm:text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Standard</h4>
-                                        <p className="text-sm sm:text-base font-bold text-slate-900">GMP & ISO Certified</p>
-                                    </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                                    {[
+                                        { label: 'Purity', value: '100% Organic Extracts', icon: <Sparkles className="w-3.5 h-3.5" /> },
+                                        { label: 'Standard', value: 'GMP & ISO Certified', icon: <Sparkles className="w-3.5 h-3.5" /> },
+                                        ...(product.botanicalName ? [{ label: 'Source', value: product.botanicalName, icon: <Sparkles className="w-3.5 h-3.5" /> }] : []),
+                                        ...(product.extractionMethod ? [{ label: 'Process', value: product.extractionMethod, icon: <Sparkles className="w-3.5 h-3.5" /> }] : []),
+                                        ...(product.activeCompounds ? [{ label: 'Active', value: product.activeCompounds, icon: <Sparkles className="w-3.5 h-3.5" /> }] : []),
+                                        ...(product.moq ? [{ label: 'MOQ', value: `${product.moq} Units`, icon: <Sparkles className="w-3.5 h-3.5" /> }] : []),
+                                    ].map((feature, idx) => (
+                                        <div key={idx} className="p-3 sm:px-4 sm:py-3.5 rounded-[20px] bg-slate-50/50 border border-slate-900/5 hover:border-nb-green/20 transition-all hover:bg-white hover:shadow-md hover:shadow-nb-green/5 group/card flex items-center gap-3">
+                                            <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-white border border-slate-900/5 flex items-center justify-center text-nb-green shadow-sm group-hover/card:scale-105 transition-transform">
+                                                {feature.icon}
+                                            </div>
+                                            <div className="flex flex-col min-w-0">
+                                                <h4 className="text-[8px] font-black uppercase text-slate-400 tracking-[0.15em] leading-none mb-0.5">{feature.label}</h4>
+                                                <p className="text-sm font-bold text-slate-900 leading-tight truncate">{feature.value}</p>
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
 
-                                <div className="flex flex-col gap-3 w-full">
+                                <div className="flex flex-col gap-4 w-full pt-4">
                                     <button
                                         onClick={handleInquiry}
-                                        className="w-full inline-flex items-center justify-center gap-3 h-14 sm:h-16 rounded-2xl sm:rounded-[24px] bg-nb-green text-white text-sm sm:text-base font-black hover:bg-nb-green/90 transition-all shadow-xl shadow-nb-green/20 group"
+                                        className="w-full inline-flex items-center justify-center gap-3 h-16 rounded-[24px] bg-nb-green text-white text-base font-black hover:bg-nb-green-soft hover:shadow-2xl hover:shadow-nb-green/20 transition-all group"
                                     >
                                         Inquire for Bulk
-                                        <ArrowRight className="w-4 sm:w-5 h-4 sm:h-5 group-hover:translate-x-1 transition-transform" />
+                                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                     </button>
                                     {!isModal && (
                                         <Link
                                             href="/products"
-                                            className="w-full inline-flex items-center justify-center h-14 sm:h-16 px-8 rounded-2xl sm:rounded-[24px] border-2 border-slate-900 text-slate-900 text-sm sm:text-base font-black hover:bg-slate-900 hover:text-white transition-all"
+                                            className="w-full inline-flex items-center justify-center h-16 px-8 rounded-[24px] border-2 border-slate-900 text-slate-900 text-base font-black hover:bg-slate-900 hover:text-white transition-all underline-none"
                                         >
-                                            Back
+                                            Back to Catalog
                                         </Link>
                                     )}
                                 </div>

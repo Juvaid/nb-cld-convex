@@ -15,7 +15,7 @@ export default function CallToAction({
     buttonLink = "/contact"
 }: CallToActionProps) {
     return (
-        <section className="py-12 bg-gradient-to-br from-nb-green-soft to-nb-green-deep">
+        <section className="py-6 md:py-10 bg-gradient-to-br from-nb-green-soft to-nb-green-deep">
             <div className="max-w-3xl mx-auto text-center px-4">
                 <h2 className="text-3xl font-bold text-white mb-4">{heading}</h2>
                 <p className="text-white/70 mb-8 max-w-2xl mx-auto">

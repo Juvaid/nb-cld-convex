@@ -22,17 +22,29 @@ export default function ProductModal({ params }: { params: Promise<{ slug: strin
 
             {/* Modal Content */}
             <motion.div
+                drag="y"
+                dragConstraints={{ top: 0, bottom: 0 }}
+                dragElastic={0.2}
+                onDragEnd={(_, info) => {
+                    if (info.offset.y > 100) router.back();
+                }}
                 initial={{ opacity: 0, y: 100 }}
                 animate={{ opacity: 1, y: 0 }}
+                transition={{ type: "spring", damping: 25, stiffness: 200 }}
                 className="relative w-full max-w-5xl max-h-[96vh] sm:max-h-[85vh] md:max-h-[90vh] bg-white rounded-t-[32px] sm:rounded-[40px] shadow-2xl overflow-y-auto pointer-events-auto"
             >
-                {/* Close Button */}
+                {/* Swipe/Close Handle */}
+                <div className="flex justify-center pt-3 pb-1 sticky top-0 bg-white/50 backdrop-blur-md z-[60] sm:hidden">
+                    <div className="w-12 h-1.5 bg-slate-200 rounded-full" />
+                </div>
+
+                {/* Desktop Close Button */}
                 <button
                     onClick={() => router.back()}
-                    className="fixed sm:absolute top-4 right-4 sm:top-6 sm:right-6 z-[110] p-2.5 sm:p-3 rounded-xl sm:rounded-2xl bg-white/80 backdrop-blur-md sm:bg-slate-50 text-slate-400 hover:text-slate-900 transition-all border border-slate-900/5 hover:border-slate-900/10 shadow-sm sm:shadow-none"
+                    className="hidden sm:flex absolute top-6 right-6 z-[60] p-3 rounded-2xl bg-slate-50 text-slate-400 hover:text-slate-900 transition-all border border-slate-900/5 hover:border-slate-900/10"
                     aria-label="Close modal"
                 >
-                    <X className="w-5 h-5 sm:w-6 sm:h-6" />
+                    <X className="w-6 h-6" />
                 </button>
 
                 <ProductDetail slug={slug} isModal={true} onClose={() => router.back()} />

@@ -26,10 +26,9 @@ export function VisualColorPicker({ value, onChange }: VisualColorPickerProps) {
                     <button
                         key={color.value}
                         onClick={() => onChange(color.value)}
-                        style={{ "--btn-bg": color.value === "transparent" ? "white" : color.value } as React.CSSProperties}
                         className={cn(
                             "w-8 h-8 rounded-full border-2 transition-all relative group flex items-center justify-center",
-                            "bg-[var(--btn-bg)]",
+                            `[--btn-bg:${color.value === "transparent" ? "white" : color.value}] bg-[var(--btn-bg)]`,
                             value === color.value ? "border-nb-green scale-110 shadow-lg" : "border-slate-200 hover:border-slate-300",
                             color.value === "transparent" ? "overflow-hidden" : ""
                         )}

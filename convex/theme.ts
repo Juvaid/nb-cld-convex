@@ -17,6 +17,7 @@ const defaultThemeSettings = {
   typography: {
     headingFont: "system-ui",
     bodyFont: "system-ui",
+    logoFont: "Inter",
     headingWeight: "700",
     headingLetterSpacing: "0em",
     bodyWeight: "400",

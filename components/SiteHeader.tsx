@@ -54,7 +54,7 @@ export function SiteHeader({
 
     return (
         <header className="bg-white/95 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100/50">
-            <div className="container mx-auto px-4 h-20 flex items-center justify-between transition-all duration-300">
+            <div className="container mx-auto px-4 h-14 md:h-16 lg:h-20 flex items-center justify-between transition-all duration-300">
                 <Link href="/" className="font-bold text-2xl tracking-tight text-slate-900 flex items-center gap-3 group">
                     {logoImage ? (
                         /* eslint-disable-next-line @next/next/no-img-element */
@@ -64,7 +64,7 @@ export function SiteHeader({
                             NB
                         </div>
                     )}
-                    <span className="hidden sm:inline bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent font-black tracking-tight">
+                    <span className="hidden sm:inline bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent font-black tracking-tight font-logo">
                         {logoText}
                     </span>
                 </Link>
@@ -104,7 +104,7 @@ export function SiteHeader({
 
             {/* Mobile Nav Overlay */}
             {isMenuOpen && (
-                <div className="md:hidden absolute top-20 left-0 w-full bg-white border-b shadow-xl px-4 py-8 z-40 animate-in slide-in-from-top duration-200">
+                <div className="md:hidden absolute top-14 left-0 w-full bg-white border-b shadow-xl px-4 py-8 z-40 animate-in slide-in-from-top duration-200">
                     <nav className="flex flex-col gap-6 mb-8">
                         {links.map((link: NavLink, i: number) => (
                             <Link
