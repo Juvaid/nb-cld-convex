@@ -1,9 +1,4 @@
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-    title: "B2B SaaS - Public Site",
-    description: "High-end B2B platform",
-};
+// Metadata is generated dynamically in the root layout
 
 export default function SiteLayout({
     children,

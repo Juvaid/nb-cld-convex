@@ -2,7 +2,7 @@
 
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { X, ArrowRight, Sparkles, ShoppingCart, ArrowLeft } from "lucide-react";
+import { X, ArrowRight, Sparkles, ShieldCheck, Leaf, Droplets, Atom, Package, ShoppingCart, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -105,7 +105,7 @@ export default function ProductDetail({ slug, isModal = false, onClose }: Produc
                                 />
                             </div>
                         ) : (
-                            <div className="space-y-6">
+                            <div className="space-y-8">
                                 <div>
                                     <div className="flex flex-wrap items-center gap-2 mb-5">
                                         <span className="inline-flex items-center px-4 py-1.5 text-[9px] font-black tracking-wider uppercase bg-nb-green/5 text-nb-green rounded-full border border-nb-green/10 whitespace-nowrap">
@@ -114,7 +114,7 @@ export default function ProductDetail({ slug, isModal = false, onClose }: Produc
                                         <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 bg-slate-50 px-3 py-1.5 rounded-full border border-slate-900/5 whitespace-nowrap">
                                             <span className="relative flex h-2 w-2 flex-shrink-0">
                                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-nb-green opacity-75"></span>
-                                                <span className="relative inline-flex rounded-full h-2 w-2 bg-nb-green"></span>
+                                                <span className="relative inline-flex rounded-full h-2 w-2 bg-nb-green shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
                                             </span>
                                             In Stock
                                         </div>
@@ -135,17 +135,17 @@ export default function ProductDetail({ slug, isModal = false, onClose }: Produc
                                     {product.description}
                                 </p>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                                     {[
                                         { label: 'Purity', value: '100% Organic Extracts', icon: <Sparkles className="w-3.5 h-3.5" /> },
-                                        { label: 'Standard', value: 'GMP & ISO Certified', icon: <Sparkles className="w-3.5 h-3.5" /> },
-                                        ...(product.botanicalName ? [{ label: 'Source', value: product.botanicalName, icon: <Sparkles className="w-3.5 h-3.5" /> }] : []),
-                                        ...(product.extractionMethod ? [{ label: 'Process', value: product.extractionMethod, icon: <Sparkles className="w-3.5 h-3.5" /> }] : []),
-                                        ...(product.activeCompounds ? [{ label: 'Active', value: product.activeCompounds, icon: <Sparkles className="w-3.5 h-3.5" /> }] : []),
-                                        ...(product.moq ? [{ label: 'MOQ', value: `${product.moq} Units`, icon: <Sparkles className="w-3.5 h-3.5" /> }] : []),
+                                        { label: 'Standard', value: 'GMP & ISO Certified', icon: <ShieldCheck className="w-3.5 h-3.5" /> },
+                                        ...(product.botanicalName ? [{ label: 'Source', value: product.botanicalName, icon: <Leaf className="w-3.5 h-3.5" /> }] : []),
+                                        ...(product.extractionMethod ? [{ label: 'Process', value: product.extractionMethod, icon: <Droplets className="w-3.5 h-3.5" /> }] : []),
+                                        ...(product.activeCompounds ? [{ label: 'Active', value: product.activeCompounds, icon: <Atom className="w-3.5 h-3.5" /> }] : []),
+                                        ...(product.moq ? [{ label: 'MOQ', value: `${product.moq} Units`, icon: <Package className="w-3.5 h-3.5" /> }] : []),
                                     ].map((feature, idx) => (
-                                        <div key={idx} className="p-3 sm:px-4 sm:py-3.5 rounded-[20px] bg-slate-50/50 border border-slate-900/5 hover:border-nb-green/20 transition-all hover:bg-white hover:shadow-md hover:shadow-nb-green/5 group/card flex items-center gap-3">
-                                            <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-white border border-slate-900/5 flex items-center justify-center text-nb-green shadow-sm group-hover/card:scale-105 transition-transform">
+                                        <div key={idx} className="p-3 sm:px-4 sm:py-3.5 rounded-[20px] bg-slate-50/30 ring-1 ring-inset ring-slate-900/5 hover:ring-nb-green/20 transition-all hover:bg-white hover:shadow-md hover:shadow-nb-green/5 group/card flex items-center gap-3">
+                                            <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-white ring-1 ring-inset ring-slate-900/5 flex items-center justify-center text-nb-green shadow-sm group-hover/card:scale-105 transition-transform">
                                                 {feature.icon}
                                             </div>
                                             <div className="flex flex-col min-w-0">

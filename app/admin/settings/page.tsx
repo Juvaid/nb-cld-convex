@@ -79,6 +79,8 @@ export default function SettingsPage() {
     const [logoText, setLogoText] = useState("");
     const [logoImage, setLogoImage] = useState("");
     const [logoFont, setLogoFont] = useState("");
+    const [siteTitle, setSiteTitle] = useState("");
+    const [faviconUrl, setFaviconUrl] = useState("");
     const [contactText, setContactText] = useState("");
     const [footerDescription, setFooterDescription] = useState("");
     const [footerCopyrightText, setFooterCopyrightText] = useState("");
@@ -107,6 +109,8 @@ export default function SettingsPage() {
             setLogoText(siteSettings.logoText || "NatureBoon");
             setLogoImage(siteSettings.logoImage || "");
             setLogoFont(localTheme.typography?.logoFont || "Inter");
+            setSiteTitle(siteSettings.siteTitle || "NatureBoon | Premium Manufacturing Platform");
+            setFaviconUrl(siteSettings.faviconUrl || "");
             setContactText(siteSettings.contactText || "Contact Us");
             setFooterDescription(siteSettings.footerDescription || "A global leader in personal care manufacturing, specializing in OEM, Private Label, and innovative R&D solutions.");
             setFooterCopyrightText(siteSettings.footerCopyrightText || `© ${new Date().getFullYear()} NatureBoon. All rights reserved.`);
@@ -168,6 +172,8 @@ export default function SettingsPage() {
                 saveAll({ settings: updatedTheme }),
                 updateSiteSetting({ key: "logoText", value: logoText }),
                 updateSiteSetting({ key: "logoImage", value: logoImage }),
+                updateSiteSetting({ key: "siteTitle", value: siteTitle }),
+                updateSiteSetting({ key: "faviconUrl", value: faviconUrl }),
                 updateSiteSetting({ key: "contactText", value: contactText }),
                 updateSiteSetting({ key: "footerDescription", value: footerDescription }),
                 updateSiteSetting({ key: "footerCopyrightText", value: footerCopyrightText }),
@@ -233,6 +239,8 @@ export default function SettingsPage() {
                 isPreset,
                 siteSettings: {
                     logoText,
+                    siteTitle,
+                    faviconUrl,
                     contactText,
                     footerDescription,
                     footerCopyrightText,
@@ -523,6 +531,22 @@ export default function SettingsPage() {
                             <CardTitle className="text-sm font-black uppercase tracking-wider">Branding</CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 pt-0 space-y-4 font-sans">
+                            <div className="space-y-1.5">
+                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Site Title (Browser Tab)</label>
+                                <Input
+                                    value={siteTitle}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSiteTitle(e.target.value)}
+                                    className="bg-slate-50 border-none font-bold text-sm h-10"
+                                    placeholder="Company Name | Tagline"
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Favicon (Browser Icon)</label>
+                                <ImagePicker
+                                    value={faviconUrl}
+                                    onChange={setFaviconUrl}
+                                />
+                            </div>
                             <div className="space-y-1.5">
                                 <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Logo Text</label>
                                 <Input
