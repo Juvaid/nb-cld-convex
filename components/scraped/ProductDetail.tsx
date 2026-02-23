@@ -43,12 +43,12 @@ export default function ProductDetail({ slug, isModal = false, onClose }: Produc
     }
 
     return (
-        <div className={`bg-white ${isModal ? 'rounded-t-[32px] sm:rounded-[40px] overflow-hidden' : 'min-h-screen py-20 sm:py-32'}`}>
-            <div className={`mx-auto ${isModal ? 'max-w-5xl px-0 sm:px-6 py-0 sm:py-12' : 'max-w-6xl px-4 sm:px-6'}`}>
-                <div className={`grid grid-cols-1 md:grid-cols-2 ${isModal ? 'gap-0 md:gap-12 lg:gap-16' : 'gap-8 sm:gap-12 lg:gap-20'}`}>
+        <div className={`bg-white ${isModal ? 'rounded-t-[32px] sm:rounded-[32px] overflow-hidden' : 'min-h-screen py-20 sm:py-32'}`}>
+            <div className={`mx-auto ${isModal ? 'max-w-5xl px-0 sm:px-8 py-0 sm:py-8' : 'max-w-6xl px-4 sm:px-6'}`}>
+                <div className={`grid grid-cols-1 md:grid-cols-2 ${isModal ? 'gap-0 md:gap-10 lg:gap-14' : 'gap-8 sm:gap-12 lg:gap-20'}`}>
                     {/* Media Gallery */}
                     <div className={`${isModal ? 'p-0 sm:p-0' : 'space-y-4 sm:space-y-6'} relative`}>
-                        <div className={`aspect-square sm:aspect-[4/5] md:aspect-square overflow-hidden bg-slate-50 relative group ${isModal ? 'rounded-none sm:rounded-[32px]' : 'rounded-[32px] sm:rounded-[40px] border border-slate-900/5'}`}>
+                        <div className={`aspect-video sm:aspect-[4/5] md:aspect-square overflow-hidden bg-slate-50 relative group ${isModal ? 'rounded-none sm:rounded-[24px]' : 'rounded-[32px] sm:rounded-[40px] border border-slate-900/5'}`}>
                             <div className="absolute inset-0 bg-gradient-to-br from-nb-green/5 to-nb-green-light/5 opacity-50" />
                             {product.images && product.images.length > 0 && typeof product.images[0] === 'string' && product.images[0] !== "[object Object]" ? (
                                 <img
@@ -62,9 +62,9 @@ export default function ProductDetail({ slug, isModal = false, onClose }: Produc
                         </div>
 
                         {product.images && product.images.length > 1 && (
-                            <div className="grid grid-cols-4 gap-3 mt-4 sm:mt-6">
+                            <div className={`grid grid-cols-4 gap-2 sm:gap-3 ${isModal ? 'mt-3 sm:mt-4 p-4 sm:p-0 pb-0' : 'mt-4 sm:mt-6'}`}>
                                 {product.images.slice(1).map((img: string | any, i: number) => (
-                                    <div key={i} className="aspect-square rounded-xl sm:rounded-2xl overflow-hidden border border-slate-900/5 bg-slate-50">
+                                    <div key={i} className={`aspect-square rounded-xl overflow-hidden border border-slate-900/5 bg-slate-50 ${isModal ? 'sm:rounded-xl' : 'sm:rounded-2xl'}`}>
                                         <img
                                             src={typeof img === 'string' && img.startsWith('http') ? img : `/api/storage/${img}`}
                                             className="w-full h-full object-cover"
@@ -77,12 +77,12 @@ export default function ProductDetail({ slug, isModal = false, onClose }: Produc
                     </div>
 
                     {/* Details/Form Area */}
-                    <div className={`flex flex-col justify-center ${isModal ? 'p-6 sm:p-0' : ''}`}>
+                    <div className={`flex flex-col justify-center ${isModal ? 'p-5 sm:p-0' : ''}`}>
                         {showInquiryForm ? (
-                            <div className="animate-fade-in">
+                            <div className="animate-fade-in relative z-20">
                                 <button
                                     onClick={() => setShowInquiryForm(false)}
-                                    className="mb-6 flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors font-bold text-sm"
+                                    className="mb-4 sm:mb-6 flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors font-bold text-sm"
                                 >
                                     <ArrowLeft className="w-4 h-4" />
                                     Back to details
@@ -107,7 +107,15 @@ export default function ProductDetail({ slug, isModal = false, onClose }: Produc
                         ) : (
                             <div className="space-y-8">
                                 <div>
-                                    <div className="flex flex-wrap items-center gap-2 mb-5">
+                                    <button
+                                        onClick={onClose}
+                                        className="sm:hidden -mr-2 p-2 text-slate-400 hover:text-slate-900 rounded-full bg-slate-50 border border-slate-900/5 transition-colors absolute right-5 top-5 z-50"
+                                        aria-label="Close"
+                                    >
+                                        <X className="w-4 h-4" />
+                                    </button>
+
+                                    <div className="flex flex-wrap items-center gap-2 mb-4">
                                         <span className="inline-flex items-center px-4 py-1.5 text-[9px] font-black tracking-wider uppercase bg-nb-green/5 text-nb-green rounded-full border border-nb-green/10 whitespace-nowrap">
                                             {product.tags?.[0] || 'Personal Care'}
                                         </span>
@@ -120,7 +128,7 @@ export default function ProductDetail({ slug, isModal = false, onClose }: Produc
                                         </div>
                                     </div>
 
-                                    <h1 className="text-3xl sm:text-5xl font-black text-slate-900 mb-2 leading-[1.1] tracking-tight">
+                                    <h1 className={`${isModal ? 'text-2xl sm:text-4xl' : 'text-3xl sm:text-5xl'} font-black text-slate-900 mb-2 leading-[1.1] tracking-tight`}>
                                         {product.name}
                                     </h1>
 
@@ -131,11 +139,11 @@ export default function ProductDetail({ slug, isModal = false, onClose }: Produc
                                     )}
                                 </div>
 
-                                <p className="text-base sm:text-lg text-slate-600 leading-relaxed font-medium">
+                                <p className={`${isModal ? 'text-sm sm:text-base' : 'text-base sm:text-lg'} text-slate-600 leading-relaxed font-medium`}>
                                     {product.description}
                                 </p>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+                                <div className={`grid grid-cols-1 sm:grid-cols-2 ${isModal ? 'gap-2 md:gap-3' : 'gap-3 md:gap-4'}`}>
                                     {[
                                         { label: 'Purity', value: '100% Organic Extracts', icon: <Sparkles className="w-3.5 h-3.5" /> },
                                         { label: 'Standard', value: 'GMP & ISO Certified', icon: <ShieldCheck className="w-3.5 h-3.5" /> },
@@ -156,10 +164,10 @@ export default function ProductDetail({ slug, isModal = false, onClose }: Produc
                                     ))}
                                 </div>
 
-                                <div className="flex flex-col gap-4 w-full pt-4">
+                                <div className={`flex flex-col gap-3 w-full ${isModal ? 'pt-2' : 'pt-4'}`}>
                                     <button
                                         onClick={handleInquiry}
-                                        className="w-full inline-flex items-center justify-center gap-3 h-16 rounded-[24px] bg-nb-green text-white text-base font-black hover:bg-nb-green-soft hover:shadow-2xl hover:shadow-nb-green/20 transition-all group"
+                                        className={`w-full inline-flex items-center justify-center gap-3 ${isModal ? 'h-14 rounded-2xl' : 'h-16 rounded-[24px]'} bg-nb-green text-white text-base font-black hover:bg-nb-green-soft hover:shadow-2xl hover:shadow-nb-green/20 transition-all group`}
                                     >
                                         Inquire for Bulk
                                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
