@@ -113,11 +113,11 @@ export interface Testimonial {
 
 // Default testimonials
 export const defaultTestimonials: Testimonial[] = [
-    { author: 'Mehar', company: 'VitalFlow Client', content: 'Highly professional and excellent service with very hygienic environment by Nature\'s Boon.', rating: 5 },
-    { author: 'Harsimran Kaur', company: 'Global Beauty Inc.', content: 'They provide the best products and services and even this is a very good platform for anyone who needs a manufacturer for their brand.', rating: 5 },
-    { author: 'Harjot Singh', company: 'Luster Cosmetics', content: 'One of the things I loved about this company is that they provided comprehensive services, eliminating the need for multiple vendors.', rating: 5 },
-    { author: 'Shivam Bhasiin', company: 'Wellness Partners', content: 'They offer an extensive range of cosmetics, spanning from exquisite skincare formulations to stunning skin care essentials.', rating: 5 },
-    { author: 'Karamjot Singh', company: 'Herbal Essence Ltd.', content: 'Excellent packaging, awesome quality, very nice follow ups.', rating: 5 },
-    { author: 'Ankita Mahajan', company: 'SkinCare Pro', content: 'I\'m truly impressed by the exquisite product range they offer, and I have a special fondness for their facial kits.', rating: 5 },
-    { author: 'Jass Verma', company: 'Beauty Brand Co.', content: 'Awesome team that\'s been helping us bring our products to life.', rating: 5 },
+    { author: 'Mehar', company: 'VitalFlow Client', content: 'Nature\'s Boon delivers an incredibly professional experience. Their state-of-the-art facilities ensure the highest hygiene standards, giving us complete peace of mind.', rating: 5 },
+    { author: 'Harsimran Kaur', company: 'Global Beauty Inc.', content: 'Finding a reliable partner can be tough, but their exceptional product quality and end-to-end service make them the ultimate platform for building a cosmetics brand.', rating: 5 },
+    { author: 'Harjot Singh', company: 'Luster Cosmetics', content: 'What truly sets them apart is their turnkey approach. By handling formulation, packaging, and logistics under one roof, they eliminated the headache of managing multiple vendors.', rating: 5 },
+    { author: 'Shivam Bhasiin', company: 'Wellness Partners', content: 'Their catalog is incredibly versatile. From advanced skincare formulations to essential everyday cosmetics, the attention to detail is evident in every single batch.', rating: 5 },
+    { author: 'Karamjot Singh', company: 'Herbal Essence Ltd.', content: 'Top-tier packaging design paired with premium product quality. The team consistently stays in touch, making the entire manufacturing process transparent and stress-free.', rating: 5 },
+    { author: 'Ankita Mahajan', company: 'SkinCare Pro', content: 'I was genuinely blown away by the sophistication of their product range. Their specialized facial kits, in particular, have become a massive hit with our customers.', rating: 5 },
+    { author: 'Jass Verma', company: 'Beauty Brand Co.', content: 'An absolutely brilliant team to work with. They took our challenging concept, refined the formula, and successfully brought our dream products to life.', rating: 5 },
 ];

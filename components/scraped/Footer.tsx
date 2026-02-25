@@ -32,7 +32,9 @@ export default function Footer() {
                             ].map(({ Icon, label }, i) => (
                                 <a
                                     key={i}
-                                    href="#"
+                                    href="https://linkedin.com"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     aria-label={`Follow us on ${label}`}
                                     className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-white/5 flex items-center justify-center hover:bg-[#16a34a] transition-all group"
                                 >
@@ -46,10 +48,16 @@ export default function Footer() {
                     <div>
                         <h4 className="text-base sm:text-lg font-black mb-6 sm:mb-8 tracking-tight">Quick Links</h4>
                         <ul className="space-y-3 sm:space-y-4">
-                            {['Home', 'About Us', 'Services', 'Our Products', 'Contact'].map((link) => (
-                                <li key={link}>
-                                    <Link href={`/${link.toLowerCase().replace(' ', '-')}`} className="text-white/60 hover:text-[#16a34a] transition-colors font-semibold flex items-center gap-2 group text-xs sm:text-sm">
-                                        {link}
+                            {[
+                                { label: 'Home', href: '/' },
+                                { label: 'About Us', href: '/about' },
+                                { label: 'Services', href: '/services' },
+                                { label: 'Our Products', href: '/products' },
+                                { label: 'Contact', href: '/contact' }
+                            ].map((link) => (
+                                <li key={link.label}>
+                                    <Link href={link.href} className="text-white/60 hover:text-[#16a34a] transition-colors font-semibold flex items-center gap-2 group text-xs sm:text-sm">
+                                        {link.label}
                                         <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-all -translate-x-1 group-hover:translate-x-0" />
                                     </Link>
                                 </li>
@@ -101,8 +109,8 @@ export default function Footer() {
                         © {currentYear} Nature&apos;s Boon. All Rights Reserved.
                     </p>
                     <div className="flex gap-6 sm:gap-8">
-                        <Link href="#" className="text-white/40 hover:text-white transition-colors text-[9px] sm:text-[11px] font-bold uppercase tracking-[0.1em]">Privacy Policy</Link>
-                        <Link href="#" className="text-white/40 hover:text-white transition-colors text-[9px] sm:text-[11px] font-bold uppercase tracking-[0.1em]">Terms of Service</Link>
+                        <Link href="/privacy-policy" className="text-white/40 hover:text-white transition-colors text-[9px] sm:text-[11px] font-bold uppercase tracking-[0.1em]">Privacy Policy</Link>
+                        <Link href="/terms-of-service" className="text-white/40 hover:text-white transition-colors text-[9px] sm:text-[11px] font-bold uppercase tracking-[0.1em]">Terms of Service</Link>
                     </div>
                 </div>
             </div>

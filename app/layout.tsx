@@ -29,6 +29,17 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title,
     description,
+    keywords: [
+      "B2B Manufacturing", "Personal Care", "OEM", "Private Label",
+      "Contract Manufacturing", "NatureBoon", "Skincare Manufacturer",
+      "Haircare Manufacturer"
+    ],
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      siteName: "NatureBoon",
+    },
     icons: faviconUrl ? { icon: faviconUrl } : undefined,
   };
 }
