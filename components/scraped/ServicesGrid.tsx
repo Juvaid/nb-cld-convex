@@ -2,10 +2,16 @@ import { Palette, FlaskConical, BadgeCheck, Megaphone, ArrowRight, LucideIcon } 
 import Link from 'next/link';
 
 export interface ServiceItem {
+    showMedia?: boolean;
+    mediaType?: "icon" | "image";
+    mediaIcon?: string;
+    mediaImage?: string;
     title: string;
     description: string;
-    icon: string;
-    slug: string;
+    showButton?: boolean;
+    buttonText?: string;
+    buttonLink?: string;
+    slug?: string;
 }
 
 export interface ServicesGridProps {
@@ -32,25 +38,33 @@ export default function ServicesGrid({
         {
             title: 'Label & Packaging Designing',
             description: 'Label and packaging designing is an essential aspect of branding and marketing strategy.',
-            icon: 'Palette',
+            showMedia: true,
+            mediaType: "icon",
+            mediaIcon: 'Palette',
             slug: 'label-packaging-designing',
         },
         {
             title: 'Customised Finished Product',
             description: 'A personal care product design must account for market demand.',
-            icon: 'FlaskConical',
+            showMedia: true,
+            mediaType: "icon",
+            mediaIcon: 'FlaskConical',
             slug: 'customised-finished-product',
         },
         {
             title: 'Trademark & Logo',
             description: 'We create trademarks and logos that effectively represent your brand.',
-            icon: 'BadgeCheck',
+            showMedia: true,
+            mediaType: "icon",
+            mediaIcon: 'BadgeCheck',
             slug: 'trademark-logo',
         },
         {
             title: 'Digital Marketing',
             description: 'We help brands promote their products and services to their target audience.',
-            icon: 'Megaphone',
+            showMedia: true,
+            mediaType: "icon",
+            mediaIcon: 'Megaphone',
             slug: 'digital-marketing',
         },
     ]
@@ -70,37 +84,48 @@ export default function ServicesGrid({
 
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-10">
                     {(services || []).map((service, i) => {
-                        const IconComponent = iconMap[service.icon] || Palette;
+                        const IconComponent = service.mediaIcon ? (iconMap[service.mediaIcon] || null) : null;
                         return (
                             <div
                                 key={service.slug || i}
-                                className="group relative bg-white rounded-[32px] sm:rounded-[48px] p-8 sm:p-10 hover:-translate-y-4 transition-all duration-700 border border-slate-900/5 hover:border-nb-green/20 hover:shadow-2xl hover:shadow-nb-green/15"
+                                className="group relative bg-white rounded-[32px] sm:rounded-[48px] p-8 sm:p-10 hover:-translate-y-4 transition-all duration-700 border border-slate-900/5 hover:border-nb-green/20 hover:shadow-2xl hover:shadow-nb-green/15 flex flex-col h-full"
                             >
-                                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-[24px] bg-gradient-to-br from-nb-green/10 to-nb-green-light/5 flex items-center justify-center mb-6 sm:mb-10 border border-nb-green/10 group-hover:scale-110 group-hover:bg-nb-green group-hover:shadow-2xl group-hover:shadow-nb-green/40 transition-all duration-700 overflow-hidden">
-                                    {iconMap[service.icon] ? (
-                                        <IconComponent className="w-8 h-8 sm:w-10 sm:h-10 text-nb-green group-hover:text-white transition-colors" />
-                                    ) : (
-                                        <img
-                                            src={service.icon?.startsWith('http') ? service.icon : `/api/storage/${service.icon}`}
-                                            className="w-full h-full object-cover"
-                                            alt={service.title}
-                                        />
-                                    )}
-                                </div>
+                                {service.showMedia !== false && (
+                                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-[24px] bg-gradient-to-br from-nb-green/10 to-nb-green-light/5 flex items-center justify-center mb-6 sm:mb-10 border border-nb-green/10 group-hover:scale-110 group-hover:bg-nb-green group-hover:shadow-2xl group-hover:shadow-nb-green/40 transition-all duration-700 overflow-hidden flex-shrink-0">
+                                        {service.mediaType === "image" && service.mediaImage ? (
+                                            <img
+                                                src={service.mediaImage.startsWith('http') ? service.mediaImage : `/api/storage/${service.mediaImage}`}
+                                                className="w-full h-full object-cover"
+                                                alt={service.title}
+                                            />
+                                        ) : IconComponent ? (
+                                            <IconComponent className="w-8 h-8 sm:w-10 sm:h-10 text-nb-green group-hover:text-white transition-colors" />
+                                        ) : (
+                                            <span className="text-3xl sm:text-4xl group-hover:scale-110 transition-transform">
+                                                {service.mediaIcon || "✨"}
+                                            </span>
+                                        )}
+                                    </div>
+                                )}
                                 <h3 className="font-black text-xl sm:text-2xl text-slate-900 mb-3 sm:mb-5 leading-tight">{service.title}</h3>
-                                <p className="text-slate-500 text-sm sm:text-base leading-relaxed mb-6 sm:mb-10 font-medium opacity-80 hidden sm:block">{service.description}</p>
-                                <Link
-                                    href={`/services#${service.slug}`}
-                                    className="inline-flex items-center gap-2 text-xs sm:text-sm font-black text-nb-green group-hover:text-slate-900 transition-all"
-                                >
-                                    Explore Service
-                                    <ArrowRight className="w-4 h-4 translate-y-[1px] group-hover:translate-x-2 transition-transform" />
-                                </Link>
+                                <p className="text-slate-500 text-sm sm:text-base leading-relaxed mb-6 sm:mb-10 font-medium opacity-80 hidden sm:block flex-grow">{service.description}</p>
+
+                                {service.showButton !== false && (
+                                    <Link
+                                        href={service.buttonLink || `/services#${service.slug || ''}`}
+                                        className="inline-flex items-center gap-2 text-xs sm:text-sm font-black text-nb-green group-hover:text-slate-900 transition-all mt-auto"
+                                    >
+                                        {service.buttonText || "Explore Service"}
+                                        <ArrowRight className="w-4 h-4 translate-y-[1px] group-hover:translate-x-2 transition-transform" />
+                                    </Link>
+                                )}
 
                                 {/* Decorative background element on hover */}
-                                <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-5 transition-opacity duration-700 pointer-events-none">
-                                    <IconComponent className="w-16 h-16 sm:w-24 sm:h-24 text-nb-green rotate-12" />
-                                </div>
+                                {IconComponent && (
+                                    <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-5 transition-opacity duration-700 pointer-events-none">
+                                        <IconComponent className="w-16 h-16 sm:w-24 sm:h-24 text-nb-green rotate-12" />
+                                    </div>
+                                )}
                             </div>
                         );
                     })}

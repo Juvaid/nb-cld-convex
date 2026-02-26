@@ -7,7 +7,10 @@ import { Typography } from "@/components/ui/Typography";
 interface ServiceItem {
     title: string;
     description: string;
-    icon: string;
+    showMedia?: boolean;
+    mediaType?: "icon" | "image";
+    mediaIcon?: string;
+    mediaImage?: string;
 }
 
 interface NatureBoonExpertiseProps {
@@ -23,9 +26,9 @@ export const NatureBoonExpertise = ({
     title = "Core Manufacturing Expertise",
     description = "Leveraging state-of-the-art facilities and scientific precision to bring your vision to market.",
     items = [
-        { title: "OEM Manufacturing", description: "Full-scale production using your proprietary formulations.", icon: "🏭" },
-        { title: "Private Label Solutions", description: "Ready-to-market formulations tailored to your brand identity.", icon: "🏷️" },
-        { title: "R&D Innovation", description: "In-house scientists developing next-generation active ingredients.", icon: "🧪" }
+        { title: "OEM Manufacturing", description: "Full-scale production using your proprietary formulations.", showMedia: true, mediaType: "icon", mediaIcon: "🏭" },
+        { title: "Private Label Solutions", description: "Ready-to-market formulations tailored to your brand identity.", showMedia: true, mediaType: "icon", mediaIcon: "🏷️" },
+        { title: "R&D Innovation", description: "In-house scientists developing next-generation active ingredients.", showMedia: true, mediaType: "icon", mediaIcon: "🧪" }
     ],
     paddingTop = "24",
     paddingBottom = "24",
@@ -57,9 +60,21 @@ export const NatureBoonExpertise = ({
                             gap="6"
                             className="bg-white p-10 rounded-[40px] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all flex-1 min-w-[300px]"
                         >
-                            <div className="w-16 h-16 bg-nb-green/10 rounded-2xl flex items-center justify-center text-3xl">
-                                {item.icon}
-                            </div>
+                            {item.showMedia !== false && (
+                                <div className="w-16 h-16 bg-nb-green/10 rounded-2xl flex items-center justify-center text-3xl overflow-hidden flex-shrink-0">
+                                    {item.mediaType === "image" && item.mediaImage ? (
+                                        <img
+                                            src={item.mediaImage.startsWith('http') ? item.mediaImage : `/api/storage/${item.mediaImage}`}
+                                            className="w-full h-full object-cover"
+                                            alt={item.title}
+                                        />
+                                    ) : (
+                                        <div>
+                                            {item.mediaIcon || "✨"}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                             <Typography variant="h4" color="slate-900">
                                 {item.title}
                             </Typography>

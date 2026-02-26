@@ -6,7 +6,10 @@ import { Section } from '@/components/ui/Section';
 export interface StatItem {
     value: string;
     label: string;
-    icon?: string;
+    showMedia?: boolean;
+    mediaType?: "icon" | "image";
+    mediaIcon?: string;
+    mediaImage?: string;
 }
 
 export interface StatsCounterProps {
@@ -14,7 +17,7 @@ export interface StatsCounterProps {
     stats?: StatItem[];
 }
 
-function AnimatedCounter({ target, label, icon }: { target: string, label: string, icon?: string }) {
+function AnimatedCounter({ target, label, stat }: { target: string, label: string, stat: StatItem }) {
     const [count, setCount] = useState(0);
     const ref = useRef<HTMLDivElement>(null);
     const numericTarget = parseInt(target.replace(/[^0-9]/g, '')) || 0;
@@ -46,14 +49,20 @@ function AnimatedCounter({ target, label, icon }: { target: string, label: strin
     }, [numericTarget]);
 
     return (
-        <div ref={ref} className="text-center p-4 sm:p-6 rounded-[24px] sm:rounded-[32px] bg-white/40 backdrop-blur-md hover:bg-white transition-all duration-500 border border-white/50">
-            {icon && (
-                <div className="w-10 h-10 rounded-xl bg-nb-green/10 flex items-center justify-center mx-auto mb-3 overflow-hidden">
-                    <img
-                        src={icon.startsWith('http') ? icon : `/api/storage/${icon}`}
-                        className="w-full h-full object-cover"
-                        alt={label}
-                    />
+        <div ref={ref} className="text-center p-4 sm:p-6 rounded-[24px] sm:rounded-[32px] bg-white/40 backdrop-blur-md hover:bg-white transition-all duration-500 border border-white/50 h-full flex flex-col justify-center">
+            {stat.showMedia !== false && (
+                <div className="w-10 h-10 rounded-xl bg-nb-green/10 flex items-center justify-center mx-auto mb-3 overflow-hidden text-nb-green">
+                    {stat.mediaType === "image" && stat.mediaImage ? (
+                        <img
+                            src={stat.mediaImage.startsWith('http') ? stat.mediaImage : `/api/storage/${stat.mediaImage}`}
+                            className="w-full h-full object-cover"
+                            alt={label}
+                        />
+                    ) : (
+                        <div className="text-xl">
+                            {stat.mediaIcon || "📊"}
+                        </div>
+                    )}
                 </div>
             )}
             <div className="text-2xl sm:text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-nb-green-soft to-nb-green-deep mb-1 sm:mb-2 tracking-tighter">
@@ -83,7 +92,7 @@ export default function StatsCounter({
             <div className="max-w-7xl mx-auto px-6 sm:px-8 relative z-10">
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6">
                     {(stats || []).map((stat, i) => (
-                        <AnimatedCounter key={stat.label || i} target={stat.value} label={stat.label} icon={stat.icon} />
+                        <AnimatedCounter key={stat.label || i} target={stat.value} label={stat.label} stat={stat} />
                     ))}
                 </div>
             </div>

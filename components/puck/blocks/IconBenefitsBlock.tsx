@@ -8,9 +8,15 @@ import { sharedFields, SharedFieldProps } from "../fields/shared";
 export interface IconBenefitsBlockProps extends SharedFieldProps {
     title?: string;
     items?: Array<{
+        showMedia?: boolean;
+        mediaType?: "icon" | "image";
+        mediaIcon?: string;
+        mediaImage?: string;
         title?: string;
         description?: string;
-        icon?: string;
+        showButton?: boolean;
+        buttonText?: string;
+        buttonLink?: string;
     }>;
 }
 
@@ -21,9 +27,15 @@ export const IconBenefitsBlockConfig: ComponentConfig<IconBenefitsBlockProps> = 
             type: "array",
             getItemSummary: (item: any) => item.title || "Benefit Item",
             arrayFields: {
+                showMedia: sharedFields.showMedia,
+                mediaType: sharedFields.mediaType,
+                mediaIcon: sharedFields.mediaIcon,
+                mediaImage: sharedFields.mediaImage,
                 title: { type: "text" },
                 description: { type: "text" },
-                icon: { type: "text" },
+                showButton: sharedFields.showButton,
+                buttonText: sharedFields.buttonText,
+                buttonLink: sharedFields.buttonLink,
             }
         },
         ...sharedFields
@@ -50,22 +62,47 @@ export const IconBenefitsBlockConfig: ComponentConfig<IconBenefitsBlockProps> = 
                     {(props.items || []).map((item: any, i: number) => (
                         <Flex
                             key={i}
+                            direction="col"
                             gap="6"
-                            className="p-8 rounded-[32px] bg-white border border-slate-50 shadow-sm hover:border-nb-green/30 transition-all flex-1 min-w-[320px]"
+                            className="p-8 rounded-[32px] bg-white border border-slate-50 shadow-sm hover:border-nb-green/30 transition-all flex-1 min-w-[320px] h-full"
                         >
-                            <Flex align="center" justify="center" className="w-14 h-14 bg-nb-green/10 rounded-full flex-shrink-0 text-nb-green shadow-inner">
-                                <Flex align="center" justify="center" className="w-7 h-7 border-4 border-current rounded-full font-black text-xs">
-                                    {i + 1}
+                            <Flex gap="6" align="start">
+                                {item.showMedia !== false && (
+                                    <Flex align="center" justify="center" className="w-14 h-14 bg-nb-green/10 rounded-full flex-shrink-0 text-nb-green shadow-inner overflow-hidden">
+                                        {item.mediaType === "image" && item.mediaImage ? (
+                                            <img
+                                                src={item.mediaImage.startsWith('http') ? item.mediaImage : `/api/storage/${item.mediaImage}`}
+                                                className="w-full h-full object-cover"
+                                                alt={item.title || ""}
+                                            />
+                                        ) : (
+                                            <div className="text-xl">
+                                                {item.mediaIcon || (i + 1)}
+                                            </div>
+                                        )}
+                                    </Flex>
+                                )}
+                                <Flex direction="col" gap="3" className="flex-grow">
+                                    <Typography variant="h6" color="slate-900">
+                                        {item.title}
+                                    </Typography>
+                                    <Typography variant="small" color="slate-500">
+                                        {item.description}
+                                    </Typography>
                                 </Flex>
                             </Flex>
-                            <Flex direction="col" gap="3">
-                                <Typography variant="h6" color="slate-900">
-                                    {item.title}
-                                </Typography>
-                                <Typography variant="small" color="slate-500">
-                                    {item.description}
-                                </Typography>
-                            </Flex>
+
+                            {item.showButton && item.buttonText && (
+                                <div className="mt-auto pt-4 border-t border-slate-900/5">
+                                    <a
+                                        href={item.buttonLink || "#"}
+                                        className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-nb-green hover:text-slate-900 transition-colors"
+                                    >
+                                        {item.buttonText}
+                                        <span>→</span>
+                                    </a>
+                                </div>
+                            )}
                         </Flex>
                     ))}
                 </Flex>

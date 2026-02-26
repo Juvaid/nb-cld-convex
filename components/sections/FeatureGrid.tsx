@@ -7,9 +7,15 @@ import { Typography } from "@/components/ui/Typography";
 import { theme } from "@/src/theme";
 
 export type FeatureItem = {
-    icon: string;
+    showMedia?: boolean;
+    mediaType?: "icon" | "image";
+    mediaIcon?: string;
+    mediaImage?: string;
     title: string;
     description: string;
+    showButton?: boolean;
+    buttonText?: string;
+    buttonLink?: string;
 };
 
 export type FeatureGridProps = {
@@ -61,15 +67,43 @@ export const FeatureGrid = ({
                             gap="6"
                             className={`${theme.surface} ${theme.radius} ${theme.shadow} p-10 text-center group`}
                         >
-                            <div className="text-5xl mb-2 group-hover:scale-110 transition-transform duration-300">
-                                {feature.icon}
+                            {feature.showMedia !== false && (
+                                <div className="mb-2 group-hover:scale-110 transition-transform duration-300 w-full flex justify-center">
+                                    {feature.mediaType === "image" && feature.mediaImage ? (
+                                        <div className="w-20 h-20 rounded-[24px] overflow-hidden border border-slate-900/5 shadow-inner">
+                                            <img
+                                                src={feature.mediaImage.startsWith("http") ? feature.mediaImage : `/api/storage/${feature.mediaImage}`}
+                                                className="w-full h-full object-cover"
+                                                alt={feature.title}
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div className="text-5xl">
+                                            {feature.mediaIcon || "✨"}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                            <div className="space-y-3">
+                                <Typography variant="h4" className={theme.textPrimary}>
+                                    {feature.title}
+                                </Typography>
+                                <Typography variant="small" className={theme.textSecondary}>
+                                    {feature.description}
+                                </Typography>
                             </div>
-                            <Typography variant="h4" className={theme.textPrimary}>
-                                {feature.title}
-                            </Typography>
-                            <Typography variant="small" className={theme.textSecondary}>
-                                {feature.description}
-                            </Typography>
+
+                            {feature.showButton && feature.buttonText && (
+                                <div className="mt-4 pt-4 border-t border-slate-900/5 w-full">
+                                    <a
+                                        href={feature.buttonLink || "#"}
+                                        className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-nb-green hover:text-slate-900 transition-colors"
+                                    >
+                                        {feature.buttonText}
+                                        <span className="group-hover:translate-x-1 transition-transform">→</span>
+                                    </a>
+                                </div>
+                            )}
                         </Flex>
                     ))}
                 </div>

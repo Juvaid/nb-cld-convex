@@ -6,6 +6,7 @@ import { Search, ArrowRight, Filter, X, ChevronDown, Package } from 'lucide-reac
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { motion, AnimatePresence } from 'framer-motion';
+import { DocumentList } from './DocumentList';
 
 export interface ProductItem {
     name: string;
@@ -20,6 +21,7 @@ export interface ProductCategoryData {
     slug: string;
     description: string;
     products: ProductItem[];
+    documents?: { name: string; storageId: string }[];
 }
 
 export interface ProductBrowserProps {
@@ -51,7 +53,8 @@ export default function ProductBrowser({ categories: initialCategories = [], use
                     slug: p.slug,
                     sku: p.sku,
                     images: p.images
-                }))
+                })),
+            documents: (cat as any).meta?.documents
         })).filter(cat => cat.products.length > 0);
     }
 
@@ -178,6 +181,11 @@ export default function ProductBrowser({ categories: initialCategories = [], use
                                 <div className="mb-2 md:mb-4 border-b border-slate-900/5 pb-1 md:pb-2">
                                     <h2 className="text-lg md:text-2xl font-black text-slate-900">{cat.name}</h2>
                                     <p className="text-slate-500 mt-0.5 max-w-3xl text-[11px] md:text-sm font-medium">{cat.description}</p>
+                                    {cat.documents && cat.documents.length > 0 && (
+                                        <div className="mt-4 max-w-md">
+                                            <DocumentList documents={cat.documents} title="Download Catalog" />
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
