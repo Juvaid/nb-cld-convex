@@ -1,60 +1,77 @@
-import { ConvexHttpClient } from "convex/browser";
-import { api } from "../convex/_generated/api.js";
-import * as dotenv from "dotenv";
+import fs from "fs";
+import path from "path";
+import dotenv from "dotenv";
+
 dotenv.config({ path: ".env.local" });
 
-const CONVEX_URL = process.env.NEXT_PUBLIC_CONVEX_URL;
+const CONTENT_DIR = "nb scraped data/output/content";
+const CONVEX_SITE_URL = process.env.NEXT_PUBLIC_CONVEX_SITE_URL;
 
-if (!CONVEX_URL) {
-    console.error("Please set NEXT_PUBLIC_CONVEX_URL in .env.local");
-    process.exit(1);
-}
+async function ingestBlogs() {
+    const files = fs.readdirSync(CONTENT_DIR).filter(f => f.endsWith(".txt") && f !== "index.txt" && f !== "about-us.txt" && f !== "contact.txt");
 
-const client = new ConvexHttpClient(CONVEX_URL);
+    console.log(`Found ${files.length} potential blog files.`);
 
-const blogs = [
-    { title: "Best Body Lotion Manufacturers In India", slug: "best-body-lotion-manufacturers-in-india" },
-    { title: "Best Body Scrub Manufacturers In India", slug: "best-body-scrub-manufacturers-in-india" },
-    { title: "Best Face Serum Manufacturers In India", slug: "best-face-serum-manufacturers-in-india" },
-    { title: "Best Face Wash Manufacturers In India", slug: "best-face-wash-manufacturers-in-india" },
-    { title: "Best Facial Kit Manufacturers In India", slug: "best-facial-kit-manufacturers-in-india" },
-    { title: "Best Hair Serum Manufacturers In India", slug: "best-hair-serum-manufacturers-in-india" },
-    { title: "Best Shampoo Manufacturers In India", slug: "best-shampoo-manufacturers-in-india" },
-    { title: "Best Sunscreen Manufacturers In India", slug: "best-sunscreen-manufacturers-in-india" },
-    { title: "Body Personal Care", slug: "body-personal-care" },
-    { title: "Case Study", slug: "case-study" },
-    { title: "Customised Finished Product", slug: "customised-finished-product" },
-    { title: "Digital Marketing", slug: "digital-marketing" },
-    { title: "Hair Care Products", slug: "hair-care-products" },
-    { title: "Hair Oil Manufacturers In India", slug: "hair-oil-manufacturers-in-india" },
-    { title: "Label Packaging Designing", slug: "label-packaging-designing" },
-    { title: "Mens Grooming Products", slug: "mens-grooming-products" },
-    { title: "Our Brands", slug: "our-brands" },
-    { title: "Private Label Skin Care Products Manufacturers In India", slug: "private-label-skin-care-products-manufacturers-in-india" },
-    { title: "Private Label Third Party Beard Oil Manufacturers In India", slug: "private-label-third-party-beard-oil-manufacturers-in-india" },
-    { title: "Skin Care Products", slug: "skin-care-products" },
-    { title: "Third Party Contract Cosmetics Products Manufacturers In India", slug: "third-party-contract-cosmetics-products-manufacturers-in-india" },
-    { title: "Top Derma Products Manufacturers In India", slug: "top-derma-products-manufacturers-in-india" },
-    { title: "Trademark Logo", slug: "trademark-logo" }
-];
+    for (const file of files) {
+        const filePath = path.join(CONTENT_DIR, file);
+        const content = fs.readFileSync(filePath, "utf8");
+        const title = file.replace(".txt", "").split("-").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+        const slug = file.replace(".txt", "");
 
-async function ingest() {
-    console.log(`Starting ingestion of ${blogs.length} blog posts...`);
+        const excerpt = content.slice(0, 150).replace(/\n/g, " ") + "...";
 
-    for (const blog of blogs) {
+        // Structured Puck-like content for the blog
+        const puckData = {
+            content: [
+                {
+                    type: "ModernHero",
+                    props: {
+                        badgeText: "Scientific Insights",
+                        title: title,
+                        description: excerpt,
+                        id: `hero-${slug}`
+                    }
+                },
+                {
+                    type: "Section",
+                    props: {
+                        id: `section-${slug}`,
+                        heading: "Detailed Analysis",
+                        padding: "py-20"
+                    }
+                }
+            ],
+            root: { props: { title: `${title} - Nature's Boon` } }
+        };
+
+        const payload = {
+            title,
+            slug,
+            content: JSON.stringify(puckData),
+            excerpt,
+            author: "Nature's Boon Editorial",
+            status: "published"
+        };
+
+        console.log(`Ingesting blog: ${title}...`);
+
         try {
-            const blogId = await client.mutation(api.blogs.createDraft, {
-                title: blog.title,
-                slug: blog.slug,
-                author: "Nature's Boon Editorial",
+            const response = await fetch(`${CONVEX_SITE_URL}/ingestBlog`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
             });
-            console.log(`✅ Created: ${blog.title} (ID: ${blogId})`);
+
+            const result = await response.json();
+            if (result.success) {
+                console.log(`Successfully ingested ${title}`);
+            } else {
+                console.error(`Failed to ingest ${title}:`, result);
+            }
         } catch (error) {
-            console.error(`❌ Failed to create ${blog.title}:`, error);
+            console.error(`Error ingesting ${title}:`, error);
         }
     }
-
-    console.log("Ingestion complete.");
 }
 
-ingest().catch(console.error);
+ingestBlogs().catch(console.error);

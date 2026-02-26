@@ -7,9 +7,15 @@ export interface FeatureGridBlockProps extends SharedFieldProps {
     subheading: string;
     columns: "2" | "3" | "4";
     features: {
-        icon: string;
+        showMedia?: boolean;
+        mediaType?: "icon" | "image";
+        mediaIcon?: string;
+        mediaImage?: string;
         title: string;
         description: string;
+        showButton?: boolean;
+        buttonText?: string;
+        buttonLink?: string;
     }[];
 }
 
@@ -29,12 +35,20 @@ export const FeatureGridBlockConfig: ComponentConfig<FeatureGridBlockProps> = {
             type: "array",
             getItemSummary: (item: any) => item.title || "Feature",
             arrayFields: {
-                icon: { type: "text" },
+                showMedia: sharedFields.showMedia,
+                mediaType: sharedFields.mediaType,
+                mediaIcon: sharedFields.mediaIcon,
+                mediaImage: sharedFields.mediaImage,
                 title: { type: "text" },
                 description: { type: "textarea" },
+                showButton: sharedFields.showButton,
+                buttonText: sharedFields.buttonText,
+                buttonLink: sharedFields.buttonLink,
             },
             defaultItemProps: {
-                icon: "✨",
+                showMedia: true,
+                mediaType: "icon",
+                mediaIcon: "✨",
                 title: "Amazing Feature",
                 description: "Describe how this helps your users stand out.",
             },
@@ -47,17 +61,23 @@ export const FeatureGridBlockConfig: ComponentConfig<FeatureGridBlockProps> = {
         columns: "3",
         features: [
             {
-                icon: "🏭",
+                showMedia: true,
+                mediaType: "icon",
+                mediaIcon: "🏭",
                 title: "OEM Manufacturing",
                 description: "Full-scale production using your proprietary formulations with rigorous quality control protocols.",
             },
             {
-                icon: "🏷️",
+                showMedia: true,
+                mediaType: "icon",
+                mediaIcon: "🏷️",
                 title: "Private Label Solutions",
                 description: "Ready-to-market formulations tailored to your brand identity with customizable packaging options.",
             },
             {
-                icon: "🔬",
+                showMedia: true,
+                mediaType: "icon",
+                mediaIcon: "🔬",
                 title: "R&D Innovation",
                 description: "In-house scientists developing next-generation active ingredients and breakthrough textures.",
             },

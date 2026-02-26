@@ -83,3 +83,57 @@ export const forceDeletePage = mutation({
         }
     },
 });
+
+export const saveIngestedBlog = mutation({
+    args: {
+        title: v.string(),
+        slug: v.string(),
+        content: v.string(),
+        excerpt: v.optional(v.string()),
+        author: v.optional(v.string()),
+        coverImage: v.optional(v.string()),
+    },
+    handler: async (ctx, args) => {
+        const existing = await ctx.db
+            .query("blogs")
+            .withIndex("by_slug", (q) => q.eq("slug", args.slug))
+            .unique();
+
+        const blogData = {
+            ...args,
+            author: args.author || "Nature's Boon Team",
+            status: "published" as const,
+            publishedAt: Date.now(),
+        };
+
+        if (existing) {
+            await ctx.db.patch(existing._id, blogData);
+        } else {
+            await ctx.db.insert("blogs", blogData);
+        }
+    },
+});
+
+export const addDocumentToCategory = mutation({
+    args: {
+        name: v.string(),
+        slug: v.string(),
+        storageId: v.string(),
+    },
+    handler: async (ctx, args) => {
+        const category = await ctx.db
+            .query("categories")
+            .withIndex("by_slug", (q) => q.eq("slug", args.slug))
+            .unique();
+
+        if (category) {
+            const meta = (category as any).meta || {};
+            const documents = meta.documents || [];
+            if (!documents.find((d: any) => d.storageId === args.storageId)) {
+                await ctx.db.patch(category._id, {
+                    meta: { ...meta, documents: [...documents, { name: args.name, storageId: args.storageId }] }
+                } as any);
+            }
+        }
+    },
+});

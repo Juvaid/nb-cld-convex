@@ -10,9 +10,15 @@ export interface ModernServicesBlockProps extends SharedFieldProps {
     heading?: string;
     subheading?: string;
     services?: {
+        showMedia?: boolean;
+        mediaType?: "icon" | "image";
+        mediaIcon?: string;
+        mediaImage?: string;
         title: string;
         description: string;
-        icon: string;
+        showButton?: boolean;
+        buttonText?: string;
+        buttonLink?: string;
     }[];
     useGlobalServices?: boolean;
 }
@@ -26,14 +32,15 @@ export const ModernServicesBlockConfig: ComponentConfig<ModernServicesBlockProps
             type: "array",
             getItemSummary: (s: any) => s.title || "Service",
             arrayFields: {
+                showMedia: sharedFields.showMedia,
+                mediaType: sharedFields.mediaType,
+                mediaIcon: sharedFields.mediaIcon,
+                mediaImage: sharedFields.mediaImage,
                 title: { type: "text" },
                 description: { type: "textarea" },
-                icon: {
-                    type: "custom",
-                    render: ({ value, onChange }: any) => (
-                        <ImagePicker value={value} onChange={onChange} />
-                    )
-                }
+                showButton: sharedFields.showButton,
+                buttonText: sharedFields.buttonText,
+                buttonLink: sharedFields.buttonLink,
             }
         },
         useGlobalServices: { type: "radio", label: "Use Global Services", options: [{ label: "Yes", value: true }, { label: "No", value: false }] },

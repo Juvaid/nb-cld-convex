@@ -275,6 +275,37 @@ export const sharedFields = {
             { label: "Lowercase", value: "lowercase" },
             { label: "Capitalize", value: "capitalize" },
         ]
+    },
+    // Media Controls
+    showMedia: { type: "radio" as const, label: "Show Icon/Image", options: [{ label: "Yes", value: true }, { label: "No", value: false }] },
+    mediaType: {
+        type: "radio" as const,
+        label: "Media Type",
+        options: [
+            { label: "Icon", value: "icon" },
+            { label: "Image", value: "image" }
+        ]
+    },
+    mediaIcon: { type: "text" as const, label: "Icon (Lucide Name or Emoji)" },
+    mediaImage: {
+        type: "custom" as const,
+        label: "Image",
+        render: ({ value, onChange }: any) => (
+            <ImagePicker value={value} onChange={onChange} />
+        )
+    },
+    // Button Controls
+    showButton: { type: "radio" as const, label: "Show Button", options: [{ label: "Yes", value: true }, { label: "No", value: false }] },
+    buttonText: { type: "text" as const, label: "Button Text" },
+    buttonLink: { type: "text" as const, label: "Button Link (URL or #anchor)" },
+    buttonVariant: {
+        type: "select" as const,
+        options: [
+            { label: "Primary (Green)", value: "primary" },
+            { label: "Outline", value: "outline" },
+            { label: "Ghost", value: "ghost" },
+            { label: "Link", value: "link" }
+        ]
     }
 };
 
@@ -309,4 +340,14 @@ export interface SharedFieldProps {
     lineHeight?: string;
     letterSpacing?: string;
     textTransform?: "normal-case" | "uppercase" | "lowercase" | "capitalize";
+    // Media Props
+    showMedia?: boolean;
+    mediaType?: "icon" | "image";
+    mediaIcon?: string;
+    mediaImage?: string;
+    // Button Props
+    showButton?: boolean;
+    buttonText?: string;
+    buttonLink?: string;
+    buttonVariant?: "primary" | "outline" | "ghost" | "link";
 }

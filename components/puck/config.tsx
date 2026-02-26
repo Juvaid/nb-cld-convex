@@ -87,7 +87,6 @@ export const config: Config = {
                 title: { type: "text" },
                 subtitle: { type: "text" },
                 description: { type: "richtext" },
-                buttonText: { type: "text" },
                 buttonHref: {
                     type: "custom",
                     render: ({ value, onChange }: any) => (
@@ -112,9 +111,12 @@ export const config: Config = {
                     type: "array",
                     getItemSummary: (item: any) => item.title || "Service Item",
                     arrayFields: {
+                        showMedia: sharedFields.showMedia,
+                        mediaType: sharedFields.mediaType,
+                        mediaIcon: sharedFields.mediaIcon,
+                        mediaImage: sharedFields.mediaImage,
                         title: { type: "text" },
                         description: { type: "textarea" },
-                        icon: { type: "text" },
                     }
                 },
                 ...sharedFields
@@ -127,6 +129,10 @@ export const config: Config = {
                     type: "array",
                     getItemSummary: (s: any) => s.label || "Stat",
                     arrayFields: {
+                        showMedia: sharedFields.showMedia,
+                        mediaType: sharedFields.mediaType,
+                        mediaIcon: sharedFields.mediaIcon,
+                        mediaImage: sharedFields.mediaImage,
                         value: { type: "text" },
                         label: { type: "text" },
                     }
@@ -367,14 +373,12 @@ export const config: Config = {
                     type: "array",
                     getItemSummary: (s: any) => s.label || "Stat",
                     arrayFields: {
+                        showMedia: sharedFields.showMedia,
+                        mediaType: sharedFields.mediaType,
+                        mediaIcon: sharedFields.mediaIcon,
+                        mediaImage: sharedFields.mediaImage,
                         value: { type: "text" },
                         label: { type: "text" },
-                        icon: {
-                            type: "custom",
-                            render: ({ value, onChange }: any) => (
-                                <ImagePicker value={value} onChange={onChange} />
-                            )
-                        }
                     }
                 },
                 useGlobalStats: { type: "radio", label: "Use Global Company Stats", options: [{ label: "Yes", value: true }, { label: "No", value: false }] },
