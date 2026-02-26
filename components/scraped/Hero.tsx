@@ -60,7 +60,7 @@ export default function Hero({
     };
 
     return (
-        <section id={id} className="relative min-h-0 lg:min-h-[90vh] flex items-center pt-12 sm:pt-16 md:pt-20 pb-10 sm:pb-16 overflow-hidden bg-white">
+        <section id={id} className="relative min-h-0 lg:min-h-[60vh] flex items-center pt-10 sm:pt-12 md:pt-14 pb-0 overflow-hidden bg-white">
             {/* Background Gradient & Pattern */}
             <div className="absolute inset-0 z-0 overflow-hidden">
                 <div className="absolute top-0 right-0 w-[80%] h-[80%] bg-nb-green/10 rounded-full blur-[120px] -translate-y-1/3 translate-x-1/4 animate-float opacity-60" />
@@ -151,7 +151,7 @@ export default function Hero({
 
             {/* Hero Curve */}
             <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none">
-                <svg className="relative block w-full h-[40px] sm:h-[80px]" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <svg className="relative block w-full h-[20px] sm:h-[40px]" viewBox="0 0 1200 120" preserveAspectRatio="none">
                     <path d="M321.39,56.44c126.31-41.28,247.92,11.39,372,21.9,132.06,11.17,252,5.28,375-10.37V120H0V0C0,0,147.22,97.72,321.39,56.44Z" className="fill-slate-50"></path>
                 </svg>
             </div>

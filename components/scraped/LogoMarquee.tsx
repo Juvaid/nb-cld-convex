@@ -37,7 +37,7 @@ export default function LogoMarquee({
     const duplicatedLogos = [...logos, ...logos, ...logos, ...logos];
 
     return (
-        <section className="py-6 sm:py-16 bg-white overflow-hidden">
+        <section className="pt-0 pb-10 sm:pt-0 sm:pb-16 bg-white overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-4 sm:mb-10 text-center">
                 {title && (
                     <h3 className="text-[10px] sm:text-sm font-bold text-slate-400 uppercase tracking-[0.2em]">
