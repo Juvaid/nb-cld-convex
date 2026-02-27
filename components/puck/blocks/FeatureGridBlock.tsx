@@ -21,8 +21,8 @@ export interface FeatureGridBlockProps extends SharedFieldProps {
 
 export const FeatureGridBlockConfig: ComponentConfig<FeatureGridBlockProps> = {
     fields: {
-        heading: { type: "text" },
-        subheading: { type: "text" },
+        heading: { type: "text", contentEditable: true },
+        subheading: { type: "text", contentEditable: true },
         columns: {
             type: "radio",
             options: [
@@ -39,8 +39,8 @@ export const FeatureGridBlockConfig: ComponentConfig<FeatureGridBlockProps> = {
                 mediaType: sharedFields.mediaType,
                 mediaIcon: sharedFields.mediaIcon,
                 mediaImage: sharedFields.mediaImage,
-                title: { type: "text" },
-                description: { type: "textarea" },
+                title: { type: "text", contentEditable: true },
+                description: { type: "textarea", contentEditable: true },
                 showButton: sharedFields.showButton,
                 buttonText: sharedFields.buttonText,
                 buttonLink: sharedFields.buttonLink,

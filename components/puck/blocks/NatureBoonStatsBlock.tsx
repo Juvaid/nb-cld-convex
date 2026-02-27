@@ -26,8 +26,8 @@ export const NatureBoonStatsConfig: ComponentConfig<NatureBoonStatsProps> = {
                 mediaType: sharedFields.mediaType as any,
                 mediaIcon: sharedFields.mediaIcon as any,
                 mediaImage: sharedFields.mediaImage as any,
-                value: { type: "text" },
-                label: { type: "text" },
+                value: { type: "text", contentEditable: true },
+                label: { type: "text", contentEditable: true },
             }
         },
         ...sharedFields

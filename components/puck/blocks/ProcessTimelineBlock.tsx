@@ -16,14 +16,14 @@ export interface ProcessTimelineBlockProps extends SharedFieldProps {
 
 export const ProcessTimelineBlockConfig: ComponentConfig<ProcessTimelineBlockProps> = {
     fields: {
-        title: { type: "text" },
+        title: { type: "text", contentEditable: true },
         items: {
             type: "array",
             getItemSummary: (item: any) => item.title || "Process Step",
             arrayFields: {
-                title: { type: "text" },
-                description: { type: "text" },
-                stepNumber: { type: "text" },
+                title: { type: "text", contentEditable: true },
+                description: { type: "text", contentEditable: true },
+                stepNumber: { type: "text", contentEditable: true },
             }
         },
         ...sharedFields

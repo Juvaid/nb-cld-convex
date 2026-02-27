@@ -16,7 +16,7 @@ export interface CTABlockProps extends SharedFieldProps {
 
 export const CTABlockConfig: ComponentConfig<CTABlockProps> = {
     fields: {
-        title: { type: "text" },
+        title: { type: "text", contentEditable: true },
         buttonHref: {
             type: "custom",
             render: ({ value, onChange }: any) => (

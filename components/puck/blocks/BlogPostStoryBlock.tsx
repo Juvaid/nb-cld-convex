@@ -16,9 +16,9 @@ export interface BlogPostStoryBlockProps extends SharedFieldProps {
 
 export const BlogPostStoryBlockConfig: ComponentConfig<BlogPostStoryBlockProps> = {
     fields: {
-        title: { type: "text" },
-        author: { type: "text" },
-        date: { type: "text" },
+        title: { type: "text", contentEditable: true },
+        author: { type: "text", contentEditable: true },
+        date: { type: "text", contentEditable: true },
         image: {
             type: "custom",
             render: ({ value, onChange }: any) => (

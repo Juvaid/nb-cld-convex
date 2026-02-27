@@ -18,6 +18,17 @@ import { BlogPostStoryBlockConfig } from "./blocks/BlogPostStoryBlock";
 import { FeatureGridBlockConfig } from "./blocks/FeatureGridBlock";
 import { ModernHeroBlockConfig } from "./blocks/ModernHeroBlock";
 import { ModernServicesBlockConfig } from "./blocks/ModernServicesBlock";
+import { OrbitalHeroBlockConfig } from "./blocks/OrbitalHeroBlock";
+import { SpacerBlockConfig } from "./blocks/SpacerBlock";
+import { ProductGridHeroBlockConfig } from "./blocks/ProductGridHeroBlock";
+import { TestimonialsSliderBlockConfig } from "./blocks/TestimonialsSliderBlock";
+import { BentoGridHeroBlockConfig } from "./blocks/BentoGridHeroBlock";
+import { LayeredDepthHeroBlockConfig } from "./blocks/LayeredDepthHeroBlock";
+import { KineticMarqueeHeroBlockConfig } from "./blocks/KineticMarqueeHeroBlock";
+import { JourneyHeroBlockConfig } from "./blocks/JourneyHeroBlock";
+import { StackedCardHeroBlockConfig } from "./blocks/StackedCardHeroBlock";
+import { SwissStyleHeroBlockConfig } from "./blocks/SwissStyleHeroBlock";
+import { BentoServicesBlockConfig } from "./blocks/BentoServicesBlock";
 
 // Components that still need minimal config or are handled specifically
 import { NatureBoonHeroConfig } from "./blocks/NatureBoonHeroBlock";
@@ -69,18 +80,20 @@ export const config: Config = {
     },
     categories: {
         "Carousel & Marquee": { components: ["LogoMarquee", "ImageCarousel", "VideoCarousel"] },
-        Hero: { components: ["NatureBoonHero", "ModernHero"] },
+        Hero: { components: ["NatureBoonHero", "ModernHero", "OrbitalHero", "ProductGridHero", "BentoGridHero", "LayeredDepthHero", "KineticMarqueeHero", "SwissStyleHero", "StackedCardHero"] },
         Themed: { components: ["NatureBoonExpertise", "NatureBoonStats", "CategoryPortfolio"] },
         "Modern Blocks": { components: ["FeatureGrid", "ModernHero", "ModernServices", "ModernStats", "ModernTestimonials", "AboutHero", "AboutJourney", "WhyChooseUs", "ProductBrowser", "CallToAction", "ServiceDetailList", "ProcessSteps", "ContactSection", "ProductShowcase"] },
-        Layout: { components: ["DynamicLayout", "Section"] },
+        Layout: { components: ["DynamicLayout", "Section", "Spacer"] },
         Marketing: { components: ["ServiceGrid", "CTA", "SuccessStory", "IconBenefits"] },
         B2B: { components: ["QuickOrderPad", "ComplianceBadges"] },
         Blog: { components: ["BlogPostStory"] },
         Content: { components: ["ProcessTimeline", "FAQAccordion", "Section"] },
+        Sections: { components: ["TestimonialsSlider", "JourneyHero", "BentoServices"] },
         Footer: { components: ["Footer"] },
     },
     components: {
         Section: SectionBlockConfig,
+        Spacer: SpacerBlockConfig,
         DynamicLayout: DynamicLayoutBlockConfig,
         NatureBoonHero: NatureBoonHeroConfig as any,
         NatureBoonExpertise: NatureBoonExpertiseConfig as any,
@@ -95,6 +108,16 @@ export const config: Config = {
         BlogPostStory: BlogPostStoryBlockConfig,
         FeatureGrid: FeatureGridBlockConfig,
         ModernHero: ModernHeroBlockConfig,
+        OrbitalHero: OrbitalHeroBlockConfig,
+        ProductGridHero: ProductGridHeroBlockConfig,
+        BentoGridHero: BentoGridHeroBlockConfig,
+        LayeredDepthHero: LayeredDepthHeroBlockConfig,
+        KineticMarqueeHero: KineticMarqueeHeroBlockConfig,
+        SwissStyleHero: SwissStyleHeroBlockConfig,
+        StackedCardHero: StackedCardHeroBlockConfig,
+        TestimonialsSlider: TestimonialsSliderBlockConfig,
+        JourneyHero: JourneyHeroBlockConfig,
+        BentoServices: BentoServicesBlockConfig,
         ModernServices: ModernServicesBlockConfig,
         AboutHero: {
             fields: {
@@ -339,12 +362,21 @@ export const config: Config = {
                         alt: { type: "text" }
                     }
                 },
-                speed: { type: "number" },
+                speed: { type: "number", label: "Speed (seconds, higher = slower)" },
                 direction: {
                     type: "select",
+                    label: "Scroll Direction",
                     options: [
-                        { label: "Left", value: "left" },
-                        { label: "Right", value: "right" }
+                        { label: "← Left", value: "left" },
+                        { label: "→ Right", value: "right" }
+                    ]
+                },
+                pauseOnHover: {
+                    type: "radio",
+                    label: "Pause on Hover",
+                    options: [
+                        { label: "Yes", value: true },
+                        { label: "No", value: false }
                     ]
                 }
             },

@@ -29,9 +29,9 @@ export interface ModernHeroBlockProps extends SharedFieldProps {
 
 export const ModernHeroBlockConfig: ComponentConfig<ModernHeroBlockProps> = {
     fields: {
-        badgeText: { type: "text" },
-        title: { type: "text" },
-        titleGradient: { type: "text" },
+        badgeText: { type: "text", contentEditable: true },
+        title: { type: "text", contentEditable: true },
+        titleGradient: { type: "text", contentEditable: true },
         alignment: {
             type: "radio",
             label: "Content Alignment",
@@ -41,17 +41,17 @@ export const ModernHeroBlockConfig: ComponentConfig<ModernHeroBlockProps> = {
                 { label: "Right", value: "right" }
             ]
         },
-        description: { type: "textarea" },
-        primaryButtonText: { type: "text" },
-        primaryButtonHref: { type: "text" },
-        secondaryButtonText: { type: "text" },
-        secondaryButtonHref: { type: "text" },
+        description: { type: "textarea", contentEditable: true },
+        primaryButtonText: { type: "text", contentEditable: true },
+        primaryButtonHref: { type: "text", contentEditable: true },
+        secondaryButtonText: { type: "text", contentEditable: true },
+        secondaryButtonHref: { type: "text", contentEditable: true },
         stats: {
             type: "array",
             getItemSummary: (s: any) => s.label || "Stat",
             arrayFields: {
-                value: { type: "text" },
-                label: { type: "text" },
+                value: { type: "text", contentEditable: true },
+                label: { type: "text", contentEditable: true },
             }
         },
         cards: {
@@ -64,8 +64,8 @@ export const ModernHeroBlockConfig: ComponentConfig<ModernHeroBlockProps> = {
                         <ImagePicker value={value} onChange={onChange} />
                     )
                 },
-                title: { type: "text" },
-                desc: { type: "text" },
+                title: { type: "text", contentEditable: true },
+                desc: { type: "text", contentEditable: true },
             }
         },
         useGlobalStats: { type: "radio", label: "Use Global Company Stats", options: [{ label: "Yes", value: true }, { label: "No", value: false }] },

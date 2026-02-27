@@ -24,8 +24,8 @@ export type NatureBoonExpertiseProps = {
 
 export const NatureBoonExpertiseConfig: ComponentConfig<NatureBoonExpertiseProps> = {
     fields: {
-        title: { type: "text" },
-        description: { type: "textarea" },
+        title: { type: "text", contentEditable: true },
+        description: { type: "textarea", contentEditable: true },
         items: {
             type: "array",
             getItemSummary: (item) => item.title || "Service Item",
@@ -34,8 +34,8 @@ export const NatureBoonExpertiseConfig: ComponentConfig<NatureBoonExpertiseProps
                 mediaType: sharedFields.mediaType as any,
                 mediaIcon: sharedFields.mediaIcon as any,
                 mediaImage: sharedFields.mediaImage as any,
-                title: { type: "text" },
-                description: { type: "textarea" },
+                title: { type: "text", contentEditable: true },
+                description: { type: "textarea", contentEditable: true },
             }
         },
         ...sharedFields

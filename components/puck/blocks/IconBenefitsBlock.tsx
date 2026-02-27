@@ -22,7 +22,7 @@ export interface IconBenefitsBlockProps extends SharedFieldProps {
 
 export const IconBenefitsBlockConfig: ComponentConfig<IconBenefitsBlockProps> = {
     fields: {
-        title: { type: "text" },
+        title: { type: "text", contentEditable: true },
         items: {
             type: "array",
             getItemSummary: (item: any) => item.title || "Benefit Item",
@@ -31,8 +31,8 @@ export const IconBenefitsBlockConfig: ComponentConfig<IconBenefitsBlockProps> = 
                 mediaType: sharedFields.mediaType,
                 mediaIcon: sharedFields.mediaIcon,
                 mediaImage: sharedFields.mediaImage,
-                title: { type: "text" },
-                description: { type: "text" },
+                title: { type: "text", contentEditable: true },
+                description: { type: "text", contentEditable: true },
                 showButton: sharedFields.showButton,
                 buttonText: sharedFields.buttonText,
                 buttonLink: sharedFields.buttonLink,

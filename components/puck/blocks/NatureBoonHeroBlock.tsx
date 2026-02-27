@@ -19,8 +19,8 @@ export type NatureBoonHeroProps = {
 
 export const NatureBoonHeroConfig: ComponentConfig<NatureBoonHeroProps> = {
     fields: {
-        title: { type: "text" },
-        subtitle: { type: "text" },
+        title: { type: "text", contentEditable: true },
+        subtitle: { type: "text", contentEditable: true },
         description: { type: "richtext" },
         buttonHref: {
             type: "custom",

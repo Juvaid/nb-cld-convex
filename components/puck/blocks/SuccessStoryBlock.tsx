@@ -18,15 +18,15 @@ export interface SuccessStoryBlockProps extends SharedFieldProps {
 
 export const SuccessStoryBlockConfig: ComponentConfig<SuccessStoryBlockProps> = {
     fields: {
-        title: { type: "text" },
+        title: { type: "text", contentEditable: true },
         stories: {
             type: "array",
             getItemSummary: (s: any) => s.brand || "Case Study",
             arrayFields: {
-                brand: { type: "text" },
-                metrics: { type: "text" },
-                product: { type: "text" },
-                description: { type: "textarea" },
+                brand: { type: "text", contentEditable: true },
+                metrics: { type: "text", contentEditable: true },
+                product: { type: "text", contentEditable: true },
+                description: { type: "textarea", contentEditable: true },
             }
         },
         ...sharedFields

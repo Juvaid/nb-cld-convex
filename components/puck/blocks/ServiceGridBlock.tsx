@@ -22,7 +22,7 @@ export interface ServiceGridBlockProps extends SharedFieldProps {
 
 export const ServiceGridBlockConfig: ComponentConfig<ServiceGridBlockProps> = {
     fields: {
-        title: { type: "text" },
+        title: { type: "text", contentEditable: true },
         items: {
             type: "array",
             getItemSummary: (item: any) => item.title || "Service Item",
@@ -31,8 +31,8 @@ export const ServiceGridBlockConfig: ComponentConfig<ServiceGridBlockProps> = {
                 mediaType: sharedFields.mediaType,
                 mediaIcon: sharedFields.mediaIcon,
                 mediaImage: sharedFields.mediaImage,
-                title: { type: "text" },
-                description: { type: "text" },
+                title: { type: "text", contentEditable: true },
+                description: { type: "text", contentEditable: true },
                 showButton: sharedFields.showButton,
                 buttonText: sharedFields.buttonText,
                 buttonLink: sharedFields.buttonLink,

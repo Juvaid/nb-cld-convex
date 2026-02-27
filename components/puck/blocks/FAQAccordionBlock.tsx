@@ -15,13 +15,13 @@ export interface FAQAccordionBlockProps extends SharedFieldProps {
 
 export const FAQAccordionBlockConfig: ComponentConfig<FAQAccordionBlockProps> = {
     fields: {
-        title: { type: "text" },
+        title: { type: "text", contentEditable: true },
         items: {
             type: "array",
             getItemSummary: (item: any) => item.question || "FAQ Item",
             arrayFields: {
-                question: { type: "text" },
-                answer: { type: "textarea" },
+                question: { type: "text", contentEditable: true },
+                answer: { type: "textarea", contentEditable: true },
             }
         },
         ...sharedFields

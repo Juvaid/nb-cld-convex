@@ -20,19 +20,19 @@ export type CategoryPortfolioProps = {
 
 export const CategoryPortfolioConfig: ComponentConfig<CategoryPortfolioProps> = {
     fields: {
-        title: { type: "text" },
-        description: { type: "textarea" },
+        title: { type: "text", contentEditable: true },
+        description: { type: "textarea", contentEditable: true },
         categories: {
             type: "array",
             getItemSummary: (c) => c.title || "Category",
             arrayFields: {
-                title: { type: "text" },
-                description: { type: "textarea" },
+                title: { type: "text", contentEditable: true },
+                description: { type: "textarea", contentEditable: true },
                 tags: {
                     type: "array",
                     getItemSummary: (tag: any) => tag.name || "Tag",
                     arrayFields: {
-                        name: { type: "text" }
+                        name: { type: "text", contentEditable: true }
                     }
                 },
                 image: {
@@ -41,7 +41,7 @@ export const CategoryPortfolioConfig: ComponentConfig<CategoryPortfolioProps> = 
                         <ImagePicker value={value} onChange={onChange} />
                     )
                 },
-                accentColor: { type: "text" },
+                accentColor: { type: "text", contentEditable: true },
             }
         },
         ...sharedFields

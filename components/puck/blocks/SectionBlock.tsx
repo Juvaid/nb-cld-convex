@@ -20,8 +20,8 @@ export const SectionBlock = ({ children, heading, subheading, sectionId, ...prop
 
 export const SectionBlockConfig: ComponentConfig<SectionBlockProps> = {
     fields: {
-        heading: { type: "text" },
-        subheading: { type: "text" },
+        heading: { type: "text", contentEditable: true },
+        subheading: { type: "text", contentEditable: true },
         ...sharedFields
     },
     render: SectionBlock as any
