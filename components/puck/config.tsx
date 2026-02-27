@@ -20,31 +20,31 @@ import { ModernHeroBlockConfig } from "./blocks/ModernHeroBlock";
 import { ModernServicesBlockConfig } from "./blocks/ModernServicesBlock";
 
 // Components that still need minimal config or are handled specifically
-import { NatureBoonHero } from "@/components/sections/NatureBoonHero";
-import { NatureBoonExpertise } from "@/components/sections/NatureBoonExpertise";
-import { NatureBoonStats } from "@/components/sections/NatureBoonStats";
-import { CategoryPortfolio } from "@/components/sections/CategoryPortfolio";
+import { NatureBoonHeroConfig } from "./blocks/NatureBoonHeroBlock";
+import { NatureBoonExpertiseConfig } from "./blocks/NatureBoonExpertiseBlock";
+import { NatureBoonStatsConfig } from "./blocks/NatureBoonStatsBlock";
+import { CategoryPortfolioConfig } from "./blocks/CategoryPortfolioBlock";
 import { PagePicker } from "@/components/PagePicker";
 import { ImagePicker } from "@/components/ImagePicker";
-import AboutHero from '../scraped/AboutHero';
-import AboutJourney from '../scraped/AboutJourney';
-import WhyChooseUs from '../scraped/WhyChooseUs';
-import ProductBrowser from '../scraped/ProductBrowser';
-import CallToAction from '../scraped/CallToAction';
-import ServiceDetailList from '../scraped/ServiceDetailList';
-import ProcessSteps from '../scraped/ProcessSteps';
-import ContactSection from '../scraped/ContactSection';
-import ModernStats from '../scraped/StatsCounter';
-import ModernTestimonials from '../scraped/TestimonialSlider';
-import ProductCard from "../scraped/ProductCard";
+import AboutHero from '../blocks/AboutHero';
+import AboutJourney from '../blocks/AboutJourney';
+import WhyChooseUs from '../blocks/WhyChooseUs';
+import ProductBrowser from '../blocks/ProductBrowser';
+import CallToAction from '../blocks/CallToAction';
+import ServiceDetailList from '../blocks/ServiceDetailList';
+import ProcessSteps from '../blocks/ProcessSteps';
+import ContactSection from '../blocks/ContactSection';
+import ModernStats from '../blocks/StatsCounter';
+import ModernTestimonials from '../blocks/TestimonialSlider';
+import ProductCard from "../blocks/ProductCard";
 import { ProductSelector } from "./ProductSelector";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Footer } from "./blocks/Footer";
 import { Section } from "../ui/Section";
-import LogoMarquee from '../scraped/LogoMarquee';
-import ImageCarousel from '../scraped/ImageCarousel';
-import VideoCarousel from '../scraped/VideoCarousel';
+import LogoMarquee from '../blocks/LogoMarquee';
+import ImageCarousel from '../blocks/ImageCarousel';
+import VideoCarousel from '../blocks/VideoCarousel';
 import { QuickOrderPad } from "./blocks/QuickOrderPad";
 import { ComplianceBadges } from "./blocks/ComplianceBadges";
 
@@ -54,7 +54,7 @@ export const config: Config = {
             inquiryEmail: { type: "text", label: "Inquiry Notification Email" },
             enableInquiryNotifications: { type: "radio", label: "Enable Email Alerts", options: [{ label: "Yes", value: true }, { label: "No", value: false }] }
         },
-        render: ({ children }: any) => {
+        render: ({ children }: import("@puckeditor/core").DefaultRootProps) => {
             return (
                 <ThemeProvider>
                     <div className="flex flex-col min-h-screen font-sans bg-white">
@@ -82,95 +82,10 @@ export const config: Config = {
     components: {
         Section: SectionBlockConfig,
         DynamicLayout: DynamicLayoutBlockConfig,
-        NatureBoonHero: {
-            fields: {
-                title: { type: "text" },
-                subtitle: { type: "text" },
-                description: { type: "richtext" },
-                buttonHref: {
-                    type: "custom",
-                    render: ({ value, onChange }: any) => (
-                        <PagePicker value={value} onChange={onChange} />
-                    )
-                },
-                image: {
-                    type: "custom",
-                    render: ({ value, onChange }: any) => (
-                        <ImagePicker value={value} onChange={onChange} />
-                    )
-                },
-                ...sharedFields
-            },
-            render: (props: any) => <NatureBoonHero {...props} />
-        },
-        NatureBoonExpertise: {
-            fields: {
-                title: { type: "text" },
-                description: { type: "textarea" },
-                items: {
-                    type: "array",
-                    getItemSummary: (item: any) => item.title || "Service Item",
-                    arrayFields: {
-                        showMedia: sharedFields.showMedia,
-                        mediaType: sharedFields.mediaType,
-                        mediaIcon: sharedFields.mediaIcon,
-                        mediaImage: sharedFields.mediaImage,
-                        title: { type: "text" },
-                        description: { type: "textarea" },
-                    }
-                },
-                ...sharedFields
-            },
-            render: (props: any) => <NatureBoonExpertise {...props} />
-        },
-        NatureBoonStats: {
-            fields: {
-                stats: {
-                    type: "array",
-                    getItemSummary: (s: any) => s.label || "Stat",
-                    arrayFields: {
-                        showMedia: sharedFields.showMedia,
-                        mediaType: sharedFields.mediaType,
-                        mediaIcon: sharedFields.mediaIcon,
-                        mediaImage: sharedFields.mediaImage,
-                        value: { type: "text" },
-                        label: { type: "text" },
-                    }
-                },
-                ...sharedFields
-            },
-            render: (props: any) => <NatureBoonStats {...props} />
-        },
-        CategoryPortfolio: {
-            fields: {
-                title: { type: "text" },
-                description: { type: "textarea" },
-                categories: {
-                    type: "array",
-                    getItemSummary: (c: any) => c.title || "Category",
-                    arrayFields: {
-                        title: { type: "text" },
-                        description: { type: "textarea" },
-                        tags: {
-                            type: "array",
-                            getItemSummary: (tag: any) => tag.name || "Tag",
-                            arrayFields: {
-                                name: { type: "text" }
-                            }
-                        },
-                        image: {
-                            type: "custom",
-                            render: ({ value, onChange }: any) => (
-                                <ImagePicker value={value} onChange={onChange} />
-                            )
-                        },
-                        accentColor: { type: "text" },
-                    }
-                },
-                ...sharedFields
-            },
-            render: (props: any) => <CategoryPortfolio {...props} />
-        },
+        NatureBoonHero: NatureBoonHeroConfig as any,
+        NatureBoonExpertise: NatureBoonExpertiseConfig as any,
+        NatureBoonStats: NatureBoonStatsConfig as any,
+        CategoryPortfolio: CategoryPortfolioConfig as any,
         ServiceGrid: ServiceGridBlockConfig,
         CTA: CTABlockConfig,
         IconBenefits: IconBenefitsBlockConfig,

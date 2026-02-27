@@ -1,8 +1,4 @@
-import { ConvexHttpClient } from "convex/browser";
-import { api } from "@/convex/_generated/api";
 import { CmsPageClient } from "@/components/CmsPageClient";
-
-const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
 interface CmsPageRendererProps {
     /** The canonical path, e.g. "/about" */
@@ -12,32 +8,9 @@ interface CmsPageRendererProps {
 }
 
 /**
- * Server component — fetches the published CMS page for a given path.
- * Passes the resolved data down to the CmsPageClient (a "use client" component)
- * for rendering via PuckRenderer.
- *
- * This pattern avoids the `createContext in server component` error because
- * PuckRenderer (which uses Framer Motion / ThemeProvider context internally)
- * is only ever imported in CmsPageClient, not here.
+ * Server component wrapper for CMS pages.
+ * Simply passes data down to the CmsPageClient to allow for client-side live fetching with Skeleton states.
  */
 export async function CmsPageRenderer({ path, fallbackData }: CmsPageRendererProps) {
-    let data: any = null;
-
-    try {
-        const page = await convex.query(api.pages.getPublishedPage, { path });
-        if (page?.data) {
-            const parsed = JSON.parse(page.data);
-            // Only use CMS data if the page has actual content blocks
-            if (parsed?.content?.length > 0) {
-                data = parsed;
-            }
-        }
-    } catch (error) {
-        console.warn(`[CmsPageRenderer] Failed to fetch CMS page for "${path}":`, error);
-    }
-
-    // Fall back to static local data if no CMS data found
-    const renderData = data || fallbackData;
-
-    return <CmsPageClient data={renderData} />;
+    return <CmsPageClient path={path} fallbackData={fallbackData} />;
 }

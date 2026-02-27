@@ -67,26 +67,36 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (themeData?.typography) {
-      const fontsToLoad = [
-        themeData.typography.headingFont,
-        themeData.typography.bodyFont,
-        themeData.typography.logoFont
-      ].filter(f => f && f !== "system-ui");
+    if (!themeData?.typography) return;
 
-      if (fontsToLoad.length > 0) {
-        const link = document.createElement("link");
-        link.rel = "stylesheet";
-        const fontQuery = fontsToLoad
-          .map(f => f.replace(/['"]/g, "").replace(/\s+/g, "+"))
-          .join("&family=");
-        link.href = `https://fonts.googleapis.com/css2?family=${fontQuery}:wght@300;400;500;600;700;800;900&display=swap`;
-        document.head.appendChild(link);
-        return () => {
-          document.head.removeChild(link);
-        };
-      }
+    const fontsToLoad = [
+      themeData.typography.headingFont,
+      themeData.typography.bodyFont,
+      themeData.typography.logoFont
+    ].filter(f => f && f !== "system-ui");
+
+    if (fontsToLoad.length === 0) return;
+
+    const fontQuery = Array.from(new Set(fontsToLoad)) // Deduplicate fonts
+      .map(f => f.replace(/['"]/g, "").replace(/\s+/g, "+"))
+      .join("&family=");
+
+    const href = `https://fonts.googleapis.com/css2?family=${fontQuery}:wght@300;400;500;600;700;800;900&display=swap`;
+
+    // Check if the font link already exists to avoid duplicates
+    let link = document.querySelector(`link[href="${href}"]`) as HTMLLinkElement;
+
+    if (!link) {
+      link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = href;
+      document.head.appendChild(link);
     }
+
+    return () => {
+      // Optional: Remove font if theme changes (often better to leave it cached though)
+      // For now, we leave it to avoid FOUC on rapid theme toggles, but ensure no dups above.
+    };
   }, [themeData?.typography]);
 
   useEffect(() => {

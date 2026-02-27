@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ArrowRight, Sparkles } from 'lucide-react';
-import { ProductCategory } from '@/lib/scraped-theme';
+import { ProductCategory } from '@/lib/default-theme';
 
 export default function ProductCard({ category }: { category: ProductCategory }) {
     return (

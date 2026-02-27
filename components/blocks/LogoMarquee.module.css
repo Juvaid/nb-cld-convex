@@ -1,0 +1,6 @@
+.marqueeContainer {
+    position: relative;
+    overflow: hidden;
+    -webkit-mask-image: var(--marquee-mask);
+    mask-image: var(--marquee-mask);
+}

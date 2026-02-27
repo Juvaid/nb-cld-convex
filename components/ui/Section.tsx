@@ -130,33 +130,37 @@ export const Section = ({
     }[containerWidth] || "container";
 
 
+    const uniqueSectionId = id || `section-${Math.random().toString(36).substr(2, 9)}`;
+
     return (
         <section
-            id={id}
+            id={uniqueSectionId}
             className={cn(
                 "relative overflow-hidden",
                 !backgroundColor && !backgroundImage ? getBgStyles(variant) : "",
                 pt, pb, mt, mb, shadowClass, borderClass, borderRadius, glassClasses,
-                "bg-[var(--section-bg)] bg-[image:var(--bg-image)] bg-[size:var(--bg-size)] bg-[position:var(--bg-pos)] bg-[repeat:var(--bg-repeat)]",
                 className
             )}
-            style={{
-                "--section-bg": backgroundColor || "transparent",
-                "--bg-image": backgroundImage ? `url(${backgroundImage})` : "none",
-                "--bg-size": backgroundSize,
-                "--bg-pos": backgroundPosition,
-                "--bg-repeat": backgroundRepeat,
-            } as React.CSSProperties}
         >
+            <style>{`
+                #${uniqueSectionId} {
+                    background-color: ${backgroundColor || "transparent"};
+                    background-image: ${backgroundImage ? `url(${backgroundImage})` : "none"};
+                    background-size: ${backgroundSize};
+                    background-position: ${backgroundPosition};
+                    background-repeat: ${backgroundRepeat};
+                }
+                ${overlayColor ? `
+                #${uniqueSectionId} .section-overlay {
+                    background-color: ${overlayColor};
+                    opacity: ${overlayOpacity};
+                }
+                ` : ''}
+            `}</style>
+
             {/* Background Overlay */}
             {overlayColor && (
-                <div
-                    className="absolute inset-0 z-0 pointer-events-none bg-[var(--overlay-color)] opacity-[var(--overlay-opacity)]"
-                    style={{
-                        "--overlay-color": overlayColor,
-                        "--overlay-opacity": overlayOpacity,
-                    } as React.CSSProperties}
-                />
+                <div className="absolute inset-0 z-0 pointer-events-none section-overlay" />
             )}
 
             {noContainer ? (

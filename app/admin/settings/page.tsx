@@ -11,6 +11,7 @@ import { useState, useEffect } from "react";
 import { Loader2, Save, Undo, Plus, Trash2, ArrowUp, ArrowDown, Clock, RotateCcw, Layout, Image as ImageIcon, Star } from "lucide-react";
 import { ImagePicker } from "@/components/ImagePicker";
 import { FontPicker } from "@/components/admin/FontPicker";
+import { Download } from "lucide-react";
 
 const PRESETS = [
     {
@@ -273,6 +274,31 @@ export default function SettingsPage() {
         }
     };
 
+    const handleExportConfig = () => {
+        const configToExport = {
+            theme: localTheme,
+            siteSettings: {
+                logoText,
+                logoImage,
+                siteTitle,
+                faviconUrl,
+                contactText,
+                footerDescription,
+                footerCopyrightText,
+                navLinks,
+                socialLinks,
+                discordWebhookUrl
+            }
+        };
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(configToExport, null, 2));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", "natureboon-theme-config.json");
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+    };
+
     if (!localTheme) return <div>Loading...</div>;
 
     return (
@@ -286,7 +312,11 @@ export default function SettingsPage() {
                     </h1>
                     <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest ml-4">Core visual & functional controls</p>
                 </div>
-                <div className="flex gap-2 w-full md:w-auto">
+                <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
+                    <Button variant="outline" size="sm" onClick={handleExportConfig} className="flex-1 md:flex-none" title="Download current settings as JSON for hardcoding">
+                        <Download className="w-3 h-3 mr-2" />
+                        Export Config
+                    </Button>
                     <Button variant="outline" size="sm" onClick={handleResetTheme} disabled={isSaving || isDoomed} className="flex-1 md:flex-none">
                         {isDoomed ? <Loader2 className="w-4 h-4 animate-spin" /> : <Undo className="w-3 h-3 mr-2" />}
                         Reset
@@ -308,20 +338,28 @@ export default function SettingsPage() {
                         </CardHeader>
                         <CardContent className="p-4 pt-4">
                             <div className="grid grid-cols-2 gap-2">
-                                {PRESETS.map((p) => (
-                                    <button
-                                        key={p.name}
-                                        onClick={() => applyPreset(p.colors)}
-                                        className="flex flex-col items-start p-2.5 rounded-xl bg-white border border-nb-green/10 hover:border-nb-green/40 transition-all text-left group"
-                                    >
-                                        <div className="flex gap-1 mb-2">
-                                            <div className="w-3 h-3 rounded-full border border-black/5 bg-[var(--p-color)]" style={{ "--p-color": p.colors.primary } as React.CSSProperties} />
-                                            <div className="w-3 h-3 rounded-full border border-black/5 bg-[var(--a-color)]" style={{ "--a-color": p.colors.accent } as React.CSSProperties} />
-                                            <div className="w-3 h-3 rounded-full border border-black/5 bg-[var(--s-color)]" style={{ "--s-color": p.colors.secondary } as React.CSSProperties} />
-                                        </div>
-                                        <span className="text-[10px] font-black tracking-tight text-slate-700">{p.name}</span>
-                                    </button>
-                                ))}
+                                {PRESETS.map((p, index) => {
+                                    const presetId = `preset-${index}`;
+                                    return (
+                                        <button
+                                            key={p.name}
+                                            onClick={() => applyPreset(p.colors)}
+                                            className={`flex flex-col items-start p-2.5 rounded-xl bg-white border border-nb-green/10 hover:border-nb-green/40 transition-all text-left group ${presetId}`}
+                                        >
+                                            <style>{`
+                                                .${presetId} .p-color { background-color: ${p.colors.primary}; }
+                                                .${presetId} .a-color { background-color: ${p.colors.accent}; }
+                                                .${presetId} .s-color { background-color: ${p.colors.secondary}; }
+                                            `}</style>
+                                            <div className="flex gap-1 mb-2">
+                                                <div className="w-3 h-3 rounded-full border border-black/5 p-color" />
+                                                <div className="w-3 h-3 rounded-full border border-black/5 a-color" />
+                                                <div className="w-3 h-3 rounded-full border border-black/5 s-color" />
+                                            </div>
+                                            <span className="text-[10px] font-black tracking-tight text-slate-700">{p.name}</span>
+                                        </button>
+                                    );
+                                })}
                             </div>
                         </CardContent>
                     </Card>

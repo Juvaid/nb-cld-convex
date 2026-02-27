@@ -125,8 +125,8 @@ export default defineSchema({
 
   themeSnapshots: defineTable({
     name: v.string(),
-    theme: v.any(),
-    siteSettings: v.optional(v.any()),
+    theme: v.record(v.string(), v.any()), // enforce object structure
+    siteSettings: v.optional(v.record(v.string(), v.any())), // enforce object structure
     image: v.optional(v.string()), // Storage ID for thumbnail
     isPreset: v.optional(v.boolean()), // Flag for official gallery themes
     createdAt: v.number(),

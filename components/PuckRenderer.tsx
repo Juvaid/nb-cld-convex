@@ -5,6 +5,7 @@ import { ThemeProvider } from "./ThemeProvider";
 import { Section } from "./ui/Section";
 import { Flex } from "./ui/Flex";
 import { Typography } from "./ui/Typography";
+import { ErrorBoundary } from "./ui/ErrorBoundary";
 
 const legacyMap: Record<string, string> = {
     Hero: "ModernHero",
@@ -15,9 +16,8 @@ const legacyMap: Record<string, string> = {
 };
 
 export function PuckRenderer({ data }: { data: any }) {
-    if (!data || !data.content) return null;
-
-    const root = data.root || {};
+    const root = data?.root || {};
+    const content = data?.content || [];
     const { header = {}, footer = {}, ...rootProps } = root.props || {};
 
     return (
@@ -25,15 +25,17 @@ export function PuckRenderer({ data }: { data: any }) {
             <div className="flex flex-col min-h-screen font-sans selection:bg-nb-green/30">
                 <SiteHeader {...header} />
                 <main className="flex-grow">
-                    {data.content.map((block: any, i: number) => {
+                    {content.map((block: any, i: number) => {
                         const type = legacyMap[block.type] || block.type;
                         const componentConfig = (config.components as any)[type];
 
                         if (componentConfig && componentConfig.render) {
                             return (
-                                <div key={i}>
-                                    {componentConfig.render({ ...block.props, puck: { renderDropZone: () => null } } as any)}
-                                </div>
+                                <ErrorBoundary key={i}>
+                                    <div>
+                                        {componentConfig.render({ ...block.props, puck: { renderDropZone: () => null } } as any)}
+                                    </div>
+                                </ErrorBoundary>
                             );
                         }
 

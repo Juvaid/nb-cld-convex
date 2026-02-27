@@ -1,5 +1,5 @@
 import { ComponentConfig } from "@puckeditor/core";
-import ModernServices from "../../scraped/ServicesGrid";
+import ModernServices from "../../blocks/ServicesGrid";
 import { ImagePicker } from "@/components/ImagePicker";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";

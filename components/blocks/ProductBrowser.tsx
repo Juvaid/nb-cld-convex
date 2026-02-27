@@ -7,6 +7,7 @@ import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DocumentList } from './DocumentList';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 export interface ProductItem {
     name: string;
@@ -72,9 +73,18 @@ export default function ProductBrowser({ categories: initialCategories = [], use
     if (!displayCategories || displayCategories.length === 0) {
         if (shouldShowDynamic && (!dbCategories || !dbProducts)) {
             return (
-                <div className="py-20 text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-nb-green mx-auto mb-4" />
-                    <div className="text-slate-400 font-bold uppercase tracking-widest text-xs">Loading Catalog...</div>
+                <div className="py-20 max-w-7xl mx-auto px-4 w-full">
+                    {/* Header Skeleton */}
+                    <div className="flex items-center gap-4 mb-8">
+                        <Skeleton className="w-1/4 h-10" />
+                        <Skeleton className="flex-1 h-10 rounded-xl" />
+                    </div>
+                    {/* Grid Skeleton */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+                            <Skeleton key={i} className="w-full h-80 rounded-[32px]" />
+                        ))}
+                    </div>
                 </div>
             );
         }

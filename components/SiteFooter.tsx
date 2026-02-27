@@ -36,6 +36,7 @@ export function SiteFooter({
     socialLinks: propSocialLinks,
 }: SiteFooterProps) {
     const siteSettings = useQuery(api.siteSettings.getSiteSettings);
+    const isLoading = siteSettings === undefined;
 
     const logoText = siteSettings?.logoText ?? propLogoText ?? "Nature's Boon";
     const logoImage = siteSettings?.logoImage ?? propLogoImage;
@@ -61,23 +62,45 @@ export function SiteFooter({
                     {/* Brand Col */}
                     <div className="space-y-6 sm:space-y-8">
                         <Link href="/" className="flex items-center gap-3 group">
-                            {logoImage ? (
+                            {isLoading ? (
+                                <>
+                                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-slate-200/20 animate-pulse" />
+                                    <div>
+                                        <div className="w-32 h-6 bg-slate-200/20 rounded mb-2 animate-pulse" />
+                                        <div className="w-16 h-3 bg-slate-200/20 rounded animate-pulse" />
+                                    </div>
+                                </>
+                            ) : logoImage ? (
                                 <img src={logoImage} alt={logoText} className="h-10 sm:h-12 w-auto object-contain" />
                             ) : (
                                 <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-nb-green-soft to-nb-green-deep flex items-center justify-center shadow-lg group-hover:rotate-12 transition-transform">
                                     <Leaf className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                                 </div>
                             )}
-                            <div>
-                                <span className={`text-xl sm:text-2xl font-black tracking-tight leading-none block ${textColor}`}>{logoText}</span>
-                                <span className={`text-[10px] ${subTextColor} font-bold tracking-[0.2em] uppercase leading-none mt-1 sm:mt-1.5 block`}>Since 2006</span>
-                            </div>
+                            {!isLoading && (
+                                <div>
+                                    <span className={`text-xl sm:text-2xl font-black tracking-tight leading-none block ${textColor}`}>{logoText}</span>
+                                    <span className={`text-[10px] ${subTextColor} font-bold tracking-[0.2em] uppercase leading-none mt-1 sm:mt-1.5 block`}>Since 2006</span>
+                                </div>
+                            )}
                         </Link>
-                        <p className={`${subTextColor} text-sm sm:text-base leading-relaxed font-medium max-w-xs`}>
-                            {description}
-                        </p>
+                        {isLoading ? (
+                            <div className="space-y-2">
+                                <div className="w-full h-4 bg-slate-200/20 rounded animate-pulse" />
+                                <div className="w-5/6 h-4 bg-slate-200/20 rounded animate-pulse" />
+                                <div className="w-4/6 h-4 bg-slate-200/20 rounded animate-pulse" />
+                            </div>
+                        ) : (
+                            <p className={`${subTextColor} text-sm sm:text-base leading-relaxed font-medium max-w-xs`}>
+                                {description}
+                            </p>
+                        )}
                         <div className="flex gap-4">
-                            {socialLinks.map((link: { platform: string; href: string }, i: number) => (
+                            {isLoading ? (
+                                Array.from({ length: 3 }).map((_, i) => (
+                                    <div key={i} className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-slate-200/20 animate-pulse" />
+                                ))
+                            ) : socialLinks.map((link: { platform: string; href: string }, i: number) => (
                                 <a
                                     key={i}
                                     href={link.href}

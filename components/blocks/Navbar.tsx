@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Menu, X, Leaf, Send } from 'lucide-react';
-import { defaultNavLinks } from '@/lib/scraped-theme';
+import { defaultNavLinks } from '@/lib/default-theme';
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);

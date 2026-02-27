@@ -1,5 +1,5 @@
 import { ComponentConfig } from "@puckeditor/core";
-import ModernHero from "../../scraped/Hero";
+import ModernHero from "../../blocks/Hero";
 import { ImagePicker } from "@/components/ImagePicker";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";

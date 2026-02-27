@@ -32,6 +32,7 @@ export function SiteHeader({
 
     // Fetch settings from Convex
     const siteSettings = useQuery(api.siteSettings.getSiteSettings);
+    const isLoading = siteSettings === undefined;
 
     // Default fallbacks
     const defaultLogoText = "NatureBoon";
@@ -56,7 +57,12 @@ export function SiteHeader({
         <header className="bg-white/95 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100/50">
             <div className="container mx-auto px-4 h-14 md:h-16 lg:h-20 flex items-center justify-between transition-all duration-300">
                 <Link href="/" className="font-bold text-2xl tracking-tight text-slate-900 flex items-center gap-3 group">
-                    {logoImage ? (
+                    {isLoading ? (
+                        <>
+                            <div className="w-10 h-10 bg-slate-200/60 rounded-xl animate-pulse" />
+                            <div className="hidden sm:block w-32 h-6 bg-slate-200/60 rounded animate-pulse" />
+                        </>
+                    ) : logoImage ? (
                         /* eslint-disable-next-line @next/next/no-img-element */
                         <img src={logoImage} alt={logoText} className="h-10 w-auto object-contain transition-transform group-hover:scale-105" />
                     ) : (
@@ -64,33 +70,45 @@ export function SiteHeader({
                             NB
                         </div>
                     )}
-                    <span className="hidden sm:inline bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent font-black tracking-tight font-logo">
-                        {logoText}
-                    </span>
+                    {!isLoading && (
+                        <span className="hidden sm:inline bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent font-black tracking-tight font-logo">
+                            {logoText}
+                        </span>
+                    )}
                 </Link>
 
                 {/* Desktop Nav */}
-                <nav className="hidden md:flex gap-8 text-sm font-bold text-slate-600">
-                    {links.map((link: NavLink, i: number) => (
-                        <Link
-                            key={i}
-                            href={link.href || "#"}
-                            className={`hover:text-nb-green transition-colors relative group py-2 ${pathname === link.href ? "text-nb-green" : ""
-                                }`}
-                        >
-                            {link.label}
-                            <span className={`absolute bottom-0 left-0 w-full h-0.5 bg-nb-green transform origin-left transition-transform duration-300 ${pathname === link.href ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
-                                }`} />
-                        </Link>
-                    ))}
+                <nav className="hidden md:flex gap-8 text-sm font-bold text-slate-600 items-center">
+                    {isLoading ? (
+                        Array.from({ length: 4 }).map((_, i) => (
+                            <div key={i} className="w-16 h-4 bg-slate-200/60 rounded animate-pulse" />
+                        ))
+                    ) : (
+                        links.map((link: NavLink, i: number) => (
+                            <Link
+                                key={i}
+                                href={link.href || "#"}
+                                className={`hover:text-nb-green transition-colors relative group py-2 ${pathname === link.href ? "text-nb-green" : ""
+                                    }`}
+                            >
+                                {link.label}
+                                <span className={`absolute bottom-0 left-0 w-full h-0.5 bg-nb-green transform origin-left transition-transform duration-300 ${pathname === link.href ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+                                    }`} />
+                            </Link>
+                        ))
+                    )}
                 </nav>
 
                 <div className="hidden md:flex items-center gap-4">
-                    <Link href="/contact">
-                        <Button variant="primary" size="md" className="shadow-[0_10px_20px_rgba(43,238,108,0.2)]">
-                            {contactText}
-                        </Button>
-                    </Link>
+                    {isLoading ? (
+                        <div className="w-28 h-10 rounded-xl bg-slate-200/60 animate-pulse" />
+                    ) : (
+                        <Link href="/contact">
+                            <Button variant="primary" size="md" className="shadow-[0_10px_20px_rgba(43,238,108,0.2)]">
+                                {contactText}
+                            </Button>
+                        </Link>
+                    )}
                 </div>
 
                 {/* Mobile Menu Toggle */}

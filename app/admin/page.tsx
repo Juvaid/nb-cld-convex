@@ -10,7 +10,8 @@ export default function AdminDashboard() {
     const products = useQuery(api.product_mutations.listProducts) || [];
     const blogs = useQuery(api.blogs.listBlogs) || [];
     const inquiries = useQuery(api.inquiries.list) || [];
-    const mediaCount = 279;
+    const media = useQuery(api.media.listAll) || [];
+    const mediaCount = media.length;
 
     const stats = [
         { label: "Site Pages", value: pages.length, icon: FileText, color: "text-blue-500", bg: "bg-blue-50", description: "Active landing pages", href: "/admin/pages" },

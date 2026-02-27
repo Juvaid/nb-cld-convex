@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 
 export interface ImageCarouselItem {
     url: string;
@@ -98,9 +99,13 @@ export default function ImageCarousel({
                     className="absolute inset-0"
                 >
                     {currentItem.url ? (
-                        <div
-                            className="absolute inset-0 bg-cover bg-center bg-[image:var(--carousel-bg)]"
-                            style={{ "--carousel-bg": `url(${currentItem.url})` } as React.CSSProperties}
+                        <Image
+                            src={currentItem.url}
+                            alt={currentItem.alt || "Carousel image"}
+                            fill
+                            priority={current === 0} // prioritize LCP for the first image
+                            className="object-cover object-center"
+                            sizes="100vw"
                         />
                     ) : (
                         <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">

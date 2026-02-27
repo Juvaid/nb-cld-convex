@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "@/convex/_generated/api";
-import ProductDetail from "@/components/scraped/ProductDetail";
+import ProductDetail from "@/components/blocks/ProductDetail";
 
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
@@ -10,9 +10,20 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     try {
         const product = await convex.query(api.products.getBySlug, { slug });
         if (product) {
+            const title = `${product.name} | NatureBoon`;
+            const description = product.description || `Buy ${product.name} from NatureBoon B2B catalog.`;
+            const imageUrl = product.images?.[0] || undefined;
+
             return {
-                title: `${product.name} | NatureBoon`,
-                description: product.description || `Buy ${product.name} from NatureBoon B2B catalog.`,
+                title,
+                description,
+                openGraph: {
+                    title,
+                    description,
+                    type: "website",
+                    siteName: "NatureBoon",
+                    ...(imageUrl && { images: [{ url: imageUrl }] }),
+                }
             };
         }
     } catch { /* fall through to defaults */ }

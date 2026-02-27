@@ -12,7 +12,7 @@ import { productsPageData } from "@/data/products-page-data";
 import { servicesPageData } from "@/data/services-page-data";
 import { contactPageData } from "@/data/contact-page-data";
 import homePageData from "@/data/home-page-data.json";
-import { defaultServices } from "@/lib/scraped-theme";
+import { defaultServices } from "@/lib/default-theme";
 
 interface EditorClientProps {
     path: string;
