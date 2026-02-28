@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useId } from "react";
 import Link from "next/link";
 
 /* ─── TYPES ─── */
@@ -117,8 +117,21 @@ export default function ProductGridHero({
     horizontalPadding = "0px",
     cards = DEFAULT_CARDS,
 }: ProductGridHeroProps) {
+    const blockId = useId();
+    const cleanId = blockId.replace(/:/g, "");
+
     return (
-        <section id={sectionId} className="flex flex-col w-full">
+        <section id={sectionId || `product-grid-${cleanId}`} className="flex flex-col w-full">
+            {/* Scoped Dynamic Styles */}
+            <style>{`
+                #${sectionId || `product-grid-${cleanId}`} .grid-padding {
+                    padding-left: ${horizontalPadding};
+                    padding-right: ${horizontalPadding};
+                }
+                ${(cards ?? [])
+                    .map((card, i) => `#${sectionId || `product-grid-${cleanId}`} .bg-card-${i} { background-image: url('${card.image}'); }`)
+                    .join("\n")}
+            `}</style>
             {/* ── HERO TEXT (30vh) ── */}
             <div className="flex flex-col items-center justify-center py-14 px-4 bg-[#f6f8f7] min-h-[30vh] text-center">
                 <div className="flex flex-col items-center max-w-3xl space-y-5">
@@ -143,10 +156,7 @@ export default function ProductGridHero({
             </div>
 
             {/* ── PRODUCT GRID (70vh) ── */}
-            <div
-                className="w-full"
-                style={{ paddingLeft: horizontalPadding, paddingRight: horizontalPadding }}
-            >
+            <div className="w-full grid-padding">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 w-full min-h-[70vh]">
                     {(cards ?? []).map((card, i) => (
                         <a
@@ -155,10 +165,7 @@ export default function ProductGridHero({
                             className="group relative overflow-hidden bg-slate-100 cursor-pointer block min-h-[50vh]"
                         >
                             {/* Background image with zoom on hover */}
-                            <div
-                                className="absolute inset-0 z-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                                style={{ backgroundImage: `url('${card.image}')` }}
-                            />
+                            <div className={`absolute inset-0 z-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 bg-card-${i}`} />
 
                             {/* Colour overlay */}
                             <div className={`absolute inset-0 z-[1] ${overlayClasses[card.overlayStyle]}`} />

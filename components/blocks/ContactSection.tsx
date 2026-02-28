@@ -40,7 +40,7 @@ export default function ContactSection({
 }: ContactSectionProps) {
 
     return (
-        <section className="py-12 bg-white">
+        <section className="py-12 bg-transparent">
             <div className="max-w-7xl mx-auto px-6 sm:px-8">
                 <div className="grid lg:grid-cols-5 gap-12">
                     {/* Contact info */}
@@ -49,9 +49,20 @@ export default function ContactSection({
 
                         {(infoItems || []).map((item) => {
                             const IconComponent = iconMap[item.icon] || Mail;
+
+                            // Determine link properties based on icon type
+                            let href = "#";
+                            let target = "_self";
+                            if (item.icon === 'Mail') href = `mailto:${item.value}`;
+                            if (item.icon === 'Phone') href = `https://wa.me/${item.value.replace(/[^0-9+]/g, '')}`;
+                            if (item.icon === 'MapPin') {
+                                href = `https://www.google.com/maps/dir/?api=1&destination=Nature%27s+Boon%2C+${encodeURIComponent(item.value)}`;
+                                target = "_blank";
+                            }
+
                             return (
-                                <div key={item.label} className="flex gap-4 p-4 rounded-2xl bg-white border border-slate-900/5 shadow-sm">
-                                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-nb-green to-nb-green-light flex items-center justify-center shrink-0 shadow-md shadow-nb-green/20 overflow-hidden">
+                                <a key={item.label} href={href} target={target} rel={target === "_blank" ? "noopener noreferrer" : undefined} className="flex gap-4 p-4 rounded-2xl bg-white border border-slate-900/5 shadow-sm hover:border-nb-green/30 hover:shadow-md transition-all group cursor-pointer block">
+                                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-nb-green to-nb-green-light flex items-center justify-center shrink-0 shadow-md shadow-nb-green/20 overflow-hidden group-hover:scale-105 transition-transform">
                                         {iconMap[item.icon] ? (
                                             <IconComponent className="w-5 h-5 text-white" />
                                         ) : (
@@ -62,11 +73,11 @@ export default function ContactSection({
                                             />
                                         )}
                                     </div>
-                                    <div>
-                                        <p className="text-sm text-slate-500">{item.label}</p>
-                                        <p className="font-semibold text-slate-900">{item.value}</p>
+                                    <div className="flex-1">
+                                        <p className="text-sm text-slate-500 group-hover:text-nb-green transition-colors">{item.label}</p>
+                                        <p className="font-semibold text-slate-900 break-words">{item.value}</p>
                                     </div>
-                                </div>
+                                </a>
                             );
                         })}
 

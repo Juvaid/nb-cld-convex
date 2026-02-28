@@ -14,7 +14,7 @@ http.route({
         await ctx.runMutation(api.ingestion_mutations.saveIngestedPage, {
             path,
             title,
-            data,
+            draftData: data,
         });
 
         return new Response(JSON.stringify({ success: true }), {

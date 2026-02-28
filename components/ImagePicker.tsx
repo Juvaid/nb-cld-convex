@@ -113,7 +113,7 @@ export function ImagePicker({ value, onChange }: ImagePickerProps) {
 
             {/* Metadata Editor Popup */}
             {editingMetadata && (
-                <div className="absolute top-0 right-full mr-4 w-64 bg-white rounded-2xl shadow-2xl border border-slate-100 p-4 z-[2000] animate-in slide-in-from-right-4 duration-200">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-4 w-64 bg-white rounded-2xl shadow-2xl border border-slate-100 p-4 z-[2000] animate-in slide-in-from-bottom-4 duration-200">
                     <div className="flex items-center justify-between mb-4">
                         <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Image Metadata</h4>
                         <button

@@ -83,7 +83,8 @@ export const syncPuckToProducts = mutation({
 
         for (const page of pages) {
             try {
-                const data = JSON.parse(page.data);
+                const dataContent = page.draftData || (page as any).data || '{"content":[]}';
+                const data = JSON.parse(dataContent);
                 // Puck data structure usually has 'content' array
                 const blocks = data.content || [];
 

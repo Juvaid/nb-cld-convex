@@ -29,6 +29,37 @@ const WIDTH_OPTIONS = [
     { label: "Small (512px)", value: "512px" },
 ];
 
+const HEIGHT_MAP: Record<string, string> = {
+    "4px": "h-1",
+    "8px": "h-2",
+    "12px": "h-3",
+    "16px": "h-4",
+    "24px": "h-6",
+    "32px": "h-8",
+    "40px": "h-10",
+    "48px": "h-12",
+    "64px": "h-16",
+    "80px": "h-20",
+    "96px": "h-24",
+    "128px": "h-32",
+};
+
+const WIDTH_MAP: Record<string, string> = {
+    "100%": "w-full max-w-full",
+    "1280px": "w-full max-w-screen-xl",
+    "1024px": "w-full max-w-screen-lg",
+    "768px": "w-full max-w-screen-md",
+    "512px": "w-full max-w-lg",
+};
+
+const BG_COLOR_MAP: Record<string, string> = {
+    "transparent": "bg-transparent",
+    "#ffffff": "bg-white",
+    "#f0fdf4": "bg-green-50",
+    "#f8fafc": "bg-slate-50",
+    "#15803d": "bg-nb-green",
+};
+
 export const SpacerBlockConfig: ComponentConfig<SpacerBlockProps> = {
     label: "Spacer",
     fields: {
@@ -59,12 +90,18 @@ export const SpacerBlockConfig: ComponentConfig<SpacerBlockProps> = {
         maxWidth: "100%",
         backgroundColor: "transparent",
     },
-    render: ({ height = "32px", maxWidth = "100%", backgroundColor = "transparent" }) => (
-        <div
-            style={{ backgroundColor, width: "100%", display: "flex", justifyContent: "center" }}
-            aria-hidden="true"
-        >
-            <div style={{ height, width: maxWidth, maxWidth: "100%" }} />
-        </div>
-    ),
+    render: ({ height = "32px", maxWidth = "100%", backgroundColor = "transparent" }) => {
+        const bgClass = BG_COLOR_MAP[backgroundColor] || "bg-transparent";
+        const heightClass = HEIGHT_MAP[height] || "h-8";
+        const widthClass = WIDTH_MAP[maxWidth] || "w-full max-w-full";
+
+        return (
+            <div
+                className={`${bgClass} w-full flex justify-center`}
+                aria-hidden="true"
+            >
+                <div className={`${heightClass} ${widthClass}`} />
+            </div>
+        );
+    },
 };

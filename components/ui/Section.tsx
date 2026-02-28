@@ -129,8 +129,8 @@ export const Section = ({
         full: "max-w-none px-0"
     }[containerWidth] || "container";
 
-
-    const uniqueSectionId = id || `section-${Math.random().toString(36).substr(2, 9)}`;
+    const generatedId = React.useId();
+    const uniqueSectionId = id || `section-${generatedId.replace(/:/g, '')}`;
 
     return (
         <section

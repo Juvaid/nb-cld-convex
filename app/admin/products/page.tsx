@@ -84,9 +84,10 @@ export default function ProductsIndexPage() {
 
     if (products === undefined) {
         return (
-            <Flex align="center" justify="center" className="h-96">
-                <Loader2 className="w-8 h-8 animate-spin text-nb-green" />
-            </Flex>
+            <div className="flex flex-col items-center justify-center py-20 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                <Loader2 className="animate-spin text-nb-green mb-4" size={32} />
+                <p className="text-slate-500 font-semibold text-sm">Loading Product Catalog...</p>
+            </div>
         );
     }
 
@@ -94,61 +95,65 @@ export default function ProductsIndexPage() {
     const isIndeterminate = selectedIds.size > 0 && selectedIds.size < (filteredProducts?.length || 0);
 
     return (
-        <div className="p-8 space-y-6 max-w-7xl mx-auto">
-            {/* Header */}
-            <Flex justify="between" align="center">
+        <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <Typography variant="h2" className="text-slate-900 font-bold text-2xl tracking-tight">Products</Typography>
+                    <h1 className="text-3xl font-bold tracking-tight text-slate-900">Products</h1>
+                    <p className="text-sm font-medium text-slate-500 mt-1">Manage your eCommerce catalog and inventory.</p>
                 </div>
-                <Link href="/admin/products/new">
-                    <Button className="bg-[#1a1a1a] hover:bg-black text-white font-medium px-4 shadow-sm h-9 rounded-lg">
-                        <Plus className="w-4 h-4 mr-2" />
-                        Add product
-                    </Button>
-                </Link>
-            </Flex>
 
-            <Card className="border-slate-200 shadow-sm rounded-xl overflow-hidden bg-white">
+                <Link
+                    href="/admin/products/new"
+                    className="flex items-center justify-center gap-2 bg-nb-green text-white px-4 h-10 flex-shrink-0 rounded-xl font-semibold shadow-sm hover:bg-nb-green/90 transition-all focus:ring-2 focus:ring-nb-green focus:ring-offset-2"
+                >
+                    <Plus size={18} />
+                    Create New Product
+                </Link>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
                 {/* Filters Bar */}
-                <div className="p-3 border-b border-slate-200 flex flex-wrap gap-2 items-center bg-white">
-                    <div className="relative max-w-md flex-grow">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <div className="p-4 border-b border-slate-200 flex flex-col sm:flex-row gap-4 items-center bg-white/50 backdrop-blur-sm z-10 relative">
+                    <div className="relative w-full sm:max-w-md group group-focus-within:text-nb-green">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-nb-green transition-colors" />
                         <input
                             type="text"
                             placeholder="Filter products..."
-                            className="w-full pl-9 pr-3 py-1.5 h-9 bg-white border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-nb-green/20 focus:border-nb-green transition-shadow"
+                            className="w-full pl-9 pr-3 h-10 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-nb-green focus:bg-white placeholder:text-slate-400 transition-all"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
-                    <select
-                        title="Filter by status"
-                        className="h-9 px-3 py-1.5 bg-white border border-slate-300 rounded-lg text-sm text-slate-700 hover:bg-slate-50 focus:outline-none focus:border-nb-green cursor-pointer"
-                        value={statusFilter}
-                        onChange={(e) => setStatusFilter(e.target.value)}
-                    >
-                        <option value="all">Status: All</option>
-                        <option value="active">Active</option>
-                        <option value="draft">Draft</option>
-                        <option value="archived">Archived</option>
-                    </select>
+                    <div className="flex items-center gap-3 w-full sm:w-auto">
+                        <select
+                            title="Filter by status"
+                            className="h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-600 focus:outline-none focus:ring-2 focus:ring-nb-green focus:bg-white transition-all cursor-pointer flex-1 sm:flex-auto"
+                            value={statusFilter}
+                            onChange={(e) => setStatusFilter(e.target.value)}
+                        >
+                            <option value="all">Status: All</option>
+                            <option value="active">Active</option>
+                            <option value="draft">Draft</option>
+                            <option value="archived">Archived</option>
+                        </select>
 
-                    <select
-                        title="Filter by category"
-                        className="h-9 px-3 py-1.5 bg-white border border-slate-300 rounded-lg text-sm text-slate-700 hover:bg-slate-50 focus:outline-none focus:border-nb-green cursor-pointer"
-                        value={categoryFilter}
-                        onChange={(e) => setCategoryFilter(e.target.value)}
-                    >
-                        <option value="all">Category: All</option>
-                        {categories?.map(c => (
-                            <option key={c._id} value={c._id}>{c.name}</option>
-                        ))}
-                    </select>
+                        <select
+                            title="Filter by category"
+                            className="h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-600 focus:outline-none focus:ring-2 focus:ring-nb-green focus:bg-white transition-all cursor-pointer flex-1 sm:flex-auto max-w-[200px] truncate"
+                            value={categoryFilter}
+                            onChange={(e) => setCategoryFilter(e.target.value)}
+                        >
+                            <option value="all">Category: All</option>
+                            {categories?.map(c => (
+                                <option key={c._id} value={c._id}>{c.name}</option>
+                            ))}
+                        </select>
+                    </div>
                 </div>
 
                 {/* Bulk Actions Bar (Floating inside header area) */}
                 {selectedIds.size > 0 && (
-                    <div className="bg-white border-b border-slate-200 px-4 py-3 flex items-center gap-4 animate-in fade-in slide-in-from-top-2">
+                    <div className="bg-slate-50 border-b border-slate-200 px-4 py-3 flex items-center gap-4 animate-in fade-in slide-in-from-top-2">
                         <div className="flex items-center gap-3">
                             <input
                                 type="checkbox"
@@ -159,32 +164,32 @@ export default function ProductsIndexPage() {
                                 ref={el => { if (el) el.indeterminate = isIndeterminate; }}
                                 onChange={handleSelectAll}
                             />
-                            <span className="text-sm font-medium text-slate-700">
+                            <span className="text-sm font-semibold text-slate-700">
                                 {selectedIds.size} selected
                             </span>
                         </div>
                         <div className="h-4 w-px bg-slate-300"></div>
                         <div className="flex gap-2">
-                            <Button variant="outline" size="sm" className="h-8 text-xs font-medium" onClick={() => handleBulkStatusChange("active")}>
+                            <button className="h-8 px-3 rounded-lg flex items-center justify-center text-xs font-semibold bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:border-slate-300 shadow-sm transition-all" onClick={() => handleBulkStatusChange("active")}>
                                 <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Set active
-                            </Button>
-                            <Button variant="outline" size="sm" className="h-8 text-xs font-medium" onClick={() => handleBulkStatusChange("draft")}>
+                            </button>
+                            <button className="h-8 px-3 rounded-lg flex items-center justify-center text-xs font-semibold bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:border-slate-300 shadow-sm transition-all" onClick={() => handleBulkStatusChange("draft")}>
                                 <Pencil className="w-3.5 h-3.5 mr-1" /> Set draft
-                            </Button>
-                            <Button variant="outline" size="sm" className="h-8 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 border-transparent bg-transparent shadow-none" onClick={handleBulkDelete}>
+                            </button>
+                            <button className="h-8 px-3 rounded-lg flex items-center justify-center text-xs font-semibold bg-white border border-transparent text-rose-600 hover:bg-rose-50 transition-all" onClick={handleBulkDelete}>
                                 <Trash2 className="w-3.5 h-3.5 mr-1" /> Delete products
-                            </Button>
+                            </button>
                         </div>
                     </div>
                 )}
 
                 {/* Data Table */}
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
+                <div className="overflow-x-auto min-h-[400px]">
+                    <table className="w-full text-left border-collapse min-w-[800px]">
                         {selectedIds.size === 0 && (
-                            <thead className="bg-[#f9fafb] border-b border-slate-200">
+                            <thead className="bg-slate-50/50 border-b border-slate-200">
                                 <tr>
-                                    <th className="px-4 py-3 w-12">
+                                    <th className="px-5 py-4 w-12 text-xs font-semibold text-slate-500 uppercase tracking-widest pl-6">
                                         <input
                                             type="checkbox"
                                             title="Select all products"
@@ -194,11 +199,11 @@ export default function ProductsIndexPage() {
                                             onChange={handleSelectAll}
                                         />
                                     </th>
-                                    <th className="px-4 py-3 text-xs font-medium text-slate-500 w-12">Image</th>
-                                    <th className="px-4 py-3 text-xs font-medium text-slate-500">Product</th>
-                                    <th className="px-4 py-3 text-xs font-medium text-slate-500">Status</th>
-                                    <th className="px-4 py-3 text-xs font-medium text-slate-500">Inventory / SKU</th>
-                                    <th className="px-4 py-3 text-xs font-medium text-slate-500">Category</th>
+                                    <th className="px-5 py-4 text-xs font-semibold text-slate-500 uppercase tracking-widest w-16">Image</th>
+                                    <th className="px-5 py-4 text-xs font-semibold text-slate-500 uppercase tracking-widest">Product</th>
+                                    <th className="px-5 py-4 text-xs font-semibold text-slate-500 uppercase tracking-widest">Status</th>
+                                    <th className="px-5 py-4 text-xs font-semibold text-slate-500 uppercase tracking-widest">Inventory / SKU</th>
+                                    <th className="px-5 py-4 text-xs font-semibold text-slate-500 uppercase tracking-widest">Category</th>
                                 </tr>
                             </thead>
                         )}
@@ -208,9 +213,9 @@ export default function ProductsIndexPage() {
                                 return (
                                     <tr
                                         key={product._id}
-                                        className={`group transition-colors ${isSelected ? 'bg-slate-50/80' : 'hover:bg-slate-50/50'}`}
+                                        className={`group transition-colors ${isSelected ? 'bg-nb-green/5' : 'hover:bg-slate-50/50'}`}
                                     >
-                                        <td className="px-4 py-3 align-middle w-12">
+                                        <td className="px-5 py-4 align-middle w-12 pl-6">
                                             <input
                                                 type="checkbox"
                                                 title={`Select product ${product.name}`}
@@ -220,9 +225,9 @@ export default function ProductsIndexPage() {
                                                 onChange={(e) => handleSelectOne(product._id, e.target.checked)}
                                             />
                                         </td>
-                                        <td className="px-4 py-3 align-middle w-12">
+                                        <td className="px-5 py-4 align-middle w-16">
                                             <Link href={`/admin/products/${product._id}`} className="block">
-                                                <div className="w-10 h-10 rounded-md bg-[#f3f4f6] border border-slate-200 flex items-center justify-center overflow-hidden flex-shrink-0">
+                                                <div className="w-12 h-12 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center overflow-hidden flex-shrink-0 group-hover:scale-105 transition-transform">
                                                     {product.images && product.images.length > 0 && typeof product.images[0] === 'string' && product.images[0] !== "[object Object]" ? (
                                                         <img
                                                             src={product.images[0].startsWith('http') ? product.images[0] : `/api/storage/${product.images[0]}`}
@@ -230,37 +235,40 @@ export default function ProductsIndexPage() {
                                                             className="w-full h-full object-cover"
                                                         />
                                                     ) : (
-                                                        <ImageIcon className="w-4 h-4 text-slate-400" />
+                                                        <ImageIcon className="w-5 h-5 text-slate-300" />
                                                     )}
                                                 </div>
                                             </Link>
                                         </td>
-                                        <td className="px-4 py-3 align-middle">
+                                        <td className="px-5 py-4 align-middle">
                                             <Link href={`/admin/products/${product._id}`} className="block">
-                                                <Typography variant="body" className="font-semibold text-slate-900 group-hover:underline decoration-slate-300 underline-offset-2">
+                                                <div className="font-semibold text-sm text-slate-900 group-hover:text-nb-green transition-colors">
                                                     {product.name}
-                                                </Typography>
-                                                <Typography variant="small" className="text-slate-500 leading-none mt-1">
+                                                </div>
+                                                <div className="text-xs font-medium text-slate-500 mt-0.5">
                                                     {product.price ? `₹${product.price.toLocaleString()}` : "No price"}
-                                                </Typography>
+                                                </div>
                                             </Link>
                                         </td>
-                                        <td className="px-4 py-3 align-middle">
-                                            <Badge variant="outline" className={`capitalize font-medium text-[11px] px-2 py-0.5 ${getStatusColor(product.status)}`}>
+                                        <td className="px-5 py-4 align-middle">
+                                            <span className={`px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider ${product.status === "active" ? "bg-nb-green/10 text-nb-green" :
+                                                product.status === "draft" ? "bg-amber-50 text-amber-600" :
+                                                    "bg-slate-100 text-slate-500"
+                                                }`}>
                                                 {product.status}
-                                            </Badge>
+                                            </span>
                                         </td>
-                                        <td className="px-4 py-3 align-middle">
-                                            <Typography variant="small" className="text-slate-600 font-mono">
+                                        <td className="px-5 py-4 align-middle">
+                                            <code className="text-xs font-medium bg-slate-50 text-slate-600 px-2 py-1 rounded-md border border-slate-200">
                                                 {product.sku || (
-                                                    <span className="text-slate-400 italic font-sans text-xs">No SKU</span>
+                                                    <span className="text-slate-400 italic">No SKU</span>
                                                 )}
-                                            </Typography>
+                                            </code>
                                         </td>
-                                        <td className="px-4 py-3 align-middle">
-                                            <Badge variant="secondary" className="bg-slate-100 hover:bg-slate-200 text-slate-600 font-normal">
+                                        <td className="px-5 py-4 align-middle">
+                                            <span className="px-2.5 py-1 bg-slate-100 text-slate-600 font-semibold text-xs rounded-lg whitespace-nowrap">
                                                 {categories?.find(c => c._id === product.categoryId)?.name || "Uncategorized"}
-                                            </Badge>
+                                            </span>
                                         </td>
                                     </tr>
                                 );
@@ -268,17 +276,14 @@ export default function ProductsIndexPage() {
                             {filteredProducts?.length === 0 && (
                                 <tr>
                                     <td colSpan={6} className="px-4 py-24 text-center">
-                                        <Flex direction="col" align="center" gap="4">
-                                            <div className="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center">
-                                                <Search className="w-8 h-8 text-slate-400" />
+                                        <div className="flex flex-col items-center gap-2">
+                                            <div className="w-16 h-16 rounded-2xl bg-slate-50 flex items-center justify-center mb-2">
+                                                <Search className="w-8 h-8 text-slate-300" />
                                             </div>
-                                            <div>
-                                                <Typography variant="body" className="font-semibold text-slate-900">No products found</Typography>
-                                                <Typography variant="small" className="text-slate-500 mt-1">Try changing the filters or search term</Typography>
-                                            </div>
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
+                                            <div className="font-semibold text-slate-900 text-sm">No products found</div>
+                                            <div className="text-xs text-slate-500 mt-1">Try changing the filters or search term</div>
+                                            <button
+                                                className="mt-4 px-4 py-1.5 rounded-lg text-xs font-semibold bg-white border border-slate-200 text-slate-600 hover:text-nb-green hover:border-nb-green/30"
                                                 onClick={() => {
                                                     setSearchQuery("");
                                                     setStatusFilter("all");
@@ -286,15 +291,15 @@ export default function ProductsIndexPage() {
                                                 }}
                                             >
                                                 Clear filters
-                                            </Button>
-                                        </Flex>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             )}
                         </tbody>
                     </table>
                 </div>
-            </Card>
+            </div>
         </div>
     );
 }

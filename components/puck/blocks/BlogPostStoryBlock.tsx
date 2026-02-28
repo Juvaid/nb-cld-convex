@@ -1,5 +1,5 @@
 import React from "react";
-import { ComponentConfig } from "@puckeditor/core";
+import { ComponentConfig, DropZone } from "@puckeditor/core";
 import { Section } from "../../ui/Section";
 import { ImagePicker } from "@/components/ImagePicker";
 import { RichText } from "../RichText";
@@ -10,7 +10,6 @@ export interface BlogPostStoryBlockProps extends SharedFieldProps {
     author?: string;
     date?: string;
     image?: string;
-    content?: string;
     [key: string]: any;
 }
 
@@ -25,17 +24,12 @@ export const BlogPostStoryBlockConfig: ComponentConfig<BlogPostStoryBlockProps> 
                 <ImagePicker value={value} onChange={onChange} />
             )
         },
-        content: {
-            type: "custom",
-            render: (props: any) => <RichText {...props} />
-        },
         ...sharedFields
     },
     defaultProps: {
         title: "New Nature Story",
         author: "Nature's Boon Team",
-        date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
-        content: "<p>Start writing your beautiful story here...</p>"
+        date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
     },
     render: (props: any) => (
         <Section {...props} sectionId={props.sectionId} containerWidth="narrow">
@@ -57,10 +51,9 @@ export const BlogPostStoryBlockConfig: ComponentConfig<BlogPostStoryBlockProps> 
                     </div>
                 )}
 
-                <div
-                    className="prose prose-slate prose-lg prose-nb max-w-none prose-headings:font-black prose-headings:text-slate-900 prose-p:text-slate-600 prose-p:leading-relaxed prose-li:text-slate-600"
-                    dangerouslySetInnerHTML={{ __html: props.content }}
-                />
+                <div className="w-full">
+                    <DropZone zone="content" />
+                </div>
             </div>
         </Section>
     )

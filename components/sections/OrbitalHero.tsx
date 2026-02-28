@@ -120,22 +120,16 @@ export default function OrbitalHero({
     return (
         <section
             id={sectionId}
-            className="relative w-full bg-white overflow-hidden"
-            style={{ minHeight: "90vh" }}
+            className="relative w-full bg-white overflow-hidden min-h-[90vh]"
         >
             {/* ── Sage radial background glow ── */}
             <div
-                className="pointer-events-none absolute inset-0"
-                style={{
-                    background:
-                        "radial-gradient(ellipse 65% 65% at 50% 52%, #f0fdf4 0%, white 70%)",
-                }}
+                className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_65%_65%_at_50%_52%,_#f0fdf4_0%,_white_70%)]"
             />
 
             {/* ── Outer dashed guide ring (decorative) ── */}
             <div
-                className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-green-200"
-                style={{ width: "580px", height: "580px", marginTop: "-30px" }}
+                className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-green-200 w-[580px] h-[580px] -mt-[30px]"
             />
 
             {/* ── HEADLINE (above the circle) ── */}
@@ -155,10 +149,10 @@ export default function OrbitalHero({
             </div>
 
             {/* ── ORBITAL COMPOSITION ── */}
-            <div className="relative z-10 flex items-center justify-center" style={{ height: "420px" }}>
+            <div className="relative z-10 flex items-center justify-center h-[420px]">
 
                 {/* LEFT stat card (9 o'clock) */}
-                <div className="absolute left-1/2 top-1/2 -translate-y-1/2" style={{ transform: "translate(calc(-50% - 260px), -50%)" }}>
+                <div className="absolute left-1/2 top-1/2 [transform:translate(calc(-50%-260px),-50%)]">
                     <div className="bg-white border border-slate-100 rounded-2xl shadow-md px-5 py-4 min-w-[130px] text-center">
                         <div className="text-2xl font-black text-slate-900">{stat2Value}</div>
                         <div className="text-xs text-slate-500 mt-0.5 font-medium">{stat2Label}</div>
@@ -166,7 +160,7 @@ export default function OrbitalHero({
                 </div>
 
                 {/* ISO badge (10-11 o'clock) */}
-                <div className="absolute left-1/2 top-1/2" style={{ transform: "translate(calc(-50% - 200px), calc(-50% - 115px))" }}>
+                <div className="absolute left-1/2 top-1/2 [transform:translate(calc(-50%-200px),calc(-50%-115px))]">
                     <div className="bg-white border border-green-100 rounded-full shadow-sm px-4 py-2 flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-[#15803d] inline-block" />
                         <span className="text-xs font-bold text-slate-700">{badge1Text}</span>
@@ -174,7 +168,7 @@ export default function OrbitalHero({
                 </div>
 
                 {/* EST badge (1-2 o'clock) */}
-                <div className="absolute left-1/2 top-1/2" style={{ transform: "translate(calc(-50% + 140px), calc(-50% - 120px))" }}>
+                <div className="absolute left-1/2 top-1/2 [transform:translate(calc(-50%+140px),calc(-50%-120px))]">
                     <div className="bg-[#f0fdf4] border border-green-100 rounded-full shadow-sm px-4 py-2 flex items-center gap-2">
                         <span className="text-sm">🌿</span>
                         <span className="text-xs font-bold text-slate-700">{badge2Text}</span>
@@ -182,16 +176,12 @@ export default function OrbitalHero({
                 </div>
 
                 {/* ── CENTER CIRCLE with SONAR RINGS ── */}
-                <div className="relative flex items-center justify-center" style={{ width: "220px", height: "220px" }}>
+                <div className="relative flex items-center justify-center w-[220px] h-[220px]">
                     {/* Sonar pulse rings */}
                     {rings.map((r, i) => (
                         <span
                             key={i}
-                            className="absolute inset-0 rounded-full border border-[#15803d] animate-sonar-ring"
-                            style={{
-                                animationDelay: r.delay,
-                                opacity: r.opacity,
-                            }}
+                            className={`absolute inset-0 rounded-full border border-[#15803d] animate-sonar-ring ring-anim-${i}`}
                         />
                     ))}
                     {/* Circle image */}
@@ -199,7 +189,7 @@ export default function OrbitalHero({
                         className="relative w-[220px] h-[220px] rounded-full overflow-hidden border-[3px] border-[#15803d] shadow-xl bg-[#f0fdf4]"
                     >
                         {centerImage ? (
-                            <Image src={centerImage} alt="Nature's Boon Products" fill className="object-cover" />
+                            <Image src={centerImage} alt="Nature's Boon Products" fill sizes="(max-width: 768px) 100vw, 300px" className="object-cover" />
                         ) : (
                             /* Placeholder visual when no image is set */
                             <div className="w-full h-full flex flex-col items-center justify-center gap-2">
@@ -213,7 +203,7 @@ export default function OrbitalHero({
                 </div>
 
                 {/* RIGHT stat card (3 o'clock) */}
-                <div className="absolute left-1/2 top-1/2 -translate-y-1/2" style={{ transform: "translate(calc(-50% + 180px), -50%)" }}>
+                <div className="absolute left-1/2 top-1/2 [transform:translate(calc(-50%+180px),-50%)]">
                     <div className="bg-[#15803d] rounded-2xl shadow-md px-5 py-4 min-w-[130px] text-center">
                         <div className="text-2xl font-black text-white">{stat1Value}</div>
                         <div className="text-xs text-green-200 mt-0.5 font-medium">{stat1Label}</div>
@@ -237,7 +227,7 @@ export default function OrbitalHero({
 
             {/* ── JOURNEY ANIMATION STRIP ── */}
             {showJourney && (
-                <div className="relative z-10 mx-auto mb-10 px-6" style={{ maxWidth: "560px" }}>
+                <div className="relative z-10 mx-auto mb-10 px-6 max-w-[560px]">
                     <div className="bg-[#f0fdf4] border border-green-100 rounded-2xl px-6 py-4">
                         <p className="text-center text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-3">
                             From Concept to Consumer
@@ -284,6 +274,9 @@ export default function OrbitalHero({
         .animate-sonar-ring {
           animation: sonar-ring 3s ease-out infinite;
         }
+        .ring-anim-0 { animation-delay: 0s; opacity: 0.18; }
+        .ring-anim-1 { animation-delay: 0.8s; opacity: 0.10; }
+        .ring-anim-2 { animation-delay: 1.6s; opacity: 0.055; }
       `}</style>
         </section>
     );

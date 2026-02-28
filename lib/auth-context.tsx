@@ -23,6 +23,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [token, setToken] = useState<string | null>(null);
+    const [isHydrated, setIsHydrated] = useState(false);
     const router = useRouter();
 
     // Load token from localStorage on mount
@@ -31,11 +32,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const stored = localStorage.getItem("auth_token");
             if (stored) setToken(stored);
         }
+        setIsHydrated(true);
     }, []);
 
     const currentUser = useQuery(
         api.auth.getCurrentUser,
-        token ? { token } : "skip" // Token is string | null, args expects optional string.
+        token && isHydrated ? { token } : "skip" // Token is string | null, args expects optional string.
     );
 
     const loginMutation = useMutation(api.auth.login);
@@ -63,7 +65,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 user: currentUser ? { ...currentUser, role: currentUser.role as "admin" | "client" } : null,
                 login,
                 logout,
-                isLoading: currentUser === undefined && !!token, // Loading if token exists but user not loaded yet
+                isLoading: !isHydrated || (currentUser === undefined && !!token), // Wait for hydration before judging auth
             }}
         >
             {children}

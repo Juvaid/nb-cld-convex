@@ -5,8 +5,9 @@ import { api } from "@/convex/_generated/api";
 import { PuckRenderer } from "@/components/PuckRenderer";
 import { PageSkeleton } from "@/components/ui/Skeleton";
 
-export function CmsPageClient({ fallbackData, path }: { fallbackData: any; path: string }) {
-    const page = useQuery(api.pages.getPublishedPage, { path });
+export function CmsPageClient({ fallbackData, path, initialPageData }: { fallbackData: any; path: string; initialPageData?: any }) {
+    const livePage = useQuery(api.pages.getPublishedPage, { path });
+    const page = livePage !== undefined ? livePage : initialPageData;
 
     // Show Skeleton while Convex is fetching (page is strictly undefined)
     if (page === undefined) {
@@ -26,7 +27,7 @@ export function CmsPageClient({ fallbackData, path }: { fallbackData: any; path:
     // Render live data if available, otherwise just render an empty object so the layout works
     return (
         <div className="min-h-screen bg-background">
-            <PuckRenderer data={liveData || { root: {}, content: [] }} />
+            <PuckRenderer data={liveData || { root: {}, content: [] }} initialData={initialPageData} />
         </div>
     );
 }

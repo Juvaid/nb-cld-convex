@@ -16,7 +16,8 @@ export const savePage = mutation({
         path: v.string(),
         title: v.string(),
         description: v.optional(v.string()),
-        data: v.string(),
+        draftData: v.string(),
+        data: v.optional(v.string()), // Deprecated, keep optional for strict validation fixes
         status: v.optional(v.union(v.literal("draft"), v.literal("published"))),
     },
     handler: async (ctx, args) => {
@@ -31,7 +32,7 @@ export const savePage = mutation({
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const updateFields: Record<string, any> = {
                 title: args.title,
-                data: args.data,
+                draftData: args.draftData,
                 lastModified: now,
             };
 
@@ -44,6 +45,7 @@ export const savePage = mutation({
 
             if (statusToSave === "published" && !existing.publishedAt) {
                 updateFields.publishedAt = now;
+                updateFields.publishedData = args.draftData; // Instantly publish
             }
 
             await ctx.db.patch(existing._id, updateFields);
@@ -52,7 +54,8 @@ export const savePage = mutation({
                 path: args.path,
                 title: args.title,
                 description: args.description,
-                data: args.data,
+                draftData: args.draftData,
+                publishedData: args.status === "published" ? args.draftData : undefined,
                 status: args.status || "draft",
                 lastModified: now,
                 publishedAt: args.status === "published" ? now : undefined,
@@ -80,10 +83,15 @@ export const getPublishedPage = query({
         }
 
         const pageStatus = page.status || "published";
-        if (pageStatus !== "published") {
+        if (pageStatus !== "published" || !page.publishedData) {
             return null;
         }
-        return page;
+
+        // Return a mock object mapping publishedData to 'data' for client compatibility
+        return {
+            ...page,
+            data: page.publishedData,
+        };
     },
 });
 
@@ -108,7 +116,8 @@ export const createPageFromTemplate = mutation({
         await ctx.db.insert("pages", {
             path: args.path,
             title: args.title,
-            data: JSON.stringify(args.templateData),
+            draftData: JSON.stringify(args.templateData),
+            publishedData: JSON.stringify(args.templateData),
             status: "draft",
             lastModified: now,
         });
@@ -124,7 +133,9 @@ export const updatePageStatus = mutation({
     },
     handler: async (ctx, args) => {
         const now = Date.now();
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const page = await ctx.db.get(args.id);
+        if (!page) throw new Error("Page not found");
+
         const updateFields: Record<string, any> = {
             status: args.status,
             lastModified: now,
@@ -132,10 +143,48 @@ export const updatePageStatus = mutation({
 
         if (args.status === "published") {
             updateFields.publishedAt = now;
+            updateFields.publishedData = page.draftData; // Move draft to published
         }
 
         await ctx.db.patch(args.id, updateFields);
     },
+});
+
+export const publishPage = mutation({
+    args: { path: v.string() },
+    handler: async (ctx, args) => {
+        const page = await ctx.db
+            .query("pages")
+            .withIndex("by_path", (q) => q.eq("path", args.path))
+            .unique();
+
+        if (!page) throw new Error("Page not found");
+
+        await ctx.db.patch(page._id, {
+            publishedData: page.draftData,
+            status: "published",
+            publishedAt: Date.now(),
+            lastModified: Date.now()
+        });
+    }
+});
+
+export const revertDraft = mutation({
+    args: { path: v.string() },
+    handler: async (ctx, args) => {
+        const page = await ctx.db
+            .query("pages")
+            .withIndex("by_path", (q) => q.eq("path", args.path))
+            .unique();
+
+        if (!page) throw new Error("Page not found");
+
+        // Revert draftData to what is currently published
+        await ctx.db.patch(page._id, {
+            draftData: page.publishedData || "[]",
+            lastModified: Date.now()
+        });
+    }
 });
 
 export const forceDeletePage = mutation({
@@ -174,7 +223,7 @@ export const createPageSnapshot = mutation({
         await ctx.db.insert("pageSnapshots", {
             pageId: page._id,
             pagePath: page.path,
-            data: page.data,
+            data: page.draftData || "",
             title: page.title,
             description: page.description,
             createdAt: Date.now(),
@@ -209,7 +258,7 @@ export const restorePageSnapshot = mutation({
         await ctx.db.insert("pageSnapshots", {
             pageId: page._id,
             pagePath: page.path,
-            data: page.data,
+            data: page.draftData || "",
             title: page.title,
             description: page.description,
             createdAt: Date.now(),
@@ -217,7 +266,7 @@ export const restorePageSnapshot = mutation({
         });
 
         await ctx.db.patch(page._id, {
-            data: snapshot.data,
+            draftData: snapshot.data,
             title: snapshot.title,
             description: snapshot.description,
             lastModified: Date.now(),

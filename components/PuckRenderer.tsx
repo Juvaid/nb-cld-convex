@@ -15,10 +15,13 @@ const legacyMap: Record<string, string> = {
     SiteFooter: "Footer",
 };
 
-export function PuckRenderer({ data }: { data: any }) {
+export function PuckRenderer({ data, initialData, configOverride }: { data: any; initialData?: any; configOverride?: Config }) {
     const root = data?.root || {};
     const content = data?.content || [];
     const { header = {}, footer = {}, ...rootProps } = root.props || {};
+
+    // Use the override config if provided, otherwise fallback to the default global config.
+    const activeConfig = configOverride || config;
 
     return (
         <ThemeProvider>
@@ -27,13 +30,13 @@ export function PuckRenderer({ data }: { data: any }) {
                 <main className="flex-grow">
                     {content.map((block: any, i: number) => {
                         const type = legacyMap[block.type] || block.type;
-                        const componentConfig = (config.components as any)[type];
+                        const componentConfig = (activeConfig.components as any)[type];
 
                         if (componentConfig && componentConfig.render) {
                             return (
                                 <ErrorBoundary key={i}>
                                     <div>
-                                        {componentConfig.render({ ...block.props, puck: { renderDropZone: () => null } } as any)}
+                                        {componentConfig.render({ ...block.props, puck: { renderDropZone: () => null }, initialData } as any)}
                                     </div>
                                 </ErrorBoundary>
                             );

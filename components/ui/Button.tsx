@@ -14,7 +14,7 @@ interface ButtonProps extends HTMLMotionProps<"button"> {
 }
 
 const variantClasses = {
-    primary: 'bg-nb-green text-white shadow-[0_15px_30px_color-mix(in_srgb,var(--nb-colors-primary),transparent_70%)] hover:shadow-[0_20px_40px_color-mix(in_srgb,var(--nb-colors-primary),transparent_60%)]',
+    primary: 'bg-nb-green text-white shadow-sm hover:shadow-md',
     secondary: 'bg-slate-900 text-white shadow-xl hover:bg-slate-800',
     outline: 'bg-transparent border-2 border-slate-900 text-slate-900 hover:bg-slate-900 hover:text-white',
     ghost: 'bg-transparent text-slate-600 hover:bg-slate-50',
@@ -44,7 +44,7 @@ export const Button = ({
             whileTap={{ scale: 0.98, y: 0 }}
             className={`
                 inline-flex items-center justify-center gap-3 
-                rounded-2xl font-black tracking-tight transition-all
+                rounded-2xl font-bold tracking-tight transition-all
                 ${variantClasses[variant]}
                 ${sizeClasses[size]}
                 ${fullWidth ? 'w-full' : ''}

@@ -6,7 +6,7 @@ export const saveIngestedPage = mutation({
         path: v.string(),
         title: v.string(),
         description: v.optional(v.string()),
-        data: v.string(), // Puck JSON data
+        draftData: v.string(), // Puck JSON data
     },
     handler: async (ctx, args) => {
         const existing = await ctx.db
@@ -18,7 +18,7 @@ export const saveIngestedPage = mutation({
             await ctx.db.patch(existing._id, {
                 title: args.title,
                 description: args.description,
-                data: args.data,
+                draftData: args.draftData,
                 status: existing.status || "draft",
                 lastModified: Date.now(),
             });
@@ -27,7 +27,7 @@ export const saveIngestedPage = mutation({
                 path: args.path,
                 title: args.title,
                 description: args.description,
-                data: args.data,
+                draftData: args.draftData,
                 status: "draft",
                 lastModified: Date.now(),
             });

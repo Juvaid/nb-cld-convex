@@ -74,7 +74,7 @@ export default function TestimonialSlider({
     };
 
     return (
-        <section className="py-16 sm:py-24 bg-white relative overflow-hidden">
+        <section className="py-16 sm:py-24 bg-transparent relative overflow-hidden">
             {/* Minimal background accents */}
             <div className="absolute top-0 right-0 w-[40%] h-[40%] bg-nb-green/2 rounded-full blur-[80px] translate-x-1/4 -translate-y-1/4" />
 

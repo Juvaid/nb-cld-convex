@@ -86,7 +86,7 @@ export default function Footer() {
                         <ul className="space-y-4 sm:space-y-6">
                             {[
                                 { icon: Mail, text: 'info@naturesboon.net', sub: 'General Inquiries' },
-                                { icon: Phone, text: '+91-9877859800', sub: 'WhatsApp Available' },
+                                { icon: Phone, text: '+91-76967 71693', sub: 'WhatsApp Available' },
                                 { icon: MapPin, text: 'Ludhiana, Punjab, India', sub: 'H.O. & Manufacturing' },
                             ].map((item, i) => (
                                 <li key={i} className="flex gap-4 items-start group">

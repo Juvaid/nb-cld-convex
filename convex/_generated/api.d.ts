@@ -19,6 +19,7 @@ import type * as inquiries from "../inquiries.js";
 import type * as media from "../media.js";
 import type * as migrateProducts from "../migrateProducts.js";
 import type * as migrations from "../migrations.js";
+import type * as notifications from "../notifications.js";
 import type * as pages from "../pages.js";
 import type * as product_mutations from "../product_mutations.js";
 import type * as products from "../products.js";
@@ -46,6 +47,7 @@ declare const fullApi: ApiFromModules<{
   media: typeof media;
   migrateProducts: typeof migrateProducts;
   migrations: typeof migrations;
+  notifications: typeof notifications;
   pages: typeof pages;
   product_mutations: typeof product_mutations;
   products: typeof products;

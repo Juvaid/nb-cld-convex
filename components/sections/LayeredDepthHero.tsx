@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useId } from "react";
 
 export interface LayeredDepthHeroProps {
     sectionId?: string;
@@ -32,14 +32,24 @@ export default function LayeredDepthHero({
     stat2Label = "Proprietary Formulas",
     backgroundImage = "",
 }: LayeredDepthHeroProps) {
+    const blockId = useId();
+    const cleanId = blockId.replace(/:/g, "");
+
     return (
-        <section id={sectionId} className="relative w-full min-h-[90vh] flex flex-col justify-end overflow-hidden bg-slate-900">
+        <section id={sectionId || `layered-${cleanId}`} className="relative w-full min-h-[90vh] flex flex-col justify-end overflow-hidden bg-slate-900">
+            {/* Scoped Dynamic Styles */}
+            <style>{`
+                #${sectionId || `layered-${cleanId}`} .bg-layer {
+                    background-image: ${backgroundImage ? `url('${backgroundImage}')` : "none"};
+                }
+                ${[20, 40, 60, 80]
+                    .map((p) => `#${sectionId || `layered-${cleanId}`} .line-${p} { left: ${p}%; }`)
+                    .join("\n")}
+            `}</style>
+
             {/* Background image layer */}
             {backgroundImage && (
-                <div
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: `url('${backgroundImage}')` }}
-                />
+                <div className="absolute inset-0 bg-cover bg-center bg-layer" />
             )}
 
             {/* Deep layered gradient */}
@@ -49,7 +59,7 @@ export default function LayeredDepthHero({
             {/* Decorative vertical lines */}
             <div className="absolute inset-0 overflow-hidden opacity-10">
                 {[20, 40, 60, 80].map((p) => (
-                    <div key={p} className="absolute top-0 bottom-0 w-px bg-white" style={{ left: `${p}%` }} />
+                    <div key={p} className={`absolute top-0 bottom-0 w-px bg-white line-${p}`} />
                 ))}
             </div>
 

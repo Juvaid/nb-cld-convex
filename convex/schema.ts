@@ -17,7 +17,9 @@ export default defineSchema({
   }).index("by_token", ["token"]),
   pages: defineTable({
     path: v.string(), // URL path, e.g. "/" or "/about"
-    data: v.string(), // JSON string for Puck data
+    draftData: v.optional(v.string()), // JSON string for drafted Puck data
+    publishedData: v.optional(v.string()), // JSON string for live Puck data
+    data: v.optional(v.string()), // Legacy field, kept so existing rows don't crash schema validation
     title: v.string(), // Page title for SEO
     description: v.optional(v.string()),
     status: v.optional(v.union(v.literal("draft"), v.literal("published"))),

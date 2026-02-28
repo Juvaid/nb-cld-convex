@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useId } from "react";
 
 export interface StackedCard {
     badge?: string;
@@ -53,8 +53,19 @@ export default function StackedCardHero({
     subtext = "From custom formulation to sustainable packaging and global logistics — end-to-end manufacturing solutions for premium personal care brands.",
     cards = DEFAULT_CARDS,
 }: StackedCardHeroProps) {
+    const blockId = useId();
+    const cleanId = blockId.replace(/:/g, "");
+
     return (
-        <section id={sectionId} className="w-full bg-[#f0fdf4] py-20 px-4">
+        <section id={sectionId || `stacked-${cleanId}`} className="w-full bg-[#f0fdf4] py-20 px-4">
+            <style>{`
+                ${cards.map((card, i) => `
+                    #${sectionId || `stacked-${cleanId}`} .accent-bg-${i} {
+                        background-color: ${card.accentColor ?? "#157f3c"};
+                    }
+                `).join("\n")}
+            `}</style>
+
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
                 <div className="mb-12">
@@ -78,8 +89,7 @@ export default function StackedCardHero({
                                 <div className="flex-1 p-8 md:p-10">
                                     {card.badge && (
                                         <span
-                                            className="inline-block text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4 text-white"
-                                            style={{ backgroundColor: card.accentColor ?? "#157f3c" }}
+                                            className={`inline-block text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4 text-white accent-bg-${i}`}
                                         >
                                             {card.badge}
                                         </span>
@@ -101,8 +111,7 @@ export default function StackedCardHero({
 
                                 {/* Right: accent strip */}
                                 <div
-                                    className="w-full md:w-48 h-32 md:h-full md:min-h-[160px] flex-shrink-0 flex items-center justify-center"
-                                    style={{ backgroundColor: card.accentColor ?? "#157f3c" }}
+                                    className={`w-full md:w-48 h-32 md:h-full md:min-h-[160px] flex-shrink-0 flex items-center justify-center accent-bg-${i}`}
                                 >
                                     <svg className="w-16 h-16 text-white/20" fill="currentColor" viewBox="0 0 100 100">
                                         <circle cx="50" cy="50" r="45" />

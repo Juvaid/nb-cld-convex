@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { Data } from "@puckeditor/core";
@@ -28,6 +28,9 @@ export function EditorClient({ path }: EditorClientProps) {
     const pages = useQuery(api.pages.listPages);
     const pageData = useQuery(api.pages.getPage, { path });
     const savePage = useMutation(api.pages.savePage);
+    const publishPage = useMutation(api.pages.publishPage);
+    const revertDraft = useMutation(api.pages.revertDraft);
+    const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     // Update URL when path changes locally
     const handlePathChange = (newPath: string) => {
@@ -38,7 +41,8 @@ export function EditorClient({ path }: EditorClientProps) {
     useEffect(() => {
         if (pageData) {
             try {
-                const parsed = JSON.parse(pageData.data);
+                const loadedString = pageData.draftData || (pageData as any).data || '{"content":[],"root":{"props":{"title":""}}}';
+                const parsed = JSON.parse(loadedString);
 
                 // If the saved data has no content, try to load seed data
                 if (!parsed.content || parsed.content.length === 0) {
@@ -183,43 +187,70 @@ export function EditorClient({ path }: EditorClientProps) {
         }
     }, [pageData, path]);
 
-    const handleAutoSave = async (newData: Data) => {
+    const handleAutoSave = (newData: Data) => {
         setData(newData);
-        const currentPage = pages?.find(p => p.path === path);
         setSaveStatus("saving");
-        try {
-            await savePage({
-                path: path,
-                title: currentPage?.title || "Untitled Page",
-                data: JSON.stringify(newData),
-                status: currentPage?.status || "draft",
-            });
-            setSaveStatus("saved");
-            setLastSaved(new Date());
-        } catch (error) {
-            console.error("Auto-save failed:", error);
-            setSaveStatus("unsaved");
-        }
+        if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+
+        saveTimeoutRef.current = setTimeout(async () => {
+            const currentPage = pages?.find(p => p.path === path);
+            try {
+                await savePage({
+                    path: path,
+                    title: currentPage?.title || "Untitled Page",
+                    draftData: JSON.stringify(newData),
+                    status: currentPage?.status || "draft",
+                });
+                setSaveStatus("saved");
+                setLastSaved(new Date());
+            } catch (error) {
+                console.error("Auto-save failed:", error);
+                setSaveStatus("unsaved");
+            }
+        }, 1500);
     };
 
     const handlePublish = async (newData: Data) => {
         setData(newData);
-        const currentPage = pages?.find(p => p.path === path);
         setSaveStatus("saving");
         try {
+            // First ensure the latest draft is fully saved
             await savePage({
                 path: path,
-                title: currentPage?.title || "Untitled Page",
-                data: JSON.stringify(newData),
-                status: "published",
+                title: pages?.find(p => p.path === path)?.title || "Untitled Page",
+                draftData: JSON.stringify(newData),
+                status: "draft",
             });
+
+            // Execute the publish mutation
+            await publishPage({ path });
             setSaveStatus("saved");
             setLastSaved(new Date());
+
+            // Revalidate Cache via Server Action/API (Fire and forget)
+            fetch('/api/revalidate?path=' + encodeURIComponent(path), { method: 'POST' }).catch(console.error);
         } catch (error) {
             console.error("Publish failed:", error);
             setSaveStatus("unsaved");
         }
     };
+
+    const handleDiscard = async () => {
+        if (!confirm("Are you sure you want to discard your unpublished changes? This cannot be undone.")) return;
+        setSaveStatus("saving");
+        try {
+            await revertDraft({ path });
+            setSaveStatus("saved");
+            // pageData will strictly reload due to reactivity
+        } catch (error) {
+            console.error("Discard failed:", error);
+            setSaveStatus("unsaved");
+        }
+    };
+
+    const hasUnpublishedChanges = pageData
+        ? (pageData.draftData || (pageData as any).data) !== pageData.publishedData
+        : false;
 
     if (pageData === undefined || loadedPath !== path) {
         return (
@@ -240,6 +271,9 @@ export function EditorClient({ path }: EditorClientProps) {
                 pages={pages}
                 currentPath={path}
                 onPathChange={handlePathChange}
+                hasUnpublishedChanges={hasUnpublishedChanges}
+                onDiscardDraft={handleDiscard}
+                isSaving={saveStatus === "saving"}
             />
         </div>
     );

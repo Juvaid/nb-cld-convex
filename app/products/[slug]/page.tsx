@@ -36,5 +36,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
-    return <ProductDetail slug={slug} />;
+
+    let initialProduct = undefined;
+    try {
+        initialProduct = await convex.query(api.products.getBySlug, { slug });
+    } catch (e) {
+        console.error("Failed to fetch product on server", e);
+    }
+
+    return <ProductDetail slug={slug} initialProduct={initialProduct} />;
 }

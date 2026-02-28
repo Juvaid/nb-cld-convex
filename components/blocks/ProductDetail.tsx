@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import ContactForm from "./ContactForm";
 import { DocumentList } from "./DocumentList";
 import { PageSkeleton } from "@/components/ui/Skeleton";
@@ -32,12 +32,18 @@ interface ProductDetailProps {
     slug: string;
     isModal?: boolean;
     onClose?: () => void;
+    initialProduct?: any;
 }
 
-export default function ProductDetail({ slug, isModal = false, onClose }: ProductDetailProps) {
+export default function ProductDetail({ slug, isModal = false, onClose, initialProduct }: ProductDetailProps) {
     const router = useRouter();
-    const product = useQuery(api.products.getBySlug, { slug });
+    const liveProduct = useQuery(api.products.getBySlug, { slug });
+    const product = liveProduct !== undefined ? liveProduct : initialProduct;
     const [showInquiryForm, setShowInquiryForm] = useState(false);
+
+    // Slider State
+    const [activeImageIndex, setActiveImageIndex] = useState(0);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
 
     const handleInquiry = () => {
         const element = document.getElementById('inquiry-section');
@@ -85,6 +91,34 @@ export default function ProductDetail({ slug, isModal = false, onClose }: Produc
         { title: "Global Shipping", desc: "Secure logistics handling for international B2B distributions.", icon: <Globe2 className="w-5 h-5" /> }
     ];
 
+    // Filter valid images
+    const images = (product.images || []).filter((img: any) => typeof img === 'string' && img !== "[object Object]");
+    const hasMultipleImages = images.length > 1;
+
+    // Track scroll position to update dots/thumbnails
+    const handleScroll = () => {
+        if (scrollContainerRef.current) {
+            const scrollLeft = scrollContainerRef.current.scrollLeft;
+            const width = scrollContainerRef.current.clientWidth;
+            const newIndex = Math.round(scrollLeft / width);
+            if (newIndex !== activeImageIndex) {
+                setActiveImageIndex(newIndex);
+            }
+        }
+    };
+
+    // Scroll to specific image index from thumbnails or arrows
+    const scrollToImage = (index: number) => {
+        if (scrollContainerRef.current) {
+            const width = scrollContainerRef.current.clientWidth;
+            scrollContainerRef.current.scrollTo({
+                left: width * index,
+                behavior: 'smooth'
+            });
+            setActiveImageIndex(index);
+        }
+    };
+
     return (
         <ThemeProvider>
             <div className="bg-background min-h-screen flex flex-col font-sans">
@@ -95,30 +129,72 @@ export default function ProductDetail({ slug, isModal = false, onClose }: Produc
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
 
                             {/* LEFT: Image Section (Fixed relative on large screens) */}
-                            <div className="lg:col-span-5 space-y-6">
-                                <div className="aspect-square rounded-[40px] overflow-hidden bg-white border border-slate-900/5 shadow-2xl shadow-slate-200/50 relative group">
-                                    <div className="absolute inset-0 bg-gradient-to-br from-nb-green/5 to-transparent opacity-50" />
-                                    {product.images && product.images.length > 0 && typeof product.images[0] === 'string' && product.images[0] !== "[object Object]" ? (
-                                        <img
-                                            src={product.images[0].startsWith('http') ? product.images[0] : `/api/storage/${product.images[0]}`}
-                                            className="w-full h-full object-cover relative z-10 transition-transform duration-[2s] group-hover:scale-110"
-                                            alt={product.name}
-                                        />
+                            <div className="lg:col-span-5 space-y-4">
+                                {/* Main Image Carousel */}
+                                <div className="aspect-[4/5] sm:aspect-square rounded-[32px] sm:rounded-[40px] overflow-hidden bg-white border border-slate-900/5 shadow-2xl shadow-slate-200/50 relative group">
+                                    <div className="absolute inset-0 bg-gradient-to-br from-nb-green/5 to-transparent opacity-50 z-0 pointer-events-none" />
+
+                                    {images.length > 0 ? (
+                                        <div
+                                            ref={scrollContainerRef}
+                                            onScroll={handleScroll}
+                                            className="flex h-full w-full overflow-x-auto snap-x snap-mandatory scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] touch-pan-x"
+                                        >
+                                            {images.map((img: string, i: number) => (
+                                                <div key={i} className="relative flex-shrink-0 w-full h-full snap-start snap-always">
+                                                    <img
+                                                        src={img.startsWith('http') ? img : `/api/storage/${img}`}
+                                                        className="w-full h-full object-cover relative z-10 transition-transform duration-[2s] group-hover:scale-110"
+                                                        alt={`${product.name} - Image ${i + 1}`}
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center text-8xl opacity-10">🌿</div>
                                     )}
+
+                                    {/* Desktop Arrow Controls */}
+                                    {hasMultipleImages && (
+                                        <>
+                                            <button
+                                                onClick={(e) => { e.preventDefault(); scrollToImage(Math.max(0, activeImageIndex - 1)); }}
+                                                className={`absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/80 backdrop-blur-sm shadow-md border border-white flex items-center justify-center text-slate-700 hover:text-nb-green hover:bg-white transition-all opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 disabled:opacity-0 disabled:cursor-not-allowed`}
+                                                disabled={activeImageIndex === 0}
+                                                aria-label="Previous image"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="m15 18-6-6 6-6" /></svg>
+                                            </button>
+                                            <button
+                                                onClick={(e) => { e.preventDefault(); scrollToImage(Math.min(images.length - 1, activeImageIndex + 1)); }}
+                                                className={`absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/80 backdrop-blur-sm shadow-md border border-white flex items-center justify-center text-slate-700 hover:text-nb-green hover:bg-white transition-all opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 disabled:opacity-0 disabled:cursor-not-allowed`}
+                                                disabled={activeImageIndex === images.length - 1}
+                                                aria-label="Next image"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="m9 18 6-6-6-6" /></svg>
+                                            </button>
+                                        </>
+                                    )}
                                 </div>
 
-                                {product.images && product.images.length > 1 && (
-                                    <div className="grid grid-cols-4 gap-4">
-                                        {product.images.slice(1).map((img: string | any, i: number) => (
-                                            <div key={i} className="aspect-square rounded-2xl overflow-hidden border-2 border-white shadow-md bg-white hover:scale-105 transition-transform cursor-pointer">
+                                {/* Thumbnail Navigation */}
+                                {hasMultipleImages && (
+                                    <div className="grid grid-cols-4 sm:grid-cols-5 gap-3 mt-4 px-1 pb-1 overflow-x-auto scrollbar-none snap-x snap-mandatory">
+                                        {images.map((img: string, i: number) => (
+                                            <button
+                                                key={i}
+                                                onClick={() => scrollToImage(i)}
+                                                className={`snap-start relative aspect-square rounded-2xl overflow-hidden border-2 transition-all cursor-pointer ${i === activeImageIndex
+                                                    ? 'border-nb-green shadow-[0_0_0_2px_rgba(43,238,108,0.2)] scale-[1.02]'
+                                                    : 'border-transparent hover:border-slate-200 opacity-60 hover:opacity-100'
+                                                    }`}
+                                            >
                                                 <img
-                                                    src={typeof img === 'string' && img.startsWith('http') ? img : `/api/storage/${img}`}
+                                                    src={img.startsWith('http') ? img : `/api/storage/${img}`}
                                                     className="w-full h-full object-cover"
-                                                    alt={`${product.name} thumbnail ${i + 1}`}
+                                                    alt={`Thumbnail ${i + 1}`}
                                                 />
-                                            </div>
+                                            </button>
                                         ))}
                                     </div>
                                 )}

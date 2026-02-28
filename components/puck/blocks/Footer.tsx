@@ -58,7 +58,7 @@ export const Footer = ({
                     <div className="space-y-6 sm:space-y-8">
                         <Link href="/" className="flex items-center gap-3 group">
                             {logoImage ? (
-                                <img src={logoImage} alt={logoText} className="h-10 sm:h-12 w-auto object-contain" />
+                                <img src={logoImage} alt={logoText} className={`h-10 sm:h-12 w-auto object-contain ${backgroundColor !== 'bg-white' ? 'invert brightness-0' : ''}`} />
                             ) : (
                                 <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-nb-green-soft to-nb-green-deep flex items-center justify-center shadow-lg group-hover:rotate-12 transition-transform">
                                     <Leaf className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
@@ -124,18 +124,20 @@ export const Footer = ({
                         <h4 className={`text-base sm:text-lg font-black mb-6 sm:mb-8 tracking-tight ${textColor}`}>Get in Touch</h4>
                         <ul className="space-y-4 sm:space-y-6">
                             {[
-                                { icon: Mail, text: 'info@naturesboon.net', sub: 'General Inquiries' },
-                                { icon: Phone, text: '+91-9877859800', sub: 'WhatsApp Available' },
-                                { icon: MapPin, text: 'Ludhiana, Punjab, India', sub: 'H.O. & Manufacturing' },
+                                { icon: Mail, text: 'info@naturesboon.net', sub: 'General Inquiries', href: 'mailto:info@naturesboon.net' },
+                                { icon: Phone, text: '+91-76967 71693', sub: 'WhatsApp Available', href: 'https://wa.me/917696771693' },
+                                { icon: MapPin, text: 'Ludhiana, Punjab, India', sub: 'H.O. & Manufacturing', href: 'https://www.google.com/maps/dir/?api=1&destination=Nature%27s+Boon%2C+Ludhiana%2C+Punjab%2C+India' },
                             ].map((item, i) => (
-                                <li key={i} className="flex gap-4 items-start group">
-                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${backgroundColor === 'bg-white' ? 'bg-slate-100 group-hover:bg-nb-green/20' : 'bg-white/5 group-hover:bg-nb-green/20'}`}>
-                                        <item.icon className="w-4 h-4 text-nb-green" />
-                                    </div>
-                                    <div>
-                                        <span className={`block text-xs sm:text-sm font-black ${textColor}`}>{item.text}</span>
-                                        <span className={`block text-[8px] sm:text-[10px] uppercase font-bold tracking-wider mt-1 sm:mt-1.5 ${backgroundColor === 'bg-white' ? 'text-slate-400' : 'text-white/40'}`}>{item.sub}</span>
-                                    </div>
+                                <li key={i}>
+                                    <a href={item.href} target={item.icon === MapPin ? "_blank" : "_self"} rel={item.icon === MapPin ? "noopener noreferrer" : undefined} className="flex gap-4 items-start group">
+                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all ${backgroundColor === 'bg-white' ? 'bg-slate-100 group-hover:bg-nb-green group-hover:shadow-[0_4px_12px_rgba(43,238,108,0.3)]' : 'bg-white/5 group-hover:bg-nb-green group-hover:shadow-[0_4px_12px_rgba(43,238,108,0.3)]'}`}>
+                                            <item.icon className={`w-4 h-4 transition-colors ${backgroundColor === 'bg-white' ? 'text-nb-green group-hover:text-white' : 'text-nb-green group-hover:text-slate-900'}`} />
+                                        </div>
+                                        <div>
+                                            <span className={`block text-xs sm:text-sm font-black transition-colors ${textColor} group-hover:text-nb-green`}>{item.text}</span>
+                                            <span className={`block text-[8px] sm:text-[10px] uppercase font-bold tracking-wider mt-1 sm:mt-1.5 transition-colors ${backgroundColor === 'bg-white' ? 'text-slate-400 group-hover:text-slate-600' : 'text-white/40 group-hover:text-white/80'}`}>{item.sub}</span>
+                                        </div>
+                                    </a>
                                 </li>
                             ))}
                         </ul>

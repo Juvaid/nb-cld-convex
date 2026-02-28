@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #f8fafc;
   --foreground: #171717;
 }
 
@@ -18,6 +18,24 @@
   --color-nb-dark: var(--nb-colors-secondary);
   --color-nb-slate: #1e293b;
   --color-nb-gray: var(--nb-colors-backgroundAlt);
+}
+
+:root {
+  /* Puck Editor Overrides (Nature's Boon Green Theme) */
+  --puck-color-indigo-01: #e9fdf0;
+  --puck-color-indigo-02: #d1fae0;
+  --puck-color-indigo-03: #a3f4c0;
+  --puck-color-indigo-04: #70eea0;
+  --puck-color-indigo-05: #4ade80;
+  --puck-color-indigo-06: #2BEE6C;
+  /* Main nb-green */
+  --puck-color-indigo-07: #16a34a;
+  --puck-color-indigo-08: #15803d;
+  --puck-color-indigo-09: #166534;
+  --puck-color-indigo-10: #14532d;
+  --puck-color-indigo-11: #052e16;
+  --puck-color-indigo-12: #022c22;
+  --puck-color-black: #0f172a;
 }
 
 @layer utilities {

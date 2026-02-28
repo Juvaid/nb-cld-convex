@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useId } from "react";
 
 export interface Testimonial {
     name: string;
@@ -72,9 +72,16 @@ export default function TestimonialsSlider({
     const next = () => setActive((a) => (a === testimonials.length - 1 ? 0 : a + 1));
 
     const t = testimonials[active];
+    const blockId = useId();
+    const cleanId = blockId.replace(/:/g, "");
 
     return (
-        <section id={sectionId} className="w-full py-20 px-4" style={{ backgroundColor }}>
+        <section id={sectionId || `testimonial-${cleanId}`} className="w-full py-20 px-4 bg-testimonial">
+            <style>{`
+                #${sectionId || `testimonial-${cleanId}`} {
+                    background-color: ${backgroundColor};
+                }
+            `}</style>
             <div className="max-w-4xl mx-auto text-center">
                 {/* Badge */}
                 <div className="inline-flex items-center gap-2 px-3 py-1 bg-white rounded-full border border-[#157f3c]/20 shadow-sm mb-6">

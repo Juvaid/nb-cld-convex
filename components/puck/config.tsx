@@ -29,6 +29,12 @@ import { JourneyHeroBlockConfig } from "./blocks/JourneyHeroBlock";
 import { StackedCardHeroBlockConfig } from "./blocks/StackedCardHeroBlock";
 import { SwissStyleHeroBlockConfig } from "./blocks/SwissStyleHeroBlock";
 import { BentoServicesBlockConfig } from "./blocks/BentoServicesBlock";
+import { TextBlockConfig } from "./blocks/TextBlock";
+
+// Composite Macro Blocks
+import { HomeEssentialsBlockConfig } from "./blocks/HomeEssentialsBlock";
+import { AboutCoreBlockConfig } from "./blocks/AboutCoreBlock";
+import { ProductShowcaseBlockConfig } from "./blocks/ProductShowcaseBlock";
 
 // Components that still need minimal config or are handled specifically
 import { NatureBoonHeroConfig } from "./blocks/NatureBoonHeroBlock";
@@ -87,14 +93,18 @@ export const config: Config = {
         Marketing: { components: ["ServiceGrid", "CTA", "SuccessStory", "IconBenefits"] },
         B2B: { components: ["QuickOrderPad", "ComplianceBadges"] },
         Blog: { components: ["BlogPostStory"] },
-        Content: { components: ["ProcessTimeline", "FAQAccordion", "Section"] },
+        Content: { components: ["TextBlock", "ProcessTimeline", "FAQAccordion", "Section"] },
         Sections: { components: ["TestimonialsSlider", "JourneyHero", "BentoServices"] },
         Footer: { components: ["Footer"] },
+        "Page Templates": { components: ["HomeEssentials", "AboutCore", "ProductShowcase"] },
     },
     components: {
         Section: SectionBlockConfig,
+        TextBlock: TextBlockConfig,
         Spacer: SpacerBlockConfig,
         DynamicLayout: DynamicLayoutBlockConfig,
+        HomeEssentials: HomeEssentialsBlockConfig as any,
+        AboutCore: AboutCoreBlockConfig as any,
         NatureBoonHero: NatureBoonHeroConfig as any,
         NatureBoonExpertise: NatureBoonExpertiseConfig as any,
         NatureBoonStats: NatureBoonStatsConfig as any,
@@ -221,7 +231,16 @@ export const config: Config = {
                     }))
                 }));
 
-                return <ProductBrowser {...props} categories={transformedCategories} />;
+                const { initialDbCategories, initialDbProducts } = props.initialData || {};
+
+                return (
+                    <ProductBrowser
+                        {...props}
+                        categories={transformedCategories}
+                        initialDbCategories={initialDbCategories}
+                        initialDbProducts={initialDbProducts}
+                    />
+                );
             }
         },
         CallToAction: {
@@ -428,51 +447,7 @@ export const config: Config = {
             },
             render: (props: any) => <VideoCarousel {...props} />
         },
-        ProductShowcase: {
-            fields: {
-                selectedProduct: {
-                    type: "custom",
-                    render: ({ value, onChange }: any) => (
-                        <ProductSelector value={value} onChange={onChange} />
-                    ),
-                },
-                ...sharedFields
-            },
-            render: ({ selectedProduct, ...props }: any) => {
-                const product = useQuery(api.product_mutations.getProduct, { id: selectedProduct || "" });
-
-                return (
-                    <Section
-                        variant={props.backgroundVariant}
-                        paddingTop={props.paddingTop}
-                        paddingBottom={props.paddingBottom}
-                        backgroundColor={props.backgroundColor}
-                        isGlass={props.isGlass}
-                        blur={props.blur}
-                    >
-                        <div className="max-w-xl mx-auto">
-                            {!selectedProduct ? (
-                                <div className="p-20 text-center bg-slate-50 rounded-[40px] border-2 border-dashed border-slate-200">
-                                    <div className="text-4xl mb-4">🛒</div>
-                                    <div className="text-slate-400 font-bold uppercase tracking-widest text-xs">
-                                        Select a product from the sidebar
-                                    </div>
-                                </div>
-                            ) : !product ? (
-                                <div className="p-20 text-center animate-pulse">
-                                    <div className="w-12 h-12 bg-nb-green/20 rounded-full mx-auto mb-4" />
-                                    <div className="text-slate-400 font-bold uppercase tracking-widest text-xs">
-                                        Fetching product details...
-                                    </div>
-                                </div>
-                            ) : (
-                                <ProductCard category={product as any} />
-                            )}
-                        </div>
-                    </Section>
-                );
-            }
-        },
+        ProductShowcase: ProductShowcaseBlockConfig as any,
         Footer: {
             fields: {
                 logoText: { type: "text" },

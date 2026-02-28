@@ -60,7 +60,7 @@ export default function Hero({
     };
 
     return (
-        <section id={id} className="relative min-h-0 lg:min-h-[60vh] flex items-center pt-10 sm:pt-12 md:pt-14 pb-0 overflow-hidden bg-white">
+        <section id={id} className="relative min-h-0 lg:min-h-[60vh] flex items-center pt-10 sm:pt-12 md:pt-14 pb-0 overflow-hidden bg-transparent">
             {/* Background Gradient & Pattern */}
             <div className="absolute inset-0 z-0 overflow-hidden">
                 <div className="absolute top-0 right-0 w-[80%] h-[80%] bg-nb-green/10 rounded-full blur-[120px] -translate-y-1/3 translate-x-1/4 animate-float opacity-60" />

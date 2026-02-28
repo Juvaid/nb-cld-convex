@@ -28,13 +28,20 @@ export interface ProductCategoryData {
 export interface ProductBrowserProps {
     categories?: ProductCategoryData[];
     useDynamicData?: boolean;
+    initialDbCategories?: any[];
+    initialDbProducts?: any[];
 }
 
-export default function ProductBrowser({ categories: initialCategories = [], useDynamicData = false }: ProductBrowserProps) {
+export default function ProductBrowser({ categories: initialCategories = [], useDynamicData = false, initialDbCategories, initialDbProducts }: ProductBrowserProps) {
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
-    const dbCategories = useQuery(api.categories.list);
-    const dbProducts = useQuery(api.products.listAll, { status: "active" });
+
+    // Fetch live data, but fallback to initialDb data if provided for SSR/SEO
+    const liveCategories = useQuery(api.categories.list);
+    const liveProducts = useQuery(api.products.listAll, { status: "active" });
+
+    const dbCategories = liveCategories !== undefined ? liveCategories : initialDbCategories;
+    const dbProducts = liveProducts !== undefined ? liveProducts : initialDbProducts;
 
     // Use dynamic data if requested or if initialCategories is empty
     const shouldShowDynamic = useDynamicData || initialCategories.length === 0;
@@ -59,17 +66,29 @@ export default function ProductBrowser({ categories: initialCategories = [], use
         })).filter(cat => cat.products.length > 0);
     }
 
-    // Filter by search query
-    const filteredCategories = searchQuery.trim() === ""
+    // Filter by search query using rich text tokenization
+    const searchTokens = searchQuery.toLowerCase().trim().split(/\s+/).filter(Boolean);
+    const filteredCategories = searchTokens.length === 0
         ? displayCategories
-        : displayCategories.map(cat => ({
-            ...cat,
-            products: cat.products.filter(p =>
-                p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                p.usp.toLowerCase().includes(searchQuery.toLowerCase())
-            )
-        })).filter(cat => cat.products.length > 0);
+        : displayCategories.map(cat => {
+            const matchingProducts = cat.products.filter(p => {
+                // Combine all searchable fields for rich search
+                const searchableText = [
+                    cat.name,
+                    cat.description,
+                    p.name,
+                    p.usp || "",
+                    p.sku || ""
+                ].join(" ").toLowerCase();
 
+                // Check if ALL search tokens are present in the combined text
+                return searchTokens.every(token => searchableText.includes(token));
+            });
+            return {
+                ...cat,
+                products: matchingProducts
+            };
+        }).filter(cat => cat.products.length > 0);
     if (!displayCategories || displayCategories.length === 0) {
         if (shouldShowDynamic && (!dbCategories || !dbProducts)) {
             return (
@@ -183,7 +202,7 @@ export default function ProductBrowser({ categories: initialCategories = [], use
             </div>
 
             {/* Product categories */}
-            <section className="py-2 md:py-8 bg-white">
+            <section className="py-2 md:py-8 bg-transparent">
                 <div className="max-w-7xl mx-auto space-y-12 px-4">
                     {categories.length > 0 ? (
                         categories.map((cat) => (

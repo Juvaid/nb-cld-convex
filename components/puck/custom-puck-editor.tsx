@@ -1,10 +1,10 @@
 "use client";
 
-import { Puck, Data } from "@puckeditor/core";
+import { Config, Data, Puck } from "@puckeditor/core";
 import "@puckeditor/core/dist/index.css";
-import { config } from "./config";
+import { config as defaultConfig } from "./config";
 import { ReactNode, useState, useEffect } from "react";
-import { Plus, PenTool, Layout, Palette, Layers, Loader2, Save, RotateCcw, Globe, ExternalLink, History, Search, X, Archive, Trash2, Copy } from "lucide-react";
+import { Plus, PenTool, Layout, Palette, Layers, Loader2, Save, RotateCcw, Globe, ExternalLink, History, Search, X, Archive, Trash2, Copy, PanelLeftClose, PanelLeft } from "lucide-react";
 import Link from "next/link";
 import { useQuery, useMutation, useConvex } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -20,11 +20,15 @@ interface Page {
 
 interface CustomPuckEditorProps {
     data: Data;
+    configOverride?: Config;
     onPublish: (data: Data) => void;
     onChange?: (data: Data) => void;
     pages?: Page[];
     currentPath: string;
     onPathChange: (path: string) => void;
+    hasUnpublishedChanges?: boolean;
+    onDiscardDraft?: () => void;
+    isSaving?: boolean;
 }
 
 interface ThemeData {
@@ -344,13 +348,18 @@ const LibraryPanel = ({ onInsert }: { onInsert: (type: string, props: any) => vo
 
 export function CustomPuckEditor({
     data,
+    configOverride,
     onPublish,
     onChange,
     pages = [],
     currentPath,
-    onPathChange
+    onPathChange,
+    hasUnpublishedChanges,
+    onDiscardDraft,
+    isSaving
 }: CustomPuckEditorProps) {
     const [activeTab, setActiveTab] = useState<"structure" | "components" | "library" | "theme" | "history">("structure");
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const currentPageId = pages.find(p => p.path === currentPath)?._id;
     const saveTemplate = useMutation(api.templates.saveSavedBlock);
 
@@ -602,11 +611,20 @@ export function CustomPuckEditor({
 
                 /* Hide Redundant puck bars if they reappear */
                 .puck-action-bar { border-top-color: #e2e8f0 !important; }
+
+                ${!isSidebarOpen ? `
+                /* Hide Left Sidebar */
+                .puck-editor > div:nth-child(2) > div:first-child,
+                .Puck-editor > div:nth-child(2) > div:first-child {
+                    display: none !important;
+                    width: 0 !important;
+                }
+                ` : ''}
             `}</style>
 
             <div className="flex-1 w-full flex flex-col">
                 <Puck
-                    config={config}
+                    config={configOverride || defaultConfig}
                     data={data}
                     onPublish={onPublish}
                     onChange={onChange}
@@ -781,6 +799,13 @@ export function CustomPuckEditor({
 
                                     <div className="flex items-center gap-2 bg-slate-50 p-1 rounded-xl border border-slate-100">
                                         <button
+                                            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                                            className="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-white/50 transition-colors mr-2"
+                                            title="Toggle Sidebar"
+                                        >
+                                            {isSidebarOpen ? <PanelLeftClose size={16} /> : <PanelLeft size={16} />}
+                                        </button>
+                                        <button
                                             onClick={() => setActiveTab("structure")}
                                             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${activeTab === "structure"
                                                 ? "bg-white text-slate-900 shadow-md ring-1 ring-slate-200"
@@ -834,6 +859,25 @@ export function CustomPuckEditor({
                                 </div>
 
                                 <div className="flex items-center gap-4">
+                                    {isSaving && (
+                                        <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400">
+                                            <Loader2 size={12} className="animate-spin" />
+                                            SAVING...
+                                        </div>
+                                    )}
+                                    {hasUnpublishedChanges && (
+                                        <div className="flex items-center gap-2 text-[10px] font-bold text-amber-500 bg-amber-50 px-2 py-1 rounded-md border border-amber-200">
+                                            UNPUBLISHED CHANGES
+                                        </div>
+                                    )}
+                                    {hasUnpublishedChanges && onDiscardDraft && (
+                                        <button
+                                            onClick={onDiscardDraft}
+                                            className="text-[10px] font-bold text-slate-500 hover:text-red-500 transition-colors border-r border-slate-200 pr-4 mr-1"
+                                        >
+                                            DISCARD DRAFT
+                                        </button>
+                                    )}
                                     {actions}
                                 </div>
                             </div>

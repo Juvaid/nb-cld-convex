@@ -44,9 +44,8 @@ export function SiteHeader({
         { label: "Blogs", href: "/blogs" },
     ];
     const defaultPortalText = "Blogs";
-    const defaultContactText = "Contact Us";
+    const defaultContactText = "Contact Sales";
 
-    // Priority: DB Settings > Default Fallbacks (Props purely for visual overrides in editor)
     // Priority: DB Settings > Default Fallbacks (Props purely for visual overrides in editor)
     const logoText = siteSettings?.logoText || propLogoText || defaultLogoText;
     const logoImage = siteSettings?.logoImage || propLogoImage;
@@ -54,7 +53,7 @@ export function SiteHeader({
     const contactText = siteSettings?.contactText || propContactText || defaultContactText;
 
     return (
-        <header className="bg-white/95 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100/50">
+        <header className="bg-slate-50/95 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100/50">
             <div className="container mx-auto px-4 h-14 md:h-16 lg:h-20 flex items-center justify-between transition-all duration-300">
                 <Link href="/" className="font-bold text-2xl tracking-tight text-slate-900 flex items-center gap-3 group">
                     {isLoading ? (
@@ -104,7 +103,7 @@ export function SiteHeader({
                         <div className="w-28 h-10 rounded-xl bg-slate-200/60 animate-pulse" />
                     ) : (
                         <Link href="/contact">
-                            <Button variant="primary" size="md" className="shadow-[0_10px_20px_rgba(43,238,108,0.2)]">
+                            <Button variant="primary" size="md">
                                 {contactText}
                             </Button>
                         </Link>

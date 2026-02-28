@@ -44,6 +44,8 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+import { CookieConsent } from "@/components/ui/CookieConsent";
+
 export default function RootLayout({
   children,
   modal,
@@ -61,6 +63,7 @@ export default function RootLayout({
             <ThemeProvider>
               {children}
               {modal}
+              <CookieConsent />
             </ThemeProvider>
           </AuthProvider>
         </ConvexClientProvider>

@@ -28,7 +28,7 @@ export default function LogoMarquee({
     const animName = `marquee-${direction}`;
 
     return (
-        <section className="bg-white overflow-hidden">
+        <section className="bg-transparent overflow-hidden">
             {/* Keyframe injection — purely CSS, no JS dependence */}
             <style>{`
                 @keyframes marquee-left  { from { transform: translateX(0); } to { transform: translateX(-50%); } }
@@ -51,7 +51,7 @@ export default function LogoMarquee({
 
             <div className="nb-marquee-wrap">
                 {title && (
-                    <p className="text-center text-[9px] font-bold text-slate-400 uppercase tracking-[0.25em] pb-1">
+                    <p className="text-center text-[9px] font-bold text-slate-400 uppercase tracking-[0.25em] pb-6">
                         {title}
                     </p>
                 )}

@@ -25,7 +25,7 @@ export default function ServiceDetailList({ services = [] }: ServiceDetailListPr
     }
 
     return (
-        <section className="py-20 sm:py-32 bg-white">
+        <section className="py-20 sm:py-32 bg-transparent">
             <div className="max-w-7xl mx-auto px-6 sm:px-8 space-y-24">
                 {services.map((service, i) => {
                     const IconComponent = iconMap[service.icon] || Palette;

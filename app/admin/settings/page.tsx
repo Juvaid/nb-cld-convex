@@ -8,10 +8,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useState, useEffect } from "react";
-import { Loader2, Save, Undo, Plus, Trash2, ArrowUp, ArrowDown, Clock, RotateCcw, Layout, Image as ImageIcon, Star } from "lucide-react";
+import { Loader2, Save, Undo, Plus, Trash2, ArrowUp, ArrowDown, Clock, RotateCcw, Layout, Image as ImageIcon, Star, FileText } from "lucide-react";
 import { ImagePicker } from "@/components/ImagePicker";
 import { FontPicker } from "@/components/admin/FontPicker";
-import { Download } from "lucide-react";
+import { Download, Bookmark } from "lucide-react";
 
 const PRESETS = [
     {
@@ -88,6 +88,8 @@ export default function SettingsPage() {
     const [navLinks, setNavLinks] = useState<any[]>([]);
     const [socialLinks, setSocialLinks] = useState<any[]>([]);
     const [discordWebhookUrl, setDiscordWebhookUrl] = useState("");
+    const [whatsappApiKey, setWhatsappApiKey] = useState("");
+    const [whatsappPhone, setWhatsappPhone] = useState("");
     const [isSavingSite, setIsSavingSite] = useState(false);
 
     // Snapshots State
@@ -127,6 +129,8 @@ export default function SettingsPage() {
                 { platform: "instagram", href: "#" }
             ]);
             setDiscordWebhookUrl(siteSettings.discord_webhook_url || "");
+            setWhatsappApiKey(siteSettings.whatsapp_api_key || "");
+            setWhatsappPhone(siteSettings.whatsapp_phone || "");
         }
     }, [siteSettings]);
 
@@ -181,7 +185,12 @@ export default function SettingsPage() {
                 updateSiteSetting({ key: "navLinks", value: navLinks }),
                 updateSiteSetting({ key: "socialLinks", value: socialLinks }),
                 updateSiteSetting({ key: "discord_webhook_url", value: discordWebhookUrl }),
+                updateSiteSetting({ key: "whatsapp_api_key", value: whatsappApiKey }),
+                updateSiteSetting({ key: "whatsapp_phone", value: whatsappPhone }),
             ]);
+
+            // Clear cache so metadata (favicon, title) updates immediately
+            fetch('/api/revalidate?path=layout', { method: 'POST' }).catch(console.error);
 
         } catch (error) {
             console.error(error);
@@ -287,7 +296,9 @@ export default function SettingsPage() {
                 footerCopyrightText,
                 navLinks,
                 socialLinks,
-                discordWebhookUrl
+                discordWebhookUrl,
+                whatsappApiKey,
+                whatsappPhone
             }
         };
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(configToExport, null, 2));
@@ -302,27 +313,27 @@ export default function SettingsPage() {
     if (!localTheme) return <div>Loading...</div>;
 
     return (
-        <div className="space-y-4 pb-20 max-w-[1600px] mx-auto">
+        <div className="space-y-6 pb-20 max-w-6xl mx-auto">
             {/* Header Area */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white/50 p-4 rounded-2xl border border-white/20 backdrop-blur-sm sticky top-0 z-50">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white/80 p-6 rounded-2xl border border-slate-200 shadow-sm backdrop-blur-md sticky top-0 z-50">
                 <div>
-                    <h1 className="text-2xl font-black tracking-tight flex items-center gap-2">
-                        <div className="w-2 h-8 bg-nb-green rounded-full animate-pulse" />
+                    <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-3">
+                        <div className="w-2 h-6 bg-nb-green rounded-full animate-pulse" />
                         Site Intelligence
                     </h1>
-                    <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest ml-4">Core visual & functional controls</p>
+                    <p className="text-sm text-slate-500 font-medium ml-5">Core visual & functional controls</p>
                 </div>
-                <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
-                    <Button variant="outline" size="sm" onClick={handleExportConfig} className="flex-1 md:flex-none" title="Download current settings as JSON for hardcoding">
-                        <Download className="w-3 h-3 mr-2" />
+                <div className="flex gap-3 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
+                    <Button variant="outline" onClick={handleExportConfig} className="flex-1 md:flex-none bg-white">
+                        <Download className="w-4 h-4 mr-2" />
                         Export Config
                     </Button>
-                    <Button variant="outline" size="sm" onClick={handleResetTheme} disabled={isSaving || isDoomed} className="flex-1 md:flex-none">
-                        {isDoomed ? <Loader2 className="w-4 h-4 animate-spin" /> : <Undo className="w-3 h-3 mr-2" />}
-                        Reset
+                    <Button variant="outline" onClick={handleResetTheme} disabled={isSaving || isDoomed} className="flex-1 md:flex-none bg-white hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50">
+                        {isDoomed ? <Loader2 className="w-4 h-4 animate-spin" /> : <Undo className="w-4 h-4 mr-2" />}
+                        Reset To Default
                     </Button>
-                    <Button size="sm" onClick={handleSaveAll} disabled={isSaving || isSavingSite || isDoomed} className="flex-1 md:flex-none">
-                        {(isSaving || isSavingSite) ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-3 h-3 mr-2" />}
+                    <Button onClick={handleSaveAll} disabled={isSaving || isSavingSite || isDoomed} className="flex-1 md:flex-none shadow-md">
+                        {(isSaving || isSavingSite) ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
                         Save Changes
                     </Button>
                 </div>
@@ -332,9 +343,12 @@ export default function SettingsPage() {
                 {/* Row 1: Visual & Layout Logic */}
                 <div className="lg:col-span-4 space-y-4">
                     {/* Theme Presets */}
-                    <Card className="shadow-sm border-none bg-nb-green/5 overflow-hidden">
-                        <CardHeader className="p-4 pb-0 flex flex-row items-center justify-between space-y-0">
-                            <CardTitle className="text-[10px] font-black uppercase tracking-widest text-nb-green">Quick Styles</CardTitle>
+                    <Card className="shadow-sm border-slate-200">
+                        <CardHeader className="p-5 border-b border-slate-100 bg-slate-50/50">
+                            <CardTitle className="text-sm font-semibold tracking-tight text-slate-800 flex items-center gap-2">
+                                <Layout className="w-4 h-4 text-nb-green" />
+                                Quick Styles
+                            </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 pt-4">
                             <div className="grid grid-cols-2 gap-2">
@@ -356,7 +370,7 @@ export default function SettingsPage() {
                                                 <div className="w-3 h-3 rounded-full border border-black/5 a-color" />
                                                 <div className="w-3 h-3 rounded-full border border-black/5 s-color" />
                                             </div>
-                                            <span className="text-[10px] font-black tracking-tight text-slate-700">{p.name}</span>
+                                            <span className="text-xs font-semibold tracking-tight text-slate-700">{p.name}</span>
                                         </button>
                                     );
                                 })}
@@ -365,19 +379,19 @@ export default function SettingsPage() {
                     </Card>
 
                     {/* Colors - Compact Grid */}
-                    <Card className="h-full shadow-sm border-none bg-white/80 backdrop-blur-sm overflow-hidden">
-                        <CardHeader className="p-4 flex flex-row items-center justify-between space-y-0">
-                            <CardTitle className="text-sm font-black uppercase tracking-wider flex items-center gap-2">
+                    <Card className="shadow-sm border-slate-200">
+                        <CardHeader className="p-5 border-b border-slate-100 bg-slate-50/50">
+                            <CardTitle className="text-sm font-semibold tracking-tight text-slate-800 flex items-center gap-2">
                                 <Star className="w-4 h-4 text-nb-green" />
-                                Palette
+                                Color Palette
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="p-2 pt-0">
-                            <div className="grid grid-cols-2 gap-1.5 font-sans">
+                        <CardContent className="p-5">
+                            <div className="grid grid-cols-2 gap-3">
                                 {Object.entries(localTheme.colors || {})
                                     .map(([key, value]) => (
-                                        <div key={key} className="flex flex-col p-2 rounded-xl bg-slate-50 border border-slate-100/50 hover:bg-white transition-all group relative">
-                                            <label className="text-[9px] font-black text-slate-400 uppercase tracking-tighter mb-1 truncate">{key.replace(/-/g, " ")}</label>
+                                        <div key={key} className="flex flex-col p-3 rounded-xl bg-slate-50 border border-slate-200 hover:bg-white transition-all group relative">
+                                            <label className="text-xs font-semibold text-slate-500 capitalize mb-2">{key.replace(/-/g, " ")}</label>
                                             <ColorPicker
                                                 value={value as string}
                                                 onChange={(c) => updateSetting("colors", key, c)}
@@ -391,48 +405,48 @@ export default function SettingsPage() {
 
                 <div className="lg:col-span-5">
                     {/* Geometry & Typography */}
-                    <Card className="h-full shadow-sm border-none bg-white/80 backdrop-blur-sm overflow-hidden">
-                        <CardHeader className="p-4 flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-black uppercase tracking-wider flex items-center gap-2">
+                    <Card className="shadow-sm border-slate-200">
+                        <CardHeader className="p-5 border-b border-slate-100 bg-slate-50/50">
+                            <CardTitle className="text-sm font-semibold tracking-tight text-slate-800 flex items-center gap-2">
                                 <Layout className="w-4 h-4 text-nb-green" />
-                                System Geometry
+                                System Geometry & Typography
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="p-4 pt-0 space-y-4">
+                        <CardContent className="p-5 space-y-6">
                             <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-1.5">
-                                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Button Radius</label>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-medium text-slate-600">Button Radius</label>
                                     <div className="relative group">
                                         <Input
                                             type="number"
                                             value={localTheme.buttons?.borderRadius || "12"}
                                             onChange={(e) => updateSetting("buttons", "borderRadius", e.target.value)}
-                                            className="h-10 text-sm font-black bg-slate-50 border-none transition-all focus-visible:bg-white focus-visible:ring-nb-green/20"
+                                            className="h-10 text-sm font-semibold border-slate-200 focus:ring-2 focus:ring-nb-green"
                                         />
-                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-300 pointer-events-none group-focus-within:text-nb-green/40 transition-colors uppercase">px</span>
+                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-slate-400 pointer-events-none">px</span>
                                     </div>
                                 </div>
-                                <div className="space-y-1.5">
-                                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Max Width</label>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-medium text-slate-600">Container Max Width</label>
                                     <div className="relative group">
                                         <Input
                                             type="number"
                                             value={localTheme.spacing?.containerMaxWidth || "1280"}
                                             onChange={(e) => updateSetting("spacing", "containerMaxWidth", e.target.value)}
-                                            className="h-10 text-sm font-black bg-slate-50 border-none transition-all focus-visible:bg-white focus-visible:ring-nb-green/20"
+                                            className="h-10 text-sm font-semibold border-slate-200 focus:ring-2 focus:ring-nb-green"
                                         />
-                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-300 pointer-events-none group-focus-within:text-nb-green/40 transition-colors uppercase">px</span>
+                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-slate-400 pointer-events-none">px</span>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="grid gap-3">
-                                <div className="p-3 rounded-2xl bg-slate-50/50 border border-slate-100/50 space-y-3">
+                            <div className="grid gap-4">
+                                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-4">
                                     <div className="flex items-center justify-between">
-                                        <div className="p-1.5 bg-white rounded-lg shadow-sm">
-                                            <Star className="w-3 h-3 text-slate-400" />
+                                        <div className="p-1.5 bg-white border border-slate-200 rounded-lg shadow-sm">
+                                            <Star className="w-4 h-4 text-slate-500" />
                                         </div>
-                                        <span className="text-[8px] font-bold text-slate-300 uppercase tracking-widest leading-none">Headings</span>
+                                        <span className="text-xs font-semibold text-slate-500 uppercase tracking-widest">Headings</span>
                                     </div>
                                     <FontPicker
                                         value={localTheme.typography?.headingFont || "system-ui"}
@@ -442,7 +456,7 @@ export default function SettingsPage() {
                                         <select
                                             value={localTheme.typography?.headingWeight || "700"}
                                             onChange={(e) => updateSetting("typography", "headingWeight", e.target.value)}
-                                            className="h-8 rounded-xl bg-white border-none text-[10px] font-bold text-slate-600 px-3 shadow-sm focus:ring-1 focus:ring-nb-green/20 cursor-pointer"
+                                            className="h-10 rounded-lg bg-white border border-slate-200 text-sm font-medium text-slate-700 px-3 shadow-sm focus:ring-2 focus:ring-nb-green focus:outline-none"
                                             title="Heading Weight"
                                         >
                                             <option value="400">Regular</option>
@@ -453,18 +467,18 @@ export default function SettingsPage() {
                                         <Input
                                             value={localTheme.typography?.headingLetterSpacing || "0em"}
                                             onChange={(e) => updateSetting("typography", "headingLetterSpacing", e.target.value)}
-                                            className="h-8 text-[10px] font-bold bg-white border-none shadow-sm px-3 focus-visible:ring-1 focus-visible:ring-nb-green/20"
-                                            placeholder="Spacing"
+                                            className="h-10 text-sm font-medium bg-white border border-slate-200 shadow-sm px-3 focus-visible:ring-2 focus-visible:ring-nb-green"
+                                            placeholder="Letter Spacing (e.g., 0.05em)"
                                         />
                                     </div>
                                 </div>
 
-                                <div className="p-3 rounded-2xl bg-slate-50/50 border border-slate-100/50 space-y-3">
+                                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-4">
                                     <div className="flex items-center justify-between">
-                                        <div className="p-1.5 bg-white rounded-lg shadow-sm">
-                                            <Star className="w-3 h-3 text-slate-400" />
+                                        <div className="p-1.5 bg-white border border-slate-200 rounded-lg shadow-sm">
+                                            <FileText className="w-4 h-4 text-slate-500" />
                                         </div>
-                                        <span className="text-[8px] font-bold text-slate-300 uppercase tracking-widest leading-none">Body</span>
+                                        <span className="text-xs font-semibold text-slate-500 uppercase tracking-widest">Body Text</span>
                                     </div>
                                     <FontPicker
                                         value={localTheme.typography?.bodyFont || "system-ui"}
@@ -474,7 +488,7 @@ export default function SettingsPage() {
                                         <select
                                             value={localTheme.typography?.bodyWeight || "400"}
                                             onChange={(e) => updateSetting("typography", "bodyWeight", e.target.value)}
-                                            className="h-8 rounded-xl bg-white border-none text-[10px] font-bold text-slate-600 px-3 shadow-sm focus:ring-1 focus:ring-nb-green/20 cursor-pointer"
+                                            className="h-10 rounded-lg bg-white border border-slate-200 text-sm font-medium text-slate-700 px-3 shadow-sm focus:ring-2 focus:ring-nb-green focus:outline-none"
                                             title="Body Weight"
                                         >
                                             <option value="300">Light</option>
@@ -485,8 +499,8 @@ export default function SettingsPage() {
                                         <Input
                                             value={localTheme.typography?.lineHeight || "1.5"}
                                             onChange={(e) => updateSetting("typography", "lineHeight", e.target.value)}
-                                            className="h-8 text-[10px] font-bold bg-white border-none shadow-sm px-3 focus-visible:ring-1 focus-visible:ring-nb-green/20"
-                                            placeholder="Line Height"
+                                            className="h-10 text-sm font-medium bg-white border border-slate-200 shadow-sm px-3 focus-visible:ring-2 focus-visible:ring-nb-green"
+                                            placeholder="Line Height (e.g., 1.5)"
                                         />
                                     </div>
                                 </div>
@@ -498,31 +512,34 @@ export default function SettingsPage() {
                 <div className="lg:col-span-3">
                     {/* Snapshot Area */}
                     <div className="h-full flex flex-col gap-4">
-                        <Card className="shadow-sm border-none bg-nb-green/5 overflow-hidden">
-                            <CardHeader className="p-4 pb-2">
-                                <CardTitle className="text-xs font-black uppercase tracking-wider text-nb-green">Quick Snap</CardTitle>
+                        <Card className="shadow-sm border-slate-200">
+                            <CardHeader className="p-5 border-b border-slate-100 bg-slate-50/50">
+                                <CardTitle className="text-sm font-semibold tracking-tight text-slate-800 flex items-center gap-2">
+                                    <Bookmark className="w-4 h-4 text-nb-green" />
+                                    Quick Snap
+                                </CardTitle>
                             </CardHeader>
-                            <CardContent className="p-4 pt-0 space-y-2">
+                            <CardContent className="p-5 space-y-3">
                                 <Input
                                     placeholder="Snapshot label..."
                                     value={snapshotName}
                                     onChange={(e) => setSnapshotName(e.target.value)}
-                                    className="h-10 text-xs font-bold bg-white border-none shadow-sm focus-visible:ring-nb-green/20"
+                                    className="h-10 text-sm font-semibold border-slate-200 focus:ring-2 focus:ring-nb-green"
                                 />
                                 <Button
-                                    className="w-full bg-nb-green hover:bg-nb-green/90 text-[10px] h-10 font-black uppercase tracking-widest text-white shadow-lg shadow-nb-green/20 border-nb-green"
+                                    className="w-full bg-nb-green hover:bg-nb-green/90 text-xs h-10 font-bold tracking-wide text-white shadow-sm"
                                     onClick={() => handleCreateSnapshot(false)}
                                     disabled={isCreatingSnapshot || !snapshotName}
                                 >
-                                    {isCreatingSnapshot ? <Loader2 className="w-3 h-3 animate-spin mr-2" /> : <Clock className="w-3 h-3 mr-2" />}
-                                    Snap Backup
+                                    {isCreatingSnapshot ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Clock className="w-4 h-4 mr-2" />}
+                                    Create Backup
                                 </Button>
                             </CardContent>
                         </Card>
 
-                        <Card className="flex-1 shadow-sm border-none bg-white/50 backdrop-blur-sm overflow-hidden flex flex-col">
-                            <CardHeader className="p-4 pb-2">
-                                <CardTitle className="text-xs font-black uppercase tracking-widest text-slate-400">History</CardTitle>
+                        <Card className="flex-1 shadow-sm border-slate-200 flex flex-col">
+                            <CardHeader className="p-5 border-b border-slate-100 bg-slate-50/50">
+                                <CardTitle className="text-sm font-semibold tracking-tight text-slate-800">History</CardTitle>
                             </CardHeader>
                             <CardContent className="p-2 pt-0 flex-1 overflow-y-auto">
                                 <div className="space-y-1.5">
@@ -564,101 +581,123 @@ export default function SettingsPage() {
                 {/* Row 2: Site Intelligence & Management */}
                 <div className="lg:col-span-4">
                     {/* Branding Info */}
-                    <Card className="h-full shadow-sm border-none bg-white/80 backdrop-blur-sm">
-                        <CardHeader className="p-4 pt-3 flex flex-row items-center justify-between space-y-0">
-                            <CardTitle className="text-sm font-black uppercase tracking-wider">Branding</CardTitle>
+                    <Card className="h-full shadow-sm border-slate-200">
+                        <CardHeader className="p-5 border-b border-slate-100 bg-slate-50/50">
+                            <CardTitle className="text-sm font-semibold tracking-tight text-slate-800 flex items-center gap-2">
+                                <ImageIcon className="w-4 h-4 text-nb-green" />
+                                Branding Identity
+                            </CardTitle>
                         </CardHeader>
-                        <CardContent className="p-4 pt-0 space-y-4 font-sans">
-                            <div className="space-y-1.5">
-                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Site Title (Browser Tab)</label>
+                        <CardContent className="p-5 space-y-5">
+                            <div className="space-y-2">
+                                <label className="text-xs font-medium text-slate-600">Site Title (Browser Tab)</label>
                                 <Input
                                     value={siteTitle}
                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSiteTitle(e.target.value)}
-                                    className="bg-slate-50 border-none font-bold text-sm h-10"
+                                    className="h-10 text-sm font-semibold border-slate-200 focus:ring-2 focus:ring-nb-green"
                                     placeholder="Company Name | Tagline"
                                 />
                             </div>
-                            <div className="space-y-1.5">
-                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Favicon (Browser Icon)</label>
+                            <div className="space-y-2">
+                                <label className="text-xs font-medium text-slate-600">Favicon (Browser Icon)</label>
                                 <ImagePicker
                                     value={faviconUrl}
                                     onChange={setFaviconUrl}
                                 />
                             </div>
-                            <div className="space-y-1.5">
-                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Logo Text</label>
+                            <div className="space-y-2">
+                                <label className="text-xs font-medium text-slate-600">Logo Text</label>
                                 <Input
                                     value={logoText}
                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLogoText(e.target.value)}
-                                    className="bg-slate-50 border-none font-bold text-sm h-10"
+                                    className="h-10 text-sm font-semibold border-slate-200 focus:ring-2 focus:ring-nb-green"
                                 />
                             </div>
-                            <div className="space-y-1.5">
-                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Logo Image / SVG</label>
+                            <div className="space-y-2">
+                                <label className="text-xs font-medium text-slate-600">Logo Image / SVG</label>
                                 <ImagePicker
                                     value={logoImage}
                                     onChange={setLogoImage}
                                 />
                             </div>
-                            <div className="space-y-1.5">
-                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Logo Font</label>
+                            <div className="space-y-2">
+                                <label className="text-xs font-medium text-slate-600">Logo Font</label>
                                 <FontPicker
                                     value={logoFont}
                                     onChange={setLogoFont}
                                 />
                             </div>
-                            <div className="space-y-1.5">
-                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">CTA Text</label>
+                            <div className="space-y-2">
+                                <label className="text-xs font-medium text-slate-600">CTA Button Text</label>
                                 <Input
                                     value={contactText}
                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setContactText(e.target.value)}
-                                    className="bg-slate-50 border-none font-bold text-sm h-10"
+                                    className="h-10 text-sm font-semibold border-slate-200 focus:ring-2 focus:ring-nb-green"
                                 />
                             </div>
-                            <div className="space-y-1.5 pt-2 border-t border-nb-green/10">
-                                <label className="text-[9px] font-black text-nb-green uppercase tracking-widest">Discord Webhook Notification</label>
+                            <div className="space-y-2 pt-4 border-t border-slate-200">
+                                <label className="text-xs font-medium text-nb-green">Discord Webhook Notification URL</label>
                                 <Input
                                     value={discordWebhookUrl}
                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDiscordWebhookUrl(e.target.value)}
                                     placeholder="https://discord.com/api/webhooks/..."
-                                    className="bg-nb-green/5 border-none font-medium text-xs h-10"
+                                    className="h-10 text-sm font-medium bg-nb-green/5 border-nb-green/20 focus:ring-2 focus:ring-nb-green"
                                 />
-                                <p className="text-[8px] text-slate-400 font-bold uppercase italic">Inquiries will be sent here</p>
                             </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <label className="text-xs font-medium text-nb-green">WhatsApp CallMeBot Phone</label>
+                                    <Input
+                                        value={whatsappPhone}
+                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setWhatsappPhone(e.target.value)}
+                                        placeholder="+919876543210 (include + and country code)"
+                                        className="h-10 text-sm font-medium bg-nb-green/5 border-nb-green/20 focus:ring-2 focus:ring-nb-green"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-medium text-nb-green">CallMeBot API Key</label>
+                                    <Input
+                                        value={whatsappApiKey}
+                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setWhatsappApiKey(e.target.value)}
+                                        placeholder="1234567"
+                                        className="h-10 text-sm font-medium bg-nb-green/5 border-nb-green/20 focus:ring-2 focus:ring-nb-green"
+                                    />
+                                </div>
+                            </div>
+                            <p className="text-[10px] text-slate-500 italic mt-0">Inquiries will be forwarded to your Discord channel and WhatsApp via CallMeBot if configured.</p>
                         </CardContent>
-
                     </Card>
                 </div>
 
                 <div className="lg:col-span-4">
                     {/* Footer Controls */}
-                    <Card className="h-full shadow-sm border-none bg-white/80 backdrop-blur-sm">
-                        <CardHeader className="p-4 pt-3 flex flex-row items-center justify-between space-y-0">
-                            <CardTitle className="text-sm font-black uppercase tracking-wider">Footer Intelligence</CardTitle>
+                    <Card className="h-full shadow-sm border-slate-200">
+                        <CardHeader className="p-5 border-b border-slate-100 bg-slate-50/50">
+                            <CardTitle className="text-sm font-semibold tracking-tight text-slate-800">Footer Intelligence</CardTitle>
                         </CardHeader>
-                        <CardContent className="p-4 pt-0 space-y-4 font-sans">
-                            <div className="space-y-1.5">
-                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Description</label>
+                        <CardContent className="p-5 space-y-4">
+                            <div className="space-y-2">
+                                <label className="text-xs font-medium text-slate-600">Description</label>
                                 <textarea
                                     value={footerDescription}
                                     onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFooterDescription(e.target.value)}
-                                    className="w-full min-h-[80px] p-4 text-xs font-black rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-nb-green/10 resize-none transition-all"
+                                    className="w-full min-h-[100px] p-3 text-sm rounded-lg border-slate-200 focus:ring-2 focus:ring-nb-green focus:border-nb-green resize-none transition-all shadow-sm"
                                     placeholder="Company footer description..."
                                 />
                             </div>
-                            <div className="space-y-1.5">
-                                <div className="flex items-center justify-between mb-2">
-                                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Social Graph</label>
+                            <div className="space-y-2">
+                                <div className="flex items-center justify-between">
+                                    <label className="text-xs font-medium text-slate-600">Social Graph</label>
                                     <button
                                         onClick={() => setSocialLinks([...socialLinks, { platform: "linkedin", href: "" }])}
-                                        className="text-[9px] font-black text-nb-green flex items-center gap-1 hover:underline"
+                                        className="text-xs font-medium text-nb-green flex items-center gap-1 hover:underline"
                                     >
-                                        <Plus size={10} /> Add Account
+                                        <Plus size={14} /> Add Account
                                     </button>
                                 </div>
-                                <div className="flex flex-wrap gap-2">
+                                <div className="flex flex-col gap-2">
                                     {socialLinks.map((link, i) => (
-                                        <div key={i} className="flex items-center gap-1.5 p-2 rounded-xl bg-slate-50 border border-slate-100/50">
+                                        <div key={i} className="flex items-center gap-3 p-2 rounded-lg bg-slate-50 border border-slate-200">
                                             <select
                                                 value={link.platform}
                                                 onChange={(e) => {
@@ -666,25 +705,34 @@ export default function SettingsPage() {
                                                     newLinks[i].platform = e.target.value;
                                                     setSocialLinks(newLinks);
                                                 }}
-                                                className="bg-transparent border-none text-[10px] font-black uppercase text-nb-green/60 p-0 focus:ring-0 cursor-pointer"
+                                                className="h-8 rounded-md border-slate-200 text-xs font-medium text-slate-700 px-2 focus:ring-1 focus:ring-nb-green cursor-pointer bg-white"
                                                 title="Social Platform"
                                             >
                                                 <option value="linkedin">LinkedIn</option>
                                                 <option value="instagram">Instagram</option>
                                                 <option value="facebook">Facebook</option>
-                                                <option value="twitter">Twitter</option>
+                                                <option value="twitter">X (Twitter)</option>
                                             </select>
-                                            <div className="w-px h-3 bg-slate-200" />
+                                            <Input
+                                                value={link.href}
+                                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                                    const newLinks = [...socialLinks];
+                                                    newLinks[i].href = e.target.value;
+                                                    setSocialLinks(newLinks);
+                                                }}
+                                                placeholder="Profile URL"
+                                                className="flex-1 h-8 text-xs bg-white border-slate-200 focus:ring-1 focus:ring-nb-green"
+                                            />
                                             <button
                                                 onClick={() => {
                                                     const newLinks = [...socialLinks];
                                                     newLinks.splice(i, 1);
                                                     setSocialLinks(newLinks);
                                                 }}
-                                                className="text-slate-300 hover:text-red-400 transition-colors"
+                                                className="text-slate-400 hover:text-rose-500 transition-colors px-1"
                                                 title="Remove Account"
                                             >
-                                                <Trash2 size={10} />
+                                                <Trash2 size={14} />
                                             </button>
                                         </div>
                                     ))}
@@ -696,51 +744,49 @@ export default function SettingsPage() {
 
                 <div className="lg:col-span-4">
                     {/* Navigation - Site Map */}
-                    <Card className="h-full shadow-sm border-none bg-white/80 backdrop-blur-sm overflow-hidden">
-                        <CardHeader className="p-4 pt-3 flex flex-row items-center justify-between space-y-0">
-                            <CardTitle className="text-sm font-black uppercase tracking-wider">Navigation</CardTitle>
-                            <Button variant="ghost" size="sm" onClick={addLink} className="h-7 px-2 text-[10px] font-black uppercase text-slate-500 hover:text-nb-green">
-                                <Plus className="w-3 h-3 mr-1" /> Add Node
+                    <Card className="h-full shadow-sm border-slate-200">
+                        <CardHeader className="p-5 border-b border-slate-100 bg-slate-50/50 flex flex-row items-center justify-between">
+                            <CardTitle className="text-sm font-semibold tracking-tight text-slate-800">Navigation Nodes</CardTitle>
+                            <Button variant="outline" size="sm" onClick={addLink} className="h-8 text-xs font-medium text-slate-700 bg-white">
+                                <Plus className="w-4 h-4 mr-1" /> Add Node
                             </Button>
                         </CardHeader>
-                        <CardContent className="p-2 pt-0">
-                            <div className="rounded-xl border border-slate-100 overflow-hidden bg-white">
-                                <table className="w-full text-left text-[10px]">
-                                    <thead className="bg-slate-50 border-b border-slate-100 uppercase tracking-widest text-[8px] font-black text-slate-400">
-                                        <tr>
-                                            <th className="px-3 py-2">Label</th>
-                                            <th className="px-3 py-2">Path</th>
-                                            <th className="px-3 py-2 text-right"></th>
+                        <CardContent className="p-0">
+                            <table className="w-full text-left text-sm">
+                                <thead className="bg-slate-50 border-b border-slate-200 text-xs font-medium text-slate-500">
+                                    <tr>
+                                        <th className="px-4 py-3 font-medium">Label</th>
+                                        <th className="px-4 py-3 font-medium">Path</th>
+                                        <th className="px-4 py-3 text-right"></th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-100 bg-white">
+                                    {navLinks.map((link, i) => (
+                                        <tr key={i} className="group hover:bg-slate-50 transition-colors">
+                                            <td className="p-2 px-4">
+                                                <Input
+                                                    className="h-8 text-sm font-medium border-none shadow-none focus-visible:ring-1 focus-visible:ring-nb-green p-0 px-2"
+                                                    value={link.label}
+                                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateLink(i, "label", e.target.value)}
+                                                />
+                                            </td>
+                                            <td className="p-2 px-4">
+                                                <Input
+                                                    className="h-8 text-sm font-medium text-slate-500 border-none shadow-none focus-visible:ring-1 focus-visible:ring-nb-green p-0 px-2"
+                                                    value={link.href}
+                                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateLink(i, "href", e.target.value)}
+                                                />
+                                            </td>
+                                            <td className="p-2 px-4 text-right align-middle">
+                                                <div className="flex justify-end gap-1 opacity-10 group-hover:opacity-100 transition-opacity">
+                                                    <button onClick={() => moveLink(i, 'up')} disabled={i === 0} className="p-1.5 text-slate-500 hover:text-slate-800 disabled:opacity-0" title="Move Up"><ArrowUp size={14} /></button>
+                                                    <button onClick={() => removeLink(i)} className="p-1.5 text-rose-400 hover:text-rose-600" title="Remove Node"><Trash2 size={14} /></button>
+                                                </div>
+                                            </td>
                                         </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-slate-50">
-                                        {navLinks.map((link, i) => (
-                                            <tr key={i} className="group hover:bg-slate-50/50 transition-colors">
-                                                <td className="p-1 px-3">
-                                                    <Input
-                                                        className="h-7 text-[10px] font-black bg-transparent border-none p-0 focus-within:ring-0"
-                                                        value={link.label}
-                                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateLink(i, "label", e.target.value)}
-                                                    />
-                                                </td>
-                                                <td className="p-1 px-3">
-                                                    <Input
-                                                        className="h-7 text-[10px] font-bold text-slate-400 bg-transparent border-none p-0 focus-within:ring-0"
-                                                        value={link.href}
-                                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateLink(i, "href", e.target.value)}
-                                                    />
-                                                </td>
-                                                <td className="p-1 px-3 text-right">
-                                                    <div className="flex justify-end gap-1 opacity-10 group-hover:opacity-100 transition-opacity">
-                                                        <button onClick={() => moveLink(i, 'up')} disabled={i === 0} className="p-1 text-slate-400 hover:text-slate-600 disabled:opacity-0" title="Move Up"><ArrowUp size={10} /></button>
-                                                        <button onClick={() => removeLink(i)} className="p-1 text-red-300 hover:text-red-500" title="Remove Node"><Trash2 size={10} /></button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
+                                    ))}
+                                </tbody>
+                            </table>
                         </CardContent>
                     </Card>
                 </div>

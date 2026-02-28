@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { Mail, Search, Loader2, Eye, Trash2, CheckCircle2, MessageSquare, Clock, Copy, Check, Phone, Filter, Calendar, Tag, ChevronDown } from "lucide-react";
+import { Mail, Search, Loader2, Eye, Trash2, CheckCircle2, MessageSquare, Clock, Copy, Check, Phone, Filter, Calendar, Tag, ChevronDown, Download } from "lucide-react";
 import { useState, useMemo } from "react";
 import Link from "next/link";
 
@@ -106,6 +106,36 @@ export default function InquiriesAdmin() {
         }
     };
 
+    const exportToCSV = () => {
+        if (!filteredInquiries || filteredInquiries.length === 0) {
+            alert("No data available to export.");
+            return;
+        }
+
+        const headers = ["ID", "Name", "Email", "Phone", "Status", "Product", "Category", "Message", "Submitted At"];
+        const rows = filteredInquiries.map(item => [
+            item._id,
+            `"${item.name.replace(/"/g, '""')}"`,
+            `"${item.email.replace(/"/g, '""')}"`,
+            `"${(item.phone || "").replace(/"/g, '""')}"`,
+            item.status,
+            `"${(item.productName || "").replace(/"/g, '""')}"`,
+            `"${(item.productCategory || "").replace(/"/g, '""')}"`,
+            `"${item.message.replace(/"/g, '""').replace(/\n/g, " ")}"`,
+            new Date(item.submittedAt).toISOString()
+        ]);
+
+        const csvContent = [headers.join(","), ...rows.map(row => row.join(","))].join("\n");
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `inquiries_export_${new Date().toISOString().slice(0, 10)}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     return (
         <div className="space-y-6 font-outfit">
             <div className="flex items-center justify-between">
@@ -126,6 +156,15 @@ export default function InquiriesAdmin() {
                             <span className="text-xl font-black text-nb-green leading-none">{inquiries?.filter(i => i.status === 'new').length || 0}</span>
                         </div>
                     </div>
+
+                    <button
+                        onClick={exportToCSV}
+                        className="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2.5 rounded-xl text-sm font-bold shadow-sm transition-all flex items-center gap-2"
+                        title="Export current view to Excel/CSV"
+                    >
+                        <Download size={16} />
+                        Export Data
+                    </button>
                 </div>
             </div>
 
