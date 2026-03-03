@@ -1,40 +1,59 @@
 @import "tailwindcss";
 
 :root {
+  /* Soft, airy background for better card contrast */
   --background: #f8fafc;
   --foreground: #171717;
 }
 
-@theme inline {
+@theme {
+  /* Nature's Boon Design System Tokens */
   --color-background: var(--nb-colors-background);
   --color-foreground: var(--nb-colors-text);
   --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --color-nb-green: var(--nb-colors-primary);
-  --color-nb-green-light: var(--nb-colors-accent);
-  --color-nb-green-soft: var(--color-nb-green-soft);
-  --color-nb-green-deep: var(--color-nb-green-deep);
-  --color-nb-accent-soft: var(--color-nb-accent-soft);
-  --color-nb-dark: var(--nb-colors-secondary);
-  --color-nb-slate: #1e293b;
-  --color-nb-gray: var(--nb-colors-backgroundAlt);
+  --color-nb-green: #15803d;
+  --color-nb-green-soft: #2bee6c;
+  --color-nb-green-deep: #16a34a;
+  --color-nb-dark: #0f172a;
+
+  /* Feature: Premium Shadows */
+  --shadow-premium: 0 20px 50px rgba(0, 0, 0, 0.08);
+  --shadow-premium-xl: 0 30px 60px -15px rgba(0, 0, 0, 0.12);
+
+  /* Feature: Premium Sheen Animation (Soft & Glassy) */
+  --animate-premium-sheen: premium-sheen 3s infinite ease-in-out;
+
+  @keyframes premium-sheen {
+    0% {
+      transform: translateX(-150%) skewX(-25deg);
+      opacity: 0;
+    }
+
+    20% {
+      opacity: 1;
+    }
+
+    40% {
+      transform: translateX(250%) skewX(-25deg);
+      opacity: 0;
+    }
+
+    100% {
+      transform: translateX(250%) skewX(-25deg);
+      opacity: 0;
+    }
+  }
 }
 
 :root {
-  /* Puck Editor Overrides (Nature's Boon Green Theme) */
+  /* Puck Editor Theme Sync */
   --puck-color-indigo-01: #e9fdf0;
   --puck-color-indigo-02: #d1fae0;
   --puck-color-indigo-03: #a3f4c0;
   --puck-color-indigo-04: #70eea0;
   --puck-color-indigo-05: #4ade80;
-  --puck-color-indigo-06: #2BEE6C;
-  /* Main nb-green */
-  --puck-color-indigo-07: #16a34a;
-  --puck-color-indigo-08: #15803d;
-  --puck-color-indigo-09: #166534;
-  --puck-color-indigo-10: #14532d;
-  --puck-color-indigo-11: #052e16;
-  --puck-color-indigo-12: #022c22;
+  --puck-color-indigo-06: #22c55e;
+  --puck-color-indigo-07: #15803d;
   --puck-color-black: #0f172a;
 }
 
@@ -44,25 +63,14 @@
     background-size: 32px 32px;
   }
 
-  .delay-3000 {
-    animation-delay: 3s;
-  }
-
   .bg-dynamic {
     background-color: var(--dynamic-bg);
-  }
-}
-
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }

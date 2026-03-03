@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Send } from 'lucide-react';
+import { Send, Phone, Mail } from 'lucide-react';
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
@@ -119,6 +119,20 @@ export default function ContactForm({
                     <p className="text-center text-red-500 font-bold text-sm bg-red-50 py-3 rounded-lg">Something went wrong. Please try again or email us directly.</p>
                 )}
             </form>
+
+            <div className="mt-8 pt-6 border-t border-slate-100 flex flex-col items-center gap-4 text-sm text-slate-500">
+                <p>Or contact us directly through other channels:</p>
+                <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+                    <a href="mailto:info@naturesboon.net" className="flex items-center gap-2 hover:text-[#16a34a] transition-colors font-medium">
+                        <Mail className="w-4 h-4" />
+                        info@naturesboon.net
+                    </a>
+                    <a href="https://wa.me/917696771693" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-[#16a34a] transition-colors font-medium">
+                        <Phone className="w-4 h-4" />
+                        +91-76967 71693
+                    </a>
+                </div>
+            </div>
         </div>
     );
 }

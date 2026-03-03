@@ -1,0 +1,23 @@
+.carouselContainer {
+    display: flex;
+    transition: transform 500ms ease-out;
+
+    /* Default (Mobile) */
+    --items-per-row: 1.25;
+    --gap-size: 12;
+
+    /* Tablet (sm) */
+    @media (min-width: 640px) {
+        --items-per-row: 2.5;
+        --gap-size: 16;
+    }
+
+    /* Desktop (lg) */
+    @media (min-width: 1024px) {
+        --items-per-row: 5;
+        --gap-size: 24;
+    }
+
+    /* Dynamic transform via CSS variables */
+    transform: translateX(calc((-1 * var(--current-index) * (100 / var(--items-per-row)) * 1vw) + (var(--current-index) * var(--gap-size) * 1px)));
+}

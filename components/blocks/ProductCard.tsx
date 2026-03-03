@@ -44,7 +44,7 @@ export default function ProductCard({ category }: { category: ProductCategory })
     };
 
     return (
-        <div className="group relative rounded-[32px] sm:rounded-[40px] overflow-hidden bg-white border border-slate-900/5 hover:shadow-2xl hover:shadow-nb-green/10 transition-all duration-500 hover:-translate-y-2 sm:hover:-translate-y-3 flex flex-col h-full">
+        <div className="group relative rounded-[32px] sm:rounded-[40px] overflow-hidden bg-white border border-slate-900/5 hover:shadow-premium transition-all duration-500 hover:-translate-y-2 sm:hover:-translate-y-3 flex flex-col h-full">
 
             {/* Image Slider Area (Relative context for arrows/dots) */}
             <div className="relative h-48 sm:h-64 bg-white overflow-hidden shrink-0">
@@ -94,6 +94,7 @@ export default function ProductCard({ category }: { category: ProductCategory })
                             className={`absolute left-4 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm shadow-md border border-white flex items-center justify-center text-slate-700 hover:text-nb-green hover:bg-white transition-all opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 disabled:opacity-0 disabled:cursor-not-allowed`}
                             disabled={activeIndex === 0}
                             aria-label="Previous image"
+                            title="Previous image"
                         >
                             <ChevronLeft className="w-4 h-4" />
                         </button>
@@ -102,6 +103,7 @@ export default function ProductCard({ category }: { category: ProductCategory })
                             className={`absolute right-4 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm shadow-md border border-white flex items-center justify-center text-slate-700 hover:text-nb-green hover:bg-white transition-all opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 disabled:opacity-0 disabled:cursor-not-allowed`}
                             disabled={activeIndex === images.length - 1}
                             aria-label="Next image"
+                            title="Next image"
                         >
                             <ChevronRight className="w-4 h-4" />
                         </button>
@@ -151,9 +153,13 @@ export default function ProductCard({ category }: { category: ProductCategory })
             <div className="px-8 pb-8 sm:px-10 sm:pb-10 pt-0 shrink-0">
                 <Link
                     href="/contact"
-                    className="inline-flex items-center gap-1 text-[10px] font-black text-white bg-gradient-to-r from-nb-green-soft to-nb-green-deep px-4 py-3 sm:py-2.5 rounded-full hover:shadow-lg hover:shadow-nb-green/20 hover:scale-[1.02] active:scale-[0.98] transition-all w-full justify-center uppercase tracking-widest relative overflow-hidden group/btn"
+                    className="inline-flex items-center gap-1 text-[10px] font-bold text-white bg-gradient-to-r from-nb-green-soft to-nb-green-deep px-4 py-3 sm:py-2.5 rounded-full hover:shadow-lg hover:shadow-nb-green/20 hover:scale-[1.02] active:scale-[0.98] transition-all w-full justify-center uppercase tracking-widest relative overflow-hidden group/btn"
                 >
-                    <div className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300 ease-out" />
+                    {/* Premium Sheen Effect */}
+                    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                        <div className="absolute inset-0 w-2/3 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-25deg] -translate-x-[150%] group-hover/btn:animate-premium-sheen" />
+                    </div>
+
                     <span className="relative z-10">Inquire for Bulk</span>
                 </Link>
             </div>

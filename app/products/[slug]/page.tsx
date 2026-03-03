@@ -44,5 +44,5 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         console.error("Failed to fetch product on server", e);
     }
 
-    return <ProductDetail slug={slug} initialProduct={initialProduct} />;
+    return <ProductDetail slug={slug} initialProduct={initialProduct} showHeaderFooter={true} />;
 }

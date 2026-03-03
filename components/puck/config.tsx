@@ -64,6 +64,8 @@ import ImageCarousel from '../blocks/ImageCarousel';
 import VideoCarousel from '../blocks/VideoCarousel';
 import { QuickOrderPad } from "./blocks/QuickOrderPad";
 import { ComplianceBadges } from "./blocks/ComplianceBadges";
+import { InstagramCarouselBlockConfig } from "./blocks/InstagramCarouselBlock";
+import { ProductDetailBlockConfig } from "./blocks/ProductDetailBlock";
 
 export const config: Config = {
     root: {
@@ -85,13 +87,13 @@ export const config: Config = {
         }
     },
     categories: {
-        "Carousel & Marquee": { components: ["LogoMarquee", "ImageCarousel", "VideoCarousel"] },
+        "Carousel & Marquee": { components: ["LogoMarquee", "ImageCarousel", "VideoCarousel", "InstagramCarousel"] },
         Hero: { components: ["NatureBoonHero", "ModernHero", "OrbitalHero", "ProductGridHero", "BentoGridHero", "LayeredDepthHero", "KineticMarqueeHero", "SwissStyleHero", "StackedCardHero"] },
         Themed: { components: ["NatureBoonExpertise", "NatureBoonStats", "CategoryPortfolio"] },
         "Modern Blocks": { components: ["FeatureGrid", "ModernHero", "ModernServices", "ModernStats", "ModernTestimonials", "AboutHero", "AboutJourney", "WhyChooseUs", "ProductBrowser", "CallToAction", "ServiceDetailList", "ProcessSteps", "ContactSection", "ProductShowcase"] },
         Layout: { components: ["DynamicLayout", "Section", "Spacer"] },
         Marketing: { components: ["ServiceGrid", "CTA", "SuccessStory", "IconBenefits"] },
-        B2B: { components: ["QuickOrderPad", "ComplianceBadges"] },
+        B2B: { components: ["QuickOrderPad", "ComplianceBadges", "ProductDetail"] },
         Blog: { components: ["BlogPostStory"] },
         Content: { components: ["TextBlock", "ProcessTimeline", "FAQAccordion", "Section"] },
         Sections: { components: ["TestimonialsSlider", "JourneyHero", "BentoServices"] },
@@ -100,6 +102,7 @@ export const config: Config = {
     },
     components: {
         Section: SectionBlockConfig,
+        ProductDetail: ProductDetailBlockConfig as any,
         TextBlock: TextBlockConfig,
         Spacer: SpacerBlockConfig,
         DynamicLayout: DynamicLayoutBlockConfig,
@@ -447,6 +450,7 @@ export const config: Config = {
             },
             render: (props: any) => <VideoCarousel {...props} />
         },
+        InstagramCarousel: InstagramCarouselBlockConfig,
         ProductShowcase: ProductShowcaseBlockConfig as any,
         Footer: {
             fields: {

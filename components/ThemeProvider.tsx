@@ -6,9 +6,9 @@ import { ReactNode, useEffect, useState } from "react";
 
 const defaultTheme = {
   colors: {
-    primary: "#16a34a",
+    primary: "#15803d",
     secondary: "#0f172a",
-    accent: "#22c55e",
+    accent: "#16a34a",
     background: "#ffffff",
     backgroundAlt: "#f8fafc",
     text: "#0f172a",
@@ -59,7 +59,8 @@ function flattenToCssVars(obj: any, prefix = "--nb-"): string {
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const themeData = useQuery(api.theme.getThemeSettings);
-  const [cssVars, setCssVars] = useState("");
+  // Initialize cssVars with the default theme immediately for SSR and initial render
+  const [cssVars, setCssVars] = useState(() => flattenToCssVars(defaultTheme));
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -67,7 +68,18 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (!themeData?.typography) return;
+    // Only update cssVars if themeData is available and different from the default
+    if (themeData) {
+      const newCssVars = flattenToCssVars(themeData);
+      if (newCssVars !== cssVars) { // Prevent unnecessary re-renders if theme hasn't changed
+        setCssVars(newCssVars);
+      }
+    }
+  }, [themeData, cssVars]); // Add cssVars to dependency array to ensure comparison is accurate
+
+  useEffect(() => {
+    // Only run on client-side after mount
+    if (!mounted || !themeData?.typography) return;
 
     const fontsToLoad = [
       themeData.typography.headingFont,
@@ -106,19 +118,17 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   }, [themeData]);
 
-  if (!mounted) {
-    return <>{children}</>;
-  }
-
   const headingFont = themeData?.typography?.headingFont || defaultTheme.typography.headingFont;
   const bodyFont = themeData?.typography?.bodyFont || defaultTheme.typography.bodyFont;
   const logoFont = themeData?.typography?.logoFont || defaultTheme.typography.logoFont;
+
+  const currentCssVars = cssVars || flattenToCssVars(defaultTheme);
 
   return (
     <>
       <style jsx global>{`
         :root {
-          ${cssVars || flattenToCssVars(defaultTheme)}
+          ${currentCssVars}
           --color-nb-green: var(--nb-colors-primary);
           --color-nb-green-light: var(--nb-colors-accent);
           

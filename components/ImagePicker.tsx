@@ -3,7 +3,7 @@
 import { useState, useMemo, useRef } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { Search, Image as ImageIcon, X, Loader2, UploadCloud, Check, ArrowUpDown } from "lucide-react";
+import { Search, Image as ImageIcon, X, Loader2, UploadCloud, Check, ArrowUpDown, Video, FileText, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUpload } from "@/hooks/useUpload";
 
@@ -81,8 +81,22 @@ export function ImagePicker({ value, onChange }: ImagePickerProps) {
                 )}
             >
                 {value ? (
-                    <>
-                        <img src={value} alt="Selected" className="w-full h-full object-contain rounded-lg" />
+                    <div className="w-full h-full flex items-center justify-center p-2">
+                        {value.match(/\.(mp4|webm|ogg)$/i) || value.includes('video') ? (
+                            <div className="relative w-full h-full bg-slate-100 rounded-lg flex items-center justify-center overflow-hidden">
+                                <video src={value} className="w-full h-full object-cover" muted loop autoPlay playsInline />
+                                <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                                    <Play size={24} className="text-white fill-white" />
+                                </div>
+                            </div>
+                        ) : value.match(/\.(pdf)$/i) || value.includes('pdf') ? (
+                            <div className="flex flex-col items-center justify-center gap-2 text-nb-green">
+                                <FileText size={40} />
+                                <span className="text-[10px] font-bold uppercase truncate max-w-[120px]">Document Selected</span>
+                            </div>
+                        ) : (
+                            <img src={value} alt="Selected" className="w-full h-full object-contain rounded-lg" />
+                        )}
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                             <button
                                 onClick={(e) => { e.stopPropagation(); setIsOpen(true); }}
@@ -100,11 +114,11 @@ export function ImagePicker({ value, onChange }: ImagePickerProps) {
                                 SEO/Alt
                             </button>
                         </div>
-                    </>
+                    </div>
                 ) : (
                     <div className="text-center font-inter">
                         <div className="w-10 h-10 bg-nb-green/10 text-nb-green rounded-full flex items-center justify-center mx-auto mb-2">
-                            <ImageIcon size={20} />
+                            <UploadCloud size={20} />
                         </div>
                         <p className="text-xs font-bold text-slate-500">Pick Brand Asset</p>
                     </div>
@@ -213,7 +227,7 @@ export function ImagePicker({ value, onChange }: ImagePickerProps) {
                                     className="hidden"
                                     ref={fileInputRef}
                                     onChange={handleUpload}
-                                    accept="image/*"
+                                    accept="image/*,video/*,application/pdf"
                                     title="Upload brand asset"
                                 />
 
@@ -254,20 +268,38 @@ export function ImagePicker({ value, onChange }: ImagePickerProps) {
                                         <div
                                             key={item._id}
                                             onClick={() => handleSelect(item.url)}
-                                            className="group relative aspect-square bg-white rounded-[24px] overflow-hidden cursor-pointer hover:ring-4 hover:ring-nb-green transition-all shadow-sm border border-slate-100"
+                                            className="group relative aspect-square bg-slate-50 rounded-[24px] overflow-hidden cursor-pointer hover:ring-4 hover:ring-nb-green transition-all shadow-sm border border-slate-100 flex items-center justify-center"
                                         >
-                                            <img
-                                                src={item.url}
-                                                alt={item.filename}
-                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                                            />
+                                            {item.type.includes('video') ? (
+                                                <div className="relative w-full h-full">
+                                                    <video src={item.url} className="w-full h-full object-cover" muted />
+                                                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 text-white">
+                                                        <Video size={32} />
+                                                    </div>
+                                                </div>
+                                            ) : item.type.includes('pdf') ? (
+                                                <div className="flex flex-col items-center justify-center gap-2 text-slate-400 group-hover:text-nb-green transition-colors">
+                                                    <FileText size={48} />
+                                                    <span className="text-[10px] font-black uppercase px-2 text-center break-all">{item.filename}</span>
+                                                </div>
+                                            ) : (
+                                                <img
+                                                    src={item.url}
+                                                    alt={item.filename}
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                                />
+                                            )}
                                             {value === item.url && (
                                                 <div className="absolute top-3 right-3 bg-nb-green text-slate-900 p-1.5 rounded-full shadow-2xl z-20 border-2 border-white animate-in zoom-in">
                                                     <Check size={16} strokeWidth={4} />
                                                 </div>
                                             )}
                                             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
-                                                <p className="text-white text-[10px] font-black truncate tracking-wide">{item.filename}</p>
+                                                <div className="flex items-center justify-between">
+                                                    <p className="text-white text-[10px] font-black truncate tracking-wide max-w-[80%]">{item.filename}</p>
+                                                    {item.type.includes('video') && <Video size={12} className="text-white" />}
+                                                    {item.type.includes('pdf') && <FileText size={12} className="text-white" />}
+                                                </div>
                                             </div>
                                         </div>
                                     ))}

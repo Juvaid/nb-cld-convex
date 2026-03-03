@@ -222,7 +222,7 @@ export default function ProductBrowser({ categories: initialCategories = [], use
                                         <Link
                                             key={idx}
                                             href={`/products/${product.slug}`}
-                                            className="group rounded-[32px] border border-slate-900/5 bg-white hover:shadow-2xl hover:shadow-nb-green/10 transition-all duration-500 hover:-translate-y-2 overflow-hidden flex flex-col"
+                                            className="group rounded-[32px] border border-slate-900/5 bg-white hover:shadow-premium transition-all duration-500 hover:-translate-y-2 overflow-hidden flex flex-col"
                                         >
                                             <div className="aspect-square bg-slate-50 flex items-center justify-center relative overflow-hidden h-64 sm:h-auto">
                                                 {product.images && product.images.length > 0 && typeof product.images[0] === 'string' && product.images[0] !== "[object Object]" ? (
@@ -253,10 +253,15 @@ export default function ProductBrowser({ categories: initialCategories = [], use
                                                     )}
                                                 </div>
                                                 <div
-                                                    className="inline-flex items-center h-12 gap-2 text-sm font-black text-white bg-slate-900 px-6 rounded-2xl hover:bg-gradient-to-r hover:from-nb-green hover:to-nb-green-deep hover:shadow-xl hover:shadow-nb-green/20 transition-all w-full justify-center group/btn"
+                                                    className="inline-flex items-center h-12 gap-2 text-sm font-bold text-white bg-slate-900 px-6 rounded-2xl hover:bg-gradient-to-r hover:from-nb-green hover:to-nb-green-deep hover:shadow-xl hover:shadow-nb-green/20 transition-all w-full justify-center group/btn relative overflow-hidden"
                                                 >
-                                                    Details
-                                                    <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                                                    {/* Premium Sheen Effect */}
+                                                    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                                                        <div className="absolute inset-0 w-2/3 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-25deg] -translate-x-[150%] group-hover/btn:animate-premium-sheen" />
+                                                    </div>
+
+                                                    <span className="relative z-10">Details</span>
+                                                    <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform relative z-10" />
                                                 </div>
                                             </div>
                                         </Link>

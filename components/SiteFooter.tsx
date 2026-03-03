@@ -157,8 +157,8 @@ export function SiteFooter({
                             ].map((item, i) => (
                                 <li key={i}>
                                     <a href={item.href} target={item.icon === MapPin ? "_blank" : "_self"} rel={item.icon === MapPin ? "noopener noreferrer" : undefined} className="flex gap-4 items-start group">
-                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all ${backgroundColor === 'bg-white' ? 'bg-slate-100 group-hover:bg-nb-green group-hover:shadow-[0_4px_12px_rgba(43,238,108,0.3)]' : 'bg-white/5 group-hover:bg-nb-green group-hover:shadow-[0_4px_12px_rgba(43,238,108,0.3)]'}`}>
-                                            <item.icon className={`w-4 h-4 transition-colors ${backgroundColor === 'bg-white' ? 'text-nb-green group-hover:text-white' : 'text-nb-green group-hover:text-slate-900'}`} />
+                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all ${backgroundColor === 'bg-white' ? 'bg-slate-100 group-hover:bg-nb-green group-hover:shadow-[0_4px_12px_rgba(21,128,61,0.3)]' : 'bg-white/5 group-hover:bg-nb-green group-hover:shadow-[0_4px_12px_rgba(21,128,61,0.3)]'}`}>
+                                            <item.icon className={`w-4 h-4 transition-colors ${backgroundColor === 'bg-white' ? 'text-nb-green group-hover:text-white' : 'text-nb-green group-hover:text-white'}`} />
                                         </div>
                                         <div>
                                             <span className={`block text-xs sm:text-sm font-black transition-colors ${textColor} group-hover:text-nb-green`}>{item.text}</span>

@@ -39,7 +39,7 @@ const getBgStyles = (variant: BackgroundVariant) => {
         case 'muted': return 'bg-slate-50 text-slate-900';
         case 'slate-900': return 'bg-slate-900 text-white';
         case 'nb-green':
-        case 'primary': return 'bg-nb-green text-slate-900';
+        case 'primary': return 'bg-nb-green text-white';
         case 'glass-white': return 'bg-white/70 backdrop-blur-xl border-y border-white/20';
         case 'glass-dark': return 'bg-slate-900/80 backdrop-blur-xl border-y border-white/5';
         case 'white':

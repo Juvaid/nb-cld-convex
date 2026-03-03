@@ -45,6 +45,7 @@ export const Button = ({
             className={`
                 inline-flex items-center justify-center gap-3 
                 rounded-2xl font-bold tracking-tight transition-all
+                relative overflow-hidden group/btn
                 ${variantClasses[variant]}
                 ${sizeClasses[size]}
                 ${fullWidth ? 'w-full' : ''}
@@ -52,9 +53,16 @@ export const Button = ({
             `}
             {...props}
         >
-            {icon && iconPosition === 'left' && icon}
-            {children}
-            {icon && iconPosition === 'right' && icon}
+            {/* Premium Sheen Effect */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                <div className="absolute inset-0 w-2/3 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-25deg] -translate-x-[150%] group-hover/btn:animate-premium-sheen" />
+            </div>
+
+            <span className="relative z-10 flex items-center gap-3">
+                {icon && iconPosition === 'left' && icon}
+                {children}
+                {icon && iconPosition === 'right' && icon}
+            </span>
         </motion.button>
     );
 };
