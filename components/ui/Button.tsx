@@ -44,7 +44,7 @@ export const Button = ({
             whileTap={{ scale: 0.98, y: 0 }}
             className={`
                 inline-flex items-center justify-center gap-3 
-                rounded-2xl font-bold tracking-tight transition-all
+                rounded-2xl font-semibold tracking-tight transition-all
                 relative overflow-hidden group/btn
                 ${variantClasses[variant]}
                 ${sizeClasses[size]}

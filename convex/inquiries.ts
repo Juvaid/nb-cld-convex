@@ -16,7 +16,31 @@ export const submit = mutation({
         annualVolume: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
-        // Lead Qualification Logic
+        // 1. Rate Limiting Check (Simple Implementation)
+        const RATE_LIMIT_WINDOW = 10 * 60 * 1000; // 10 minutes
+        const MAX_SUBMISSIONS = 5;
+        const now = Date.now();
+        const rateLimitKey = `inquiry:${args.email}`;
+
+        const rateLimit = await ctx.db
+            .query("rate_limits")
+            .withIndex("by_key", (q) => q.eq("key", rateLimitKey))
+            .unique();
+
+        if (rateLimit) {
+            if (now < rateLimit.resetAt) {
+                if (rateLimit.value >= MAX_SUBMISSIONS) {
+                    throw new Error("Too many submissions. Please try again in 10 minutes.");
+                }
+                await ctx.db.patch(rateLimit._id, { value: rateLimit.value + 1 });
+            } else {
+                await ctx.db.patch(rateLimit._id, { value: 1, resetAt: now + RATE_LIMIT_WINDOW });
+            }
+        } else {
+            await ctx.db.insert("rate_limits", { key: rateLimitKey, value: 1, resetAt: now + RATE_LIMIT_WINDOW });
+        }
+
+        // 2. Lead Qualification Logic
         const highVolumeThreshold = 500; // kg or units
         let isHighValue = false;
 

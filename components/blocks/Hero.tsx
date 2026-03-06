@@ -108,8 +108,8 @@ export default function Hero({
 
                         {/* Quick stats with glass background - Hidden on mobile */}
                         <div className="hidden lg:flex gap-4 sm:gap-12 mt-6 sm:mt-12 p-3.5 sm:p-6 rounded-[32px] sm:rounded-[40px] bg-white/40 backdrop-blur-md max-w-fit border border-white/60 mx-auto lg:mx-0">
-                            {(stats || []).map((stat) => (
-                                <div key={stat.label}>
+                            {(stats || []).map((stat, i) => (
+                                <div key={i}>
                                     <div className="text-xl sm:text-4xl font-black text-slate-900 tracking-tighter">{stat.value}</div>
                                     <div className="text-[8.5px] sm:text-xs font-black text-slate-500 uppercase tracking-[0.1em] mt-0.5 sm:mt-2 opacity-70 leading-tight">{stat.label}</div>
                                 </div>
@@ -124,7 +124,7 @@ export default function Hero({
                                 const IconComp = iconMap[card.icon] || Factory;
                                 return (
                                     <div
-                                        key={card.title}
+                                        key={i}
                                         className={`bg-white/40 backdrop-blur-md rounded-[24px] sm:rounded-[32px] p-3.5 sm:p-8 hover:-translate-y-4 transition-all duration-700 hover:shadow-[0_20px_60px_-15px_rgba(21,128,61,0.2)] border border-white/60 flex flex-col ${alignmentClasses[alignment]} ${i === 0 ? "delay-0" : i === 1 ? "delay-75" : i === 2 ? "delay-150" : "delay-200"
                                             }`}
                                     >

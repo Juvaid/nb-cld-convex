@@ -1,0 +1,31 @@
+services:
+  convex:
+    image: ghcr.io/get-convex/convex-backend:latest
+    ports:
+      - "3210:3210" # Backend API
+      - "3211:3211" # HTTP Actions
+      - "6791:6791" # Dashboard UI
+    environment:
+      - CONVEX_DB_TYPE=postgres
+      - CONVEX_DB_HOST=postgres
+      - CONVEX_DB_PORT=5432
+      - CONVEX_DB_USER=postgres
+      - CONVEX_DB_PASSWORD=password
+      - CONVEX_DB_NAME=convex
+      - CONVEX_CLOUD_URL=http://127.0.0.1:3210
+      - CONVEX_SITE_URL=http://127.0.0.1:3211
+      - DISABLE_BEACON=1
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=convex
+    volumes:
+      - convex-db-data:/var/lib/postgresql/data
+
+volumes:
+  convex-db-data:

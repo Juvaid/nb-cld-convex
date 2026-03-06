@@ -97,20 +97,20 @@ export default function TestimonialsSlider({
                     {/* Quote mark */}
                     <span className="absolute top-8 left-10 text-7xl font-serif text-[#157f3c]/10 leading-none select-none">"</span>
 
-                    <StarRating count={t.rating ?? 5} />
+                    <StarRating count={t?.rating ?? 5} />
 
                     <p className="text-slate-700 text-lg md:text-xl leading-relaxed mb-8 relative z-10">
-                        "{t.quote}"
+                        "{t?.quote || "..."}"
                     </p>
 
                     <div className="flex items-center gap-4">
                         {/* Avatar placeholder */}
                         <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#157f3c] to-[#0d4f25] flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
-                            {t.name.charAt(0)}
+                            {t?.name && typeof t.name === 'string' ? t.name.charAt(0) : '?'}
                         </div>
                         <div>
-                            <p className="font-bold text-slate-900">{t.name}</p>
-                            <p className="text-sm text-slate-500">{t.role}, {t.company}</p>
+                            <p className="font-bold text-slate-900">{t?.name || "Anonymous"}</p>
+                            <p className="text-sm text-slate-500">{t?.role || "Verified"} {t?.company ? `at ${t.company}` : ""}</p>
                         </div>
                     </div>
                 </div>

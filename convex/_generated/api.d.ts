@@ -9,6 +9,7 @@
  */
 
 import type * as auth from "../auth.js";
+import type * as backup from "../backup.js";
 import type * as blogs from "../blogs.js";
 import type * as categories from "../categories.js";
 import type * as http from "../http.js";
@@ -24,6 +25,8 @@ import type * as pages from "../pages.js";
 import type * as product_mutations from "../product_mutations.js";
 import type * as products from "../products.js";
 import type * as seed from "../seed.js";
+import type * as seed_admin from "../seed_admin.js";
+import type * as seed_catalog from "../seed_catalog.js";
 import type * as siteData from "../siteData.js";
 import type * as siteSettings from "../siteSettings.js";
 import type * as templates from "../templates.js";
@@ -37,6 +40,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  backup: typeof backup;
   blogs: typeof blogs;
   categories: typeof categories;
   http: typeof http;
@@ -52,6 +56,8 @@ declare const fullApi: ApiFromModules<{
   product_mutations: typeof product_mutations;
   products: typeof products;
   seed: typeof seed;
+  seed_admin: typeof seed_admin;
+  seed_catalog: typeof seed_catalog;
   siteData: typeof siteData;
   siteSettings: typeof siteSettings;
   templates: typeof templates;

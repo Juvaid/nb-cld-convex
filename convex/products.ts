@@ -164,3 +164,67 @@ export const listNames = query({
         }));
     },
 });
+
+export const listLite = query({
+    args: {
+        status: v.optional(v.union(v.literal("active"), v.literal("draft"), v.literal("archived"))),
+        categoryId: v.optional(v.id("categories")),
+    },
+    handler: async (ctx, args) => {
+        let products;
+        if (args.status) {
+            products = await ctx.db
+                .query("products")
+                .withIndex("by_status", (q) => q.eq("status", args.status as any))
+                .collect();
+        } else {
+            products = await ctx.db.query("products").collect();
+        }
+
+        let filtered = products;
+
+        if (args.categoryId) {
+            filtered = products.filter(p => p.categoryId === args.categoryId);
+        }
+
+        // Return only essential fields to save bandwidth
+        return filtered.map(p => ({
+            _id: p._id,
+            name: p.name,
+            slug: p.slug,
+            images: p.images.slice(0, 1), // Only first image
+            status: p.status,
+            categoryId: p.categoryId,
+            price: p.price,
+            sku: p.sku,
+            usp: p.usp,
+        }));
+    },
+});
+
+// ── Backfill: add missing slugs to products that were inserted without one ─────
+export const backfillSlugs = mutation({
+    args: {},
+    handler: async (ctx) => {
+        function toSlug(name: string) {
+            return name
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, "-")
+                .replace(/^-|-$/g, "");
+        }
+
+        const all = await ctx.db.query("products").collect();
+        let patched = 0;
+
+        for (const product of all) {
+            if (!product.slug) {
+                const slug = toSlug(product.name);
+                await ctx.db.patch(product._id, { slug });
+                patched++;
+            }
+        }
+
+        return { patched };
+    },
+});
+

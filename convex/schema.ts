@@ -101,7 +101,9 @@ export default defineSchema({
     storageId: v.string(), // Convex Storage ID
     url: v.string(),
     type: v.string(), // image, video, etc.
-  }).index("by_filename", ["filename"]),
+    folder: v.optional(v.string()), // Grouping / folder label e.g. "Products", "Hero"
+  }).index("by_filename", ["filename"])
+    .index("by_storageId", ["storageId"]),
 
   siteSettings: defineTable({
     key: v.string(),
@@ -159,4 +161,11 @@ export default defineSchema({
     category: v.optional(v.string()),
     createdAt: v.number(),
   }).index("by_componentType", ["componentType"]),
+
+  // Rate Limiter Tables
+  rate_limits: defineTable({
+    key: v.string(),
+    value: v.number(),
+    resetAt: v.number(),
+  }).index("by_key", ["key"]),
 });

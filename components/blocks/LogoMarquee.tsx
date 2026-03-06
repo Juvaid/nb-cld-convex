@@ -8,6 +8,11 @@ export interface LogoMarqueeProps {
     speed?: number; // seconds for one full cycle (higher = slower)
     direction?: 'left' | 'right';
     pauseOnHover?: boolean;
+    size?: 'sm' | 'md' | 'lg';
+    colorMode?: 'grayscale' | 'color' | 'grayscale-to-color';
+    gap?: number;
+    paddingTop?: number;
+    paddingBottom?: number;
 }
 
 export default function LogoMarquee({
@@ -22,7 +27,14 @@ export default function LogoMarquee({
     speed = 40,
     direction = 'left',
     pauseOnHover = true,
+    size = 'md',
+    colorMode = 'grayscale-to-color',
+    gap = 5,
+    paddingTop = 6,
+    paddingBottom = 6,
 }: LogoMarqueeProps) {
+    if (!logos || logos.length === 0) return null;
+
     // Duplicate exactly once → animate -50% = one full set width
     const allLogos = [...logos, ...logos];
     const animName = `marquee-${direction}`;
@@ -35,7 +47,7 @@ export default function LogoMarquee({
                 @keyframes marquee-right { from { transform: translateX(-50%); } to { transform: translateX(0); } }
                 .nb-marquee-track {
                     display: flex;
-                    gap: 5rem;
+                    gap: ${gap}rem;
                     align-items: center;
                     width: max-content;
                     animation: ${animName} ${speed}s linear infinite;
@@ -49,32 +61,44 @@ export default function LogoMarquee({
                 }
             `}</style>
 
-            <div className="nb-marquee-wrap">
+            <div className="nb-marquee-wrap" style={{ paddingTop: `${paddingTop}rem`, paddingBottom: `${paddingBottom}rem` }}>
                 {title && (
-                    <p className="text-center text-[9px] font-bold text-slate-400 uppercase tracking-[0.25em] pb-6">
+                    <p className="text-center text-xs sm:text-sm font-semibold text-slate-500 uppercase tracking-widest pb-8">
                         {title}
                     </p>
                 )}
                 <div className={`nb-marquee-track pb-2${pauseOnHover ? ' pause-on-hover' : ''}`}>
-                    {allLogos.map((logo, i) => (
-                        <div
-                            key={i}
-                            className="flex-shrink-0 grayscale hover:grayscale-0 transition-all duration-500 hover:scale-110"
-                        >
-                            {logo.url ? (
-                                <img
-                                    src={logo.url}
-                                    alt={logo.alt}
-                                    className="h-11 sm:h-16 w-auto object-contain select-none"
-                                    draggable={false}
-                                />
-                            ) : (
-                                <div className="h-11 sm:h-16 w-28 sm:w-36 bg-slate-50 rounded-xl flex items-center justify-center text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-tighter border border-slate-100">
-                                    {logo.alt}
-                                </div>
-                            )}
-                        </div>
-                    ))}
+                    {allLogos.map((logo, i) => {
+                        const sizeClasses = {
+                            sm: "h-8 sm:h-12 w-auto",
+                            md: "h-11 sm:h-16 w-auto",
+                            lg: "h-14 sm:h-20 w-auto"
+                        }[size];
+
+                        const colorClass = colorMode === 'grayscale' ? 'grayscale' :
+                            colorMode === 'grayscale-to-color' ? 'grayscale hover:grayscale-0 transition-all duration-500 hover:scale-110' :
+                                '';
+
+                        return (
+                            <div
+                                key={i}
+                                className={`flex-shrink-0 ${colorClass}`}
+                            >
+                                {logo.url ? (
+                                    <img
+                                        src={logo.url}
+                                        alt={logo.alt}
+                                        className={`${sizeClasses} object-contain select-none`}
+                                        draggable={false}
+                                    />
+                                ) : (
+                                    <div className={`${sizeClasses} min-w-[120px] bg-slate-50 rounded-xl flex items-center justify-center text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-tighter border border-slate-100 px-4`}>
+                                        {logo.alt}
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
         </section>

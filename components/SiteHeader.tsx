@@ -55,7 +55,7 @@ export function SiteHeader({
     return (
         <header className="bg-slate-50/95 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100/50">
             <div className="container mx-auto px-4 h-14 md:h-16 lg:h-20 flex items-center justify-between transition-all duration-300">
-                <Link href="/" className="font-bold text-2xl tracking-tight text-slate-900 flex items-center gap-3 group">
+                <Link href="/" className="font-semibold text-2xl tracking-tight text-slate-900 flex items-center gap-3 group">
                     {isLoading ? (
                         <>
                             <div className="w-10 h-10 bg-slate-200/60 rounded-xl animate-pulse" />
@@ -70,14 +70,14 @@ export function SiteHeader({
                         </div>
                     )}
                     {!isLoading && (
-                        <span className="hidden sm:inline bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent font-black tracking-tight font-logo">
+                        <span className="hidden sm:inline bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent font-bold tracking-tight font-logo">
                             {logoText}
                         </span>
                     )}
                 </Link>
 
                 {/* Desktop Nav */}
-                <nav className="hidden md:flex gap-8 text-sm font-bold text-slate-600 items-center">
+                <nav className="hidden md:flex gap-8 text-sm font-semibold text-slate-600 items-center">
                     {isLoading ? (
                         Array.from({ length: 4 }).map((_, i) => (
                             <div key={i} className="w-16 h-4 bg-slate-200/60 rounded animate-pulse" />
@@ -127,7 +127,7 @@ export function SiteHeader({
                             <Link
                                 key={i}
                                 href={link.href || "#"}
-                                className={`text-xl font-bold ${pathname === link.href ? "text-nb-green" : "text-slate-900"}`}
+                                className={`text-xl font-semibold ${pathname === link.href ? "text-nb-green" : "text-slate-900"}`}
                                 onClick={() => setIsMenuOpen(false)}
                             >
                                 {link.label}

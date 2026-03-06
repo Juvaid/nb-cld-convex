@@ -211,6 +211,19 @@ export const getAllPagePaths = query({
     },
 });
 
+export const listLite = query({
+    handler: async (ctx) => {
+        const pages = await ctx.db.query("pages").collect();
+        return pages.map((page) => ({
+            _id: page._id,
+            path: page.path,
+            title: page.title,
+            status: page.status,
+            lastModified: page.lastModified,
+        }));
+    },
+});
+
 export const createPageSnapshot = mutation({
     args: {
         pageId: v.id("pages"),

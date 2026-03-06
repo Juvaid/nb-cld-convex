@@ -30,6 +30,7 @@ import { StackedCardHeroBlockConfig } from "./blocks/StackedCardHeroBlock";
 import { SwissStyleHeroBlockConfig } from "./blocks/SwissStyleHeroBlock";
 import { BentoServicesBlockConfig } from "./blocks/BentoServicesBlock";
 import { TextBlockConfig } from "./blocks/TextBlock";
+import { HeroCarouselBlockConfig } from "./blocks/HeroCarouselBlock";
 
 // Composite Macro Blocks
 import { HomeEssentialsBlockConfig } from "./blocks/HomeEssentialsBlock";
@@ -88,7 +89,7 @@ export const config: Config = {
     },
     categories: {
         "Carousel & Marquee": { components: ["LogoMarquee", "ImageCarousel", "VideoCarousel", "InstagramCarousel"] },
-        Hero: { components: ["NatureBoonHero", "ModernHero", "OrbitalHero", "ProductGridHero", "BentoGridHero", "LayeredDepthHero", "KineticMarqueeHero", "SwissStyleHero", "StackedCardHero"] },
+        Hero: { components: ["HeroCarousel", "NatureBoonHero", "ModernHero", "OrbitalHero", "ProductGridHero", "BentoGridHero", "LayeredDepthHero", "KineticMarqueeHero", "SwissStyleHero", "StackedCardHero"] },
         Themed: { components: ["NatureBoonExpertise", "NatureBoonStats", "CategoryPortfolio"] },
         "Modern Blocks": { components: ["FeatureGrid", "ModernHero", "ModernServices", "ModernStats", "ModernTestimonials", "AboutHero", "AboutJourney", "WhyChooseUs", "ProductBrowser", "CallToAction", "ServiceDetailList", "ProcessSteps", "ContactSection", "ProductShowcase"] },
         Layout: { components: ["DynamicLayout", "Section", "Spacer"] },
@@ -132,6 +133,7 @@ export const config: Config = {
         JourneyHero: JourneyHeroBlockConfig,
         BentoServices: BentoServicesBlockConfig,
         ModernServices: ModernServicesBlockConfig,
+        HeroCarousel: HeroCarouselBlockConfig,
         AboutHero: {
             fields: {
                 badgeText: { type: "text" },
@@ -370,7 +372,7 @@ export const config: Config = {
         },
         LogoMarquee: {
             fields: {
-                title: { type: "text" },
+                title: { type: "text", label: "Heading (Leave empty to hide)" },
                 logos: {
                     type: "array",
                     getItemSummary: (l: any) => l.alt || "Logo",
@@ -381,28 +383,49 @@ export const config: Config = {
                                 <ImagePicker value={value} onChange={onChange} />
                             )
                         },
-                        alt: { type: "text" }
+                        alt: { type: "text", label: "Brand Name / Alt Text" },
                     }
                 },
-                speed: { type: "number", label: "Speed (seconds, higher = slower)" },
-                direction: {
-                    type: "select",
-                    label: "Scroll Direction",
+                size: {
+                    type: "radio", label: "Logo Size",
+                    options: [{ label: "Small", value: "sm" }, { label: "Medium", value: "md" }, { label: "Large", value: "lg" }]
+                },
+                colorMode: {
+                    type: "select", label: "Color Treatment",
                     options: [
-                        { label: "← Left", value: "left" },
-                        { label: "→ Right", value: "right" }
+                        { label: "Grayscale to Color On Hover", value: "grayscale-to-color" },
+                        { label: "Always Grayscale", value: "grayscale" },
+                        { label: "Always Color", value: "color" }
                     ]
                 },
+                gap: { type: "number", label: "Gap Between Logos (rem)" },
+                speed: { type: "number", label: "Speed (seconds, higher = slower)" },
+                direction: {
+                    type: "select", label: "Scroll Direction",
+                    options: [{ label: "← Left", value: "left" }, { label: "→ Right", value: "right" }]
+                },
                 pauseOnHover: {
-                    type: "radio",
-                    label: "Pause on Hover",
-                    options: [
-                        { label: "Yes", value: true },
-                        { label: "No", value: false }
-                    ]
-                }
+                    type: "radio", label: "Pause on Hover",
+                    options: [{ label: "Yes", value: true }, { label: "No", value: false }]
+                },
+                paddingTop: { type: "number", label: "Top Padding (rem)" },
+                paddingBottom: { type: "number", label: "Bottom Padding (rem)" }
             },
-            render: (props: any) => <LogoMarquee {...props} />
+            defaultProps: {
+                title: "Trusted by Industry Leaders",
+                logos: [{ url: "", alt: "Brand 1" }, { url: "", alt: "Brand 2" }, { url: "", alt: "Brand 3" }],
+                speed: 40, direction: 'left', pauseOnHover: true, size: 'md', colorMode: 'grayscale-to-color', gap: 5, paddingTop: 6, paddingBottom: 6
+            },
+            render: (props: any) => {
+                if (!props.logos || props.logos.length === 0) {
+                    return (
+                        <div className="p-8 text-center bg-slate-100 border-2 border-dashed border-slate-300 rounded-xl text-slate-500 my-8">
+                            Logo Marquee Empty. Add logos or this section will be entirely hidden on the live site.
+                        </div>
+                    );
+                }
+                return <LogoMarquee {...props} />;
+            }
         },
         ImageCarousel: {
             fields: {

@@ -65,7 +65,7 @@ export const Footer = ({
                                 </div>
                             )}
                             <div>
-                                <span className={`text-xl sm:text-2xl font-black tracking-tight leading-none block ${textColor}`}>{logoText}</span>
+                                <span className={`text-xl sm:text-2xl font-bold tracking-tight leading-none block ${textColor}`}>{logoText}</span>
                                 <span className={`text-[10px] ${subTextColor} font-bold tracking-[0.2em] uppercase leading-none mt-1 sm:mt-1.5 block`}>Since 2006</span>
                             </div>
                         </Link>
@@ -88,7 +88,7 @@ export const Footer = ({
 
                     {/* Links 1 */}
                     <div>
-                        <h4 className={`text-base sm:text-lg font-black mb-6 sm:mb-8 tracking-tight ${textColor}`}>Quick Links</h4>
+                        <h4 className={`text-base sm:text-lg font-bold mb-6 sm:mb-8 tracking-tight ${textColor}`}>Quick Links</h4>
                         <ul className="space-y-3 sm:space-y-4">
                             {['Home', 'About Us', 'Services', 'Our Products', 'Contact'].map((link) => {
                                 const href = link === 'Home' ? '/' : `/${link.toLowerCase().replace(' ', '-').replace('our-', '')}`;
@@ -106,7 +106,7 @@ export const Footer = ({
 
                     {/* Links 2 */}
                     <div>
-                        <h4 className={`text-base sm:text-lg font-black mb-6 sm:mb-8 tracking-tight ${textColor}`}>Expertise</h4>
+                        <h4 className={`text-base sm:text-lg font-bold mb-6 sm:mb-8 tracking-tight ${textColor}`}>Expertise</h4>
                         <ul className="space-y-3 sm:space-y-4 text-xs sm:text-sm">
                             {['OEM Manufacturing', 'Private Labeling', 'Formulation R&D', 'Packaging Design', 'Contract Manufacturing'].map((link) => (
                                 <li key={link}>
@@ -121,7 +121,7 @@ export const Footer = ({
 
                     {/* Contact Col */}
                     <div>
-                        <h4 className={`text-base sm:text-lg font-black mb-6 sm:mb-8 tracking-tight ${textColor}`}>Get in Touch</h4>
+                        <h4 className={`text-base sm:text-lg font-bold mb-6 sm:mb-8 tracking-tight ${textColor}`}>Get in Touch</h4>
                         <ul className="space-y-4 sm:space-y-6">
                             {[
                                 { icon: Mail, text: 'info@naturesboon.net', sub: 'General Inquiries', href: 'mailto:info@naturesboon.net' },
@@ -134,7 +134,7 @@ export const Footer = ({
                                             <item.icon className={`w-4 h-4 transition-colors ${backgroundColor === 'bg-white' ? 'text-nb-green group-hover:text-white' : 'text-nb-green group-hover:text-slate-900'}`} />
                                         </div>
                                         <div>
-                                            <span className={`block text-xs sm:text-sm font-black transition-colors ${textColor} group-hover:text-nb-green`}>{item.text}</span>
+                                            <span className={`block text-xs sm:text-sm font-semibold transition-colors ${textColor} group-hover:text-nb-green`}>{item.text}</span>
                                             <span className={`block text-[8px] sm:text-[10px] uppercase font-bold tracking-wider mt-1 sm:mt-1.5 transition-colors ${backgroundColor === 'bg-white' ? 'text-slate-400 group-hover:text-slate-600' : 'text-white/40 group-hover:text-white/80'}`}>{item.sub}</span>
                                         </div>
                                     </a>

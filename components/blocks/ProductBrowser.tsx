@@ -218,54 +218,55 @@ export default function ProductBrowser({ categories: initialCategories = [], use
                                 </div>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                                    {(cat.products || []).map((product, idx) => (
-                                        <Link
-                                            key={idx}
-                                            href={`/products/${product.slug}`}
-                                            className="group rounded-[32px] border border-slate-900/5 bg-white hover:shadow-premium transition-all duration-500 hover:-translate-y-2 overflow-hidden flex flex-col"
-                                        >
-                                            <div className="aspect-square bg-slate-50 flex items-center justify-center relative overflow-hidden h-64 sm:h-auto">
-                                                {product.images && product.images.length > 0 && typeof product.images[0] === 'string' && product.images[0] !== "[object Object]" ? (
-                                                    <img
-                                                        src={product.images[0].startsWith('http') ? product.images[0] : `/api/storage/${product.images[0]}`}
-                                                        className="w-full h-full object-cover relative z-10 group-hover:scale-110 transition-transform duration-1000"
-                                                        alt={product.name}
-                                                    />
-                                                ) : (
-                                                    <span className="text-4xl opacity-30 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">🌿</span>
-                                                )}
-                                                <div className="absolute inset-0 bg-gradient-to-br from-nb-green-soft/10 to-nb-green-deep/10 opacity-50" />
-                                            </div>
-                                            <div className="p-4 sm:p-5 flex flex-col flex-1">
-                                                <div className="flex-1">
-                                                    {product.usp && (
-                                                        <span className="inline-block px-3 py-1 text-[10px] font-black text-nb-green bg-nb-green/5 rounded-full mb-3 tracking-widest uppercase border border-nb-green/10">
-                                                            {product.usp}
-                                                        </span>
+                                    {(cat.products || []).map((product, idx) => {
+                                        const sharedClass = "group rounded-[32px] border border-slate-900/5 bg-white hover:shadow-premium transition-all duration-500 hover:-translate-y-2 overflow-hidden flex flex-col";
+                                        const inner = (
+                                            <>
+                                                <div className="aspect-square bg-slate-50 flex items-center justify-center relative overflow-hidden h-64 sm:h-auto">
+                                                    {product.images && product.images.length > 0 && typeof product.images[0] === 'string' && product.images[0] !== "[object Object]" ? (
+                                                        <img
+                                                            src={product.images[0].startsWith('http') ? product.images[0] : `/api/storage/${product.images[0]}`}
+                                                            className="w-full h-full object-cover relative z-10 group-hover:scale-110 transition-transform duration-1000"
+                                                            alt={product.name}
+                                                        />
+                                                    ) : (
+                                                        <span className="text-4xl opacity-30 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">🌿</span>
                                                     )}
-                                                    <h3 className="text-lg font-black text-slate-900 mb-1 line-clamp-2 leading-snug">
-                                                        {product.name}
-                                                    </h3>
-                                                    {product.sku && (
-                                                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">
-                                                            SKU: {product.sku}
-                                                        </div>
-                                                    )}
+                                                    <div className="absolute inset-0 bg-gradient-to-br from-nb-green-soft/10 to-nb-green-deep/10 opacity-50" />
                                                 </div>
-                                                <div
-                                                    className="inline-flex items-center h-12 gap-2 text-sm font-bold text-white bg-slate-900 px-6 rounded-2xl hover:bg-gradient-to-r hover:from-nb-green hover:to-nb-green-deep hover:shadow-xl hover:shadow-nb-green/20 transition-all w-full justify-center group/btn relative overflow-hidden"
-                                                >
-                                                    {/* Premium Sheen Effect */}
-                                                    <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                                                        <div className="absolute inset-0 w-2/3 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-25deg] -translate-x-[150%] group-hover/btn:animate-premium-sheen" />
+                                                <div className="p-4 sm:p-5 flex flex-col flex-1">
+                                                    <div className="flex-1">
+                                                        {product.usp && (
+                                                            <span className="inline-block px-3 py-1 text-[10px] font-black text-nb-green bg-nb-green/5 rounded-full mb-3 tracking-widest uppercase border border-nb-green/10">
+                                                                {product.usp}
+                                                            </span>
+                                                        )}
+                                                        <h3 className="text-lg font-black text-slate-900 mb-1 line-clamp-2 leading-snug">
+                                                            {product.name}
+                                                        </h3>
+                                                        {product.sku && (
+                                                            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">
+                                                                SKU: {product.sku}
+                                                            </div>
+                                                        )}
                                                     </div>
-
-                                                    <span className="relative z-10">Details</span>
-                                                    <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform relative z-10" />
+                                                    <div
+                                                        className="inline-flex items-center h-12 gap-2 text-sm font-bold text-white bg-slate-900 px-6 rounded-2xl hover:bg-gradient-to-r hover:from-nb-green hover:to-nb-green-deep hover:shadow-xl hover:shadow-nb-green/20 transition-all w-full justify-center group/btn relative overflow-hidden"
+                                                    >
+                                                        {/* Premium Sheen Effect */}
+                                                        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                                                            <div className="absolute inset-0 w-2/3 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-25deg] -translate-x-[150%] group-hover/btn:animate-premium-sheen" />
+                                                        </div>
+                                                        <span className="relative z-10">Details</span>
+                                                        <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform relative z-10" />
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </Link>
-                                    ))}
+                                            </>
+                                        );
+                                        return product.slug
+                                            ? <Link key={product.slug} href={`/products/${product.slug}`} className={sharedClass}>{inner}</Link>
+                                            : <div key={`no-slug-${idx}`} className={sharedClass + " cursor-default"}>{inner}</div>;
+                                    })}
                                 </div>
                             </div>
                         ))

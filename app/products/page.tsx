@@ -8,5 +8,8 @@ export const metadata: Metadata = {
 };
 
 export default function ProductsPage() {
-    return <CmsPageRenderer path="/products" fallbackData={productsPageData} />;
+    // useDynamicData=true makes the ProductBrowser component fetch live from Convex
+    // instead of using the hardcoded fallback in productsPageData
+    return <CmsPageRenderer path="/products" fallbackData={productsPageData} useDynamicData />;
 }
+

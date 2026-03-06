@@ -45,6 +45,14 @@ export const seedSiteData = mutation({
             });
         }
 
-        return "Successfully seeded site stats and services.";
+        // Seed Site Settings
+        const existingSettings = await ctx.db.query("siteSettings").collect();
+        if (existingSettings.length === 0) {
+            await ctx.db.insert("siteSettings", { key: "logoText", value: "Nature's Boon" });
+            await ctx.db.insert("siteSettings", { key: "contactEmail", value: "info@naturesboon.com" });
+            await ctx.db.insert("siteSettings", { key: "contactPhone", value: "+91 97818 00033" });
+        }
+
+        return "Successfully seeded site stats, services, and settings.";
     },
 });

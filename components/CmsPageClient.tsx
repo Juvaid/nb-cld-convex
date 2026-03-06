@@ -5,7 +5,17 @@ import { api } from "@/convex/_generated/api";
 import { PuckRenderer } from "@/components/PuckRenderer";
 import { PageSkeleton } from "@/components/ui/Skeleton";
 
-export function CmsPageClient({ fallbackData, path, initialPageData }: { fallbackData: any; path: string; initialPageData?: any }) {
+export function CmsPageClient({
+    fallbackData,
+    path,
+    initialPageData,
+    useDynamicData,
+}: {
+    fallbackData: any;
+    path: string;
+    initialPageData?: any;
+    useDynamicData?: boolean;
+}) {
     const livePage = useQuery(api.pages.getPublishedPage, { path });
     const page = livePage !== undefined ? livePage : initialPageData;
 
@@ -24,10 +34,16 @@ export function CmsPageClient({ fallbackData, path, initialPageData }: { fallbac
         }
     }
 
-    // Render live data if available, otherwise just render an empty object so the layout works
+    // Inject useDynamicData into initialData so ProductBrowser can pick it up
+    const enrichedInitialData = {
+        ...initialPageData,
+        useDynamicData: useDynamicData ?? true, // Always use dynamic data when passed via props
+    };
+
     return (
         <div className="min-h-screen bg-background">
-            <PuckRenderer data={liveData || { root: {}, content: [] }} initialData={initialPageData} />
+            <PuckRenderer data={liveData || { root: {}, content: [] }} initialData={enrichedInitialData} />
         </div>
     );
 }
+
