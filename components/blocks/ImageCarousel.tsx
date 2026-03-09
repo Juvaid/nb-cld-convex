@@ -116,8 +116,8 @@ export default function ImageCarousel({
                     {/* Overlay */}
                     <div className="absolute inset-0 bg-black/40" />
 
-                    {/* Content */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 sm:p-12">
+                    {/* Content - Positioned lower on mobile */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-end md:justify-center text-center p-6 sm:p-12 pb-20 sm:pb-32 md:pb-12">
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -172,7 +172,7 @@ export default function ImageCarousel({
                             }}
                             title={`Go to slide ${i + 1}`}
                             aria-label={`Go to slide ${i + 1}`}
-                            className={`h-1 rounded-full transition-all duration-500 ${current === i ? 'w-8 bg-nb-green' : 'w-2 bg-white/30 hover:bg-white/50'}`}
+                            className={`h-2 rounded-full transition-all duration-500 ${current === i ? 'w-8 bg-nb-green' : 'w-2 bg-white/30 hover:bg-white/50'}`}
                         />
                     ))}
                 </div>

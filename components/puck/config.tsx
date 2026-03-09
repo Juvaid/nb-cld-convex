@@ -31,6 +31,7 @@ import { SwissStyleHeroBlockConfig } from "./blocks/SwissStyleHeroBlock";
 import { BentoServicesBlockConfig } from "./blocks/BentoServicesBlock";
 import { TextBlockConfig } from "./blocks/TextBlock";
 import { HeroCarouselBlockConfig } from "./blocks/HeroCarouselBlock";
+import { ProductCategoryCarouselBlockConfig } from "./blocks/ProductCategoryCarouselBlock";
 
 // Composite Macro Blocks
 import { HomeEssentialsBlockConfig } from "./blocks/HomeEssentialsBlock";
@@ -88,7 +89,7 @@ export const config: Config = {
         }
     },
     categories: {
-        "Carousel & Marquee": { components: ["LogoMarquee", "ImageCarousel", "VideoCarousel", "InstagramCarousel"] },
+        "Carousel & Marquee": { components: ["LogoMarquee", "ImageCarousel", "VideoCarousel", "InstagramCarousel", "ProductCategoryCarousel"] },
         Hero: { components: ["HeroCarousel", "NatureBoonHero", "ModernHero", "OrbitalHero", "ProductGridHero", "BentoGridHero", "LayeredDepthHero", "KineticMarqueeHero", "SwissStyleHero", "StackedCardHero"] },
         Themed: { components: ["NatureBoonExpertise", "NatureBoonStats", "CategoryPortfolio"] },
         "Modern Blocks": { components: ["FeatureGrid", "ModernHero", "ModernServices", "ModernStats", "ModernTestimonials", "AboutHero", "AboutJourney", "WhyChooseUs", "ProductBrowser", "CallToAction", "ServiceDetailList", "ProcessSteps", "ContactSection", "ProductShowcase"] },
@@ -113,6 +114,7 @@ export const config: Config = {
         NatureBoonExpertise: NatureBoonExpertiseConfig as any,
         NatureBoonStats: NatureBoonStatsConfig as any,
         CategoryPortfolio: CategoryPortfolioConfig as any,
+        ProductCategoryCarousel: ProductCategoryCarouselBlockConfig as any,
         ServiceGrid: ServiceGridBlockConfig,
         CTA: CTABlockConfig,
         IconBenefits: IconBenefitsBlockConfig,
@@ -331,6 +333,7 @@ export const config: Config = {
         },
         ModernStats: {
             fields: {
+                heading: { type: "text" },
                 stats: {
                     type: "array",
                     getItemSummary: (s: any) => s.label || "Stat",
@@ -357,6 +360,22 @@ export const config: Config = {
                 badgeText: { type: "text" },
                 heading: { type: "text" },
                 description: { type: "textarea" },
+                layout: {
+                    type: "radio",
+                    options: [
+                        { label: "Split", value: "split" },
+                        { label: "Centered", value: "centered" }
+                    ]
+                },
+                animationType: {
+                    type: "radio",
+                    options: [
+                        { label: "Spring", value: "spring" },
+                        { label: "Fade", value: "fade" },
+                        { label: "Slide", value: "slide" }
+                    ]
+                },
+                themeColor: { type: "text", label: "Accent Color (HEX)" },
                 testimonials: {
                     type: "array",
                     getItemSummary: (t: any) => t.author || "Testimonial",
@@ -365,6 +384,12 @@ export const config: Config = {
                         company: { type: "text" },
                         content: { type: "textarea" },
                         rating: { type: "number" },
+                        avatar: {
+                            type: "custom",
+                            render: ({ value, onChange }: any) => (
+                                <ImagePicker value={value} onChange={onChange} />
+                            )
+                        }
                     }
                 }
             },

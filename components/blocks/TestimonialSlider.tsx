@@ -10,6 +10,7 @@ export interface TestimonialItem {
     company: string;
     content: string;
     rating: number;
+    avatar?: string;
 }
 
 export interface TestimonialSliderProps {
@@ -17,12 +18,18 @@ export interface TestimonialSliderProps {
     heading?: string;
     description?: string;
     testimonials?: TestimonialItem[];
+    layout?: 'split' | 'centered';
+    animationType?: 'spring' | 'fade' | 'slide';
+    themeColor?: string;
 }
 
 export default function TestimonialSlider({
     badgeText = "Testimonials",
     heading = "Trusted by Brands Worldwide",
     description = "Discover why over 20+ global entities choose Nature's Boon for their manufacturing needs.",
+    layout = 'split',
+    animationType = 'spring',
+    themeColor = '#15803d', // nb-green
     testimonials = [
         { author: 'Mehar', company: 'VitalFlow Client', content: 'Highly professional and excellent service with very hygienic environment by Nature\'s Boon.', rating: 5 },
         { author: 'Harsimran Kaur', company: 'Global Beauty Inc.', content: 'They provide the best products and services and even this is a very good platform.', rating: 5 },
@@ -54,63 +61,95 @@ export default function TestimonialSlider({
     if (!testimonials || testimonials.length === 0) return null;
 
     const variants = {
-        enter: (direction: number) => ({
-            x: direction > 0 ? '100%' : '-100%',
-            opacity: 0,
-            scale: 0.95,
-        }),
+        enter: (direction: number) => {
+            if (animationType === 'fade') return { opacity: 0, scale: 0.98 };
+            if (animationType === 'slide') return { x: direction > 0 ? '50%' : '-50%', opacity: 0 };
+            return {
+                x: direction > 0 ? '100%' : '-100%',
+                opacity: 0,
+                scale: 0.95,
+            };
+        },
         center: {
             zIndex: 1,
             x: 0,
             opacity: 1,
             scale: 1,
         },
-        exit: (direction: number) => ({
-            zIndex: 0,
-            x: direction < 0 ? '100%' : '-100%',
-            opacity: 0,
-            scale: 0.95,
-        } as const),
+        exit: (direction: number) => {
+            if (animationType === 'fade') return { opacity: 0, scale: 0.98, zIndex: 0 };
+            if (animationType === 'slide') return { x: direction < 0 ? '50%' : '-50%', opacity: 0, zIndex: 0 };
+            return {
+                zIndex: 0,
+                x: direction < 0 ? '100%' : '-100%',
+                opacity: 0,
+                scale: 0.95,
+            } as const;
+        },
     };
 
+    const springTransition = { type: "spring", stiffness: 260, damping: 30 } as const;
+    const easeTransition = { duration: 0.4, ease: [0.22, 1, 0.36, 1] } as const;
+    const activeTransition = animationType === 'spring' ? springTransition : easeTransition;
+
     return (
-        <section className="py-16 sm:py-24 bg-transparent relative overflow-hidden">
-            {/* Minimal background accents */}
-            <div className="absolute top-0 right-0 w-[40%] h-[40%] bg-nb-green/2 rounded-full blur-[80px] translate-x-1/4 -translate-y-1/4" />
+        <div className="py-24 bg-white relative overflow-hidden">
+            {/* Soft decorative glows */}
+            <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full blur-[100px] pointer-events-none opacity-[0.08]" style={{ backgroundColor: themeColor }} />
+            <div className="absolute -bottom-24 -right-24 w-96 h-96 rounded-full blur-[100px] pointer-events-none opacity-[0.08]" style={{ backgroundColor: themeColor }} />
 
             <div className="max-w-7xl mx-auto px-6 sm:px-8 relative z-10">
-                <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
-                    <div className="lg:w-[35%] text-center lg:text-left">
-                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-nb-green/[0.03] border border-nb-green/10 text-nb-green text-[10px] md:text-xs font-bold mb-4 sm:mb-6 uppercase tracking-[0.15em] leading-none mx-auto lg:mx-0">
+                <div className={cn(
+                    "flex flex-col gap-10 lg:gap-16",
+                    layout === 'split' ? "lg:flex-row items-center" : "items-center text-center"
+                )}>
+                    <div className={cn(
+                        "w-full",
+                        layout === 'split' ? "lg:w-[35%] text-center lg:text-left" : "max-w-3xl mx-auto"
+                    )}>
+                        <div
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-full border text-[10px] md:text-xs font-bold mb-6 uppercase tracking-[0.2em] leading-none transition-colors"
+                            style={{
+                                color: themeColor,
+                                backgroundColor: `${themeColor}0D`,
+                                borderColor: `${themeColor}1A`
+                            }}
+                        >
                             {badgeText}
                         </div>
-                        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 tracking-tight leading-[1.2] mb-5 sm:mb-6 text-balance">
+                        <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-slate-900 tracking-tight leading-[1.1] mb-8 text-balance">
                             {heading}
                         </h2>
-                        <p className="text-sm sm:text-base text-slate-500 font-medium mb-8 sm:mb-10 opacity-70 max-w-sm mx-auto lg:mx-0 leading-relaxed">
+                        <p className="text-base sm:text-lg text-slate-600 font-medium mb-10 max-w-sm mx-auto leading-relaxed opacity-90 lg:max-w-md" style={layout === 'centered' ? { marginLeft: 'auto', marginRight: 'auto' } : {}}>
                             {description}
                         </p>
 
-                        {/* Desktop Navigation */}
-                        <div className="hidden lg:flex gap-3">
-                            <button
-                                onClick={() => paginate(-1)}
-                                aria-label="Previous testimonial"
-                                className="w-11 h-11 rounded-xl border border-slate-200 flex items-center justify-center hover:border-nb-green hover:text-nb-green hover:bg-nb-green/[0.02] transition-all group active:scale-95 text-slate-400"
-                            >
-                                <ChevronLeft className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" />
-                            </button>
-                            <button
-                                onClick={() => paginate(1)}
-                                aria-label="Next testimonial"
-                                className="w-11 h-11 rounded-xl border border-slate-200 flex items-center justify-center hover:border-nb-green hover:text-nb-green hover:bg-nb-green/[0.02] transition-all group active:scale-95 text-slate-400"
-                            >
-                                <ChevronRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
-                            </button>
-                        </div>
+                        {/* Desktop Navigation (Left for split, hidden for centered since it usually has dots below) */}
+                        {layout === 'split' && (
+                            <div className="hidden lg:flex gap-4">
+                                <button
+                                    onClick={() => paginate(-1)}
+                                    aria-label="Previous testimonial"
+                                    className="w-12 h-12 rounded-2xl border border-slate-100 bg-white shadow-sm flex items-center justify-center transition-all group active:scale-95 text-slate-400 hover:shadow-md"
+                                    style={{ '--hover-color': themeColor } as any}
+                                >
+                                    <ChevronLeft className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" />
+                                </button>
+                                <button
+                                    onClick={() => paginate(1)}
+                                    aria-label="Next testimonial"
+                                    className="w-12 h-12 rounded-2xl border border-slate-100 bg-white shadow-sm flex items-center justify-center transition-all group active:scale-95 text-slate-400 hover:shadow-md"
+                                >
+                                    <ChevronRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
+                                </button>
+                            </div>
+                        )}
                     </div>
 
-                    <div className="lg:w-[65%] w-full relative">
+                    <div className={cn(
+                        "w-full relative",
+                        layout === 'split' ? "lg:w-[65%]" : "max-w-4xl mx-auto"
+                    )}>
                         <div
                             className="relative min-h-[380px] sm:min-h-[420px] md:min-h-[320px] lg:min-h-[380px] overflow-visible"
                             onMouseEnter={() => setIsPaused(true)}
@@ -124,11 +163,7 @@ export default function TestimonialSlider({
                                     initial="enter"
                                     animate="center"
                                     exit="exit"
-                                    transition={{
-                                        x: { type: "spring", stiffness: 260, damping: 30 },
-                                        opacity: { duration: 0.3 },
-                                        scale: { duration: 0.3 }
-                                    }}
+                                    transition={activeTransition}
                                     drag="x"
                                     dragConstraints={{ left: 0, right: 0 }}
                                     dragElastic={0.7}
@@ -144,48 +179,48 @@ export default function TestimonialSlider({
                                     }}
                                     className="w-full h-full cursor-grab active:cursor-grabbing"
                                 >
-                                    <div className="bg-white/40 backdrop-blur-sm rounded-3xl p-6 sm:p-10 md:p-12 border border-slate-100 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.03)] relative overflow-hidden h-full flex flex-col justify-center">
+                                    <div className="bg-white rounded-[2.5rem] p-8 sm:p-12 md:p-14 border border-slate-100 shadow-[0_30px_70px_-20px_rgba(0,0,0,0.06)] relative overflow-hidden h-full flex flex-col justify-center group/card transition-all duration-500 hover:shadow-[0_40px_90px_-20px_rgba(21,128,61,0.12)]">
                                         {/* Subtle Watermark */}
-                                        <Quote className="absolute top-6 right-6 w-12 sm:w-16 h-12 sm:h-16 text-nb-green/[0.03] -rotate-6 select-none" />
+                                        <Quote className="absolute top-10 right-10 w-20 h-20 -rotate-12 select-none group-hover/card:rotate-0 transition-transform duration-700 opacity-[0.04]" style={{ color: themeColor }} />
 
-                                        <div className="flex gap-0.5 mb-6 sm:mb-8 md:mb-10">
+                                        <div className="flex gap-1 mb-8">
                                             {[...Array(5)].map((_, i) => (
-                                                <Star key={i} className="w-3.5 sm:w-4 h-3.5 sm:h-4 fill-nb-green text-nb-green" />
+                                                <Star key={i} className="w-4 h-4" style={{ fill: themeColor, color: themeColor }} />
                                             ))}
                                         </div>
 
-                                        <p className="text-lg sm:text-xl md:text-2xl font-semibold text-slate-800 leading-relaxed mb-8 sm:mb-10 md:mb-12 tracking-tight italic">
-                                            &ldquo;{testimonials[current].content}&rdquo;
+                                        <p className={cn(
+                                            "font-bold text-slate-800 leading-[1.5] mb-12 tracking-tight italic",
+                                            layout === 'centered' ? "text-2xl sm:text-3xl md:text-4xl" : "text-xl sm:text-2xl md:text-3xl"
+                                        )}>
+                                            &ldquo;{testimonials[current]?.content || "No content provided."}&rdquo;
                                         </p>
 
-                                        <div className="flex items-center gap-4 sm:gap-5">
-                                            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-nb-green/10 to-nb-green/20 flex items-center justify-center text-nb-green text-lg sm:text-xl font-bold border border-nb-green/5">
-                                                {testimonials[current].author[0]}
+                                        <div className={cn("flex items-center gap-5", layout === 'centered' && "justify-center")}>
+                                            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center overflow-hidden border transition-all duration-300 group-hover/card:scale-110 shadow-sm" style={{ backgroundColor: `${themeColor}0D`, borderColor: `${themeColor}1A` }}>
+                                                {testimonials[current]?.avatar ? (
+                                                    <img src={testimonials[current].avatar} alt={testimonials[current].author || "Avatar"} className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <span className="text-xl sm:text-2xl font-black" style={{ color: themeColor }}>
+                                                        {testimonials[current]?.author?.[0] || "?"}
+                                                    </span>
+                                                )}
                                             </div>
-                                            <div className="flex flex-col">
-                                                <span className="text-base sm:text-lg font-bold text-slate-800 leading-tight whitespace-nowrap">{testimonials[current].author}</span>
-                                                <span className="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-widest mt-1 whitespace-nowrap">{testimonials[current].company}</span>
+                                            <div className={cn("flex flex-col", layout === 'centered' ? "text-left" : "")}>
+                                                <span className="text-lg sm:text-xl font-black text-slate-900 leading-tight">{testimonials[current]?.author || "Anonymous"}</span>
+                                                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] mt-1.5 opacity-80" style={{ color: themeColor }}>{testimonials[current]?.company || "N/A"}</span>
                                             </div>
                                         </div>
                                     </div>
-                                    {/* The provided code edit seems to be missing the `currentItem` definition.
-                                        Assuming `currentItem` is meant to be `testimonials[current]` and `url` is a property on it.
-                                        However, `TestimonialItem` does not have a `url` property.
-                                        Inserting the div as requested, but it will likely cause a runtime error due to `currentItem.url` being undefined.
-                                        If `currentItem` is intended to be `testimonials[current]` and `url` is a new property,
-                                        the `TestimonialItem` interface would need to be updated.
-                                        For now, I'll insert it as provided, assuming `currentItem` is defined elsewhere or this is a partial change.
-                                    */}
-                                    {/* <div
-                                        className="absolute inset-0 bg-cover bg-center bg-[image:var(--carousel-bg)]"
-                                        style={{ "--carousel-bg": `url(${currentItem.url})` } as React.CSSProperties}
-                                    /> */}
                                 </motion.div>
                             </AnimatePresence>
                         </div>
 
-                        {/* Mobile Navigation Dots (Centered, No arrows) */}
-                        <div className="flex lg:hidden items-center justify-center mt-6 sm:mt-10">
+                        {/* Navigation Dots */}
+                        <div className={cn(
+                            "flex items-center mt-10",
+                            layout === 'split' ? "lg:justify-end justify-center" : "justify-center"
+                        )}>
                             <div className="flex gap-2">
                                 {testimonials.map((_, i) => (
                                     <button
@@ -197,16 +232,20 @@ export default function TestimonialSlider({
                                         aria-label={`Go to testimonial ${i + 1}`}
                                         className={cn(
                                             "relative h-2 rounded-full transition-all duration-300",
-                                            current === i ? "w-6" : "w-2"
+                                            current === i ? "w-8" : "w-2"
                                         )}
                                     >
-                                        <span className={`absolute inset-0 rounded-full transition-all duration-300 ${current === i ? 'bg-nb-green' : 'bg-slate-200 hover:bg-slate-300'}`} />
+                                        <span
+                                            className="absolute inset-0 rounded-full transition-all duration-300"
+                                            style={{
+                                                backgroundColor: current === i ? themeColor : '#f1f5f9',
+                                                opacity: current === i ? 1 : 0.8
+                                            }}
+                                        />
                                     </button>
                                 ))}
                             </div>
                         </div>
-
-                        {/* Desktop Pagination Dots */}
                         <div className="hidden lg:flex justify-end gap-1.5 mt-8">
                             {testimonials.map((_, i) => (
                                 <button
@@ -223,6 +262,6 @@ export default function TestimonialSlider({
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
     );
 }

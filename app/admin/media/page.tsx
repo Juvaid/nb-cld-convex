@@ -243,7 +243,7 @@ function UploadButton({ disabled, isUploading, folders, productNames, onUpload }
                                 onChange={(e) => setCustom(e.target.value)}
                                 className="w-full px-3 py-2 text-sm border border-nb-green/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-nb-green/20 font-medium" />
                         )}
-                        <input type="file" className="hidden" ref={fileInputRef} onChange={handleFiles} accept="image/*,video/mp4,video/webm" multiple />
+                        <input type="file" className="hidden" ref={fileInputRef} onChange={handleFiles} accept="image/*,video/mp4,video/webm" multiple title="Upload files" aria-label="Upload files" />
                         <button onClick={() => fileInputRef.current?.click()} className="w-full py-2.5 bg-slate-900 text-white rounded-xl font-medium text-sm hover:bg-nb-green hover:text-slate-900 transition-colors">
                             {activeFolder ? `Upload to "${activeFolder}"` : "Upload (no folder)"}
                         </button>

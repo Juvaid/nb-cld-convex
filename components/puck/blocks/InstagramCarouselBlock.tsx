@@ -50,6 +50,7 @@ export function InstagramCarouselBlock({
     const [isMuted, setIsMuted] = useState(true);
     const [touchStart, setTouchStart] = useState<number | null>(null);
     const [touchEnd, setTouchEnd] = useState<number | null>(null);
+    const [itemsPerRow, setItemsPerRow] = useState(5); // Default SSR state
 
     // Fallback posts if empty
     const displayPosts: InstagramPost[] = posts.length > 0 ? posts : [
@@ -139,7 +140,6 @@ export function InstagramCarouselBlock({
 
     // Auto-scroll logic (Carousel sliding)
     useEffect(() => {
-        const itemsPerRow = getItemsPerRow();
         // Disable carousel auto-scroll if it's in sequential video mode (video timer handles it)
         // OR if all items are already visible
         if (!autoScroll || isHovered || displayPosts.length <= itemsPerRow || autoplayMode === 'sequential') return;
@@ -149,7 +149,7 @@ export function InstagramCarouselBlock({
         }, autoScrollInterval);
 
         return () => clearInterval(timer);
-    }, [autoScroll, autoScrollInterval, isHovered, nextSlide, displayPosts.length, autoplayMode]);
+    }, [autoScroll, autoScrollInterval, isHovered, nextSlide, displayPosts.length, autoplayMode, itemsPerRow]);
 
     // Sequential Autoplay logic
     useEffect(() => {
@@ -170,7 +170,6 @@ export function InstagramCarouselBlock({
                 const nextVideoIndex = videoPostsIndices[nextPos];
 
                 // Only scroll carousel if not all posts fit in one view
-                const itemsPerRow = getItemsPerRow();
                 if (displayPosts.length > itemsPerRow) {
                     // Only move index if the next video is beyond the current visible range
                     // Or if we are looping back to the start
@@ -184,7 +183,7 @@ export function InstagramCarouselBlock({
         }, autoplayDelay);
 
         return () => clearInterval(timer);
-    }, [autoplayMode, displayPosts, autoplayDelay, isHovered, currentIndex]);
+    }, [autoplayMode, displayPosts, autoplayDelay, isHovered, currentIndex, itemsPerRow]);
 
     const handlePostClick = (e: React.MouseEvent, post: InstagramPost, index: number) => {
         if (post.clickAction === 'play') {
@@ -196,7 +195,6 @@ export function InstagramCarouselBlock({
             if (newIndex !== null) setIsMuted(false);
 
             // Only scroll if necessary (e.g. video is partially out of view)
-            const itemsPerRow = getItemsPerRow();
             if (displayPosts.length > itemsPerRow && (index < currentIndex || index >= currentIndex + itemsPerRow)) {
                 setCurrentIndex(index);
             }
@@ -211,13 +209,20 @@ export function InstagramCarouselBlock({
         "transparent": "bg-transparent"
     };
 
-    // Helper for responsive items per row
-    const getItemsPerRow = () => {
-        if (typeof window === 'undefined') return 5;
-        if (window.innerWidth >= 1024) return 5;
-        if (window.innerWidth >= 640) return 2.5;
-        return 1.25;
-    };
+    // Use effect to handle window resize and hydration safely
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth >= 1024) setItemsPerRow(5);
+            else if (window.innerWidth >= 640) setItemsPerRow(2.5);
+            else setItemsPerRow(1.25);
+        };
+
+        // Initial setup
+        handleResize();
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     // Helper to check if a post is a video
     const isPostVideo = (post: InstagramPost) => {
@@ -229,14 +234,6 @@ export function InstagramCarouselBlock({
             post.imageUrl.includes('/video/') ||
             post.imageUrl.includes('convex.cloud') ||
             post.imageUrl.includes('convex.dev');
-    };
-
-    // Helper for responsive gap sizes
-    const getGapSize = () => {
-        if (typeof window === 'undefined') return 24;
-        if (window.innerWidth >= 1024) return 24;
-        if (window.innerWidth >= 640) return 16;
-        return 12;
     };
 
     return (
@@ -270,7 +267,7 @@ export function InstagramCarouselBlock({
                     onTouchEnd={handleTouchEnd}
                 >
                     {/* Carousel Navigation (Desktop) */}
-                    {displayPosts.length > getItemsPerRow() && (
+                    {displayPosts.length > itemsPerRow && (
                         <>
                             <button
                                 onClick={prevSlide}
@@ -284,7 +281,7 @@ export function InstagramCarouselBlock({
                             <button
                                 onClick={nextSlide}
                                 className={`hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 lg:translate-x-8 z-10 w-12 h-12 rounded-full bg-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-100 items-center justify-center text-slate-700 hover:text-[#16a34a] hover:scale-110 hover:shadow-xl transition-all ${isHovered ? 'opacity-100' : 'opacity-0'} disabled:opacity-0`}
-                                disabled={currentIndex >= displayPosts.length - getItemsPerRow()}
+                                disabled={currentIndex >= displayPosts.length - itemsPerRow}
                                 title="Next slide"
                                 aria-label="Next slide"
                             >

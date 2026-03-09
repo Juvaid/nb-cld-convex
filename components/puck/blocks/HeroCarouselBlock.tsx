@@ -5,8 +5,10 @@ import { ComponentConfig } from "@puckeditor/core";
 import { ImagePicker } from "@/components/ImagePicker";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { cn } from "@/lib/utils";
 
 export interface HeroCarouselSlide {
     image: string;
@@ -20,11 +22,15 @@ export interface HeroCarouselSlide {
     primaryCtaLink?: string;
     secondaryCtaText?: string;
     secondaryCtaLink?: string;
+    bannerLink?: string;
+    ctaPositioning?: "relative" | "fixed";
+    mobileVerticalAlign?: "top" | "center" | "bottom";
 }
 
 export interface HeroCarouselProps {
     autoPlay: boolean;
     interval: number;
+    hideArrows?: boolean;
     animationType: "fade" | "slideHorizontal" | "slideVertical" | "zoom" | "blur";
     slides: HeroCarouselSlide[];
 }
@@ -57,7 +63,7 @@ const animationVariants = {
     }
 };
 
-export const HeroCarouselBlock = ({ autoPlay, interval, animationType = "fade", slides }: HeroCarouselProps) => {
+export const HeroCarouselBlock = ({ autoPlay, interval, hideArrows = false, animationType = "fade", slides }: HeroCarouselProps) => {
     const [[currentIndex, direction], setPage] = useState([0, 0]);
 
     const paginate = (newDirection: number) => {
@@ -94,120 +100,161 @@ export const HeroCarouselBlock = ({ autoPlay, interval, animationType = "fade", 
     const alignClass = slide.align === "center" ? "items-center text-center mx-auto" : slide.align === "right" ? "items-end text-right ml-auto" : "items-start text-left mr-auto";
     const contentWidthClass = slide.align === "center" ? "max-w-3xl xl:max-w-4xl" : "max-w-xl xl:max-w-2xl";
 
-    return (
-        <div className="relative w-full h-[45vh] min-h-[380px] md:h-[45vh] md:min-h-[400px] 2xl:max-h-[600px] overflow-hidden group">
-            <AnimatePresence initial={false} custom={direction}>
-                <motion.div
-                    key={activeIndex}
-                    custom={direction}
-                    variants={animationVariants[animationType] || animationVariants.fade}
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                    transition={{ duration: 0.8, ease: "easeInOut" }}
-                    className="absolute inset-0"
-                >
-                    {slide.image && (
-                        <picture>
-                            {slide.mobileImage && (
-                                <source media="(max-width: 640px)" srcSet={slide.mobileImage.startsWith("http") ? slide.mobileImage : `/api/storage/${slide.mobileImage}`} />
-                            )}
-                            <img
-                                src={slide.image.startsWith("http") ? slide.image : `/api/storage/${slide.image}`}
-                                alt={slide.title || "Hero background"}
-                                className="absolute inset-0 w-full h-full object-cover origin-center"
-                            />
-                        </picture>
-                    )}
-                    {/* eslint-disable-next-line react/forbid-dom-props */}
-                    <div
-                        className="absolute inset-0 bg-black transition-opacity duration-300"
-                        style={{ opacity: (slide.overlayOpacity || 50) / 100 }}
-                    />
-                </motion.div>
-            </AnimatePresence>
+    const verticalAlignClass = slide.mobileVerticalAlign === "top"
+        ? "justify-start pt-12 md:justify-center md:pt-0"
+        : slide.mobileVerticalAlign === "center"
+            ? "justify-center"
+            : "justify-end pb-14 md:justify-center md:pb-0"; // default to bottom with adjusted padding
 
-            <div className="absolute inset-0 flex items-center z-10 pointer-events-none">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pointer-events-auto">
-                    <AnimatePresence mode="wait">
+    return (
+        <div className="w-full bg-transparent">
+            {/* Wrapper with side margins (no top/bottom padding to keep it flush vertically) */}
+            <div className="mx-auto max-w-[1600px] px-4 md:px-16 lg:px-20 relative">
+
+                {/* Navigation Arrows Removed per User Request */}
+
+
+                {/* The card itself */}
+                <div className="relative w-full aspect-[4/3] md:aspect-[21/9] xl:aspect-[3/1] min-h-[320px] xl:min-h-[500px] rounded-2xl md:rounded-[2rem] overflow-hidden group shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] ring-1 ring-black/5">
+                    <AnimatePresence initial={false} custom={direction}>
                         <motion.div
                             key={activeIndex}
-                            initial={{ y: 20, opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            exit={{ y: -20, opacity: 0 }}
-                            transition={{ duration: 0.5, delay: 0.2 }}
-                            className={`flex flex-col ${alignClass} ${contentWidthClass}`}
+                            custom={direction}
+                            variants={animationVariants[animationType] || animationVariants.fade}
+                            initial="initial"
+                            animate="animate"
+                            exit="exit"
+                            transition={{ duration: 0.8, ease: [0.32, 0.72, 0, 1] }}
+                            drag="x"
+                            dragConstraints={{ left: 0, right: 0 }}
+                            dragElastic={0.2}
+                            onDragEnd={(e, { offset, velocity }) => {
+                                const swipe = Math.abs(offset.x) > 50 && Math.abs(velocity.x) > 500;
+                                if (offset.x > 100 || (swipe && offset.x > 0)) {
+                                    paginate(-1);
+                                } else if (offset.x < -100 || (swipe && offset.x < 0)) {
+                                    paginate(1);
+                                }
+                            }}
+                            className="absolute inset-0 cursor-grab active:cursor-grabbing"
                         >
-                            {slide.tagline && (
-                                <span className="mb-4 inline-block px-4 py-1.5 text-xs md:text-sm font-black text-nb-green bg-nb-green/10 rounded-full tracking-widest uppercase border border-nb-green/20 backdrop-blur-sm">
-                                    {slide.tagline}
-                                </span>
+                            {slide.image && (
+                                <>
+                                    {/* Mobile Image (Visible only on small screens) */}
+                                    {slide.mobileImage && (
+                                        <div className="block sm:hidden absolute inset-0">
+                                            <Image
+                                                src={slide.mobileImage.startsWith("http") ? slide.mobileImage : `/api/storage/${slide.mobileImage}`}
+                                                alt={slide.title || "Hero mobile background"}
+                                                fill
+                                                className="object-cover origin-center"
+                                                priority
+                                                sizes="(max-width: 640px) 100vw, 0px"
+                                            />
+                                        </div>
+                                    )}
+                                    {/* Desktop Image (Hidden on small screens IF mobile image exists) */}
+                                    <div className={`absolute inset-0 ${slide.mobileImage ? 'hidden sm:block' : 'block'}`}>
+                                        <Image
+                                            src={slide.image.startsWith("http") ? slide.image : `/api/storage/${slide.image}`}
+                                            alt={slide.title || "Hero background"}
+                                            fill
+                                            className="object-cover origin-center"
+                                            priority
+                                            sizes={slide.mobileImage ? "(max-width: 640px) 0px, 100vw" : "100vw"}
+                                        />
+                                    </div>
+                                </>
                             )}
-
-                            {slide.title && (
-                                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-4 md:mb-6 tracking-tight drop-shadow-lg">
-                                    {slide.title}
-                                </h1>
+                            {/* eslint-disable-next-line react/forbid-dom-props */}
+                            <div
+                                className="absolute inset-0 bg-black transition-opacity duration-300"
+                                style={
+                                    {
+                                        "--overlay-op": (slide.overlayOpacity || 50) / 100,
+                                        opacity: "var(--overlay-op)"
+                                    } as React.CSSProperties
+                                }
+                            />
+                            {slide.bannerLink && (
+                                <Link href={slide.bannerLink} className="absolute inset-0 z-[5]" aria-label={slide.title || "Banner link"} />
                             )}
-
-                            {slide.description && (
-                                <p className="text-sm sm:text-base md:text-lg text-slate-200 font-medium leading-relaxed mb-6 md:mb-8 drop-shadow max-w-xl">
-                                    {slide.description}
-                                </p>
-                            )}
-
-                            <div className={`flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto ${slide.align === "center" ? "justify-center mx-auto" : slide.align === "right" ? "justify-end ml-auto" : "justify-start mr-auto"}`}>
-                                {slide.primaryCtaText && slide.primaryCtaLink && (
-                                    <Link href={slide.primaryCtaLink} className="w-full sm:w-auto">
-                                        <Button variant="primary" size="md" className="rounded-full w-full sm:w-auto shadow-lg">
-                                            {slide.primaryCtaText}
-                                        </Button>
-                                    </Link>
-                                )}
-                                {slide.secondaryCtaText && slide.secondaryCtaLink && (
-                                    <Link href={slide.secondaryCtaLink} className="w-full sm:w-auto">
-                                        <Button variant="glass" size="md" className="rounded-full w-full sm:w-auto shadow-lg">
-                                            {slide.secondaryCtaText}
-                                        </Button>
-                                    </Link>
-                                )}
-                            </div>
                         </motion.div>
                     </AnimatePresence>
+
+                    <div className="absolute inset-0 z-10 pointer-events-none">
+                        <div className="w-full h-full relative pointer-events-auto">
+                            <AnimatePresence mode="wait">
+                                <motion.div
+                                    key={activeIndex}
+                                    initial={{ y: 20, opacity: 0 }}
+                                    animate={{ y: 0, opacity: 1 }}
+                                    exit={{ y: -20, opacity: 0 }}
+                                    transition={{ duration: 0.5, delay: 0.2 }}
+                                    className={`absolute inset-0 flex flex-col px-4 sm:px-10 lg:px-16 ${alignClass} ${contentWidthClass} ${verticalAlignClass}`}
+                                >
+                                    <div className="w-full max-w-full pb-4 sm:pb-0">
+                                        {slide.tagline && (
+                                            <span className="mb-4 inline-block px-4 py-1.5 text-xs md:text-sm font-black text-nb-green bg-nb-green/10 rounded-full tracking-widest uppercase border border-nb-green/20 backdrop-blur-sm">
+                                                {slide.tagline}
+                                            </span>
+                                        )}
+
+                                        {slide.title && (
+                                            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-4 md:mb-6 tracking-tight drop-shadow-lg">
+                                                {slide.title}
+                                            </h1>
+                                        )}
+
+                                        {slide.description && (
+                                            <p className="text-sm sm:text-base md:text-lg text-slate-200 font-medium leading-relaxed drop-shadow max-w-xl">
+                                                {slide.description}
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    <div className={cn(
+                                        "flex flex-row flex-wrap gap-2 sm:gap-4",
+                                        slide.ctaPositioning === "fixed"
+                                            ? "absolute bottom-12 md:bottom-16 lg:bottom-20 left-0 right-0 px-4 sm:px-10 lg:px-16"
+                                            : "relative mt-4 md:mt-8",
+                                        slide.align === "center" ? "justify-center" : slide.align === "right" ? "justify-end" : "justify-start"
+                                    )}>
+                                        {(slide.primaryCtaText || slide.primaryCtaLink) && (
+                                            <Link href={slide.primaryCtaLink || "#"} className="inline-block">
+                                                <Button variant="primary" className="rounded-full shadow-lg px-4 py-2 sm:py-3 sm:px-8 h-9 sm:h-11 text-[12px] sm:text-sm whitespace-nowrap">
+                                                    {slide.primaryCtaText || "Contact us"}
+                                                </Button>
+                                            </Link>
+                                        )}
+                                        {slide.secondaryCtaText && slide.secondaryCtaLink && (
+                                            <Link href={slide.secondaryCtaLink} className="inline-block">
+                                                <Button variant="glass" className="rounded-full shadow-lg px-4 py-2 sm:py-3 sm:px-8 h-9 sm:h-11 text-[12px] sm:text-sm whitespace-nowrap">
+                                                    {slide.secondaryCtaText}
+                                                </Button>
+                                            </Link>
+                                        )}
+                                    </div>
+                                </motion.div>
+                            </AnimatePresence>
+                        </div>
+                    </div>
+
+                    {/* Dots (centered at bottom) */}
+                    {slides.length > 1 && (
+                        <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-3 z-30 pointer-events-auto">
+                            {slides.map((_, idx) => (
+                                <button
+                                    key={idx}
+                                    onClick={() => setIndex(idx)}
+                                    className={`rounded-full transition-all duration-300 ${idx === activeIndex ? "w-6 h-1.5 sm:w-8 sm:h-2 bg-nb-green" : "w-1.5 h-1.5 sm:w-2 sm:h-2 bg-white/40 hover:bg-white/60"}`}
+                                    aria-label={`Go to slide ${idx + 1}`}
+                                />
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
-
-            {/* Navigation Arrows */}
-            {slides.length > 1 && (
-                <>
-                    <button
-                        onClick={() => paginate(-1)}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white flex items-center justify-center hover:bg-white/20 transition-all opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 z-20 pointer-events-auto"
-                        aria-label="Previous slide"
-                    >
-                        <ChevronLeft className="w-6 h-6" />
-                    </button>
-                    <button
-                        onClick={() => paginate(1)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white flex items-center justify-center hover:bg-white/20 transition-all opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 z-20 pointer-events-auto"
-                        aria-label="Next slide"
-                    >
-                        <ChevronRight className="w-6 h-6" />
-                    </button>
-
-                    {/* Dots */}
-                    <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-3 z-20 pointer-events-auto">
-                        {slides.map((_, idx) => (
-                            <button
-                                key={idx}
-                                onClick={() => setIndex(idx)}
-                                className={`h-1.5 rounded-full transition-all duration-300 ${idx === activeIndex ? "w-8 bg-nb-green" : "w-2 bg-white/40 hover:bg-white/60"}`}
-                                aria-label={`Go to slide ${idx + 1}`}
-                            />
-                        ))}
-                    </div>
-                </>
-            )}
         </div>
     );
 };
@@ -225,6 +272,7 @@ export const HeroCarouselBlockConfig: ComponentConfig<HeroCarouselProps> = {
             type: "number",
             label: "Interval (ms)",
         },
+
         animationType: {
             type: "select",
             label: "Animation Style",
@@ -245,7 +293,7 @@ export const HeroCarouselBlockConfig: ComponentConfig<HeroCarouselProps> = {
                     label: "Desktop Image",
                     render: ({ value, onChange }: any) => (
                         <div className="flex flex-col gap-2">
-                            <span className="text-xs text-slate-500 font-medium">✨ Ideal Resolution: 1920x1080 (16:9 Landscape)</span>
+                            <span className="text-xs text-slate-500 font-medium">✨ Ideal Resolution: 2100x900 (21:9 UltraWide)</span>
                             <ImagePicker value={value} onChange={onChange} />
                         </div>
                     ),
@@ -256,7 +304,7 @@ export const HeroCarouselBlockConfig: ComponentConfig<HeroCarouselProps> = {
                     render: ({ value, onChange }: any) => (
                         <div className="flex flex-col gap-2">
                             <span className="text-xs text-slate-500 font-medium whitespace-break-spaces">
-                                ✨ Ideal Resolution: 1080x1920 (9:16 Portrait)
+                                ✨ Ideal Resolution: 1080x1080 (1:1 Square)
                                 <br />
                                 Leave blank to automatically center-crop the desktop image.
                             </span>
@@ -276,6 +324,15 @@ export const HeroCarouselBlockConfig: ComponentConfig<HeroCarouselProps> = {
                         { label: "Right", value: "right" },
                     ],
                 },
+                mobileVerticalAlign: {
+                    type: "select",
+                    label: "Mobile Vertical Align",
+                    options: [
+                        { label: "Top", value: "top" },
+                        { label: "Center", value: "center" },
+                        { label: "Bottom", value: "bottom" },
+                    ],
+                },
                 tagline: { type: "text" },
                 title: { type: "text" },
                 description: { type: "textarea" },
@@ -283,6 +340,15 @@ export const HeroCarouselBlockConfig: ComponentConfig<HeroCarouselProps> = {
                 primaryCtaLink: { type: "text" },
                 secondaryCtaText: { type: "text" },
                 secondaryCtaLink: { type: "text" },
+                bannerLink: { type: "text", label: "Banner Click Link (Optional)" },
+                ctaPositioning: {
+                    type: "radio",
+                    label: "CTA Positioning",
+                    options: [
+                        { label: "Relative to Content", value: "relative" },
+                        { label: "Fixed at Bottom", value: "fixed" },
+                    ],
+                },
             },
         },
     },
@@ -296,11 +362,14 @@ export const HeroCarouselBlockConfig: ComponentConfig<HeroCarouselProps> = {
                 mobileImage: "",
                 overlayOpacity: 50,
                 align: "left",
+                mobileVerticalAlign: "bottom",
                 tagline: "NEW ARRIVALS",
                 title: "Premium Formulations",
                 description: "Discover our latest B2B high-grade formulas.",
-                primaryCtaText: "View Collection",
-                primaryCtaLink: "/products",
+                primaryCtaText: "Contact us",
+                primaryCtaLink: "/contact",
+                ctaPositioning: "relative",
+                bannerLink: "",
             },
         ],
     },

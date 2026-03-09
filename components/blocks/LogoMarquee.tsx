@@ -40,7 +40,7 @@ export default function LogoMarquee({
     const animName = `marquee-${direction}`;
 
     return (
-        <section className="bg-transparent overflow-hidden">
+        <div className="bg-white overflow-hidden">
             {/* Keyframe injection — purely CSS, no JS dependence */}
             <style>{`
                 @keyframes marquee-left  { from { transform: translateX(0); } to { transform: translateX(-50%); } }
@@ -60,10 +60,19 @@ export default function LogoMarquee({
                     overflow: hidden;
                 }
             `}</style>
-
-            <div className="nb-marquee-wrap" style={{ paddingTop: `${paddingTop}rem`, paddingBottom: `${paddingBottom}rem` }}>
+            <div
+                className="nb-marquee-wrap"
+                style={
+                    {
+                        "--pt": `${paddingTop}rem`,
+                        "--pb": `${paddingBottom}rem`,
+                        paddingTop: "var(--pt)",
+                        paddingBottom: "var(--pb)"
+                    } as React.CSSProperties
+                }
+            >
                 {title && (
-                    <p className="text-center text-xs sm:text-sm font-semibold text-slate-500 uppercase tracking-widest pb-8">
+                    <p className="text-center text-xs sm:text-sm font-bold text-nb-green uppercase tracking-[0.2em] pb-8">
                         {title}
                     </p>
                 )}
@@ -101,6 +110,6 @@ export default function LogoMarquee({
                     })}
                 </div>
             </div>
-        </section>
+        </div>
     );
 }

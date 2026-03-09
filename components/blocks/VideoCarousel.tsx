@@ -150,7 +150,7 @@ export default function VideoCarousel({
                                                     }}
                                                     title={`Video ${i + 1}`}
                                                     aria-label={`Go to video ${i + 1}`}
-                                                    className={`h-1.5 rounded-full transition-all duration-300 ${current === i ? 'w-6 bg-nb-green' : 'w-1.5 bg-slate-200 hover:bg-slate-300'}`}
+                                                    className={`h-2 rounded-full transition-all duration-300 ${current === i ? 'w-6 bg-nb-green' : 'w-2 bg-slate-200 hover:bg-slate-300'}`}
                                                 />
                                             ))}
                                         </div>
