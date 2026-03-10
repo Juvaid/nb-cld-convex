@@ -17,8 +17,13 @@ const legacyMap: Record<string, string> = {
 
 export function PuckRenderer({ data, initialData, configOverride, siteSettings }: { data: any; initialData?: any; configOverride?: Config; siteSettings?: any }) {
     const root = data?.root || {};
-    const content = data?.content || [];
+    const content = Array.isArray(data?.content) ? data.content : [];
     const { header = {}, footer = {}, ...rootProps } = root.props || {};
+
+    if (typeof window !== "undefined") {
+        console.log("PuckRenderer Content Type:", typeof content, "Length:", content.length);
+        if (content.length > 0) console.log("First block type:", content[0]?.type);
+    }
 
     // Use the override config if provided, otherwise fallback to the default global config.
     const activeConfig = configOverride || config;
@@ -29,6 +34,7 @@ export function PuckRenderer({ data, initialData, configOverride, siteSettings }
                 <SiteHeader {...header} initialSettings={siteSettings} />
                 <main className="flex-grow">
                     {content.map((block: any, i: number) => {
+                        if (!block || !block.type) return null;
                         const type = legacyMap[block.type] || block.type;
                         const componentConfig = (activeConfig.components as any)[type];
 

@@ -39,6 +39,10 @@ export function SiteHeader({
     const siteSettings = liveSettings !== undefined ? liveSettings : initialSettings;
     const isLoading = siteSettings === undefined;
 
+    if (typeof window !== "undefined") {
+        console.log("SiteHeader state - isLoading:", isLoading, "hasSettings:", !!siteSettings);
+    }
+
     // Default fallbacks
     const defaultLogoText = "NatureBoon";
     const defaultLinks = [
