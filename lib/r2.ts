@@ -1,29 +1,42 @@
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
-if (!process.env.R2_ACCOUNT_ID) throw new Error("R2_ACCOUNT_ID is not set");
-if (!process.env.R2_ACCESS_KEY_ID) throw new Error("R2_ACCESS_KEY_ID is not set");
-if (!process.env.R2_SECRET_ACCESS_KEY) throw new Error("R2_SECRET_ACCESS_KEY is not set");
-if (!process.env.R2_BUCKET_NAME) throw new Error("R2_BUCKET_NAME is not set");
+// Helper to get R2 configuration safely without crashing at boot time
+function getR2Config() {
+    const config = {
+        accountId: process.env.R2_ACCOUNT_ID,
+        accessKeyId: process.env.R2_ACCESS_KEY_ID,
+        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
+        bucketName: process.env.R2_BUCKET_NAME,
+        publicUrl: (process.env.R2_PUBLIC_URL ?? "").replace(/\/$/, ""),
+    };
 
-export const r2 = new S3Client({
-    region: "auto",
-    endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
-    credentials: {
-        accessKeyId: process.env.R2_ACCESS_KEY_ID!,
-        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
-    },
-});
+    const missing = Object.entries(config)
+        .filter(([key, value]) => !value && key !== "publicUrl")
+        .map(([key]) => key);
 
-export const BUCKET = process.env.R2_BUCKET_NAME!;
-export const PUBLIC_URL = (process.env.R2_PUBLIC_URL ?? "").replace(/\/$/, "");
+    return { ...config, missing };
+}
 
-// CRITICAL: Ensure PUBLIC_URL is set to avoid broken relative links
-if (!PUBLIC_URL) {
-    console.error("❌ [R2 CONFIG ERROR] R2_PUBLIC_URL is not defined in environment variables.");
-    // We don't throw yet to allow the client to initialize, but we'll throw in uploadToR2
-} else {
-    console.log("✅ [R2 CONFIG] Public URL configured:", PUBLIC_URL);
+// Lazy-loaded R2 client
+let _r2Client: S3Client | null = null;
+function getR2Client() {
+    if (_r2Client) return _r2Client;
+
+    const config = getR2Config();
+    if (config.missing.length > 0) {
+        throw new Error(`R2 Configuration incomplete. Missing: ${config.missing.join(", ")}`);
+    }
+
+    _r2Client = new S3Client({
+        region: "auto",
+        endpoint: `https://${config.accountId}.r2.cloudflarestorage.com`,
+        credentials: {
+            accessKeyId: config.accessKeyId!,
+            secretAccessKey: config.secretAccessKey!,
+        },
+    });
+    return _r2Client;
 }
 
 /**
@@ -34,34 +47,47 @@ export async function uploadToR2(
     body: Buffer | Uint8Array,
     contentType: string
 ): Promise<string> {
-    if (!PUBLIC_URL) {
-        throw new Error("R2_PUBLIC_URL is missing. Cannot generate public asset URL.");
+    const config = getR2Config();
+
+    if (!config.publicUrl) {
+        throw new Error("R2_PUBLIC_URL is missing. Please add it to your environment variables.");
     }
-    await r2.send(
+
+    const client = getR2Client();
+    await client.send(
         new PutObjectCommand({
-            Bucket: BUCKET,
+            Bucket: config.bucketName!,
             Key: key,
             Body: body,
             ContentType: contentType,
         })
     );
-    return `${PUBLIC_URL}/${key}`;
+
+    return `${config.publicUrl}/${key}`;
 }
 
 /**
  * Delete a file from R2 by its key (filename).
  */
 export async function deleteFromR2(key: string): Promise<void> {
-    await r2.send(new DeleteObjectCommand({ Bucket: BUCKET, Key: key }));
+    const config = getR2Config();
+    const client = getR2Client();
+    await client.send(new DeleteObjectCommand({ Bucket: config.bucketName!, Key: key }));
 }
 
 /**
  * Generate a presigned URL for direct browser-to-R2 uploads (optional, advanced).
  */
 export async function getPresignedUploadUrl(key: string, contentType: string): Promise<string> {
+    const config = getR2Config();
+    const client = getR2Client();
     return getSignedUrl(
-        r2,
-        new PutObjectCommand({ Bucket: BUCKET, Key: key, ContentType: contentType }),
+        client,
+        new PutObjectCommand({ Bucket: config.bucketName!, Key: key, ContentType: contentType }),
         { expiresIn: 3600 }
     );
 }
+
+// Export these for diagnostics if needed, but they won't throw at boot now
+export const getBucketName = () => process.env.R2_BUCKET_NAME || "";
+export const getPublicUrl = () => (process.env.R2_PUBLIC_URL ?? "").replace(/\/$/, "");
