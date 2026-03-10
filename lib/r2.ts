@@ -18,6 +18,14 @@ export const r2 = new S3Client({
 export const BUCKET = process.env.R2_BUCKET_NAME!;
 export const PUBLIC_URL = (process.env.R2_PUBLIC_URL ?? "").replace(/\/$/, "");
 
+// CRITICAL: Ensure PUBLIC_URL is set to avoid broken relative links
+if (!PUBLIC_URL) {
+    console.error("❌ [R2 CONFIG ERROR] R2_PUBLIC_URL is not defined in environment variables.");
+    // We don't throw yet to allow the client to initialize, but we'll throw in uploadToR2
+} else {
+    console.log("✅ [R2 CONFIG] Public URL configured:", PUBLIC_URL);
+}
+
 /**
  * Upload a file buffer to Cloudflare R2 and return its public CDN URL.
  */
@@ -26,6 +34,9 @@ export async function uploadToR2(
     body: Buffer | Uint8Array,
     contentType: string
 ): Promise<string> {
+    if (!PUBLIC_URL) {
+        throw new Error("R2_PUBLIC_URL is missing. Cannot generate public asset URL.");
+    }
     await r2.send(
         new PutObjectCommand({
             Bucket: BUCKET,

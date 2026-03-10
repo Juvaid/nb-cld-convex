@@ -42,12 +42,12 @@ export const ProductCategoryCarouselBlock = ({ useDesignSystem = true, heading, 
         if (scrollContainerRef.current) {
             const container = scrollContainerRef.current;
             const scrollLeft = container.scrollLeft;
-            const child = container.children[0] as HTMLElement;
+            const child = container.children?.[0] as HTMLElement;
             if (child) {
                 // Determine item width including gap
                 const itemWidth = child.offsetWidth;
                 // Adding gap based on screen size (16px/1rem for mobile)
-                const gap = window.innerWidth >= 768 ? 24 : 16;
+                const gap = (typeof window !== "undefined" && window.innerWidth >= 768) ? 24 : 16;
                 const index = Math.round(scrollLeft / (itemWidth + gap));
                 setActiveIndex(index);
             }
@@ -55,7 +55,7 @@ export const ProductCategoryCarouselBlock = ({ useDesignSystem = true, heading, 
     };
 
     useEffect(() => {
-        if (!autoSlideMobile) return;
+        if (!autoSlideMobile || typeof window === "undefined") return;
 
         // Only auto-slide on mobile screens (width < 768px)
         const isMobile = window.innerWidth < 768;
@@ -64,7 +64,7 @@ export const ProductCategoryCarouselBlock = ({ useDesignSystem = true, heading, 
         const interval = setInterval(() => {
             if (scrollContainerRef.current && categories.length > 0) {
                 const container = scrollContainerRef.current;
-                const child = container.children[0] as HTMLElement;
+                const child = container.children?.[0] as HTMLElement;
                 if (!child) return;
 
                 const itemWidth = child.offsetWidth;

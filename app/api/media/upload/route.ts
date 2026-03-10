@@ -45,7 +45,10 @@ async function uploadSingleFile(file: File, client: ConvexHttpClient, folder?: s
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-").toLowerCase();
     const key = `${Date.now()}-${safeName}`;
     const buffer = Buffer.from(await file.arrayBuffer());
+
+    console.log(`[R2 Upload] Starting upload of ${file.name} (Key: ${key})`);
     const publicUrl = await uploadToR2(key, buffer, file.type);
+    console.log(`[R2 Upload] Successfully uploaded ${file.name}. Public URL: ${publicUrl}`);
 
     const mediaId = await client.mutation(api.media.saveR2Media, {
         filename: file.name,

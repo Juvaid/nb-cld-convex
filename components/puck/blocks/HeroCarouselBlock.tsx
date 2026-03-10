@@ -94,8 +94,6 @@ export const HeroCarouselBlock = ({ useDesignSystem = true, autoPlay, interval, 
         return () => clearInterval(timer);
     }, [autoPlay, interval, slides, currentIndex]);
 
-    const activeIndex = ((currentIndex % slides.length) + slides.length) % slides.length;
-
     if (!slides || slides.length === 0) {
         return (
             <div className="py-20 text-center bg-slate-100 text-slate-500 rounded-xl m-4 border-2 border-dashed border-slate-300">
@@ -104,7 +102,17 @@ export const HeroCarouselBlock = ({ useDesignSystem = true, autoPlay, interval, 
         );
     }
 
+    const activeIndex = ((currentIndex % slides.length) + slides.length) % slides.length;
     const slide = slides[activeIndex];
+
+    if (!slide) {
+        return (
+            <div className="py-20 text-center bg-slate-50 text-slate-400 rounded-xl m-4 border-2 border-dashed border-slate-200">
+                Invalid Slide Data
+            </div>
+        );
+    }
+
     const alignClass = slide.align === "center" ? "items-center text-center mx-auto" : slide.align === "right" ? "items-end text-right ml-auto" : "items-start text-left mr-auto";
     const contentWidthClass = slide.align === "center" ? "max-w-3xl xl:max-w-4xl" : "max-w-xl xl:max-w-2xl";
 

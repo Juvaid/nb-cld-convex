@@ -60,12 +60,14 @@ export const ProductShowcaseBlock = ({
         if (manual?.productId && products) {
             const dbProduct = products.find((p) => p._id === manual.productId);
             if (dbProduct) {
-                const dbImg = dbProduct.images?.[0] as string | undefined;
+                const dbImg = (dbProduct.images && Array.isArray(dbProduct.images) && dbProduct.images.length > 0)
+                    ? dbProduct.images[0]
+                    : undefined;
                 result = {
                     ...manual,
                     title: dbProduct.name || manual.title,
                     description: isFeatured ? (dbProduct.usp || manual.description) : undefined,
-                    image: (dbImg !== "[object Object]" && dbImg) ? dbImg : manual.image,
+                    image: (dbImg && dbImg !== "[object Object]") ? dbImg : manual.image,
                     link: `/products/${dbProduct.slug}`,
                 };
             }
