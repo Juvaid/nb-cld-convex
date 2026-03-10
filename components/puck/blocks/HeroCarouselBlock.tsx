@@ -8,11 +8,18 @@ import Link from "next/link";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { Typography } from "@/components/ui/Typography";
 import { cn } from "@/lib/utils";
+import { sharedFields } from "../fields/shared";
 
 export interface HeroCarouselSlide {
     image: string;
     mobileImage?: string;
+    video?: string;
+    mobileVideo?: string;
+    videoMuted?: boolean;
+    videoLoop?: boolean;
+    videoAutoPlay?: boolean;
     overlayOpacity: number;
     align: "left" | "center" | "right";
     tagline?: string;
@@ -28,6 +35,7 @@ export interface HeroCarouselSlide {
 }
 
 export interface HeroCarouselProps {
+    useDesignSystem?: boolean;
     autoPlay: boolean;
     interval: number;
     hideArrows?: boolean;
@@ -63,7 +71,7 @@ const animationVariants = {
     }
 };
 
-export const HeroCarouselBlock = ({ autoPlay, interval, hideArrows = false, animationType = "fade", slides }: HeroCarouselProps) => {
+export const HeroCarouselBlock = ({ useDesignSystem = true, autoPlay, interval, hideArrows = false, animationType = "fade", slides }: HeroCarouselProps) => {
     const [[currentIndex, direction], setPage] = useState([0, 0]);
 
     const paginate = (newDirection: number) => {
@@ -138,7 +146,36 @@ export const HeroCarouselBlock = ({ autoPlay, interval, hideArrows = false, anim
                             }}
                             className="absolute inset-0 cursor-grab active:cursor-grabbing"
                         >
-                            {slide.image && (
+                            {/* Video Support */}
+                            {slide.mobileVideo && (
+                                <div className="block sm:hidden absolute inset-0 z-0">
+                                    <video
+                                        src={slide.mobileVideo.startsWith("http") ? slide.mobileVideo : `/api/storage/${slide.mobileVideo}`}
+                                        poster={slide.mobileImage ? (slide.mobileImage.startsWith("http") ? slide.mobileImage : `/api/storage/${slide.mobileImage}`) : (slide.image.startsWith("http") ? slide.image : `/api/storage/${slide.image}`)}
+                                        autoPlay={slide.videoAutoPlay ?? true}
+                                        muted={slide.videoMuted ?? true}
+                                        loop={slide.videoLoop ?? true}
+                                        playsInline
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+                            )}
+                            {slide.video && (
+                                <div className={`absolute inset-0 z-0 ${slide.mobileVideo ? "hidden sm:block" : "block"}`}>
+                                    <video
+                                        src={slide.video.startsWith("http") ? slide.video : `/api/storage/${slide.video}`}
+                                        poster={slide.image.startsWith("http") ? slide.image : `/api/storage/${slide.image}`}
+                                        autoPlay={slide.videoAutoPlay ?? true}
+                                        muted={slide.videoMuted ?? true}
+                                        loop={slide.videoLoop ?? true}
+                                        playsInline
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+                            )}
+
+                            {/* Image Fallback/Background (Visible only if video is NOT present or failing) */}
+                            {slide.image && !slide.video && !slide.mobileVideo && (
                                 <>
                                     {/* Mobile Image (Visible only on small screens) */}
                                     {slide.mobileImage && (
@@ -195,21 +232,39 @@ export const HeroCarouselBlock = ({ autoPlay, interval, hideArrows = false, anim
                                 >
                                     <div className="w-full max-w-full pb-4 sm:pb-0">
                                         {slide.tagline && (
-                                            <span className="mb-4 inline-block px-4 py-1.5 text-xs md:text-sm font-black text-nb-green bg-nb-green/10 rounded-full tracking-widest uppercase border border-nb-green/20 backdrop-blur-sm">
-                                                {slide.tagline}
-                                            </span>
+                                            useDesignSystem ? (
+                                                <Typography variant="detail" color="nb-green" uppercase className="mb-4 inline-block px-4 py-1.5 bg-nb-green/10 rounded-full border border-nb-green/20 backdrop-blur-sm">
+                                                    {slide.tagline}
+                                                </Typography>
+                                            ) : (
+                                                <span className="mb-4 inline-block px-4 py-1.5 bg-nb-green/10 text-nb-green text-[10px] font-black uppercase tracking-widest rounded-full border border-nb-green/20 backdrop-blur-sm">
+                                                    {slide.tagline}
+                                                </span>
+                                            )
                                         )}
 
                                         {slide.title && (
-                                            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-4 md:mb-6 tracking-tight drop-shadow-lg">
-                                                {slide.title}
-                                            </h1>
+                                            useDesignSystem ? (
+                                                <Typography variant="h1" color="white" className="mb-4 md:mb-6 drop-shadow-lg">
+                                                    {slide.title}
+                                                </Typography>
+                                            ) : (
+                                                <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4 md:mb-6 drop-shadow-lg leading-[1.1]">
+                                                    {slide.title}
+                                                </h1>
+                                            )
                                         )}
 
                                         {slide.description && (
-                                            <p className="text-sm sm:text-base md:text-lg text-slate-200 font-medium leading-relaxed drop-shadow max-w-xl">
-                                                {slide.description}
-                                            </p>
+                                            useDesignSystem ? (
+                                                <Typography variant="body" color="slate-400" weight="medium" className="text-slate-200 drop-shadow max-w-xl">
+                                                    {slide.description}
+                                                </Typography>
+                                            ) : (
+                                                <p className="text-lg md:text-xl text-slate-200 drop-shadow max-w-xl font-medium">
+                                                    {slide.description}
+                                                </p>
+                                            )
                                         )}
                                     </div>
 
@@ -261,6 +316,7 @@ export const HeroCarouselBlock = ({ autoPlay, interval, hideArrows = false, anim
 
 export const HeroCarouselBlockConfig: ComponentConfig<HeroCarouselProps> = {
     fields: {
+        useDesignSystem: sharedFields.useDesignSystem,
         autoPlay: {
             type: "radio",
             options: [
@@ -300,17 +356,60 @@ export const HeroCarouselBlockConfig: ComponentConfig<HeroCarouselProps> = {
                 },
                 mobileImage: {
                     type: "custom",
-                    label: "Mobile Image (Optional)",
+                    label: "Mobile Image (Fallback)",
                     render: ({ value, onChange }: any) => (
                         <div className="flex flex-col gap-2">
                             <span className="text-xs text-slate-500 font-medium whitespace-break-spaces">
                                 ✨ Ideal Resolution: 1080x1080 (1:1 Square)
                                 <br />
-                                Leave blank to automatically center-crop the desktop image.
+                                Used as fallback and video poster on mobile.
                             </span>
                             <ImagePicker value={value} onChange={onChange} />
                         </div>
                     ),
+                },
+                video: {
+                    type: "custom",
+                    label: "Desktop Video",
+                    render: ({ value, onChange }: any) => (
+                        <div className="flex flex-col gap-2">
+                            <span className="text-xs text-slate-500 font-medium">✨ Preferred: MP4/WebM with optimized bitrate</span>
+                            <ImagePicker value={value} onChange={onChange} />
+                        </div>
+                    ),
+                },
+                mobileVideo: {
+                    type: "custom",
+                    label: "Mobile Video (Optional)",
+                    render: ({ value, onChange }: any) => (
+                        <div className="flex flex-col gap-2">
+                            <ImagePicker value={value} onChange={onChange} />
+                        </div>
+                    ),
+                },
+                videoAutoPlay: {
+                    type: "radio",
+                    label: "Video Auto Play",
+                    options: [
+                        { label: "Yes", value: true },
+                        { label: "No", value: false },
+                    ],
+                },
+                videoMuted: {
+                    type: "radio",
+                    label: "Video Muted",
+                    options: [
+                        { label: "Yes", value: true },
+                        { label: "No", value: false },
+                    ],
+                },
+                videoLoop: {
+                    type: "radio",
+                    label: "Video Loop",
+                    options: [
+                        { label: "Yes", value: true },
+                        { label: "No", value: false },
+                    ],
                 },
                 overlayOpacity: {
                     type: "number",
@@ -353,6 +452,7 @@ export const HeroCarouselBlockConfig: ComponentConfig<HeroCarouselProps> = {
         },
     },
     defaultProps: {
+        useDesignSystem: true,
         autoPlay: true,
         interval: 5000,
         animationType: "slideHorizontal",

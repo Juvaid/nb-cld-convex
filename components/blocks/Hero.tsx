@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ArrowRight, Award, FlaskConical, Factory, ShieldCheck, Zap, LucideIcon } from 'lucide-react';
+import { Typography } from '../ui/Typography';
 
 export interface HeroProps {
     id?: string;
@@ -14,6 +15,7 @@ export interface HeroProps {
     stats?: Array<{ value: string; label: string }>;
     cards?: Array<{ icon: string; title: string; desc: string }>;
     alignment?: 'left' | 'center' | 'right';
+    useDesignSystem?: boolean;
 }
 
 const iconMap: Record<string, LucideIcon> = {
@@ -45,7 +47,8 @@ export default function Hero({
         { icon: 'ShieldCheck', title: 'Quality Assurance', desc: 'ISO global standards' },
         { icon: 'Award', title: 'R&D Innovation', desc: 'Herbal formulations' },
     ],
-    alignment = 'center'
+    alignment = 'center',
+    useDesignSystem = true
 }: HeroProps) {
     const alignmentClasses = {
         left: 'text-left items-start',
@@ -74,21 +77,43 @@ export default function Hero({
                 <div className="grid lg:grid-cols-2 gap-8 lg:gap-20 items-center text-center lg:text-left">
                     {/* Left content */}
                     <div className="animate-fade-in-up">
-                        <div className="inline-flex items-center gap-1.5 sm:gap-3 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-nb-green/5 border border-nb-green/10 text-nb-green text-[8.5px] md:text-xs font-black mb-4 sm:mb-6 uppercase tracking-wider md:tracking-[0.2em] leading-none mx-auto lg:mx-0">
-                            <Zap className="w-2.5 sm:w-3.5 h-2.5 sm:h-3.5 fill-nb-green" />
-                            {badgeText}
-                        </div>
+                        {useDesignSystem ? (
+                            <Typography variant="detail" color="nb-green" uppercase className="inline-flex items-center gap-1.5 sm:gap-3 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-nb-green/5 border border-nb-green/10 mb-4 sm:mb-6 mx-auto lg:mx-0">
+                                <Zap className="w-2.5 sm:w-3.5 h-2.5 sm:h-3.5 fill-nb-green" />
+                                {badgeText}
+                            </Typography>
+                        ) : (
+                            <div className="inline-flex items-center gap-1.5 sm:gap-3 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-nb-green/5 border border-nb-green/10 text-nb-green text-[8.5px] md:text-xs font-black mb-4 sm:mb-6 uppercase tracking-wider md:tracking-[0.2em] leading-none mx-auto lg:mx-0">
+                                <Zap className="w-2.5 sm:w-3.5 h-2.5 sm:h-3.5 fill-nb-green" />
+                                {badgeText}
+                            </div>
+                        )}
 
-                        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-slate-900 leading-[1.1] sm:leading-[0.95] tracking-tight mb-4 sm:mb-6 text-balance">
-                            {title}{" "}
-                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-nb-green to-nb-green-deep pb-2 block sm:inline">
-                                {titleGradient}
-                            </span>
-                        </h1>
+                        {useDesignSystem ? (
+                            <Typography variant="h1" color="slate-900" className="mb-4 sm:mb-6 text-balance">
+                                {title}{" "}
+                                <span className="bg-clip-text text-transparent bg-gradient-to-r from-nb-green to-nb-green-deep pb-2 block sm:inline">
+                                    {titleGradient}
+                                </span>
+                            </Typography>
+                        ) : (
+                            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-slate-900 leading-[1.1] sm:leading-[0.95] tracking-tight mb-4 sm:mb-6 text-balance">
+                                {title}{" "}
+                                <span className="bg-clip-text text-transparent bg-gradient-to-r from-nb-green to-nb-green-deep pb-2 block sm:inline">
+                                    {titleGradient}
+                                </span>
+                            </h1>
+                        )}
 
-                        <p className="text-sm sm:text-lg md:text-xl text-slate-500 max-w-xl mb-6 sm:mb-8 leading-relaxed font-medium opacity-90 mx-auto lg:mx-0">
-                            {description}
-                        </p>
+                        {useDesignSystem ? (
+                            <Typography variant="body" color="slate-600" weight="medium" className="mb-6 sm:mb-8 opacity-90 mx-auto lg:mx-0 max-w-xl">
+                                {description}
+                            </Typography>
+                        ) : (
+                            <p className="text-sm sm:text-lg md:text-xl text-slate-500 max-w-xl mb-6 sm:mb-8 leading-relaxed font-medium opacity-90 mx-auto lg:mx-0">
+                                {description}
+                            </p>
+                        )}
 
                         <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 justify-center lg:justify-start">
                             <Link

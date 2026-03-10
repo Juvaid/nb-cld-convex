@@ -4,6 +4,14 @@ import { VisualColorPicker } from "./VisualColorPicker";
 import { SpacingControl } from "./SpacingControl";
 
 export const sharedFields = {
+    useDesignSystem: {
+        type: "radio" as const,
+        label: "Design System",
+        options: [
+            { label: "On (Recommended)", value: true },
+            { label: "Off (Custom Legacy)", value: false }
+        ]
+    },
     sectionId: { type: "text" as const, label: "Anchor Section ID (for navigation)" },
     paddingTop: {
         type: "custom" as const,
@@ -310,6 +318,7 @@ export const sharedFields = {
 };
 
 export interface SharedFieldProps {
+    useDesignSystem?: boolean;
     sectionId?: string;
     paddingTop?: string;
     paddingBottom?: string;

@@ -71,6 +71,9 @@ export const ModernHeroBlockConfig: ComponentConfig<ModernHeroBlockProps> = {
         useGlobalStats: { type: "radio", label: "Use Global Company Stats", options: [{ label: "Yes", value: true }, { label: "No", value: false }] },
         ...sharedFields
     },
+    defaultProps: {
+        useDesignSystem: true
+    },
     render: (props) => {
         const globalStats = useQuery(api.siteData.getStats);
         const finalStats = props.useGlobalStats ? (globalStats || []) : props.stats;

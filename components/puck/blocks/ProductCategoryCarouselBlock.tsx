@@ -6,7 +6,9 @@ import { ImagePicker } from "@/components/ImagePicker";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-
+import { Typography } from "@/components/ui/Typography";
+import { cn } from "@/lib/utils";
+import { sharedFields } from "../fields/shared";
 export interface CategoryCardProps {
     title: string;
     image: string;
@@ -14,13 +16,14 @@ export interface CategoryCardProps {
 }
 
 export interface ProductCategoryCarouselProps {
+    useDesignSystem?: boolean;
     heading: string;
     subheading: string;
     categories: CategoryCardProps[];
     autoSlideMobile?: boolean;
 }
 
-export const ProductCategoryCarouselBlock = ({ heading, subheading, categories, autoSlideMobile = true }: ProductCategoryCarouselProps) => {
+export const ProductCategoryCarouselBlock = ({ useDesignSystem = true, heading, subheading, categories, autoSlideMobile = true }: ProductCategoryCarouselProps) => {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const [activeIndex, setActiveIndex] = useState(0);
 
@@ -97,18 +100,29 @@ export const ProductCategoryCarouselBlock = ({ heading, subheading, categories, 
         <section className="pt-8 pb-16 md:pt-12 md:pb-24 bg-white relative overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header block */}
-                <div className="mb-6 md:mb-8 border-b border-slate-200 pb-6 relative">
-                    {heading && (
-                        <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight mb-2">
-                            {heading}
-                        </h2>
-                    )}
-                    {subheading && (
-                        <p className="text-base md:text-lg text-slate-600 font-medium max-w-3xl">
-                            {subheading}
-                        </p>
-                    )}
-
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-6 md:mb-8">
+                    <div className="max-w-2xl">
+                        {useDesignSystem ? (
+                            <Typography variant="section-title" color="slate-900" className="mb-2">
+                                {heading}
+                            </Typography>
+                        ) : (
+                            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">
+                                {heading}
+                            </h2>
+                        )}
+                        {subheading && (
+                            useDesignSystem ? (
+                                <Typography variant="section-subtitle" color="slate-600">
+                                    {subheading}
+                                </Typography>
+                            ) : (
+                                <p className="text-slate-600">
+                                    {subheading}
+                                </p>
+                            )
+                        )}
+                    </div>
                     {/* Desktop Navigation Arrows (positioned top right of header) */}
                     <div className="hidden md:flex absolute bottom-6 right-0 gap-3">
                         <button
@@ -197,6 +211,7 @@ export const ProductCategoryCarouselBlock = ({ heading, subheading, categories, 
 
 export const ProductCategoryCarouselBlockConfig: ComponentConfig<ProductCategoryCarouselProps> = {
     fields: {
+        useDesignSystem: sharedFields.useDesignSystem,
         heading: { type: "text", label: "Section Heading" },
         subheading: { type: "text", label: "Section Subheading" },
         categories: {
@@ -227,6 +242,7 @@ export const ProductCategoryCarouselBlockConfig: ComponentConfig<ProductCategory
         }
     },
     defaultProps: {
+        useDesignSystem: true,
         heading: "Categories",
         subheading: "Customized solutions for streamlined product manufacturing.",
         autoSlideMobile: true,

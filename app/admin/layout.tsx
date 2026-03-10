@@ -8,6 +8,7 @@ import {
     Settings,
     LogOut,
     PenTool,
+    Palette,
     Layout,
     Mail,
     Globe
@@ -31,7 +32,11 @@ const contentItems = [
 const commerceItems = [
     { name: "Products", href: "/admin/products", icon: Package },
     { name: "Inquiries", href: "/admin/inquiries", icon: Mail },
-    { name: "Settings", href: "/admin/settings", icon: Settings },
+];
+
+const systemItems = [
+    { name: "Theme & Design", href: "/admin/theme", icon: Palette },
+    { name: "General Settings", href: "/admin/settings", icon: Settings },
 ];
 
 export default function AdminLayout({
@@ -128,6 +133,28 @@ export default function AdminLayout({
                             <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-3 mb-2">B2B Commerce</div>
                             <div className="space-y-1">
                                 {commerceItems.map((item) => {
+                                    const isActive = pathname === item.href;
+                                    return (
+                                        <Link
+                                            key={item.name}
+                                            href={item.href}
+                                            className={`group flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors relative ${isActive
+                                                ? "bg-slate-800/80 text-white"
+                                                : "text-slate-400 hover:bg-slate-800/50 hover:text-white"
+                                                }`}
+                                        >
+                                            <item.icon className="w-4 h-4" />
+                                            {item.name}
+                                        </Link>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        <div>
+                            <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-3 mb-2">Site Configuration</div>
+                            <div className="space-y-1">
+                                {systemItems.map((item) => {
                                     const isActive = pathname === item.href;
                                     return (
                                         <Link

@@ -45,6 +45,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 import { CookieConsent } from "@/components/ui/CookieConsent";
+import { FloatingWidget } from "@/components/ui/FloatingWidget";
 
 export default function RootLayout({
   children,
@@ -64,6 +65,7 @@ export default function RootLayout({
               {children}
               {modal}
               <CookieConsent />
+              <FloatingWidget />
             </ThemeProvider>
           </AuthProvider>
         </ConvexClientProvider>

@@ -15,7 +15,7 @@ const legacyMap: Record<string, string> = {
     SiteFooter: "Footer",
 };
 
-export function PuckRenderer({ data, initialData, configOverride }: { data: any; initialData?: any; configOverride?: Config }) {
+export function PuckRenderer({ data, initialData, configOverride, siteSettings }: { data: any; initialData?: any; configOverride?: Config; siteSettings?: any }) {
     const root = data?.root || {};
     const content = data?.content || [];
     const { header = {}, footer = {}, ...rootProps } = root.props || {};
@@ -26,7 +26,7 @@ export function PuckRenderer({ data, initialData, configOverride }: { data: any;
     return (
         <ThemeProvider>
             <div className="flex flex-col min-h-screen font-sans selection:bg-nb-green/30">
-                <SiteHeader {...header} />
+                <SiteHeader {...header} initialSettings={siteSettings} />
                 <main className="flex-grow">
                     {content.map((block: any, i: number) => {
                         const type = legacyMap[block.type] || block.type;

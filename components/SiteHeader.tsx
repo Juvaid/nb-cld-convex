@@ -19,6 +19,7 @@ export interface SiteHeaderProps {
     logoImage?: string;
     links?: NavLink[];
     contactText?: string;
+    initialSettings?: any;
 }
 
 export function SiteHeader({
@@ -26,12 +27,14 @@ export function SiteHeader({
     logoImage: propLogoImage,
     links: propLinks,
     contactText: propContactText,
+    initialSettings,
 }: SiteHeaderProps) {
     const pathname = usePathname();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     // Fetch settings from Convex
-    const siteSettings = useQuery(api.siteSettings.getSiteSettings);
+    const liveSettings = useQuery(api.siteSettings.getSiteSettings);
+    const siteSettings = liveSettings !== undefined ? liveSettings : initialSettings;
     const isLoading = siteSettings === undefined;
 
     // Default fallbacks

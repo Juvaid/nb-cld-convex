@@ -3,6 +3,7 @@ import { ComponentConfig } from "@puckeditor/core";
 import { RichText } from "../RichText";
 import { Section } from "../../ui/Section";
 import { sharedFields, SharedFieldProps } from "../fields/shared";
+import { cn } from "@/lib/utils";
 
 export interface TextBlockProps extends SharedFieldProps {
     content: string;
@@ -43,6 +44,7 @@ export const TextBlockConfig: ComponentConfig<TextBlockProps> = {
         ...sharedFields
     },
     defaultProps: {
+        useDesignSystem: true,
         content: "<p>Write your amazing text here...</p>",
         alignment: "left",
         maxWidth: "none"
@@ -58,11 +60,17 @@ export const TextBlockConfig: ComponentConfig<TextBlockProps> = {
             maxWidthClass = `max-w-${props.maxWidth} mx-auto`;
         }
 
+        const useDesignSystem = props.useDesignSystem !== false;
+
         return (
             <Section {...props} sectionId={props.sectionId}>
                 <div className={`w-full ${alignClass}`}>
                     <div
-                        className={`prose prose-slate prose-lg lg:prose-xl prose-nb ${maxWidthClass} prose-headings:font-black prose-headings:text-slate-900 prose-p:text-slate-600 prose-p:leading-relaxed prose-li:text-slate-600 focus:outline-none`}
+                        className={cn(
+                            "prose prose-slate prose-lg lg:prose-xl prose-nb focus:outline-none",
+                            useDesignSystem ? "prose-headings:font-black prose-headings:text-slate-900 prose-p:text-slate-600 prose-p:leading-relaxed prose-li:text-slate-600" : "prose-headings:font-bold prose-p:text-slate-500",
+                            maxWidthClass
+                        )}
                         dangerouslySetInnerHTML={{ __html: props.content }}
                     />
                 </div>

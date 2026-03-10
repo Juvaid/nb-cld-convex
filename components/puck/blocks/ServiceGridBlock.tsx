@@ -40,74 +40,100 @@ export const ServiceGridBlockConfig: ComponentConfig<ServiceGridBlockProps> = {
         },
         ...sharedFields
     },
-    render: (props: any) => (
-        <Section
-            {...props}
-            id={props.sectionId}
-        >
-            <Flex direction="col" align="center" gap="12">
-                <Flex direction="col" align="center" gap="4" className="max-w-3xl text-center">
-                    <Typography variant="h2" color="slate-900">
-                        {props.title || "Our Professional Services"}
-                    </Typography>
-                    <div className="w-24 h-2 bg-nb-green rounded-full shadow-sm" />
-                </Flex>
+    defaultProps: {
+        useDesignSystem: true,
+        title: "Our Professional Services",
+        items: []
+    },
+    render: (props: any) => {
+        const useDesignSystem = props.useDesignSystem !== false;
+        return (
+            <Section
+                {...props}
+                id={props.sectionId}
+            >
+                <Flex direction="col" align="center" gap="12">
+                    <Flex direction="col" align="center" gap="4" className="max-w-3xl text-center">
+                        {useDesignSystem ? (
+                            <Typography variant="h2" color="slate-900">
+                                {props.title || "Our Professional Services"}
+                            </Typography>
+                        ) : (
+                            <h2 className="text-3xl font-bold text-slate-900">
+                                {props.title || "Our Professional Services"}
+                            </h2>
+                        )}
+                        <div className="w-24 h-2 bg-nb-green rounded-full shadow-sm" />
+                    </Flex>
 
-                <Flex
-                    direction={props.flexDirection || "row"}
-                    justify={props.flexJustify || "center"}
-                    align={props.flexAlign || "stretch"}
-                    gap={props.gap || "8"}
-                    wrap
-                    className="w-full"
-                >
-                    {(props.items || []).map((item: any, i: number) => (
-                        <Flex
-                            key={i}
-                            direction="col"
-                            align="start"
-                            gap="6"
-                            className="bg-white p-6 md:p-10 rounded-[40px] border border-slate-50 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all flex-1 min-w-[280px] h-full"
-                        >
-                            {item.showMedia !== false && (
-                                <Flex align="center" justify="center" className="w-16 h-16 bg-nb-green/10 rounded-2xl text-nb-green font-black text-xl overflow-hidden flex-shrink-0">
-                                    {item.mediaType === "image" && item.mediaImage ? (
-                                        <img
-                                            src={item.mediaImage.startsWith('http') ? item.mediaImage : `/api/storage/${item.mediaImage}`}
-                                            className="w-full h-full object-cover"
-                                            alt={item.title || ""}
-                                        />
+                    <Flex
+                        direction={props.flexDirection || "row"}
+                        justify={props.flexJustify || "center"}
+                        align={props.flexAlign || "stretch"}
+                        gap={props.gap || "8"}
+                        wrap
+                        className="w-full"
+                    >
+                        {(props.items || []).map((item: any, i: number) => (
+                            <Flex
+                                key={i}
+                                direction="col"
+                                align="start"
+                                gap="6"
+                                className="bg-white p-6 md:p-10 rounded-[40px] border border-slate-50 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all flex-1 min-w-[280px] h-full"
+                            >
+                                {item.showMedia !== false && (
+                                    <Flex align="center" justify="center" className="w-16 h-16 bg-nb-green/10 rounded-2xl text-nb-green font-black text-xl overflow-hidden flex-shrink-0">
+                                        {item.mediaType === "image" && item.mediaImage ? (
+                                            <img
+                                                src={item.mediaImage.startsWith('http') ? item.mediaImage : `/api/storage/${item.mediaImage}`}
+                                                className="w-full h-full object-cover"
+                                                alt={item.title || ""}
+                                            />
+                                        ) : (
+                                            <div>
+                                                {item.mediaIcon || (i + 1)}
+                                            </div>
+                                        )}
+                                    </Flex>
+                                )}
+                                <div className="flex-grow space-y-3">
+                                    {useDesignSystem ? (
+                                        <Typography variant="h4" color="slate-900">
+                                            {item.title}
+                                        </Typography>
                                     ) : (
-                                        <div>
-                                            {item.mediaIcon || (i + 1)}
-                                        </div>
+                                        <h4 className="text-xl font-bold text-slate-900">
+                                            {item.title}
+                                        </h4>
                                     )}
-                                </Flex>
-                            )}
-                            <div className="flex-grow space-y-3">
-                                <Typography variant="h4" color="slate-900">
-                                    {item.title}
-                                </Typography>
-                                <Typography variant="small" color="slate-500">
-                                    {item.description}
-                                </Typography>
-                            </div>
-
-                            {item.showButton && item.buttonText && (
-                                <div className="mt-4 pt-4 border-t border-slate-900/5 w-full">
-                                    <a
-                                        href={item.buttonLink || "#"}
-                                        className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-nb-green hover:text-slate-900 transition-colors"
-                                    >
-                                        {item.buttonText}
-                                        <span>→</span>
-                                    </a>
+                                    {useDesignSystem ? (
+                                        <Typography variant="small" color="slate-500">
+                                            {item.description}
+                                        </Typography>
+                                    ) : (
+                                        <p className="text-sm text-slate-500">
+                                            {item.description}
+                                        </p>
+                                    )}
                                 </div>
-                            )}
-                        </Flex>
-                    ))}
+
+                                {item.showButton && item.buttonText && (
+                                    <div className="mt-4 pt-4 border-t border-slate-900/5 w-full">
+                                        <a
+                                            href={item.buttonLink || "#"}
+                                            className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-nb-green hover:text-slate-900 transition-colors"
+                                        >
+                                            {item.buttonText}
+                                            <span>→</span>
+                                        </a>
+                                    </div>
+                                )}
+                            </Flex>
+                        ))}
+                    </Flex>
                 </Flex>
-            </Flex>
-        </Section>
-    )
+            </Section>
+        )
+    }
 };

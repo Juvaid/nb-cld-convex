@@ -5,14 +5,17 @@ import { api } from "@/convex/_generated/api";
 import ReactMarkdown from "react-markdown";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { PageSkeleton } from "@/components/ui/Skeleton";
+import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
 import Link from "next/link";
 import React, { use } from "react";
 
 interface BlogPostClientProps {
     slug: string;
+    initialSettings?: any;
 }
 
-export default function BlogPostClient({ slug }: BlogPostClientProps) {
+export default function BlogPostClient({ slug, initialSettings }: BlogPostClientProps) {
     const blog = useQuery(api.blogs.getBlogBySlug, { slug });
 
     if (blog === undefined) {
@@ -52,6 +55,7 @@ export default function BlogPostClient({ slug }: BlogPostClientProps) {
 
     return (
         <div className="bg-white min-h-screen font-outfit">
+            <SiteHeader initialSettings={initialSettings} />
             <article>
                 <header className="relative w-full pt-32 pb-20 overflow-hidden bg-slate-900 border-b-[16px] border-nb-green">
                     {/* Background Image / Pattern */}
@@ -156,6 +160,7 @@ export default function BlogPostClient({ slug }: BlogPostClientProps) {
                     <div className="absolute bottom-0 left-0 w-64 h-64 bg-nb-green-deep/10 rounded-full blur-[100px] -ml-32 -mb-32" />
                 </div>
             </div>
+            <SiteFooter initialSettings={initialSettings} />
         </div>
     );
 }

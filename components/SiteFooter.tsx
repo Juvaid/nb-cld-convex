@@ -34,8 +34,10 @@ export function SiteFooter({
     backgroundColor = "bg-slate-900",
     textColor = "text-white",
     socialLinks: propSocialLinks,
-}: SiteFooterProps) {
-    const siteSettings = useQuery(api.siteSettings.getSiteSettings);
+    initialSettings,
+}: SiteFooterProps & { initialSettings?: any }) {
+    const liveSettings = useQuery(api.siteSettings.getSiteSettings);
+    const siteSettings = liveSettings !== undefined ? liveSettings : initialSettings;
     const isLoading = siteSettings === undefined;
 
     const logoText = siteSettings?.logoText ?? propLogoText ?? "Nature's Boon";

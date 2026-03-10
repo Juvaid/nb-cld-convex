@@ -1,6 +1,7 @@
 "use client";
 
 import { useTheme } from "@/components/ThemeProvider";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/input";
 import { ColorPicker } from "@/components/ui/color-picker";
@@ -8,65 +9,15 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useState, useEffect } from "react";
-import { Loader2, Save, Undo, Plus, Trash2, ArrowUp, ArrowDown, Clock, RotateCcw, Layout, Image as ImageIcon, Star, FileText } from "lucide-react";
+import {
+    Loader2, Save, Undo, Clock, RotateCcw, Layout,
+    Star, FileText, Download, Bookmark, Sparkles,
+    Settings as SettingsIcon, Package, Palette, Mail, MessageSquare, Globe,
+    Trash2, Plus, ArrowUp, ArrowDown, ArrowUpDown, Image as ImageIcon, Phone
+} from "lucide-react";
+import Link from "next/link";
 import { ImagePicker } from "@/components/ImagePicker";
 import { FontPicker } from "@/components/admin/FontPicker";
-import { Download, Bookmark } from "lucide-react";
-
-const PRESETS = [
-    {
-        name: "Forest Emerald",
-        colors: {
-            primary: "#16a34a",
-            secondary: "#0f172a",
-            accent: "#22c55e",
-            background: "#ffffff",
-            backgroundAlt: "#f8fafc",
-            text: "#0f172a",
-            textMuted: "#64748b",
-            border: "#e2e8f0",
-        }
-    },
-    {
-        name: "Royal Midnight",
-        colors: {
-            primary: "#1e40af",
-            secondary: "#0f172a",
-            accent: "#3b82f6",
-            background: "#ffffff",
-            backgroundAlt: "#f1f5f9",
-            text: "#0f172a",
-            textMuted: "#64748b",
-            border: "#e2e8f0",
-        }
-    },
-    {
-        name: "Organic Earth",
-        colors: {
-            primary: "#0d9488",
-            secondary: "#134e4a",
-            accent: "#2dd4bf",
-            background: "#ffffff",
-            backgroundAlt: "#f0fdfa",
-            text: "#042f2e",
-            textMuted: "#5da399",
-            border: "#ccfbf1",
-        }
-    },
-    {
-        name: "Sleek Onyx",
-        colors: {
-            primary: "#18181b",
-            secondary: "#000000",
-            accent: "#3f3f46",
-            background: "#ffffff",
-            backgroundAlt: "#f4f4f5",
-            text: "#09090b",
-            textMuted: "#71717a",
-            border: "#e4e4e7",
-        }
-    }
-];
 
 export default function SettingsPage() {
     const { theme, saveAll, reset } = useTheme();
@@ -79,7 +30,6 @@ export default function SettingsPage() {
     const updateSiteSetting = useMutation(api.siteSettings.updateSiteSetting);
     const [logoText, setLogoText] = useState("");
     const [logoImage, setLogoImage] = useState("");
-    const [logoFont, setLogoFont] = useState("");
     const [siteTitle, setSiteTitle] = useState("");
     const [faviconUrl, setFaviconUrl] = useState("");
     const [contactText, setContactText] = useState("");
@@ -90,6 +40,14 @@ export default function SettingsPage() {
     const [discordWebhookUrl, setDiscordWebhookUrl] = useState("");
     const [whatsappApiKey, setWhatsappApiKey] = useState("");
     const [whatsappPhone, setWhatsappPhone] = useState("");
+    const [floatingWidget, setFloatingWidget] = useState<any>({
+        enabled: false,
+        position: "right",
+        vAlign: "bottom",
+        whatsapp: "",
+        phone: "",
+        catalogStorageId: "",
+    });
     const [isSavingSite, setIsSavingSite] = useState(false);
 
     // Snapshots State
@@ -111,7 +69,6 @@ export default function SettingsPage() {
         if (siteSettings) {
             setLogoText(siteSettings.logoText || "NatureBoon");
             setLogoImage(siteSettings.logoImage || "");
-            setLogoFont(localTheme.typography?.logoFont || "Inter");
             setSiteTitle(siteSettings.siteTitle || "NatureBoon | Premium Manufacturing Platform");
             setFaviconUrl(siteSettings.faviconUrl || "");
             setContactText(siteSettings.contactText || "Contact Us");
@@ -131,6 +88,14 @@ export default function SettingsPage() {
             setDiscordWebhookUrl(siteSettings.discord_webhook_url || "");
             setWhatsappApiKey(siteSettings.whatsapp_api_key || "");
             setWhatsappPhone(siteSettings.whatsapp_phone || "");
+            setFloatingWidget(siteSettings.floating_widget || {
+                enabled: false,
+                position: "right",
+                vAlign: "bottom",
+                whatsapp: "",
+                phone: "",
+                catalogStorageId: "",
+            });
         }
     }, [siteSettings]);
 
@@ -145,36 +110,13 @@ export default function SettingsPage() {
         }));
     };
 
-    const applyPreset = (presetColors: any) => {
-        setLocalTheme((prev: any) => ({
-            ...prev,
-            colors: {
-                ...prev.colors,
-                ...presetColors
-            },
-            // Also update buttons primaryBg just in case
-            buttons: {
-                ...prev.buttons,
-                primaryBg: presetColors.primary
-            }
-        }));
-    };
-
     const handleSaveAll = async () => {
         setIsSaving(true);
         setIsSavingSite(true);
         try {
-            // Update logoFont in theme settings
-            const updatedTheme = {
-                ...localTheme,
-                typography: {
-                    ...localTheme.typography,
-                    logoFont: logoFont
-                }
-            };
-
             await Promise.all([
-                saveAll({ settings: updatedTheme }),
+                // We don't save theme here anymore to avoid overwriting designer changes
+                // saveAll({ settings: updatedTheme }),
                 updateSiteSetting({ key: "logoText", value: logoText }),
                 updateSiteSetting({ key: "logoImage", value: logoImage }),
                 updateSiteSetting({ key: "siteTitle", value: siteTitle }),
@@ -187,6 +129,7 @@ export default function SettingsPage() {
                 updateSiteSetting({ key: "discord_webhook_url", value: discordWebhookUrl }),
                 updateSiteSetting({ key: "whatsapp_api_key", value: whatsappApiKey }),
                 updateSiteSetting({ key: "whatsapp_phone", value: whatsappPhone }),
+                updateSiteSetting({ key: "floating_widget", value: floatingWidget }),
             ]);
 
             // Clear cache so metadata (favicon, title) updates immediately
@@ -298,7 +241,8 @@ export default function SettingsPage() {
                 socialLinks,
                 discordWebhookUrl,
                 whatsappApiKey,
-                whatsappPhone
+                whatsappPhone,
+                floatingWidget
             }
         };
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(configToExport, null, 2));
@@ -340,171 +284,27 @@ export default function SettingsPage() {
             </div>
 
             <div className="grid gap-4 lg:grid-cols-12">
-                {/* Row 1: Visual & Layout Logic */}
                 <div className="lg:col-span-4 space-y-4">
-                    {/* Theme Presets */}
                     <Card className="shadow-sm border-slate-200">
                         <CardHeader className="p-5 border-b border-slate-100 bg-slate-50/50">
                             <CardTitle className="text-sm font-semibold tracking-tight text-slate-800 flex items-center gap-2">
-                                <Layout className="w-4 h-4 text-nb-green" />
-                                Quick Styles
+                                <Palette className="w-4 h-4 text-nb-green" />
+                                Visual Branding
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="p-4 pt-4">
-                            <div className="grid grid-cols-2 gap-2">
-                                {PRESETS.map((p, index) => {
-                                    const presetId = `preset-${index}`;
-                                    return (
-                                        <button
-                                            key={p.name}
-                                            onClick={() => applyPreset(p.colors)}
-                                            className={`flex flex-col items-start p-2.5 rounded-xl bg-white border border-nb-green/10 hover:border-nb-green/40 transition-all text-left group ${presetId}`}
-                                        >
-                                            <style>{`
-                                                .${presetId} .p-color { background-color: ${p.colors.primary}; }
-                                                .${presetId} .a-color { background-color: ${p.colors.accent}; }
-                                                .${presetId} .s-color { background-color: ${p.colors.secondary}; }
-                                            `}</style>
-                                            <div className="flex gap-1 mb-2">
-                                                <div className="w-3 h-3 rounded-full border border-black/5 p-color" />
-                                                <div className="w-3 h-3 rounded-full border border-black/5 a-color" />
-                                                <div className="w-3 h-3 rounded-full border border-black/5 s-color" />
-                                            </div>
-                                            <span className="text-xs font-semibold tracking-tight text-slate-700">{p.name}</span>
-                                        </button>
-                                    );
-                                })}
+                        <CardContent className="p-6 flex flex-col items-center justify-center text-center space-y-4">
+                            <div className="w-16 h-16 bg-nb-green/10 rounded-full flex items-center justify-center">
+                                <Palette className="w-8 h-8 text-nb-green" />
                             </div>
-                        </CardContent>
-                    </Card>
-
-                    {/* Colors - Compact Grid */}
-                    <Card className="shadow-sm border-slate-200">
-                        <CardHeader className="p-5 border-b border-slate-100 bg-slate-50/50">
-                            <CardTitle className="text-sm font-semibold tracking-tight text-slate-800 flex items-center gap-2">
-                                <Star className="w-4 h-4 text-nb-green" />
-                                Color Palette
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-5">
-                            <div className="grid grid-cols-2 gap-3">
-                                {Object.entries(localTheme.colors || {})
-                                    .map(([key, value]) => (
-                                        <div key={key} className="flex flex-col p-3 rounded-xl bg-slate-50 border border-slate-200 hover:bg-white transition-all group relative">
-                                            <label className="text-xs font-semibold text-slate-500 capitalize mb-2">{key.replace(/-/g, " ")}</label>
-                                            <ColorPicker
-                                                value={value as string}
-                                                onChange={(c) => updateSetting("colors", key, c)}
-                                            />
-                                        </div>
-                                    ))}
+                            <div className="space-y-1">
+                                <h3 className="font-bold text-slate-900">Theme & Design System</h3>
+                                <p className="text-xs text-slate-500 max-w-[200px]">Colors, typography and brand geometry are now managed in the dedicated Theme section.</p>
                             </div>
-                        </CardContent>
-                    </Card>
-                </div>
-
-                <div className="lg:col-span-5">
-                    {/* Geometry & Typography */}
-                    <Card className="shadow-sm border-slate-200">
-                        <CardHeader className="p-5 border-b border-slate-100 bg-slate-50/50">
-                            <CardTitle className="text-sm font-semibold tracking-tight text-slate-800 flex items-center gap-2">
-                                <Layout className="w-4 h-4 text-nb-green" />
-                                System Geometry & Typography
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-5 space-y-6">
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <label className="text-xs font-medium text-slate-600">Button Radius</label>
-                                    <div className="relative group">
-                                        <Input
-                                            type="number"
-                                            value={localTheme.buttons?.borderRadius || "12"}
-                                            onChange={(e) => updateSetting("buttons", "borderRadius", e.target.value)}
-                                            className="h-10 text-sm font-semibold border-slate-200 focus:ring-2 focus:ring-nb-green"
-                                        />
-                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-slate-400 pointer-events-none">px</span>
-                                    </div>
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-xs font-medium text-slate-600">Container Max Width</label>
-                                    <div className="relative group">
-                                        <Input
-                                            type="number"
-                                            value={localTheme.spacing?.containerMaxWidth || "1280"}
-                                            onChange={(e) => updateSetting("spacing", "containerMaxWidth", e.target.value)}
-                                            className="h-10 text-sm font-semibold border-slate-200 focus:ring-2 focus:ring-nb-green"
-                                        />
-                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-slate-400 pointer-events-none">px</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="grid gap-4">
-                                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-4">
-                                    <div className="flex items-center justify-between">
-                                        <div className="p-1.5 bg-white border border-slate-200 rounded-lg shadow-sm">
-                                            <Star className="w-4 h-4 text-slate-500" />
-                                        </div>
-                                        <span className="text-xs font-semibold text-slate-500 uppercase tracking-widest">Headings</span>
-                                    </div>
-                                    <FontPicker
-                                        value={localTheme.typography?.headingFont || "system-ui"}
-                                        onChange={(f) => updateSetting("typography", "headingFont", f)}
-                                    />
-                                    <div className="grid grid-cols-2 gap-2">
-                                        <select
-                                            value={localTheme.typography?.headingWeight || "700"}
-                                            onChange={(e) => updateSetting("typography", "headingWeight", e.target.value)}
-                                            className="h-10 rounded-lg bg-white border border-slate-200 text-sm font-medium text-slate-700 px-3 shadow-sm focus:ring-2 focus:ring-nb-green focus:outline-none"
-                                            title="Heading Weight"
-                                        >
-                                            <option value="400">Regular</option>
-                                            <option value="600">Semi-Bold</option>
-                                            <option value="700">Bold</option>
-                                            <option value="900">Black</option>
-                                        </select>
-                                        <Input
-                                            value={localTheme.typography?.headingLetterSpacing || "0em"}
-                                            onChange={(e) => updateSetting("typography", "headingLetterSpacing", e.target.value)}
-                                            className="h-10 text-sm font-medium bg-white border border-slate-200 shadow-sm px-3 focus-visible:ring-2 focus-visible:ring-nb-green"
-                                            placeholder="Letter Spacing (e.g., 0.05em)"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-4">
-                                    <div className="flex items-center justify-between">
-                                        <div className="p-1.5 bg-white border border-slate-200 rounded-lg shadow-sm">
-                                            <FileText className="w-4 h-4 text-slate-500" />
-                                        </div>
-                                        <span className="text-xs font-semibold text-slate-500 uppercase tracking-widest">Body Text</span>
-                                    </div>
-                                    <FontPicker
-                                        value={localTheme.typography?.bodyFont || "system-ui"}
-                                        onChange={(f) => updateSetting("typography", "bodyFont", f)}
-                                    />
-                                    <div className="grid grid-cols-2 gap-2">
-                                        <select
-                                            value={localTheme.typography?.bodyWeight || "400"}
-                                            onChange={(e) => updateSetting("typography", "bodyWeight", e.target.value)}
-                                            className="h-10 rounded-lg bg-white border border-slate-200 text-sm font-medium text-slate-700 px-3 shadow-sm focus:ring-2 focus:ring-nb-green focus:outline-none"
-                                            title="Body Weight"
-                                        >
-                                            <option value="300">Light</option>
-                                            <option value="400">Regular</option>
-                                            <option value="500">Medium</option>
-                                            <option value="600">Semi-Bold</option>
-                                        </select>
-                                        <Input
-                                            value={localTheme.typography?.lineHeight || "1.5"}
-                                            onChange={(e) => updateSetting("typography", "lineHeight", e.target.value)}
-                                            className="h-10 text-sm font-medium bg-white border border-slate-200 shadow-sm px-3 focus-visible:ring-2 focus-visible:ring-nb-green"
-                                            placeholder="Line Height (e.g., 1.5)"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
+                            <Link href="/admin/theme">
+                                <Button variant="outline" size="sm" className="w-full">
+                                    Open Designer
+                                </Button>
+                            </Link>
                         </CardContent>
                     </Card>
                 </div>
@@ -620,13 +420,7 @@ export default function SettingsPage() {
                                     onChange={setLogoImage}
                                 />
                             </div>
-                            <div className="space-y-2">
-                                <label className="text-xs font-medium text-slate-600">Logo Font</label>
-                                <FontPicker
-                                    value={logoFont}
-                                    onChange={setLogoFont}
-                                />
-                            </div>
+                            <p className="text-[10px] text-slate-500 font-medium">Font selection moved to Designer</p>
                             <div className="space-y-2">
                                 <label className="text-xs font-medium text-slate-600">CTA Button Text</label>
                                 <Input
@@ -742,6 +536,139 @@ export default function SettingsPage() {
                     </Card>
                 </div>
 
+                <div className="lg:col-span-12">
+                    {/* Floating Contact Widget Configuration */}
+                    <Card className="shadow-md border-nb-green/20 bg-nb-green/[0.02]">
+                        <CardHeader className="p-6 border-b border-nb-green/10 flex flex-row items-center justify-between">
+                            <div>
+                                <CardTitle className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                                    <MessageSquare className="w-5 h-5 text-nb-green" />
+                                    Floating Contact Widget
+                                </CardTitle>
+                                <CardDescription>Configure the persistent floating actions (WhatsApp, Phone, Catalog) for your customers.</CardDescription>
+                            </div>
+                            <div className="flex items-center gap-2 bg-white p-1.5 rounded-xl border border-slate-200">
+                                <label className="text-[10px] font-black uppercase tracking-widest px-2 text-slate-400">Status</label>
+                                <Button
+                                    variant={floatingWidget.enabled ? "primary" : "outline"}
+                                    size="sm"
+                                    onClick={() => setFloatingWidget({ ...floatingWidget, enabled: !floatingWidget.enabled })}
+                                    className={cn("h-8 px-4 font-black text-[10px]", floatingWidget.enabled ? "bg-nb-green" : "opacity-50")}
+                                >
+                                    {floatingWidget.enabled ? "ENABLED" : "DISABLED"}
+                                </Button>
+                            </div>
+                        </CardHeader>
+                        <CardContent className="p-6">
+                            <div className="grid md:grid-cols-3 gap-8">
+                                <div className="space-y-6">
+                                    <div className="space-y-3">
+                                        <h4 className="text-xs font-black uppercase tracking-widest text-slate-400">Widget Layout</h4>
+                                        <div className="flex gap-2">
+                                            {['left', 'right'].map((pos) => (
+                                                <button
+                                                    key={pos}
+                                                    onClick={() => setFloatingWidget({ ...floatingWidget, position: pos })}
+                                                    className={cn(
+                                                        "flex-1 py-10 rounded-2xl border-2 transition-all flex flex-col items-center justify-center gap-3",
+                                                        floatingWidget.position === pos
+                                                            ? "border-nb-green bg-nb-green/5 ring-4 ring-nb-green/10"
+                                                            : "border-slate-100 bg-white hover:border-slate-200"
+                                                    )}
+                                                >
+                                                    <div className={cn(
+                                                        "w-12 h-16 rounded-lg border-2 border-slate-200 relative",
+                                                        pos === 'left' ? "bg-gradient-to-r from-nb-green/20 to-transparent" : "bg-gradient-to-l from-nb-green/20 to-transparent"
+                                                    )}>
+                                                        <div className={cn(
+                                                            "absolute w-3 h-3 rounded-full bg-nb-green shadow-lg transition-all duration-300",
+                                                            floatingWidget.vAlign === 'top' ? "top-2" : floatingWidget.vAlign === 'middle' ? "top-1/2 -translate-y-1/2" : "bottom-2",
+                                                            pos === 'left' ? "left-2" : "right-2"
+                                                        )} />
+                                                    </div>
+                                                    <span className="text-[10px] font-black uppercase tracking-widest capitalize">{pos} Side</span>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <div className="space-y-3">
+                                        <h4 className="text-xs font-black uppercase tracking-widest text-slate-400">Vertical Alignment</h4>
+                                        <div className="flex gap-2">
+                                            {[
+                                                { id: 'top', icon: <ArrowUp className="w-3 h-3" /> },
+                                                { id: 'middle', icon: <ArrowUpDown className="w-3 h-3" /> },
+                                                { id: 'bottom', icon: <ArrowDown className="w-3 h-3" /> }
+                                            ].map((pos) => (
+                                                <button
+                                                    key={pos.id}
+                                                    onClick={() => setFloatingWidget({ ...floatingWidget, vAlign: pos.id })}
+                                                    className={cn(
+                                                        "flex-1 py-3 rounded-xl border-2 transition-all flex flex-col items-center justify-center gap-1",
+                                                        floatingWidget.vAlign === pos.id
+                                                            ? "border-nb-green bg-nb-green/5 ring-2 ring-nb-green/10"
+                                                            : "border-slate-100 bg-white hover:border-slate-200"
+                                                    )}
+                                                >
+                                                    {pos.icon}
+                                                    <span className="text-[8px] font-black uppercase tracking-tight">{pos.id}</span>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="md:col-span-2 grid sm:grid-cols-2 gap-6">
+                                    <div className="space-y-6">
+                                        <div className="space-y-2">
+                                            <h4 className="text-xs font-black uppercase tracking-widest text-slate-400">Direct Contact</h4>
+                                            <div className="space-y-4">
+                                                <div className="space-y-1.5">
+                                                    <label className="text-[10px] font-black text-slate-500 flex items-center gap-1.5 uppercase">
+                                                        <MessageSquare className="w-3 h-3 text-[#25D366]" /> WhatsApp Number
+                                                    </label>
+                                                    <Input
+                                                        value={floatingWidget.whatsapp}
+                                                        onChange={(e) => setFloatingWidget({ ...floatingWidget, whatsapp: e.target.value })}
+                                                        placeholder="+91 98765 43210"
+                                                        className="h-10 text-sm font-semibold border-slate-200"
+                                                    />
+                                                </div>
+                                                <div className="space-y-1.5">
+                                                    <label className="text-[10px] font-black text-slate-500 flex items-center gap-1.5 uppercase">
+                                                        <Phone className="w-3 h-3 text-blue-600" /> Phone Dialer Number
+                                                    </label>
+                                                    <Input
+                                                        value={floatingWidget.phone}
+                                                        onChange={(e) => setFloatingWidget({ ...floatingWidget, phone: e.target.value })}
+                                                        placeholder="+91 98765 43210"
+                                                        className="h-10 text-sm font-semibold border-slate-200"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-6">
+                                        <div className="space-y-2">
+                                            <h4 className="text-xs font-black uppercase tracking-widest text-slate-400">Downloadable Resources</h4>
+                                            <div className="space-y-1.5">
+                                                <label className="text-[10px] font-black text-slate-500 flex items-center gap-1.5 uppercase">
+                                                    <FileText className="w-3 h-3 text-nb-green" /> Product Catalog (PDF)
+                                                </label>
+                                                <ImagePicker
+                                                    value={floatingWidget.catalogStorageId}
+                                                    onChange={(val) => setFloatingWidget({ ...floatingWidget, catalogStorageId: val })}
+                                                />
+                                                <p className="text-[9px] text-slate-400 italic">Select or upload your latest B2B catalog PDF here.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+
                 <div className="lg:col-span-4">
                     {/* Navigation - Site Map */}
                     <Card className="h-full shadow-sm border-slate-200">
@@ -791,6 +718,6 @@ export default function SettingsPage() {
                     </Card>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

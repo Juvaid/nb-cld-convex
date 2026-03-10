@@ -32,6 +32,7 @@ import { BentoServicesBlockConfig } from "./blocks/BentoServicesBlock";
 import { TextBlockConfig } from "./blocks/TextBlock";
 import { HeroCarouselBlockConfig } from "./blocks/HeroCarouselBlock";
 import { ProductCategoryCarouselBlockConfig } from "./blocks/ProductCategoryCarouselBlock";
+import { GoogleReviewsBlockConfig } from "./blocks/GoogleReviewsBlock";
 
 // Composite Macro Blocks
 import { HomeEssentialsBlockConfig } from "./blocks/HomeEssentialsBlock";
@@ -92,7 +93,7 @@ export const config: Config = {
         "Carousel & Marquee": { components: ["LogoMarquee", "ImageCarousel", "VideoCarousel", "InstagramCarousel", "ProductCategoryCarousel"] },
         Hero: { components: ["HeroCarousel", "NatureBoonHero", "ModernHero", "OrbitalHero", "ProductGridHero", "BentoGridHero", "LayeredDepthHero", "KineticMarqueeHero", "SwissStyleHero", "StackedCardHero"] },
         Themed: { components: ["NatureBoonExpertise", "NatureBoonStats", "CategoryPortfolio"] },
-        "Modern Blocks": { components: ["FeatureGrid", "ModernHero", "ModernServices", "ModernStats", "ModernTestimonials", "AboutHero", "AboutJourney", "WhyChooseUs", "ProductBrowser", "CallToAction", "ServiceDetailList", "ProcessSteps", "ContactSection", "ProductShowcase"] },
+        "Modern Blocks": { components: ["FeatureGrid", "ModernHero", "ModernServices", "ModernStats", "ModernTestimonials", "AboutHero", "AboutJourney", "WhyChooseUs", "ProductBrowser", "CallToAction", "ServiceDetailList", "ProcessSteps", "ContactSection", "ProductShowcase", "GoogleReviews"] },
         Layout: { components: ["DynamicLayout", "Section", "Spacer"] },
         Marketing: { components: ["ServiceGrid", "CTA", "SuccessStory", "IconBenefits"] },
         B2B: { components: ["QuickOrderPad", "ComplianceBadges", "ProductDetail"] },
@@ -136,6 +137,7 @@ export const config: Config = {
         BentoServices: BentoServicesBlockConfig,
         ModernServices: ModernServicesBlockConfig,
         HeroCarousel: HeroCarouselBlockConfig,
+        GoogleReviews: GoogleReviewsBlockConfig,
         AboutHero: {
             fields: {
                 badgeText: { type: "text" },
@@ -550,3 +552,5 @@ export const config: Config = {
         },
     },
 };
+
+// Force re-evaluation of config to pick up block export changes

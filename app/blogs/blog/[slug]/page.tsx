@@ -41,5 +41,11 @@ interface BlogPostPageProps {
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
     const { slug } = await params;
-    return <BlogPostClient slug={slug} />;
+    let settings = null;
+    try {
+        settings = await convex.query(api.siteSettings.getSiteSettings);
+    } catch (e) {
+        console.error("Failed to fetch settings for blog post page", e);
+    }
+    return <BlogPostClient slug={slug} initialSettings={settings} />;
 }

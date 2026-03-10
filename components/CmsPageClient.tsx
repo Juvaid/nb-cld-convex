@@ -10,14 +10,19 @@ export function CmsPageClient({
     path,
     initialPageData,
     useDynamicData,
+    siteSettings: initialSettings,
 }: {
     fallbackData: any;
     path: string;
     initialPageData?: any;
     useDynamicData?: boolean;
+    siteSettings?: any;
 }) {
     const livePage = useQuery(api.pages.getPublishedPage, { path });
+    const liveSettings = useQuery(api.siteSettings.getSiteSettings);
+
     const page = livePage !== undefined ? livePage : initialPageData;
+    const siteSettings = liveSettings !== undefined ? liveSettings : initialSettings;
 
     // Show Skeleton while Convex is fetching (page is strictly undefined)
     if (page === undefined) {
@@ -42,8 +47,11 @@ export function CmsPageClient({
 
     return (
         <div className="min-h-screen bg-background">
-            <PuckRenderer data={liveData || { root: {}, content: [] }} initialData={enrichedInitialData} />
+            <PuckRenderer
+                data={liveData || { root: {}, content: [] }}
+                initialData={enrichedInitialData}
+                siteSettings={siteSettings}
+            />
         </div>
     );
 }
-
