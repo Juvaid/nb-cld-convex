@@ -3,7 +3,7 @@
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { PuckRenderer } from "@/components/PuckRenderer";
-import { PageSkeleton } from "@/components/ui/Skeleton";
+import { LoadingAnimation } from "@/components/animations/LoadingAnimation";
 
 export function CmsPageClient({
     fallbackData,
@@ -18,15 +18,20 @@ export function CmsPageClient({
     useDynamicData?: boolean;
     siteSettings?: any;
 }) {
+    // Debug helper for production connection
+    if (typeof window !== "undefined") {
+        console.log("Convex Client URL:", process.env.NEXT_PUBLIC_CONVEX_URL || "NOT SET");
+    }
+
     const livePage = useQuery(api.pages.getPublishedPage, { path });
     const liveSettings = useQuery(api.siteSettings.getSiteSettings);
 
     const page = livePage !== undefined ? livePage : initialPageData;
     const siteSettings = liveSettings !== undefined ? liveSettings : initialSettings;
 
-    // Show Skeleton while Convex is fetching (page is strictly undefined)
+    // Show Premium Loader while Convex is fetching (page is strictly undefined)
     if (page === undefined) {
-        return <PageSkeleton />;
+        return <LoadingAnimation />;
     }
 
     let liveData = null;

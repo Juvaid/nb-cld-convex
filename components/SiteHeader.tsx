@@ -9,6 +9,8 @@ import { api } from "@/convex/_generated/api";
 
 import { Button } from "@/components/ui/Button";
 
+import { AnimatedLogo } from "@/components/animations/AnimatedLogo";
+
 export interface NavLink {
     label: string;
     href: string;
@@ -68,9 +70,7 @@ export function SiteHeader({
                         /* eslint-disable-next-line @next/next/no-img-element */
                         <img src={logoImage} alt={logoText} className="h-10 w-auto object-contain transition-transform group-hover:scale-105" />
                     ) : (
-                        <div className="w-10 h-10 bg-gradient-to-br from-nb-green-soft to-nb-green-deep rounded-xl shadow-[0_4px_12px_rgba(45,90,67,0.2)] flex items-center justify-center text-white font-black group-hover:scale-105 transition-transform">
-                            NB
-                        </div>
+                        <AnimatedLogo />
                     )}
                     {!isLoading && (
                         <span className="hidden sm:inline bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent font-bold tracking-tight font-logo">
