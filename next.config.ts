@@ -16,6 +16,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'images.unsplash.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'pub-13cf3fd8cdce49458ef78cee02101f.r2.dev',
+      },
     ],
     minimumCacheTTL: 31536000,
   },
