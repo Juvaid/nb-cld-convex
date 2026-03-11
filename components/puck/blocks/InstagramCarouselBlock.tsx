@@ -324,7 +324,7 @@ export function InstagramCarouselBlock({
                                         className={`w-[80vw] sm:w-[calc(40%-12px)] lg:w-[calc(20%-19.2px)] shrink-0 flex flex-col group`}
                                     >
                                         <a
-                                            href={post.link}
+                                            href={post.link || "https://www.instagram.com/naturesboon.cosmeticsmfg"}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             onClick={(e) => handlePostClick(e, post, i)}
@@ -403,7 +403,7 @@ export function InstagramCarouselBlock({
                                         {/* Caption Area */}
                                         <div className="mt-4 px-1">
                                             <a
-                                                href={post.link}
+                                                href={post.link || "https://www.instagram.com/naturesboon.cosmeticsmfg"}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="block hover:opacity-80 transition-opacity"
@@ -413,7 +413,7 @@ export function InstagramCarouselBlock({
                                                 </p>
                                             </a>
                                             {showHandles && (
-                                                <a href={post.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-[0.05em] text-nb-green hover:opacity-80 transition-all group/link">
+                                                <a href={post.link || "https://www.instagram.com/naturesboon.cosmeticsmfg"} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-[0.05em] text-nb-green hover:opacity-80 transition-all group/link">
                                                     VIEW ON INSTAGRAM
                                                     <ExternalLink className="w-3 h-3 transition-transform group-hover/link:translate-x-0.5" />
                                                 </a>

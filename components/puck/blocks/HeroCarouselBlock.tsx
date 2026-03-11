@@ -284,7 +284,7 @@ export const HeroCarouselBlock = ({ useDesignSystem = true, autoPlay, interval, 
                                         slide.align === "center" ? "justify-center" : slide.align === "right" ? "justify-end" : "justify-start"
                                     )}>
                                         {(slide.primaryCtaText || slide.primaryCtaLink) && (
-                                            <Link href={slide.primaryCtaLink || "#"} className="inline-block">
+                                            <Link href={slide.primaryCtaLink || "/contact"} className="inline-block">
                                                 <Button variant="primary" className="rounded-full shadow-lg px-4 py-2 sm:py-3 sm:px-8 h-9 sm:h-11 text-[12px] sm:text-sm whitespace-nowrap">
                                                     {slide.primaryCtaText || "Contact us"}
                                                 </Button>

@@ -151,11 +151,11 @@ export const ProductCategoryCarouselBlock = ({ useDesignSystem = true, heading, 
                         className="flex overflow-x-auto gap-4 md:gap-6 pb-8 snap-x snap-mandatory hide-scrollbar"
                     >
                         {categories.map((category, idx) => (
-                            <Link
-                                key={idx}
-                                href={category.link || "#"}
-                                className="block relative flex-none w-[85vw] sm:w-[45vw] md:w-[calc(33.333%-1rem)] xl:w-[calc(25%-1.125rem)] aspect-[4/3] rounded-xl overflow-hidden snap-start group shadow-sm hover:shadow-xl transition-all duration-300"
-                            >
+                                <Link
+                                    key={idx}
+                                    href={category.link || "/products"}
+                                    className="block relative flex-none w-[85vw] sm:w-[45vw] md:w-[calc(33.333%-1rem)] xl:w-[calc(25%-1.125rem)] aspect-[4/3] rounded-xl overflow-hidden snap-start group shadow-sm hover:shadow-xl transition-all duration-300"
+                                >
                                 <Image
                                     src={category.image?.startsWith("http") ? category.image : (category.image ? `/api/storage/${category.image}` : "/favicon.ico")}
                                     alt={category.title}
