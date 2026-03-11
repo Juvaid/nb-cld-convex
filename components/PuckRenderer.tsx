@@ -1,3 +1,5 @@
+"use client";
+
 import { Action, Config } from "@puckeditor/core";
 import { config } from "./puck/config";
 import { SiteHeader } from "./SiteHeader";
@@ -49,10 +51,11 @@ export function PuckRenderer({ data, initialData, configOverride, siteSettings }
                             const safeProps = block.props || {};
 
                             if (componentConfig && componentConfig.render) {
+                                const Render = componentConfig.render;
                                 return (
                                     <ErrorBoundary key={safeProps.id || `${block.type}-${index}`}>
                                         <div className="puck-block">
-                                            {componentConfig.render({ ...safeProps, puck: { renderDropZone: () => null }, initialData } as any)}
+                                            <Render {...safeProps} puck={{ renderDropZone: () => null }} initialData={initialData} />
                                         </div>
                                     </ErrorBoundary>
                                 );
