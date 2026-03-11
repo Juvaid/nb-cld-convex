@@ -193,7 +193,7 @@ export const HeroCarouselBlock = ({ useDesignSystem = true, autoPlay, interval, 
                                                 alt={slide.title || "Hero mobile background"}
                                                 fill
                                                 className="object-cover origin-center"
-                                                priority
+                                                priority={activeIndex === 0}
                                                 sizes="(max-width: 640px) 100vw, 0px"
                                             />
                                         </div>
@@ -205,7 +205,7 @@ export const HeroCarouselBlock = ({ useDesignSystem = true, autoPlay, interval, 
                                             alt={slide.title || "Hero background"}
                                             fill
                                             className="object-cover origin-center"
-                                            priority
+                                            priority={activeIndex === 0}
                                             sizes={slide.mobileImage ? "(max-width: 640px) 0px, 100vw" : "100vw"}
                                         />
                                     </div>

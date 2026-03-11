@@ -22,8 +22,22 @@ export async function GET(
             return new NextResponse("Image not found", { status: 404 });
         }
 
-        // Redirect to the actual Convex storage URL
-        return NextResponse.redirect(url);
+        // Fetch the actual image data to proxy it with caching headers
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+            return new NextResponse("Failed to fetch image from storage", { status: response.status });
+        }
+
+        const buffer = await response.arrayBuffer();
+        const contentType = response.headers.get("Content-Type") || "image/png";
+
+        return new NextResponse(buffer, {
+            headers: {
+                "Content-Type": contentType,
+                "Cache-Control": "public, max-age=31536000, immutable",
+            },
+        });
     } catch (error) {
         console.error("Storage API Error:", error);
         return new NextResponse("Internal Server Error", { status: 500 });

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Leaf, Mail, Phone, MapPin, Linkedin, Instagram, ArrowUpRight, Facebook, Twitter, Github } from 'lucide-react';
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import Image from "next/image";
 
 export interface FooterProps {
     logoText?: string;
@@ -58,7 +59,13 @@ export const Footer = ({
                     <div className="space-y-6 sm:space-y-8">
                         <Link href="/" className="flex items-center gap-3 group">
                             {logoImage ? (
-                                <img src={logoImage} alt={logoText} className={`h-10 sm:h-12 w-auto object-contain ${backgroundColor !== 'bg-white' ? 'invert brightness-0' : ''}`} />
+                                <Image 
+                                    src={logoImage} 
+                                    alt={logoText} 
+                                    width={200}
+                                    height={48}
+                                    className={`h-10 sm:h-12 w-auto object-contain ${backgroundColor !== 'bg-white' ? 'invert brightness-0' : ''}`} 
+                                />
                             ) : (
                                 <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-nb-green-soft to-nb-green-deep flex items-center justify-center shadow-lg group-hover:rotate-12 transition-transform">
                                     <Leaf className="w-5 h-5 sm:w-6 sm:h-6 text-white" />

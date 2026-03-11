@@ -6,6 +6,7 @@ import { Search, ArrowRight, Filter, X, ChevronDown, Package } from 'lucide-reac
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 import { DocumentList } from './DocumentList';
 import { Skeleton } from '@/components/ui/Skeleton';
 
@@ -224,10 +225,12 @@ export default function ProductBrowser({ categories: initialCategories = [], use
                                             <>
                                                 <div className="aspect-square bg-slate-50 flex items-center justify-center relative overflow-hidden h-64 sm:h-auto">
                                                     {product.images && product.images.length > 0 && typeof product.images[0] === 'string' && product.images[0] !== "[object Object]" ? (
-                                                        <img
+                                                        <Image
                                                             src={product.images[0].startsWith('http') ? product.images[0] : `/api/storage/${product.images[0]}`}
-                                                            className="w-full h-full object-cover relative z-10 group-hover:scale-110 transition-transform duration-1000"
                                                             alt={product.name}
+                                                            fill
+                                                            className="object-cover relative z-10 group-hover:scale-110 transition-transform duration-1000"
+                                                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                                                         />
                                                     ) : (
                                                         <span className="text-4xl opacity-30 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">🌿</span>

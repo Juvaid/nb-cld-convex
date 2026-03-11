@@ -4,6 +4,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { ComponentConfig } from "@puckeditor/core";
 import { ImagePicker } from "@/components/ImagePicker";
 import Link from "next/link";
+import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Typography } from "@/components/ui/Typography";
@@ -155,10 +156,12 @@ export const ProductCategoryCarouselBlock = ({ useDesignSystem = true, heading, 
                                 href={category.link || "#"}
                                 className="block relative flex-none w-[85vw] sm:w-[45vw] md:w-[calc(33.333%-1rem)] xl:w-[calc(25%-1.125rem)] aspect-[4/3] rounded-xl overflow-hidden snap-start group shadow-sm hover:shadow-xl transition-all duration-300"
                             >
-                                <img
+                                <Image
                                     src={category.image?.startsWith("http") ? category.image : (category.image ? `/api/storage/${category.image}` : "/favicon.ico")}
                                     alt={category.title}
-                                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out"
+                                    fill
+                                    className="object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out"
+                                    sizes="(max-width: 640px) 85vw, (max-width: 1024px) 45vw, 25vw"
                                 />
                                 {/* Title Overlay matched to user screenshot (solid dark block bottom left) */}
                                 <div className="absolute bottom-4 left-4 bg-[#111822] px-4 py-2 mt-auto group-hover:bg-[#159a4c] transition-colors duration-300">

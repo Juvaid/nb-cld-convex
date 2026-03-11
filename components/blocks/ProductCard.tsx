@@ -10,9 +10,9 @@ export default function ProductCard({ category }: { category: ProductCategory })
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const [activeIndex, setActiveIndex] = useState(0);
 
-    // Filter valid image URLs
+    // Filter valid image URLs and exclude empty strings
     const images = (category.images || []).filter(
-        img => typeof img === 'string' && img !== "[object Object]"
+        img => typeof img === 'string' && img.trim() !== "" && img !== "[object Object]"
     );
 
     const hasMultipleImages = images.length > 1;
@@ -63,7 +63,7 @@ export default function ProductCard({ category }: { category: ProductCategory })
                                 className="relative flex-shrink-0 w-full h-full snap-start snap-always"
                             >
                                 <Image
-                                    src={imgUrl.startsWith('http') ? imgUrl : `/api/storage/${imgUrl}`}
+                                    src={imgUrl.startsWith('http') || imgUrl.startsWith('/') ? imgUrl : `/api/storage/${imgUrl}`}
                                     fill
                                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                                     className="object-cover group-hover:scale-105 transition-transform duration-700"

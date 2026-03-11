@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ArrowRight, Award, FlaskConical, Factory, ShieldCheck, Zap, LucideIcon } from 'lucide-react';
 import { Typography } from '../ui/Typography';
+import Image from 'next/image';
 
 export interface HeroProps {
     id?: string;
@@ -156,12 +157,18 @@ export default function Hero({
                                         <div className="w-9 h-9 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-nb-green-soft to-nb-green-deep flex items-center justify-center mb-3 sm:mb-6 shadow-xl shadow-nb-green/20 overflow-hidden">
                                             {iconMap[card.icon] ? (
                                                 <IconComp className="w-5 sm:w-10 h-5 sm:h-10 text-white" />
+                                            ) : card.icon ? (
+                                                <div className="relative w-full h-full">
+                                                    <Image
+                                                        src={card.icon?.startsWith('http') || card.icon?.startsWith('/') ? card.icon : `/api/storage/${card.icon}`}
+                                                        fill
+                                                        className="object-cover"
+                                                        alt={card.title}
+                                                        sizes="(max-width: 640px) 40px, (max-width: 1024px) 64px, 64px"
+                                                    />
+                                                </div>
                                             ) : (
-                                                <img
-                                                    src={card.icon?.startsWith('http') ? card.icon : `/api/storage/${card.icon}`}
-                                                    className="w-full h-full object-cover"
-                                                    alt={card.title}
-                                                />
+                                                <div className="w-full h-full bg-nb-green/20" />
                                             )}
                                         </div>
                                         <h3 className="font-black text-slate-900 text-[12px] sm:text-xl mb-1 sm:mb-3 leading-tight break-words">{card.title}</h3>

@@ -27,3 +27,13 @@ export const DynamicLoginClient = dynamic(
     { ssr: false }
 );
 
+export const DynamicCookieConsent = dynamic(
+    () => import("./ui/CookieConsent").then((mod) => mod.CookieConsent),
+    { ssr: false }
+);
+
+export const DynamicFloatingWidget = dynamic(
+    () => import("./ui/FloatingWidget").then((mod) => mod.FloatingWidget),
+    { ssr: false }
+);
+

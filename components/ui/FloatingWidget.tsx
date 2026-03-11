@@ -57,8 +57,8 @@ export const FloatingWidget = () => {
         {
             icon: <FileText className="w-6 h-6 md:w-8 md:h-8" />,
             label: "Catalog",
-            href: widgetConfig.catalogStorageId?.startsWith('http') ? widgetConfig.catalogStorageId : `/api/storage/${widgetConfig.catalogStorageId}`,
-            show: !!widgetConfig.catalogStorageId,
+            href: widgetConfig.catalogStorageId ? (widgetConfig.catalogStorageId.startsWith('http') ? widgetConfig.catalogStorageId : `/api/storage/${widgetConfig.catalogStorageId}`) : "#",
+            show: !!widgetConfig.catalogStorageId && widgetConfig.catalogStorageId.trim() !== "",
             color: "bg-nb-green",
             hoverColor: "hover:bg-nb-green/90",
             download: true,

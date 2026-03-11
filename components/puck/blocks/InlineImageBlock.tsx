@@ -1,4 +1,5 @@
 import { ComponentConfig } from "@puckeditor/core";
+import Image from "next/image";
 import { ImagePicker } from "@/components/ImagePicker";
 import { sharedFields } from "../fields/shared";
 
@@ -51,12 +52,13 @@ export const InlineImageBlockConfig: ComponentConfig<InlineImageProps> = {
 
         return (
             <figure className={`mx-auto w-full flex flex-col items-center my-10 ${sizeClasses[size || "large"]}`}>
-                <div className={`relative w-full overflow-hidden ${size === 'full' ? '' : 'rounded-2xl'}`}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                <div className={`relative w-full aspect-video overflow-hidden ${size === 'full' ? '' : 'rounded-2xl'}`}>
+                    <Image
                         src={imageUrl}
                         alt={altText || caption || "Blog Image"}
-                        className="w-full h-auto object-cover"
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 1024px) 100vw, 800px"
                     />
                 </div>
                 {caption && (

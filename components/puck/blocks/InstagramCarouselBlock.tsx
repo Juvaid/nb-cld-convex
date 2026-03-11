@@ -1,4 +1,5 @@
 import { Section } from "../../ui/Section";
+import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, Heart, MessageCircle, ExternalLink, Play, Image as ImageIcon, Volume2, VolumeX } from "lucide-react";
 import styles from "./InstagramCarouselBlock.module.css";
@@ -355,10 +356,12 @@ export function InstagramCarouselBlock({
                                                         </div>
                                                     ) : (
                                                         <div className="relative w-full h-full">
-                                                            <img
+                                                            <Image
                                                                 src={post.thumbnailUrl || post.imageUrl}
                                                                 alt={post.caption}
-                                                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                                                fill
+                                                                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                                                sizes="(max-width: 640px) 80vw, (max-width: 1024px) 40vw, 20vw"
                                                             />
                                                             <div className="absolute inset-0 flex items-center justify-center bg-black/10">
                                                                 <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white border border-white/30">
@@ -369,10 +372,12 @@ export function InstagramCarouselBlock({
                                                     )}
                                                 </>
                                             ) : post.imageUrl ? (
-                                                <img
+                                                <Image
                                                     src={post.imageUrl}
                                                     alt={post.caption}
-                                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                                    fill
+                                                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                                    sizes="(max-width: 640px) 80vw, (max-width: 1024px) 40vw, 20vw"
                                                 />
                                             ) : (
                                                 <div className="w-full h-full bg-slate-50 flex items-center justify-center">

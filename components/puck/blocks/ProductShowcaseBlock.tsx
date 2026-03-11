@@ -112,10 +112,12 @@ export const ProductShowcaseBlock = ({
                     <div className="lg:col-span-7 group flex flex-col rounded-[32px] overflow-hidden bg-white shadow-[0_20px_40px_rgba(0,0,0,0.04)] border border-slate-100 hover:shadow-premium-xl transition-all duration-500 hover:-translate-y-1">
                         <div className="relative w-full aspect-[4/3] lg:aspect-auto lg:h-[400px] overflow-hidden bg-slate-100">
                             {featuredProduct.image && (
-                                <img
+                                <Image
                                     src={featuredProduct.image}
                                     alt={featuredProduct.title || "Featured Product"}
-                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                                    fill
+                                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                                    sizes="(max-width: 1024px) 100vw, 60vw"
                                 />
                             )}
                             <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-slate-900/0 to-transparent opacity-60" />
@@ -152,10 +154,12 @@ export const ProductShowcaseBlock = ({
                             >
                                 <div className="relative w-full aspect-square bg-slate-100 overflow-hidden">
                                     {product.image && (
-                                        <img
+                                        <Image
                                             src={product.image}
                                             alt={product.title || "Product"}
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                            fill
+                                            className="object-cover group-hover:scale-105 transition-transform duration-500"
+                                            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
                                         />
                                     )}
                                 </div>

@@ -9,6 +9,8 @@ import { api } from "@/convex/_generated/api";
 
 import { Button } from "@/components/ui/Button";
 
+import Image from "next/image";
+
 import { AnimatedLogo } from "@/components/animations/AnimatedLogo";
 
 export interface NavLink {
@@ -72,8 +74,14 @@ export function SiteHeader({
                             <div className="hidden sm:block w-32 h-6 bg-slate-200/60 rounded animate-pulse" />
                         </>
                     ) : logoImage ? (
-                        /* eslint-disable-next-line @next/next/no-img-element */
-                        <img src={logoImage} alt={logoText} className="h-10 w-auto object-contain transition-transform group-hover:scale-105" />
+                        <Image 
+                            src={logoImage} 
+                            alt={logoText} 
+                            width={200}
+                            height={60}
+                            priority
+                            className="h-10 w-auto object-contain transition-transform group-hover:scale-105" 
+                        />
                     ) : (
                         <AnimatedLogo />
                     )}
