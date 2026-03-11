@@ -6,12 +6,14 @@ import { FileText, Edit2, ExternalLink, Plus } from "lucide-react";
 import { TemplateSelector } from "@/components/editor/TemplateSelector";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth-context";
 
 export default function PagesAdmin() {
     const pages = useQuery(api.pages.listPages);
     const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState<"all" | "published" | "draft">("all");
+    const { token } = useAuth();
     const createPage = useMutation(api.pages.createPageFromTemplate);
     const toggleStatus = useMutation(api.pages.updatePageStatus);
     const router = useRouter();
@@ -23,6 +25,7 @@ export default function PagesAdmin() {
             path: "/" + pagePath,
             title: pageTitle,
             templateData: templates.data,
+            token: token ?? undefined,
         });
 
         router.push(`/admin/editor?path=/${pagePath}`);
@@ -118,7 +121,7 @@ export default function PagesAdmin() {
                                         <button
                                             onClick={async () => {
                                                 const newStatus = page.status === "published" ? "draft" : "published";
-                                                await toggleStatus({ id: page._id, status: newStatus });
+                                                await toggleStatus({ id: page._id, status: newStatus, token: token ?? undefined });
                                             }}
                                             className={`text-[11px] font-bold px-2.5 py-1 rounded-md transition-all uppercase tracking-wider ${page.status === "published"
                                                 ? "bg-nb-green/10 text-nb-green hover:bg-nb-green/20"

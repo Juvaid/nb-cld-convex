@@ -4,6 +4,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth-context";
 import { Loader2 } from "lucide-react";
 import { Data } from "@puckeditor/core";
 import { CustomPuckEditor } from "@/components/puck/custom-puck-editor";
@@ -20,10 +21,12 @@ interface EditorClientProps {
 
 export function EditorClient({ path }: EditorClientProps) {
     const router = useRouter();
+    const { token } = useAuth();
     const [data, setData] = useState<Data>({ content: [], root: { props: { title: "" } } });
     const [loadedPath, setLoadedPath] = useState<string | null>(null);
     const [saveStatus, setSaveStatus] = useState<"saved" | "saving" | "unsaved">("saved");
     const [lastSaved, setLastSaved] = useState<Date | null>(null);
+    const [initialData, setInitialData] = useState<Data | null>(null);
 
     const pages = useQuery(api.pages.listPages);
     const pageData = useQuery(api.pages.getPage, { path });
@@ -113,17 +116,20 @@ export function EditorClient({ path }: EditorClientProps) {
                 }
                 setLoadedPath(path);
                 setSaveStatus("saved");
+                setInitialData(parsed); // Set initial data for comparison
             } catch (e) {
                 console.error("Failed to parse page data", e);
                 setData({ content: [], root: { props: { title: "" } } });
                 setLoadedPath(path);
                 setSaveStatus("saved");
+                setInitialData({ content: [], root: { props: { title: "" } } }); // Set initial data for comparison
             }
         } else if (pageData === null) {
             // Find seeding logic same as before
             const serviceSlug = path.replace(/^\/services\//, "").replace(/^\//, "");
             const service = defaultServices.find(s => s.slug === serviceSlug);
 
+            let seedData: Data;
             if (service) {
                 setData({
                     content: [
@@ -195,11 +201,9 @@ export function EditorClient({ path }: EditorClientProps) {
         saveTimeoutRef.current = setTimeout(async () => {
             const currentPage = pages?.find(p => p.path === path);
             try {
-                await savePage({
-                    path: path,
-                    title: currentPage?.title || "Untitled Page",
                     draftData: JSON.stringify(newData),
                     status: currentPage?.status || "draft",
+                    token: token ?? undefined,
                 });
                 setSaveStatus("saved");
                 setLastSaved(new Date());
@@ -215,15 +219,14 @@ export function EditorClient({ path }: EditorClientProps) {
         setSaveStatus("saving");
         try {
             // First ensure the latest draft is fully saved
-            await savePage({
-                path: path,
                 title: pages?.find(p => p.path === path)?.title || "Untitled Page",
                 draftData: JSON.stringify(newData),
                 status: "draft",
+                token: token ?? undefined,
             });
 
             // Execute the publish mutation
-            await publishPage({ path });
+            await publishPage({ path, token: token ?? undefined });
             setSaveStatus("saved");
             setLastSaved(new Date());
 
@@ -239,7 +242,7 @@ export function EditorClient({ path }: EditorClientProps) {
         if (!confirm("Are you sure you want to discard your unpublished changes? This cannot be undone.")) return;
         setSaveStatus("saving");
         try {
-            await revertDraft({ path });
+            await revertDraft({ path, token: token ?? undefined });
             setSaveStatus("saved");
             // pageData will strictly reload due to reactivity
         } catch (error) {

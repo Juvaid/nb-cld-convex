@@ -16,6 +16,7 @@ interface AuthContextType {
     user: User | null;
     login: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
+    token: string | null;
     isLoading: boolean;
 }
 
@@ -60,6 +61,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const login = async (email: string, password: string) => {
         const result = await loginMutation({ email, password });
         localStorage.setItem("auth_token", result.token);
+        // Set cookie for middleware access (expires in 30 days)
+        document.cookie = `auth_token=${result.token}; path=/; max-age=${30 * 24 * 60 * 60}; SameSite=Lax`;
         setToken(result.token);
         router.push("/admin");
     };
@@ -69,6 +72,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             await logoutMutation({ token });
         }
         localStorage.removeItem("auth_token");
+        // Clear cookie
+        document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
         setToken(null);
         router.push("/login"); // Redirect to login after logout
     };
@@ -79,6 +84,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 user: currentUser ? { ...currentUser, role: currentUser.role as "admin" | "client" } : null,
                 login,
                 logout,
+                token,
                 isLoading: !isHydrated || (currentUser === undefined && !!token), // Wait for hydration before judging auth
             }}
         >

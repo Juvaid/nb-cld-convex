@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { validateAdmin } from "./auth_utils";
 
 export const listAll = query({
     args: {
@@ -114,9 +115,12 @@ export const create = mutation({
         extractionMethod: v.optional(v.string()),
         activeCompounds: v.optional(v.string()),
         documents: v.optional(v.array(v.object({ name: v.string(), storageId: v.string() }))),
+        token: v.optional(v.string()), // Added token for auth
     },
     handler: async (ctx, args) => {
-        const id = await ctx.db.insert("products", args);
+        await validateAdmin(ctx, args.token, "createProduct"); // Auth guard
+        const { token, ...productData } = args; // Destructure token
+        const id = await ctx.db.insert("products", productData);
         return id;
     },
 });
@@ -141,16 +145,22 @@ export const update = mutation({
         extractionMethod: v.optional(v.string()),
         activeCompounds: v.optional(v.string()),
         documents: v.optional(v.array(v.object({ name: v.string(), storageId: v.string() }))),
+        token: v.optional(v.string()), // Added token for auth
     },
     handler: async (ctx, args) => {
-        const { id, ...rest } = args;
+        await validateAdmin(ctx, args.token, "updateProduct"); // Auth guard
+        const { id, token, ...rest } = args; // Destructure token
         await ctx.db.patch(id, rest);
     },
 });
 
 export const remove = mutation({
-    args: { id: v.id("products") },
+    args: {
+        id: v.id("products"),
+        token: v.optional(v.string()),
+    },
     handler: async (ctx, args) => {
+        await validateAdmin(ctx, args.token, "removeProduct");
         await ctx.db.delete(args.id);
     },
 });

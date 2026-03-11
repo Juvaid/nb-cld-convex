@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
+import { validateAdmin } from "./auth_utils";
 
 export const getPage = query({
     args: { path: v.string() },
@@ -19,8 +20,10 @@ export const savePage = mutation({
         draftData: v.string(),
         data: v.optional(v.string()), // Deprecated, keep optional for strict validation fixes
         status: v.optional(v.union(v.literal("draft"), v.literal("published"))),
+        token: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
+        await validateAdmin(ctx, args.token, "savePage");
         const existing = await ctx.db
             .query("pages")
             .withIndex("by_path", (q) => q.eq("path", args.path))
@@ -100,8 +103,10 @@ export const createPageFromTemplate = mutation({
         path: v.string(),
         title: v.string(),
         templateData: v.any(),
+        token: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
+        await validateAdmin(ctx, args.token, "createPageFromTemplate");
         const existing = await ctx.db
             .query("pages")
             .withIndex("by_path", (q) => q.eq("path", args.path))
@@ -130,8 +135,10 @@ export const updatePageStatus = mutation({
     args: {
         id: v.id("pages"),
         status: v.union(v.literal("draft"), v.literal("published")),
+        token: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
+        await validateAdmin(ctx, args.token, "updatePageStatus");
         const now = Date.now();
         const page = await ctx.db.get(args.id);
         if (!page) throw new Error("Page not found");
@@ -151,8 +158,12 @@ export const updatePageStatus = mutation({
 });
 
 export const publishPage = mutation({
-    args: { path: v.string() },
+    args: {
+        path: v.string(),
+        token: v.optional(v.string()),
+    },
     handler: async (ctx, args) => {
+        await validateAdmin(ctx, args.token, "publishPage");
         const page = await ctx.db
             .query("pages")
             .withIndex("by_path", (q) => q.eq("path", args.path))
@@ -170,8 +181,12 @@ export const publishPage = mutation({
 });
 
 export const revertDraft = mutation({
-    args: { path: v.string() },
+    args: {
+        path: v.string(),
+        token: v.optional(v.string()),
+    },
     handler: async (ctx, args) => {
+        await validateAdmin(ctx, args.token, "revertDraft");
         const page = await ctx.db
             .query("pages")
             .withIndex("by_path", (q) => q.eq("path", args.path))
@@ -188,8 +203,12 @@ export const revertDraft = mutation({
 });
 
 export const forceDeletePage = mutation({
-    args: { path: v.string() },
+    args: {
+        path: v.string(),
+        token: v.optional(v.string()),
+    },
     handler: async (ctx, args) => {
+        await validateAdmin(ctx, args.token, "forceDeletePage");
         const existing = await ctx.db
             .query("pages")
             .withIndex("by_path", (q) => q.eq("path", args.path))
@@ -228,8 +247,10 @@ export const createPageSnapshot = mutation({
     args: {
         pageId: v.id("pages"),
         name: v.optional(v.string()),
+        token: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
+        await validateAdmin(ctx, args.token, "createPageSnapshot");
         const page = await ctx.db.get(args.pageId);
         if (!page) throw new Error("Page not found");
 
@@ -259,8 +280,10 @@ export const listPageSnapshots = query({
 export const restorePageSnapshot = mutation({
     args: {
         snapshotId: v.id("pageSnapshots"),
+        token: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
+        await validateAdmin(ctx, args.token, "restorePageSnapshot");
         const snapshot = await ctx.db.get(args.snapshotId);
         if (!snapshot) throw new Error("Snapshot not found");
 

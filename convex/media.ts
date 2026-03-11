@@ -1,9 +1,11 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { validateAdmin } from "./auth_utils";
 
 export const generateUploadUrl = mutation({
-    args: {},
-    handler: async (ctx) => {
+    args: { token: v.optional(v.string()) },
+    handler: async (ctx, args) => {
+        await validateAdmin(ctx, args.token, "generateUploadUrl");
         return await ctx.storage.generateUploadUrl();
     },
 });
@@ -13,8 +15,10 @@ export const saveMedia = mutation({
         filename: v.string(),
         storageId: v.string(),
         type: v.string(),
+        token: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
+        await validateAdmin(ctx, args.token, "saveMedia");
         const url = (await ctx.storage.getUrl(args.storageId))!;
         return await ctx.db.insert("media", {
             filename: args.filename,
@@ -52,8 +56,12 @@ export const getById = query({
 
 
 export const remove = mutation({
-    args: { id: v.id("media") },
+    args: {
+        id: v.id("media"),
+        token: v.optional(v.string()),
+    },
     handler: async (ctx, args) => {
+        await validateAdmin(ctx, args.token, "removeMedia");
         const item = await ctx.db.get(args.id);
         if (item) {
             // Only delete from Convex storage if it's an old-style upload (not an R2 URL)
@@ -110,8 +118,11 @@ export const saveR2Media = mutation({
         type: v.string(),         // "image" | "video"
         size: v.optional(v.number()),
         folder: v.optional(v.string()), // Media folder/group label
+        token: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
+        await validateAdmin(ctx, args.token, "saveR2Media");
+        const { token, ...data } = args;
         return await ctx.db.insert("media", {
             filename: args.filename,
             storageId: args.r2Key,  // Repurposed: store r2Key here for future deletion

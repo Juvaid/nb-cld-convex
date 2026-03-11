@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useState, useMemo, useRef, useCallback } from "react";
 import { useUpload, FileUploadState } from "@/hooks/useUpload";
+import { useAuth } from "@/lib/auth-context";
 import { motion, AnimatePresence } from "framer-motion";
 
 // ─── Confirmation Dialog ─────────────────────────────────────────────────────
@@ -329,13 +330,13 @@ function Checkbox({ checked, onChange }: { checked: boolean; onChange: () => voi
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function MediaAdmin() {
+    const { token } = useAuth();
     const media = useQuery(api.media.listAll);
     const moveManyToFolder = useMutation(api.media.moveManyToFolder);
     const folders = useQuery(api.media.listFolders) ?? [];
 
     // Delete via API route so R2 objects are actually removed from Cloudflare
     const apiDelete = async (ids: string[]) => {
-        const token = typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
         const res = await fetch("/api/media/delete", {
             method: "DELETE",
             headers: {
@@ -421,7 +422,7 @@ export default function MediaAdmin() {
     };
 
     const handleMove = async (folder: string | undefined) => {
-        await moveManyToFolder({ ids: Array.from(selectedIds) as any[], folder });
+        await moveManyToFolder({ ids: Array.from(selectedIds) as any[], folder, token: token ?? undefined });
         setSelectedIds(new Set());
         setShowMoveModal(false);
     };

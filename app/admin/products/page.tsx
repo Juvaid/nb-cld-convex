@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { useAuth } from "@/lib/auth-context";
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Typography } from "@/components/ui/Typography";
@@ -26,6 +27,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 
 export default function ProductsIndexPage() {
+    const { token } = useAuth();
     const products = useQuery(api.products.listAll, {});
     const categories = useQuery(api.categories.list);
     const updateProduct = useMutation(api.products.update);
@@ -72,13 +74,13 @@ export default function ProductsIndexPage() {
 
     const handleBulkDelete = async () => {
         if (confirm(`Are you sure you want to delete ${selectedIds.size} products? This cannot be undone.`)) {
-            await Promise.all(Array.from(selectedIds).map(id => deleteProduct({ id: id as any })));
+            await Promise.all(Array.from(selectedIds).map(id => deleteProduct({ id: id as any, token: token ?? undefined })));
             setSelectedIds(new Set());
         }
     };
 
     const handleBulkStatusChange = async (status: "active" | "draft" | "archived") => {
-        await Promise.all(Array.from(selectedIds).map(id => updateProduct({ id: id as any, status })));
+        await Promise.all(Array.from(selectedIds).map(id => updateProduct({ id: id as any, status, token: token ?? undefined })));
         setSelectedIds(new Set());
     };
 
