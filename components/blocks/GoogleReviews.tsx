@@ -268,9 +268,7 @@ export function GoogleReviews({
                                                     draggable={false}
                                                 />
                                             ) : (
-                                                <div className="w-full h-full bg-nb-green/10 flex items-center justify-center rounded-full">
-                                                    <span className="text-nb-green font-black text-sm">{review.author_name[0]}</span>
-                                                </div>
+                                                <span className="text-nb-green font-black text-sm">{review.author_name?.[0] || "U"}</span>
                                             )}
                                         </div>
                                         <div className="overflow-hidden">

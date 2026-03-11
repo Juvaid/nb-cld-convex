@@ -111,11 +111,11 @@ export function InstagramCarouselBlock({
     }, [maxIndex]);
 
     const handleTouchStart = (e: React.TouchEvent) => {
-        setTouchStart(e.targetTouches[0].clientX);
+        setTouchStart(e.targetTouches[0]?.clientX || null);
     };
 
     const handleTouchMove = (e: React.TouchEvent) => {
-        setTouchEnd(e.targetTouches[0].clientX);
+        setTouchEnd(e.targetTouches[0]?.clientX || null);
     };
 
     const handleTouchEnd = () => {

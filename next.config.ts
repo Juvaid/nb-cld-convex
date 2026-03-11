@@ -18,6 +18,8 @@ const nextConfig: NextConfig = {
     ],
   },
   allowedDevOrigins: ['192.168.1.62'],
+  transpilePackages: ["@convex-dev/auth"],
+  serverExternalPackages: ["convex"],
 };
 
 export default nextConfig;

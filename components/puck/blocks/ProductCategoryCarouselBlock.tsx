@@ -190,9 +190,9 @@ export const ProductCategoryCarouselBlock = ({ useDesignSystem = true, heading, 
                             key={idx}
                             onClick={() => {
                                 if (scrollContainerRef.current) {
-                                    const child = scrollContainerRef.current.children[0] as HTMLElement;
+                                    const child = scrollContainerRef.current?.children?.[0] as HTMLElement;
                                     if (child) {
-                                        scrollContainerRef.current.scrollTo({
+                                        scrollContainerRef.current?.scrollTo({
                                             left: (child.offsetWidth + 16) * idx,
                                             behavior: 'smooth'
                                         });
