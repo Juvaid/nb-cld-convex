@@ -158,8 +158,8 @@ export const HeroCarouselBlock = ({ useDesignSystem = true, autoPlay, interval, 
                             {slide.mobileVideo && (
                                 <div className="block sm:hidden absolute inset-0 z-0">
                                     <video
-                                        src={slide.mobileVideo.startsWith("http") ? slide.mobileVideo : `/api/storage/${slide.mobileVideo}`}
-                                        poster={slide.mobileImage ? (slide.mobileImage.startsWith("http") ? slide.mobileImage : `/api/storage/${slide.mobileImage}`) : (slide.image.startsWith("http") ? slide.image : `/api/storage/${slide.image}`)}
+                                        src={slide.mobileVideo?.startsWith("http") ? slide.mobileVideo : (slide.mobileVideo ? `/api/storage/${slide.mobileVideo}` : "")}
+                                        poster={slide.mobileImage ? (slide.mobileImage.startsWith("http") ? slide.mobileImage : `/api/storage/${slide.mobileImage}`) : (slide.image?.startsWith("http") ? slide.image : (slide.image ? `/api/storage/${slide.image}` : ""))}
                                         autoPlay={slide.videoAutoPlay ?? true}
                                         muted={slide.videoMuted ?? true}
                                         loop={slide.videoLoop ?? true}
@@ -171,8 +171,8 @@ export const HeroCarouselBlock = ({ useDesignSystem = true, autoPlay, interval, 
                             {slide.video && (
                                 <div className={`absolute inset-0 z-0 ${slide.mobileVideo ? "hidden sm:block" : "block"}`}>
                                     <video
-                                        src={slide.video.startsWith("http") ? slide.video : `/api/storage/${slide.video}`}
-                                        poster={slide.image.startsWith("http") ? slide.image : `/api/storage/${slide.image}`}
+                                        src={slide.video?.startsWith("http") ? slide.video : (slide.video ? `/api/storage/${slide.video}` : "")}
+                                        poster={slide.image?.startsWith("http") ? slide.image : (slide.image ? `/api/storage/${slide.image}` : "")}
                                         autoPlay={slide.videoAutoPlay ?? true}
                                         muted={slide.videoMuted ?? true}
                                         loop={slide.videoLoop ?? true}
@@ -189,7 +189,7 @@ export const HeroCarouselBlock = ({ useDesignSystem = true, autoPlay, interval, 
                                     {slide.mobileImage && (
                                         <div className="block sm:hidden absolute inset-0">
                                             <Image
-                                                src={slide.mobileImage.startsWith("http") ? slide.mobileImage : `/api/storage/${slide.mobileImage}`}
+                                                src={slide.mobileImage?.startsWith("http") ? slide.mobileImage : (slide.mobileImage ? `/api/storage/${slide.mobileImage}` : "/favicon.ico")}
                                                 alt={slide.title || "Hero mobile background"}
                                                 fill
                                                 className="object-cover origin-center"
@@ -201,7 +201,7 @@ export const HeroCarouselBlock = ({ useDesignSystem = true, autoPlay, interval, 
                                     {/* Desktop Image (Hidden on small screens IF mobile image exists) */}
                                     <div className={`absolute inset-0 ${slide.mobileImage ? 'hidden sm:block' : 'block'}`}>
                                         <Image
-                                            src={slide.image.startsWith("http") ? slide.image : `/api/storage/${slide.image}`}
+                                            src={slide.image?.startsWith("http") ? slide.image : (slide.image ? `/api/storage/${slide.image}` : "/favicon.ico")}
                                             alt={slide.title || "Hero background"}
                                             fill
                                             className="object-cover origin-center"

@@ -75,7 +75,7 @@ export function SiteHeader({
                         </>
                     ) : logoImage ? (
                         <Image 
-                            src={logoImage} 
+                            src={logoImage.startsWith('http') || logoImage.startsWith('/') ? logoImage : `/api/storage/${logoImage}`} 
                             alt={logoText} 
                             width={200}
                             height={60}

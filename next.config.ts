@@ -18,8 +18,16 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'pub-13cf3fd8cdce49458ef78cee02101f.r2.dev',
+        hostname: '**.r2.dev',
       },
+      {
+        protocol: 'https',
+        hostname: '**.convex.cloud',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.natureboon.com',
+      }
     ],
     minimumCacheTTL: 31536000,
   },

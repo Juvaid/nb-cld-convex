@@ -56,7 +56,7 @@ export async function CmsPageRenderer({ path, fallbackData, useDynamicData }: Cm
 
                     if (imageId) {
                         lcpImage = {
-                            src: imageId.startsWith("http") ? imageId : `/api/storage/${imageId}`,
+                            src: imageId.startsWith("http") || imageId.startsWith("/") ? imageId : `/api/storage/${imageId}`,
                             alt: props.title || "Hero image"
                         };
                     }

@@ -371,7 +371,7 @@ export function InstagramCarouselBlock({
                                                         </div>
                                                     )}
                                                 </>
-                                            ) : post.imageUrl ? (
+                                            ) : (post.imageUrl && post.imageUrl.trim() !== "") ? (
                                                 <Image
                                                     src={post.imageUrl}
                                                     alt={post.caption}

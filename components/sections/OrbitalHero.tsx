@@ -189,7 +189,13 @@ export default function OrbitalHero({
                         className="relative w-[220px] h-[220px] rounded-full overflow-hidden border-[3px] border-[#15803d] shadow-xl bg-[#f0fdf4]"
                     >
                         {centerImage ? (
-                            <Image src={centerImage} alt="Nature's Boon Products" fill sizes="(max-width: 768px) 100vw, 300px" className="object-cover" />
+                            <Image 
+                                src={centerImage.startsWith('http') || centerImage.startsWith('/') ? centerImage : `/api/storage/${centerImage}`} 
+                                alt="Nature's Boon Products" 
+                                fill 
+                                sizes="(max-width: 768px) 100vw, 300px" 
+                                className="object-cover" 
+                            />
                         ) : (
                             /* Placeholder visual when no image is set */
                             <div className="w-full h-full flex flex-col items-center justify-center gap-2">
