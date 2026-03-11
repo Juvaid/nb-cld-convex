@@ -4,7 +4,6 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { ThemeProvider } from "@/components/ThemeProvider";
 import { Calendar, User, ArrowRight, Loader2, PenTool } from "lucide-react";
 import Link from "next/link";
 
@@ -12,8 +11,7 @@ export function BlogsClient({ initialSettings }: { initialSettings?: any }) {
     const blogs = useQuery(api.blogs.listBlogs);
 
     return (
-        <ThemeProvider>
-            <div className="flex min-h-screen flex-col bg-background font-outfit">
+        <div className="flex min-h-screen flex-col bg-background font-outfit">
                 <SiteHeader initialSettings={initialSettings} />
                 <main className="flex-1">
                     {/* Hero Section */}
@@ -113,6 +111,5 @@ export function BlogsClient({ initialSettings }: { initialSettings?: any }) {
                 </main>
                 <SiteFooter initialSettings={initialSettings} />
             </div>
-        </ThemeProvider>
     );
 }

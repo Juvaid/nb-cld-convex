@@ -18,10 +18,7 @@ export function CmsPageClient({
     useDynamicData?: boolean;
     siteSettings?: any;
 }) {
-    // Debug helper for production connection
-    if (typeof window !== "undefined") {
-        console.log("Convex Client URL:", process.env.NEXT_PUBLIC_CONVEX_URL || "NOT SET");
-    }
+
 
     const livePage = useQuery(api.pages.getPublishedPage, { path });
     const liveSettings = useQuery(api.siteSettings.getSiteSettings);
