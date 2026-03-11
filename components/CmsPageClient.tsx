@@ -20,9 +20,11 @@ export function CmsPageClient({
 }) {
 
 
+    // Live data hooks (client only)
     const livePage = useQuery(api.pages.getPublishedPage, { path });
     const liveSettings = useQuery(api.siteSettings.getSiteSettings);
-
+    
+    // Resolve page data: use live data if available, otherwise initial/fallback data
     const page = livePage !== undefined ? livePage : initialPageData;
     const siteSettings = liveSettings !== undefined ? liveSettings : initialSettings;
 
