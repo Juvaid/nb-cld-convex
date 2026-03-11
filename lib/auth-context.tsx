@@ -22,6 +22,20 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+    if (typeof window === "undefined") {
+        return (
+            <AuthContext.Provider
+                value={{
+                    user: null,
+                    login: async () => { },
+                    logout: async () => { },
+                    isLoading: true,
+                }}
+            >
+                {children}
+            </AuthContext.Provider>
+        );
+    }
     const [token, setToken] = useState<string | null>(null);
     const [isHydrated, setIsHydrated] = useState(false);
     const router = useRouter();

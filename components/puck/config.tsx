@@ -1,6 +1,5 @@
 import { Config } from "@puckeditor/core";
 import { SiteHeader } from "@/components/SiteHeader";
-import { ThemeProvider } from "@/components/ThemeProvider";
 
 // Shared Fields
 import { sharedFields } from "./fields/shared";
@@ -78,14 +77,12 @@ export const config: Config = {
         },
         render: ({ children }: import("@puckeditor/core").DefaultRootProps) => {
             return (
-                <ThemeProvider>
-                    <div className="flex flex-col min-h-screen font-sans bg-white">
+                <div className="flex flex-col min-h-screen font-sans bg-white">
                         <SiteHeader />
                         <main className="flex-grow">
                             {children}
                         </main>
                     </div>
-                </ThemeProvider>
             );
         }
     },

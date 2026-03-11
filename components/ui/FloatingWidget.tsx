@@ -19,6 +19,7 @@ const WhatsAppIcon = ({ className }: { className?: string }) => (
 );
 
 export const FloatingWidget = () => {
+    if (typeof window === "undefined") return null;
     const pathname = usePathname();
     const settings = useQuery(api.siteSettings.getSiteSettings);
 

@@ -3,14 +3,35 @@ import { ConvexHttpClient } from 'convex/browser';
 import { api } from '@/convex/_generated/api';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+    const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL || "https://placeholder-url-for-build.convex.cloud";
+const convex = new ConvexHttpClient(convexUrl);
 
-    // Fetch all necessary data concurrently
-    const [pages, products, blogs] = await Promise.all([
-        convex.query(api.pages.getAllPagePaths),
-        convex.query(api.products.listNames),
-        convex.query(api.blogs.listBlogs)
-    ]);
+    // Fetch all necessary data concurrently with error handling
+    let pages: any[] = [];
+    let products: any[] = [];
+    let blogs: any[] = [];
+
+    try {
+        const [pagesData, productsData, blogsData] = await Promise.all([
+            convex.query(api.pages.getAllPagePaths),
+            convex.query(api.products.listNames),
+            convex.query(api.blogs.listBlogs)
+        ]);
+        pages = pagesData || [];
+        products = productsData || [];
+        blogs = blogsData || [];
+    } catch (error) {
+        console.warn("Failed to fetch data for sitemap:", error);
+        // Provide essential fallback pages if fetching fails
+        pages = [
+            { path: '/', lastModified: new Date() },
+            { path: '/about', lastModified: new Date() },
+            { path: '/services', lastModified: new Date() },
+            { path: '/products', lastModified: new Date() },
+            { path: '/blogs', lastModified: new Date() },
+            { path: '/contact', lastModified: new Date() }
+        ];
+    }
 
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://naturesboon.net';
 
@@ -22,7 +43,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
 
     const productUrls = products.map((product: any) => ({
-        url: `${baseUrl}/products/${product.slug || product._id}`, // fallback to _id if slug missing in light query
+        url: `${baseUrl}/products/${product.slug || product._id}`,
         lastModified: new Date(),
         changeFrequency: 'weekly' as const,
         priority: 0.9,

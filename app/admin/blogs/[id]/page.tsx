@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { BlogEditorClient } from "@/components/puck/BlogEditorClient";
 import { Id } from "@/convex/_generated/dataModel";
 

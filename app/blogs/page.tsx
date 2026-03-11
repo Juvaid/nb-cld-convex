@@ -1,8 +1,11 @@
+export const dynamic = "force-dynamic";
+
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "@/convex/_generated/api";
-import { BlogsClient } from "./BlogsClient";
+import { DynamicBlogsClient as BlogsClient } from "@/components/DynamicClients";
 
-const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL || "https://placeholder-url-for-build.convex.cloud";
+const convex = new ConvexHttpClient(convexUrl);
 
 export default async function BlogsPage() {
     let settings = null;

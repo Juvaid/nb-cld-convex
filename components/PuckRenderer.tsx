@@ -1,7 +1,6 @@
 import { Action, Config } from "@puckeditor/core";
 import { config } from "./puck/config";
 import { SiteHeader } from "./SiteHeader";
-import { ThemeProvider } from "./ThemeProvider";
 import { Section } from "./ui/Section";
 import { Flex } from "./ui/Flex";
 import { Typography } from "./ui/Typography";
@@ -28,8 +27,7 @@ export function PuckRenderer({ data, initialData, configOverride, siteSettings }
     const activeConfig = configOverride || config;
 
     return (
-        <ThemeProvider>
-            <div className="flex flex-col min-h-screen font-sans selection:bg-nb-green/30">
+        <div className="flex flex-col min-h-screen font-sans selection:bg-nb-green/30">
                 <SiteHeader {...header} initialSettings={siteSettings} />
                 <main className="flex-grow">
                     {content.length === 0 ? (
@@ -70,7 +68,6 @@ export function PuckRenderer({ data, initialData, configOverride, siteSettings }
                     )}
                 </main>
             </div>
-        </ThemeProvider>
     );
 };
 

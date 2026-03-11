@@ -369,11 +369,7 @@ export default function ProductDetail({
     );
 
     if (isModal) {
-        return (
-            <ThemeProvider>
-                {content}
-            </ThemeProvider>
-        );
+        return content;
     }
 
     return content;

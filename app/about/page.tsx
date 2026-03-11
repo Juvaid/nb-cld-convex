@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import type { Metadata } from "next";
 import { CmsPageRenderer } from "@/components/CmsPageRenderer";
 import { aboutPageData } from "@/data/about-page-data";

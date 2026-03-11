@@ -6,6 +6,7 @@ import { X, Cookie } from "lucide-react";
 import { Button } from "./Button";
 
 export function CookieConsent() {
+    if (typeof window === "undefined") return null;
     const [isVisible, setIsVisible] = useState(false);
     const [showPreferences, setShowPreferences] = useState(false);
 

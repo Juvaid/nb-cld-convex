@@ -1,4 +1,4 @@
-import { CmsPageClient } from "@/components/CmsPageClient";
+import { DynamicCmsPageClient as CmsPageClient } from "@/components/DynamicClients";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "@/convex/_generated/api";
 
@@ -11,7 +11,8 @@ interface CmsPageRendererProps {
     useDynamicData?: boolean;
 }
 
-const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL || "https://placeholder-url-for-build.convex.cloud";
+const convex = new ConvexHttpClient(convexUrl);
 
 /**
  * Server component wrapper for CMS pages.

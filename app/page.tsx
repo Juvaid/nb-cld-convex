@@ -1,10 +1,13 @@
+export const dynamic = "force-dynamic";
+
 import type { Metadata } from "next";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "@/convex/_generated/api";
 import { CmsPageRenderer } from "@/components/CmsPageRenderer";
 import homePageData from "@/data/home-page-data.json";
 
-const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL || "https://placeholder-url-for-build.convex.cloud";
+const convex = new ConvexHttpClient(convexUrl);
 
 export async function generateMetadata(): Promise<Metadata> {
     try {

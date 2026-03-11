@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { EditorClient } from "@/components/puck/EditorClient";
 
 interface EditorPageProps {
