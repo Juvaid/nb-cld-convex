@@ -44,7 +44,18 @@ export const ModernServicesBlockConfig: ComponentConfig<ModernServicesBlockProps
             }
         },
         useGlobalServices: { type: "radio", label: "Use Global Services", options: [{ label: "Yes", value: true }, { label: "No", value: false }] },
+        useDesignSystem: { type: "radio", label: "Use Design System", options: [{ label: "Yes", value: true }, { label: "No", value: false }] },
         ...sharedFields
+    },
+    defaultProps: {
+        useDesignSystem: true,
+        badgeText: "Our Capability",
+        heading: "Expert Solutions for Your Brand",
+        subheading: "We provide comprehensive, end-to-end manufacturing services to help you build a world-class personal care brand.",
+        services: [
+            { title: "Service 1", description: "Service 1 description" },
+            { title: "Service 2", description: "Service 2 description" },
+        ]
     },
     render: (props) => {
         const globalServices = useQuery(api.siteData.getServices);

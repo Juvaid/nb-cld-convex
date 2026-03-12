@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Star, Quote } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { Typography } from '../ui/Typography';
 
 export interface TestimonialItem {
     author: string;
@@ -14,6 +15,7 @@ export interface TestimonialItem {
 }
 
 export interface TestimonialSliderProps {
+    id?: string;
     badgeText?: string;
     heading?: string;
     description?: string;
@@ -21,9 +23,11 @@ export interface TestimonialSliderProps {
     layout?: 'split' | 'centered';
     animationType?: 'spring' | 'fade' | 'slide';
     themeColor?: string;
+    useDesignSystem?: boolean;
 }
 
 export default function TestimonialSlider({
+    id,
     badgeText = "Testimonials",
     heading = "Trusted by Brands Worldwide",
     description = "Discover why over 20+ global entities choose Nature's Boon for their manufacturing needs.",
@@ -34,7 +38,8 @@ export default function TestimonialSlider({
         { author: 'Mehar', company: 'VitalFlow Client', content: 'Highly professional and excellent service with very hygienic environment by Nature\'s Boon.', rating: 5 },
         { author: 'Harsimran Kaur', company: 'Global Beauty Inc.', content: 'They provide the best products and services and even this is a very good platform.', rating: 5 },
         { author: 'Harjot Singh', company: 'Luster Cosmetics', content: 'One of the things I loved about this company is that they provided comprehensive services.', rating: 5 },
-    ]
+    ],
+    useDesignSystem = true
 }: TestimonialSliderProps) {
     const [current, setCurrent] = useState(0);
     const [direction, setDirection] = useState(0);
@@ -58,7 +63,12 @@ export default function TestimonialSlider({
         };
     }, [isPaused, paginate]);
 
-    if (!testimonials || testimonials.length === 0) return null;
+    const hasTestimonials = testimonials && testimonials.length > 0;
+    const hasHeading = heading && heading.trim() !== "";
+    const hasDesc = description && description.trim() !== "";
+    const hasBadge = badgeText && badgeText.trim() !== "";
+
+    if (!hasTestimonials && !hasHeading && !hasDesc && !hasBadge) return null;
 
     const variants = {
         enter: (direction: number) => {
@@ -93,7 +103,7 @@ export default function TestimonialSlider({
     const activeTransition = animationType === 'spring' ? springTransition : easeTransition;
 
     return (
-        <div className="py-24 bg-white relative overflow-hidden">
+        <div id={id} className="py-24 bg-white relative overflow-hidden">
             {/* Soft decorative glows */}
             <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full blur-[100px] pointer-events-none opacity-[0.08]" style={{ backgroundColor: themeColor }} />
             <div className="absolute -bottom-24 -right-24 w-96 h-96 rounded-full blur-[100px] pointer-events-none opacity-[0.08]" style={{ backgroundColor: themeColor }} />
@@ -107,25 +117,47 @@ export default function TestimonialSlider({
                         "w-full",
                         layout === 'split' ? "lg:w-[35%] text-center lg:text-left" : "max-w-3xl mx-auto"
                     )}>
-                        <div
-                            className="inline-flex items-center gap-2 px-4 py-2 rounded-full border text-[10px] md:text-xs font-bold mb-6 uppercase tracking-[0.2em] leading-none transition-colors"
-                            style={{
-                                color: themeColor,
-                                backgroundColor: `${themeColor}0D`,
-                                borderColor: `${themeColor}1A`
-                            }}
-                        >
-                            {badgeText}
-                        </div>
-                        <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-slate-900 tracking-tight leading-[1.1] mb-8 text-balance">
-                            {heading}
-                        </h2>
-                        <p className="text-base sm:text-lg text-slate-600 font-medium mb-10 max-w-sm mx-auto leading-relaxed opacity-90 lg:max-w-md" style={layout === 'centered' ? { marginLeft: 'auto', marginRight: 'auto' } : {}}>
-                            {description}
-                        </p>
+                        {hasBadge && (
+                            <div
+                                className="inline-flex items-center gap-2 px-4 py-2 rounded-full border text-[10px] md:text-xs font-bold mb-6 uppercase tracking-[0.2em] leading-none transition-colors"
+                                style={{
+                                    color: themeColor,
+                                    backgroundColor: `${themeColor}0D`,
+                                    borderColor: `${themeColor}1A`
+                                }}
+                            >
+                                {badgeText}
+                            </div>
+                        )}
+                        
+                        {hasHeading && (
+                            useDesignSystem ? (
+                                <Typography variant="h1" color="slate-900" className="tracking-tight leading-[1.1] mb-8 text-balance">
+                                    {heading}
+                                </Typography>
+                            ) : (
+                                <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-slate-900 tracking-tight leading-[1.1] mb-8 text-balance">
+                                    {heading}
+                                </h2>
+                            )
+                        )}
+
+                        {hasDesc && (
+                            <div style={layout === 'centered' ? { marginLeft: 'auto', marginRight: 'auto' } : {}}>
+                                {useDesignSystem ? (
+                                    <Typography variant="body" color="slate-600" weight="medium" className="mb-10 max-w-sm mx-auto leading-relaxed opacity-90 lg:max-w-md">
+                                        {description}
+                                    </Typography>
+                                ) : (
+                                    <p className="text-base sm:text-lg text-slate-600 font-medium mb-10 max-w-sm mx-auto leading-relaxed opacity-90 lg:max-w-md">
+                                        {description}
+                                    </p>
+                                )}
+                            </div>
+                        )}
 
                         {/* Desktop Navigation (Left for split, hidden for centered since it usually has dots below) */}
-                        {layout === 'split' && (
+                        {layout === 'split' && hasTestimonials && testimonials.length > 1 && (
                             <div className="hidden lg:flex gap-4">
                                 <button
                                     onClick={() => paginate(-1)}
@@ -146,122 +178,136 @@ export default function TestimonialSlider({
                         )}
                     </div>
 
-                    <div className={cn(
-                        "w-full relative",
-                        layout === 'split' ? "lg:w-[65%]" : "max-w-4xl mx-auto"
-                    )}>
-                        <div
-                            className="relative min-h-[380px] sm:min-h-[420px] md:min-h-[320px] lg:min-h-[380px] overflow-visible"
-                            onMouseEnter={() => setIsPaused(true)}
-                            onMouseLeave={() => setIsPaused(false)}
-                        >
-                            <AnimatePresence initial={false} custom={direction} mode="popLayout">
-                                <motion.div
-                                    key={current}
-                                    custom={direction}
-                                    variants={variants}
-                                    initial="enter"
-                                    animate="center"
-                                    exit="exit"
-                                    transition={activeTransition}
-                                    drag="x"
-                                    dragConstraints={{ left: 0, right: 0 }}
-                                    dragElastic={0.7}
-                                    onDragStart={() => setIsPaused(true)}
-                                    onDragEnd={(e, { offset, velocity }) => {
-                                        const swipeThreshold = 50;
-                                        if (offset.x > swipeThreshold) {
-                                            paginate(-1);
-                                        } else if (offset.x < -swipeThreshold) {
-                                            paginate(1);
-                                        }
-                                        setIsPaused(false);
-                                    }}
-                                    className="w-full h-full cursor-grab active:cursor-grabbing"
-                                >
-                                    <div className="bg-white rounded-[2.5rem] p-8 sm:p-12 md:p-14 border border-slate-100 shadow-[0_30px_70px_-20px_rgba(0,0,0,0.06)] relative overflow-hidden h-full flex flex-col justify-center group/card transition-all duration-500 hover:shadow-[0_40px_90px_-20px_rgba(21,128,61,0.12)]">
-                                        {/* Subtle Watermark */}
-                                        <Quote className="absolute top-10 right-10 w-20 h-20 -rotate-12 select-none group-hover/card:rotate-0 transition-transform duration-700 opacity-[0.04]" style={{ color: themeColor }} />
-
-                                        <div className="flex gap-1 mb-8">
-                                            {[...Array(5)].map((_, i) => (
-                                                <Star key={i} className="w-4 h-4" style={{ fill: themeColor, color: themeColor }} />
-                                            ))}
-                                        </div>
-
-                                        <p className={cn(
-                                            "font-bold text-slate-800 leading-[1.5] mb-12 tracking-tight italic",
-                                            layout === 'centered' ? "text-2xl sm:text-3xl md:text-4xl" : "text-xl sm:text-2xl md:text-3xl"
-                                        )}>
-                                            &ldquo;{testimonials[current]?.content || "No content provided."}&rdquo;
-                                        </p>
-
-                                        <div className={cn("flex items-center gap-5", layout === 'centered' && "justify-center")}>
-                                            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center overflow-hidden border transition-all duration-300 group-hover/card:scale-110 shadow-sm" style={{ backgroundColor: `${themeColor}0D`, borderColor: `${themeColor}1A` }}>
-                                                {testimonials[current]?.avatar ? (
-                                                    <img src={testimonials[current].avatar} alt={testimonials[current].author || "Avatar"} className="w-full h-full object-cover" />
-                                                ) : (
-                                                    <span className="text-xl sm:text-2xl font-black" style={{ color: themeColor }}>
-                                                        {testimonials[current]?.author?.[0] || "?"}
-                                                    </span>
-                                                )}
-                                            </div>
-                                            <div className={cn("flex flex-col", layout === 'centered' ? "text-left" : "")}>
-                                                <span className="text-lg sm:text-xl font-black text-slate-900 leading-tight">{testimonials[current]?.author || "Anonymous"}</span>
-                                                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] mt-1.5 opacity-80" style={{ color: themeColor }}>{testimonials[current]?.company || "N/A"}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            </AnimatePresence>
-                        </div>
-
-                        {/* Navigation Dots */}
+                    {hasTestimonials && (
                         <div className={cn(
-                            "flex items-center mt-10",
-                            layout === 'split' ? "lg:justify-end justify-center" : "justify-center"
+                            "w-full relative",
+                            layout === 'split' ? "lg:w-[65%]" : "max-w-4xl mx-auto"
                         )}>
-                            <div className="flex gap-2">
-                                {testimonials.map((_, i) => (
-                                    <button
-                                        key={i}
-                                        onClick={() => {
-                                            setDirection(i > current ? 1 : -1);
-                                            setCurrent(i);
+                            <div
+                                className="relative min-h-[380px] sm:min-h-[420px] md:min-h-[320px] lg:min-h-[380px] overflow-visible"
+                                onMouseEnter={() => setIsPaused(true)}
+                                onMouseLeave={() => setIsPaused(false)}
+                            >
+                                <AnimatePresence initial={false} custom={direction} mode="popLayout">
+                                    <motion.div
+                                        key={current}
+                                        custom={direction}
+                                        variants={variants}
+                                        initial="enter"
+                                        animate="center"
+                                        exit="exit"
+                                        transition={activeTransition}
+                                        drag="x"
+                                        dragConstraints={{ left: 0, right: 0 }}
+                                        dragElastic={0.7}
+                                        onDragStart={() => setIsPaused(true)}
+                                        onDragEnd={(e, { offset, velocity }) => {
+                                            const swipeThreshold = 50;
+                                            if (offset.x > swipeThreshold) {
+                                                paginate(-1);
+                                            } else if (offset.x < -swipeThreshold) {
+                                                paginate(1);
+                                            }
+                                            setIsPaused(false);
                                         }}
-                                        aria-label={`Go to testimonial ${i + 1}`}
-                                        className={cn(
-                                            "relative h-2 rounded-full transition-all duration-300",
-                                            current === i ? "w-8" : "w-2"
-                                        )}
+                                        className="w-full h-full cursor-grab active:cursor-grabbing"
                                     >
-                                        <span
-                                            className="absolute inset-0 rounded-full transition-all duration-300"
-                                            style={{
-                                                backgroundColor: current === i ? themeColor : '#f1f5f9',
-                                                opacity: current === i ? 1 : 0.8
-                                            }}
-                                        />
-                                    </button>
-                                ))}
+                                        <div className="bg-white rounded-[2.5rem] p-8 sm:p-12 md:p-14 border border-slate-100 shadow-[0_30px_70px_-20px_rgba(0,0,0,0.06)] relative overflow-hidden h-full flex flex-col justify-center group/card transition-all duration-500 hover:shadow-[0_40px_90px_-20px_rgba(21,128,61,0.12)]">
+                                            {/* Subtle Watermark */}
+                                            <Quote className="absolute top-10 right-10 w-20 h-20 -rotate-12 select-none group-hover/card:rotate-0 transition-transform duration-700 opacity-[0.04]" style={{ color: themeColor }} />
+
+                                            <div className="flex gap-1 mb-8">
+                                                {[...Array(5)].map((_, i) => (
+                                                    <Star key={i} className="w-4 h-4" style={{ fill: themeColor, color: themeColor }} />
+                                                ))}
+                                            </div>
+
+                                            {useDesignSystem ? (
+                                                <Typography 
+                                                    variant={layout === 'centered' ? "h3" : "h4"} 
+                                                    className="text-slate-800 leading-[1.5] mb-12 tracking-tight italic"
+                                                >
+                                                    &ldquo;{testimonials[current]?.content || "No content provided."}&rdquo;
+                                                </Typography>
+                                            ) : (
+                                                <p className={cn(
+                                                    "font-bold text-slate-800 leading-[1.5] mb-12 tracking-tight italic",
+                                                    layout === 'centered' ? "text-2xl sm:text-3xl md:text-4xl" : "text-xl sm:text-2xl md:text-3xl"
+                                                )}>
+                                                    &ldquo;{testimonials[current]?.content || "No content provided."}&rdquo;
+                                                </p>
+                                            )}
+
+                                            <div className={cn("flex items-center gap-5", layout === 'centered' && "justify-center")}>
+                                                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center overflow-hidden border transition-all duration-300 group-hover/card:scale-110 shadow-sm" style={{ backgroundColor: `${themeColor}0D`, borderColor: `${themeColor}1A` }}>
+                                                    {testimonials[current]?.avatar ? (
+                                                        <img src={testimonials[current].avatar} alt={testimonials[current].author || "Avatar"} className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        <span className="text-xl sm:text-2xl font-black" style={{ color: themeColor }}>
+                                                            {testimonials[current]?.author?.[0] || "?"}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <div className={cn("flex flex-col", layout === 'centered' ? "text-left" : "")}>
+                                                    {useDesignSystem ? (
+                                                        <>
+                                                            <Typography variant="body" weight="black" className="text-slate-900 leading-tight">
+                                                                {testimonials[current]?.author || "Anonymous"}
+                                                            </Typography>
+                                                            <Typography variant="detail" weight="bold" uppercase className="tracking-[0.2em] mt-1.5 opacity-80" color="nb-green">
+                                                        {testimonials[current]?.company || "N/A"}
+                                                    </Typography>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <span className="text-lg sm:text-xl font-black text-slate-900 leading-tight">{testimonials[current]?.author || "Anonymous"}</span>
+                                                            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] mt-1.5 opacity-80" style={{ color: themeColor }}>{testimonials[current]?.company || "N/A"}</span>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                </AnimatePresence>
                             </div>
+
+                            {/* Navigation Dots */}
+                            {testimonials.length > 1 && (
+                                <div className={cn(
+                                    "flex items-center mt-10",
+                                    layout === 'split' ? "lg:justify-end justify-center" : "justify-center"
+                                )}>
+                                    <div className="flex gap-2">
+                                        {testimonials.map((_, i) => (
+                                            <button
+                                                key={i}
+                                                onClick={() => {
+                                                    setDirection(i > current ? 1 : -1);
+                                                    setCurrent(i);
+                                                }}
+                                                aria-label={`Go to testimonial ${i + 1}`}
+                                                className={cn(
+                                                    "relative h-2 rounded-full transition-all duration-300",
+                                                    current === i ? "w-8" : "w-2"
+                                                )}
+                                            >
+                                                <span
+                                                    className="absolute inset-0 rounded-full transition-all duration-300"
+                                                    style={{
+                                                        backgroundColor: current === i ? themeColor : '#f1f5f9',
+                                                        opacity: current === i ? 1 : 0.8
+                                                    }}
+                                                />
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
-                        <div className="hidden lg:flex justify-end gap-1.5 mt-8">
-                            {testimonials.map((_, i) => (
-                                <button
-                                    key={i}
-                                    onClick={() => {
-                                        setDirection(i > current ? 1 : -1);
-                                        setCurrent(i);
-                                    }}
-                                    aria-label={`Go to testimonial ${i + 1}`}
-                                    className={`h-1.5 rounded-full transition-all duration-300 ${current === i ? 'w-8 bg-nb-green/40' : 'w-2 bg-slate-100 hover:bg-slate-200'}`}
-                                />
-                            ))}
-                        </div>
-                    </div>
+                    )}
                 </div>
             </div>
         </div>
     );
 }
+

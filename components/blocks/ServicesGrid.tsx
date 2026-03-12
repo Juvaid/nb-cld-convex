@@ -1,5 +1,10 @@
-import { Palette, FlaskConical, BadgeCheck, Megaphone, ArrowRight, LucideIcon } from 'lucide-react';
+'use client';
+
+import { Palette, FlaskConical, BadgeCheck, Megaphone, ArrowRight, Factory, Users, Award, Target, LucideIcon } from 'lucide-react';
 import Link from 'next/link';
+import React, { useEffect, useRef } from 'react';
+import { motion, useSpring, useTransform, useInView } from 'framer-motion';
+import { Typography } from '../ui/Typography';
 
 export interface ServiceItem {
     showMedia?: boolean;
@@ -20,6 +25,7 @@ export interface ServicesGridProps {
     heading?: string;
     subheading?: string;
     services?: ServiceItem[];
+    useDesignSystem?: boolean;
 }
 
 const iconMap: Record<string, LucideIcon> = {
@@ -27,6 +33,10 @@ const iconMap: Record<string, LucideIcon> = {
     FlaskConical: FlaskConical,
     BadgeCheck: BadgeCheck,
     Megaphone: Megaphone,
+    Factory: Factory,
+    Users: Users,
+    Award: Award,
+    Target: Target,
 };
 
 export default function ServicesGrid({
@@ -34,6 +44,7 @@ export default function ServicesGrid({
     badgeText = "Our Capability",
     heading = "Expert Solutions for Your Brand",
     subheading = "We provide comprehensive, end-to-end manufacturing services to help you build a world-class personal care brand.",
+    useDesignSystem = true,
     services = [
         {
             title: 'Label & Packaging Designing',
@@ -70,28 +81,79 @@ export default function ServicesGrid({
     ]
 }: ServicesGridProps) {
     return (
-        <section id={id} className="py-12 sm:py-20 bg-slate-50 relative overflow-hidden">
+        <section id={id} className={`py-12 sm:py-24 relative overflow-hidden ${useDesignSystem ? 'bg-white' : 'bg-slate-50'}`}>
+            {useDesignSystem && (
+                <>
+                    <div className="absolute top-0 left-1/4 w-96 h-96 bg-nb-green/5 rounded-full blur-[120px] -translate-y-1/2 pointer-events-none" />
+                    <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-nb-green-light/5 rounded-full blur-[120px] translate-y-1/2 pointer-events-none" />
+                </>
+            )}
+            
             <div className="max-w-7xl mx-auto px-6 sm:px-8 relative z-10">
-                <div className="text-center mb-16 sm:mb-24">
-                    <div className="inline-block px-4 sm:px-5 py-1.5 sm:py-2 rounded-full bg-nb-green/5 text-nb-green text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] leading-none mb-4 sm:mb-6">
-                        {badgeText}
+                {(heading || subheading || badgeText) && (
+                    <div className="text-center mb-16 sm:mb-24">
+                        {badgeText && (
+                            <motion.div 
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                className={`inline-block px-5 py-2 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] leading-none mb-6 sm:mb-8 ${
+                                    useDesignSystem ? 'bg-nb-green/10 text-nb-green border border-nb-green/20' : 'bg-nb-green/5 text-nb-green'
+                                }`}
+                            >
+                                {badgeText}
+                            </motion.div>
+                        )}
+                        
+                        {useDesignSystem ? (
+                            <div className="space-y-6">
+                                {heading && (
+                                    <Typography variant="h1" className="text-slate-900 tracking-tight">
+                                        {heading}
+                                    </Typography>
+                                )}
+                                {subheading && (
+                                    <Typography variant="body" className="text-slate-500 max-w-2xl mx-auto font-medium opacity-80">
+                                        {subheading}
+                                    </Typography>
+                                )}
+                            </div>
+                        ) : (
+                            <>
+                                {heading && <h2 className="text-3xl sm:text-5xl md:text-6xl font-black text-slate-900 tracking-tight leading-[1.1]">{heading}</h2>}
+                                {subheading && (
+                                    <p className="text-base sm:text-xl text-slate-500 max-w-2xl mx-auto mt-4 sm:mt-6 font-medium opacity-80">
+                                        {subheading}
+                                    </p>
+                                )}
+                            </>
+                        )}
                     </div>
-                    <h2 className="text-3xl sm:text-5xl md:text-6xl font-black text-slate-900 tracking-tight leading-[1.1]">{heading}</h2>
-                    <p className="text-base sm:text-xl text-slate-500 max-w-2xl mx-auto mt-4 sm:mt-6 font-medium opacity-80">
-                        {subheading}
-                    </p>
-                </div>
+                )}
 
-                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-10">
+                {services && services.length > 0 && (
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
                     {(services || []).map((service, i) => {
                         const IconComponent = service.mediaIcon ? (iconMap[service.mediaIcon] || null) : null;
                         return (
-                            <div
+                            <motion.div
                                 key={service.slug || i}
-                                className="group relative bg-white rounded-[32px] sm:rounded-[48px] p-8 sm:p-10 hover:-translate-y-4 transition-all duration-700 border border-slate-900/5 hover:border-nb-green/20 hover:shadow-2xl hover:shadow-nb-green/15 flex flex-col h-full"
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                transition={{ delay: i * 0.1 }}
+                                viewport={{ once: true }}
+                                className={`group relative rounded-[32px] sm:rounded-[40px] p-8 sm:p-10 transition-all duration-500 flex flex-col h-full ${
+                                    useDesignSystem 
+                                    ? 'bg-white border border-slate-100 hover:border-nb-green/30 hover:shadow-[0_20px_50px_rgba(43,238,108,0.15)]' 
+                                    : 'bg-white border border-slate-900/5 hover:-translate-y-4 hover:shadow-2xl hover:shadow-nb-green/15'
+                                }`}
                             >
                                 {service.showMedia !== false && (
-                                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-[24px] bg-gradient-to-br from-nb-green/10 to-nb-green-light/5 flex items-center justify-center mb-6 sm:mb-10 border border-nb-green/10 group-hover:scale-110 group-hover:bg-nb-green group-hover:shadow-2xl group-hover:shadow-nb-green/40 transition-all duration-700 overflow-hidden flex-shrink-0">
+                                    <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-[24px] flex items-center justify-center mb-8 border transition-all duration-500 overflow-hidden flex-shrink-0 ${
+                                        useDesignSystem
+                                        ? 'bg-slate-50 border-slate-100 group-hover:bg-nb-green group-hover:border-nb-green group-hover:shadow-lg group-hover:shadow-nb-green/30'
+                                        : 'bg-gradient-to-br from-nb-green/10 to-nb-green-light/5 border-nb-green/10 group-hover:bg-nb-green'
+                                    }`}>
                                         {service.mediaType === "image" && service.mediaImage ? (
                                             <img
                                                 src={service.mediaImage.startsWith('http') ? service.mediaImage : `/api/storage/${service.mediaImage}`}
@@ -99,7 +161,9 @@ export default function ServicesGrid({
                                                 alt={service.title}
                                             />
                                         ) : IconComponent ? (
-                                            <IconComponent className="w-8 h-8 sm:w-10 sm:h-10 text-nb-green group-hover:text-white transition-colors" />
+                                            <IconComponent className={`w-8 h-8 sm:w-9 sm:h-9 transition-colors duration-500 ${
+                                                useDesignSystem ? 'text-slate-400 group-hover:text-white' : 'text-nb-green group-hover:text-white'
+                                            }`} />
                                         ) : (
                                             <span className="text-3xl sm:text-4xl group-hover:scale-110 transition-transform">
                                                 {service.mediaIcon || "✨"}
@@ -107,31 +171,48 @@ export default function ServicesGrid({
                                         )}
                                     </div>
                                 )}
-                                <h3 className="font-black text-xl sm:text-2xl text-slate-900 mb-3 sm:mb-5 leading-tight">{service.title}</h3>
-                                <p className="text-slate-500 text-sm sm:text-base leading-relaxed mb-6 sm:mb-10 font-medium opacity-80 hidden sm:block flex-grow">{service.description}</p>
+
+                                {useDesignSystem ? (
+                                    <div className="space-y-4 flex-grow">
+                                        <Typography variant="h4" className="text-slate-900 group-hover:text-nb-green transition-colors">
+                                            {service.title}
+                                        </Typography>
+                                        <Typography variant="body" className="text-slate-500 leading-relaxed font-medium">
+                                            {service.description}
+                                        </Typography>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <h3 className="font-black text-xl sm:text-2xl text-slate-900 mb-3 sm:mb-5 leading-tight">{service.title}</h3>
+                                        <p className="text-slate-500 text-sm sm:text-base leading-relaxed mb-6 sm:mb-10 font-medium opacity-80 flex-grow">{service.description}</p>
+                                    </>
+                                )}
 
                                 {service.showButton !== false && (
                                     <Link
                                         href={service.buttonLink || `/services#${service.slug || ''}`}
-                                        className="inline-flex items-center gap-2 text-xs sm:text-sm font-black text-nb-green group-hover:text-slate-900 transition-all mt-auto"
+                                        className={`inline-flex items-center gap-2 text-xs sm:text-sm font-black transition-all mt-8 ${
+                                            useDesignSystem 
+                                            ? 'text-slate-400 hover:text-nb-green uppercase tracking-widest' 
+                                            : 'text-nb-green group-hover:text-slate-900'
+                                        }`}
                                     >
                                         {service.buttonText || "Explore Service"}
-                                        <ArrowRight className="w-4 h-4 translate-y-[1px] group-hover:translate-x-2 transition-transform" />
+                                        <ArrowRight className={`w-4 h-4 transition-transform ${useDesignSystem ? 'group-hover:translate-x-1' : 'group-hover:translate-x-2'}`} />
                                     </Link>
                                 )}
 
-                                {/* Decorative background element on hover */}
-                                {IconComponent && (
-                                    <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-5 transition-opacity duration-700 pointer-events-none">
-                                        <IconComponent className="w-16 h-16 sm:w-24 sm:h-24 text-nb-green rotate-12" />
+                                {useDesignSystem && IconComponent && (
+                                    <div className="absolute bottom-10 right-10 opacity-0 group-hover:opacity-[0.03] transition-opacity duration-700 pointer-events-none">
+                                        <IconComponent className="w-32 h-32 text-slate-900 -rotate-12" />
                                     </div>
                                 )}
-                            </div>
+                            </motion.div>
                         );
                     })}
-                </div>
+                    </div>
+                )}
             </div>
         </section>
     );
 }
-
