@@ -266,10 +266,18 @@ export const config: Config = {
                     type: "array",
                     getItemSummary: (item: any) => item.title || "Service",
                     arrayFields: {
-                        title: { type: "text" },
-                        description: { type: "textarea" },
+                        title: { type: "text", contentEditable: true },
+                        description: { type: "textarea", contentEditable: true },
                         icon: {
                             type: "custom",
+                            label: "Small Icon (Lucide Name or Image)",
+                            render: ({ value, onChange }: any) => (
+                                <ImagePicker value={value} onChange={onChange} />
+                            )
+                        },
+                        image: {
+                            type: "custom",
+                            label: "Large Card Image (Optional)",
                             render: ({ value, onChange }: any) => (
                                 <ImagePicker value={value} onChange={onChange} />
                             )
