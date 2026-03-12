@@ -14,7 +14,7 @@ async function verifyAdminSession(client: ConvexHttpClient, request: NextRequest
     if (!token) return null;
     const user = await client.query(api.auth.getCurrentUser, { token });
     if (!user || user.role !== "admin") return null;
-    return user;
+    return { user, token };
 }
 
 /**
@@ -29,10 +29,11 @@ async function verifyAdminSession(client: ConvexHttpClient, request: NextRequest
 export async function DELETE(request: NextRequest) {
     const client = getConvexClient();
 
-    const admin = await verifyAdminSession(client, request);
-    if (!admin) {
+    const auth = await verifyAdminSession(client, request);
+    if (!auth) {
         return NextResponse.json({ error: "Unauthorized. Admin session required." }, { status: 401 });
     }
+    const { token } = auth;
 
     try {
         const { ids } = (await request.json()) as { ids: string[] };
@@ -58,7 +59,7 @@ export async function DELETE(request: NextRequest) {
                 }
 
                 // 3. Delete the Convex record regardless
-                await client.mutation(api.media.remove, { id: id as any });
+                await client.mutation(api.media.remove, { id: id as any, token });
 
                 results.push({ id, ok: true });
             } catch (err: unknown) {

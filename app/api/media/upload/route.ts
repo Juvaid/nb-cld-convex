@@ -26,7 +26,7 @@ async function verifyAdminSession(client: ConvexHttpClient, request: NextRequest
 
     const user = await client.query(api.auth.getCurrentUser, { token });
     if (!user || user.role !== "admin") return null;
-    return user;
+    return { user, token };
 }
 
 function validateFile(file: File): string | null {
@@ -41,7 +41,7 @@ function validateFile(file: File): string | null {
     return null;
 }
 
-async function uploadSingleFile(file: File, client: ConvexHttpClient, folder?: string) {
+async function uploadSingleFile(file: File, client: ConvexHttpClient, token: string, folder?: string) {
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-").toLowerCase();
     const key = `${Date.now()}-${safeName}`;
     const buffer = Buffer.from(await file.arrayBuffer());
@@ -57,6 +57,7 @@ async function uploadSingleFile(file: File, client: ConvexHttpClient, folder?: s
         type: file.type.startsWith("video/") ? "video" : "image",
         size: file.size,
         folder,
+        token,
     });
 
     return { url: publicUrl, mediaId, filename: file.name, type: file.type, size: file.size };
@@ -70,10 +71,11 @@ export async function POST(request: NextRequest) {
     const client = getConvexClient();
 
     // 1. Auth guard
-    const adminUser = await verifyAdminSession(client, request);
-    if (!adminUser) {
+    const auth = await verifyAdminSession(client, request);
+    if (!auth) {
         return NextResponse.json({ error: "Unauthorized. Admin session required." }, { status: 401 });
     }
+    const { token } = auth;
 
     try {
         const formData = await request.formData();
@@ -93,7 +95,7 @@ export async function POST(request: NextRequest) {
         const folder = (formData.get("folder") as string | null) || undefined;
 
         // 3. Upload concurrently
-        const results = await Promise.all(files.map((f) => uploadSingleFile(f, client, folder)));
+        const results = await Promise.all(files.map((f) => uploadSingleFile(f, client, token, folder)));
 
         return NextResponse.json({ success: true, results });
     } catch (error: unknown) {

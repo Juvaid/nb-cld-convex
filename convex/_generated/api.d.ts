@@ -9,6 +9,7 @@
  */
 
 import type * as auth from "../auth.js";
+import type * as auth_utils from "../auth_utils.js";
 import type * as backup from "../backup.js";
 import type * as blogs from "../blogs.js";
 import type * as categories from "../categories.js";
@@ -40,6 +41,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  auth_utils: typeof auth_utils;
   backup: typeof backup;
   blogs: typeof blogs;
   categories: typeof categories;
