@@ -75,7 +75,7 @@ export default function ServicesGrid({
     ]
 }: ServicesGridProps) {
     return (
-        <section id={id} className={`py-12 sm:py-24 relative overflow-hidden ${useDesignSystem ? 'bg-white' : 'bg-slate-50'}`}>
+        <section id={id} className={`pt-4 pb-12 sm:pt-6 sm:pb-24 relative overflow-hidden ${useDesignSystem ? 'bg-white' : 'bg-slate-50'}`}>
             {useDesignSystem && (
                 <>
                     <div className="absolute top-0 left-1/4 w-96 h-96 bg-nb-green/5 rounded-full blur-[120px] -translate-y-1/2 pointer-events-none" />

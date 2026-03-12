@@ -98,7 +98,7 @@ export const ProductCategoryCarouselBlock = ({ useDesignSystem = true, heading, 
     }
 
     return (
-        <section className="pt-8 pb-8 md:pt-12 md:pb-12 bg-white relative overflow-hidden">
+        <section className="pt-8 pb-0 md:pt-12 md:pb-0 bg-white relative overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header block */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-6 md:mb-8">
@@ -170,7 +170,7 @@ export const ProductCategoryCarouselBlock = ({ useDesignSystem = true, heading, 
                 </div>
 
                 {/* Pagination Dots */}
-                <div className="flex justify-center items-center gap-1 mt-6 md:mt-8">
+                <div className="flex justify-center items-center gap-1 mt-4 md:mt-6">
                     {categories.map((_, idx) => (
                         <button
                             key={idx}
