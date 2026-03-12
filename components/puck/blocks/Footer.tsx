@@ -157,8 +157,8 @@ export const Footer = ({
                         {copyrightText}
                     </p>
                     <div className="flex gap-6 sm:gap-8">
-                        <Link href="#" className={`${backgroundColor === 'bg-white' ? 'text-slate-400 hover:text-slate-900' : 'text-white/40 hover:text-white'} transition-colors text-[9px] sm:text-[11px] font-bold uppercase tracking-[0.1em]`}>Privacy Policy</Link>
-                        <Link href="#" className={`${backgroundColor === 'bg-white' ? 'text-slate-400 hover:text-slate-900' : 'text-white/40 hover:text-white'} transition-colors text-[9px] sm:text-[11px] font-bold uppercase tracking-[0.1em]`}>Terms of Service</Link>
+                        <Link href="/privacy-policy" className={`${backgroundColor === 'bg-white' ? 'text-slate-400 hover:text-slate-900' : 'text-white/40 hover:text-white'} transition-colors text-[9px] sm:text-[11px] font-bold uppercase tracking-[0.1em]`}>Privacy Policy</Link>
+                        <Link href="/terms-of-service" className={`${backgroundColor === 'bg-white' ? 'text-slate-400 hover:text-slate-900' : 'text-white/40 hover:text-white'} transition-colors text-[9px] sm:text-[11px] font-bold uppercase tracking-[0.1em]`}>Terms of Service</Link>
                     </div>
                 </div>
             </div>

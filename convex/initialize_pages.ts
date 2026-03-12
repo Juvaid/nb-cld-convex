@@ -483,6 +483,98 @@ export const setupCorePages = mutation({
                         }
                     }
                 })
+            },
+            {
+                path: "/privacy-policy",
+                title: "Privacy Policy | Nature's Boon",
+                description: "Our commitment to protecting your privacy and personal data.",
+                data: JSON.stringify({
+                    content: [
+                        {
+                            type: "TextBlock",
+                            props: {
+                                id: "privacy-policy-content",
+                                content: `
+                                    <h1>Privacy Policy</h1>
+                                    <p>Last Updated: March 2026</p>
+                                    <p>At Nature's Boon, we are committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you visit our website.</p>
+                                    <h2>1. Information We Collect</h2>
+                                    <p>We collect information that you provide directly to us, such as when you fill out a contact form or inquire about our services.</p>
+                                    <h2>2. How We Use Your Information</h2>
+                                    <p>We use the information we collect to provide and improve our services, communicate with you, and comply with legal obligations.</p>
+                                    <h2>3. Data Security</h2>
+                                    <p>We implement appropriate technical and organizational measures to protect your personal data against unauthorized access or disclosure.</p>
+                                    <h2>4. Contact Us</h2>
+                                    <p>If you have any questions about this Privacy Policy, please contact us at info@naturesboon.net.</p>
+                                `,
+                                alignment: "left",
+                                maxWidth: "3xl"
+                            }
+                        },
+                        {
+                            type: "Footer",
+                            props: {
+                                id: "Footer-privacy",
+                                logoText: "Nature's Boon",
+                                description: "Our commitment to protecting your privacy and personal data.",
+                                copyrightText: "© 2026 Nature's Boon Manufacturing. All rights reserved.",
+                                backgroundColor: "bg-slate-900",
+                                textColor: "text-white"
+                            }
+                        }
+                    ],
+                    root: {
+                        props: {
+                            title: "Privacy Policy"
+                        }
+                    }
+                })
+            },
+            {
+                path: "/terms-of-service",
+                title: "Terms of Service | Nature's Boon",
+                description: "The terms and conditions governing the use of our website and services.",
+                data: JSON.stringify({
+                    content: [
+                        {
+                            type: "TextBlock",
+                            props: {
+                                id: "terms-of-service-content",
+                                content: `
+                                    <h1>Terms of Service</h1>
+                                    <p>Last Updated: March 2026</p>
+                                    <p>Welcome to Nature's Boon. By accessing or using our website, you agree to comply with and be bound by these Terms of Service.</p>
+                                    <h2>1. Use of Website</h2>
+                                    <p>You agree to use our website only for lawful purposes and in a way that does not infringe the rights of others.</p>
+                                    <h2>2. Intellectual Property</h2>
+                                    <p>All content on this website, including text, graphics, and logos, is the property of Nature's Boon and is protected by intellectual property laws.</p>
+                                    <h2>3. Limitation of Liability</h2>
+                                    <p>Nature's Boon shall not be liable for any damages arising out of your use of or inability to use our website.</p>
+                                    <h2>4. Governing Law</h2>
+                                    <p>These terms are governed by and construed in accordance with the laws of India.</p>
+                                `,
+                                alignment: "left",
+                                maxWidth: "3xl"
+                            }
+                        },
+                        {
+                            type: "Footer",
+                            props: {
+                                id: "Footer-terms",
+                                logoText: "Nature's Boon",
+                                description: "The terms and conditions governing the use of our website and services.",
+                                copyrightText: "© 2026 Nature's Boon Manufacturing. All rights reserved.",
+                                backgroundColor: "bg-slate-900",
+                                textColor: "text-white"
+                            }
+                        }
+                    ],
+                    root: {
+                        props: {
+                            title: "Terms of Service"
+                        }
+                    }
+                })
             }
         ];
 
