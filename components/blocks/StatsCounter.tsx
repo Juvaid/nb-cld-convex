@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { motion, useSpring, useTransform, useInView } from 'framer-motion';
 import { Section } from '@/components/ui/Section';
+import { Typography } from '@/components/ui/Typography';
 
 export interface StatItem {
     value: string;
@@ -104,9 +105,9 @@ export default function StatsCounter({
             <div className="max-w-7xl mx-auto px-6 sm:px-8 relative z-10">
                 {heading && (
                     <div className="text-center mb-16 max-w-2xl mx-auto">
-                        <h2 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+                        <Typography variant="section-title" align="center" color="slate-900">
                             {heading}
-                        </h2>
+                        </Typography>
                         <div className="w-20 h-1.5 bg-nb-green mx-auto mt-6 rounded-full opacity-20" />
                     </div>
                 )}

@@ -55,7 +55,7 @@ export const CategoryPortfolio = ({
             <Flex direction="col" gap="16">
                 <div className="max-w-xl space-y-6">
                     <div className="w-12 h-1 bg-nb-green rounded-full" />
-                    <Typography variant="h2" color="slate-900">
+                    <Typography variant="section-title" color="slate-900">
                         {title}
                     </Typography>
                     <Typography variant="body" color="slate-600">

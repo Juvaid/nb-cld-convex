@@ -1,6 +1,7 @@
 import { Palette, FlaskConical, BadgeCheck, Megaphone, ArrowRight, LucideIcon } from 'lucide-react';
 import Link from 'next/link';
-import { Typography } from '../ui/Typography';
+import { Typography } from '@/components/ui/Typography';
+import { Section } from '@/components/ui/Section';
 import { motion } from 'framer-motion';
 
 export interface ServiceItem {
@@ -101,9 +102,12 @@ export default function ServicesGrid({
                         {useDesignSystem ? (
                             <div className="space-y-6">
                                 {heading && (
-                                    <Typography variant="h2" className="text-slate-900 tracking-tight">
-                                        {heading}
-                                    </Typography>
+                                    <div className="text-center mb-16 max-w-2xl mx-auto">
+                                        <Typography variant="section-title" align="center" color="slate-900">
+                                            {heading}
+                                        </Typography>
+                                        <div className="w-20 h-1.5 bg-nb-green mx-auto mt-6 rounded-full opacity-20" />
+                                    </div>
                                 )}
                                 {subheading && (
                                     <Typography variant="body" className="text-slate-500 max-w-2xl mx-auto font-medium opacity-80">
@@ -167,7 +171,7 @@ export default function ServicesGrid({
                                 {useDesignSystem ? (
                                     <div className="space-y-4 flex-grow">
                                         {service.title && (
-                                            <Typography variant="h4" className="text-slate-900 group-hover:text-nb-green transition-colors">
+                                            <Typography variant="section-title" color="slate-900">
                                                 {service.title}
                                             </Typography>
                                         )}
