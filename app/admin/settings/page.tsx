@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import {
     Loader2, Save, Undo, Clock, RotateCcw, Layout,
@@ -26,6 +27,7 @@ export default function SettingsPage() {
     const [isSaving, setIsSaving] = useState(false);
     const [isDoomed, setIsDoomed] = useState(false);
     const { token } = useAuth();
+    const router = useRouter();
 
     // Site Settings State
     const siteSettings = useQuery(api.siteSettings.getSiteSettings);
@@ -113,6 +115,11 @@ export default function SettingsPage() {
     };
 
     const handleSaveAll = async () => {
+        if (!token) {
+            alert("Session not found. Please log in again.");
+            router.push("/login");
+            return;
+        }
         setIsSaving(true);
         setIsSavingSite(true);
         try {
@@ -137,9 +144,10 @@ export default function SettingsPage() {
             // Clear cache so metadata (favicon, title) updates immediately
             fetch('/api/revalidate?path=layout', { method: 'POST' }).catch(console.error);
 
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
-            alert("Failed to save settings");
+            const message = error.data || error.message || "Failed to save settings";
+            alert(message);
         } finally {
             setIsSaving(false);
             setIsSavingSite(false);
