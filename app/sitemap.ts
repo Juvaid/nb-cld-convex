@@ -21,19 +21,10 @@ const convex = new ConvexHttpClient(convexUrl);
         products = productsData || [];
         blogs = blogsData || [];
     } catch (error) {
-        console.warn("Failed to fetch data for sitemap:", error);
-        // Provide essential fallback pages if fetching fails
-        pages = [
-            { path: '/', lastModified: new Date() },
-            { path: '/about', lastModified: new Date() },
-            { path: '/services', lastModified: new Date() },
-            { path: '/products', lastModified: new Date() },
-            { path: '/blogs', lastModified: new Date() },
-            { path: '/contact', lastModified: new Date() }
-        ];
+        // Fallback handled below
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://naturesboon.net';
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://naturesboon.net';
 
     const pageUrls = pages.map((page: any) => ({
         url: `${baseUrl}${page.path}`,

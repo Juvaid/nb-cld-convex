@@ -47,7 +47,7 @@ export function SiteHeader({
     }
 
     // Default fallbacks
-    const defaultLogoText = "NatureBoon";
+    const defaultLogoText = "Nature's Boon";
     const defaultLinks = [
         { label: "Home", href: "/" },
         { label: "About", href: "/about" },

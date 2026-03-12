@@ -13,7 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
     try {
         const page = await convex.query(api.pages.getPublishedPage, { path: "/services" });
         const settings = await convex.query(api.siteSettings.getSiteSettings);
-        const siteName = (settings as any)?.siteTitle || "NatureBoon";
+        const siteName = (settings as any)?.siteTitle || "Nature's Boon";
 
         if (page) {
             const puckData = page.data ? JSON.parse(page.data) : null;
@@ -34,7 +34,7 @@ export async function generateMetadata(): Promise<Metadata> {
     } catch { /* fall through to defaults */ }
 
     return {
-        title: "Services | NatureBoon",
+        title: "Services | Nature's Boon",
         description: "End-to-end private label and contract manufacturing services.",
     };
 }

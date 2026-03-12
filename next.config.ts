@@ -26,7 +26,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: '**.natureboon.com',
+        hostname: '**.naturesboon.net',
       }
     ],
     minimumCacheTTL: 31536000,

@@ -20,10 +20,10 @@ export async function generateMetadata(): Promise<Metadata> {
   try {
     settings = await convex.query(api.siteSettings.getSiteSettings);
   } catch (error) {
-    console.warn("Failed to fetch site settings for metadata:", error);
+    // Silence error during build
   }
 
-  const title = settings.siteTitle || "NatureBoon | Premium Manufacturing Platform";
+  const title = settings.siteTitle || "Nature's Boon | Premium Manufacturing Platform";
   const description = settings.footerDescription || "Next-generation B2B manufacturing platform for premium personal care.";
   const faviconUrl = settings.faviconUrl;
 
@@ -32,43 +32,71 @@ export async function generateMetadata(): Promise<Metadata> {
     description,
     keywords: [
       "B2B Manufacturing", "Personal Care", "OEM", "Private Label",
-      "Contract Manufacturing", "NatureBoon", "Skincare Manufacturer",
+      "Contract Manufacturing", "Nature's Boon", "Skincare Manufacturer",
       "Haircare Manufacturer"
     ],
     openGraph: {
       title,
       description,
       type: "website",
-      siteName: "NatureBoon",
+      siteName: "Nature's Boon",
     },
     icons: faviconUrl ? { icon: faviconUrl } : undefined,
   };
 }
 
-import { DynamicCookieConsent, DynamicFloatingWidget } from "@/components/DynamicClients";
+import { Providers } from "./providers";
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
   modal,
 }: {
   children: React.ReactNode;
   modal: React.ReactNode;
 }) {
+  let settings: any = {};
+  try {
+    // Only fetch if we're not in the middle of a build that can't reach Convex
+    settings = await convex.query(api.siteSettings.getSiteSettings);
+  } catch (error) {
+    // Silence error during build; static fallbacks handled below
+  }
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://naturesboon.net";
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": settings.siteTitle || "Nature's Boon",
+    "image": settings.logoUrl || `${siteUrl}/logo.png`,
+    "description": settings.footerDescription || "Personal care manufacturing excellence.",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Plot No 123, JLPL Industrial Area",
+      "addressLocality": "Mohali",
+      "addressRegion": "Punjab",
+      "postalCode": "140308",
+      "addressCountry": "IN"
+    },
+    "telephone": "+91 97818 00033",
+    "email": "info@naturesboon.net",
+    "url": siteUrl,
+    "sameAs": [
+      "https://www.instagram.com/natures_boon",
+      "https://www.facebook.com/naturesboon"
+    ]
+  };
+
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${inter.variable} font-sans antialiased`}
-      >
-        <ConvexClientProvider>
-          <AuthProvider>
-            <ThemeProvider>
-              {children}
-              {modal}
-              <DynamicCookieConsent />
-              <DynamicFloatingWidget />
-            </ThemeProvider>
-          </AuthProvider>
-        </ConvexClientProvider>
+      <head>
+        <link rel="canonical" href={siteUrl} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
+      <body className={`${inter.variable} font-sans antialiased`}>
+        <Providers children={children} modal={modal} />
       </body>
     </html>
   );

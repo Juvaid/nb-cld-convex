@@ -10,7 +10,7 @@ const convex = new ConvexHttpClient(convexUrl);
 export async function generateMetadata(): Promise<Metadata> {
     try {
         const settings = await convex.query(api.siteSettings.getSiteSettings);
-        const siteName = (settings as any)?.siteTitle || "NatureBoon";
+        const siteName = (settings as any)?.siteTitle || "Nature's Boon";
         const categories = await convex.query(api.categories.list);
         const categoryNames = categories?.map((c: any) => c.name).join(", ") || "";
 
@@ -27,7 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
     } catch { /* fall through to defaults */ }
 
     return {
-        title: "Our Products | NatureBoon",
+        title: "Our Products | Nature's Boon",
         description: "Browse our full B2B personal care product catalog.",
     };
 }

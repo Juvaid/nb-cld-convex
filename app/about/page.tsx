@@ -13,7 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
     try {
         const page = await convex.query(api.pages.getPublishedPage, { path: "/about" });
         const settings = await convex.query(api.siteSettings.getSiteSettings);
-        const siteName = (settings as any)?.siteTitle || "NatureBoon";
+        const siteName = (settings as any)?.siteTitle || "Nature's Boon";
 
         if (page) {
             const puckData = page.data ? JSON.parse(page.data) : null;
@@ -22,10 +22,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
             return {
                 title: `${title} | ${siteName}`,
-                description: "Learn about NatureBoon's B2B manufacturing excellence and heritage.",
+                description: "Learn about Nature's Boon's B2B manufacturing excellence and heritage.",
                 openGraph: {
                     title: `${title} | ${siteName}`,
-                    description: "Learn about NatureBoon's B2B manufacturing excellence and heritage.",
+                    description: "Learn about Nature's Boon's B2B manufacturing excellence and heritage.",
                     type: "website",
                     siteName,
                 },
@@ -34,8 +34,8 @@ export async function generateMetadata(): Promise<Metadata> {
     } catch { /* fall through to defaults */ }
 
     return {
-        title: "About Us | NatureBoon",
-        description: "Learn about NatureBoon's B2B manufacturing excellence and heritage.",
+        title: "About Us | Nature's Boon",
+        description: "Learn about Nature's Boon's B2B manufacturing excellence and heritage.",
     };
 }
 

@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Privacy Policy | NatureBoon',
-    description: 'Privacy Policy and data handling practices for NatureBoon, your premium manufacturing partner.',
+    title: "Privacy Policy | Nature's Boon",
+    description: "Privacy Policy and data handling practices for Nature's Boon, your premium manufacturing partner.",
 };
 
 export default function PrivacyPolicyPage() {
@@ -20,7 +20,7 @@ export default function PrivacyPolicyPage() {
                 <section className="mb-8">
                     <h2 className="text-2xl font-bold text-gray-900 mb-4">1. Introduction</h2>
                     <p className="text-gray-600 mb-4">
-                        NatureBoon ("we", "our", or "us") respects your privacy and is committed to protecting your personal data.
+                        Nature's Boon ("we", "our", or "us") respects your privacy and is committed to protecting your personal data.
                         This privacy policy will inform you as to how we look after your personal data when you visit our website
                         (regardless of where you visit it from) and tell you about your privacy rights and how the law protects you.
                     </p>

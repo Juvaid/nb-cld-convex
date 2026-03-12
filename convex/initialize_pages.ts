@@ -191,7 +191,7 @@ export const setupCorePages = mutation({
             },
             {
                 path: "/services",
-                title: "Our Services | Nature Boon",
+                title: "Our Services | Nature's Boon",
                 description: "From concept to shelf — we provide comprehensive services to build, grow, and scale your brand.",
                 data: JSON.stringify({
                     content: [
@@ -297,7 +297,7 @@ export const setupCorePages = mutation({
             },
             {
                 path: "/products",
-                title: "Our Products | Nature Boon",
+                title: "Our Products | Nature's Boon",
                 description: "Premium personal care products manufactured with the finest ingredients and cutting-edge technology.",
                 data: JSON.stringify({
                     content: [
@@ -418,7 +418,7 @@ export const setupCorePages = mutation({
             },
             {
                 path: "/contact",
-                title: "Contact Us | Nature Boon",
+                title: "Contact Us | Nature's Boon",
                 description: "Have a question or want to discuss a new project? We're here to help.",
                 data: JSON.stringify({
                     content: [
@@ -438,14 +438,14 @@ export const setupCorePages = mutation({
                                 heading: "Get in Touch",
                                 infoItems: [
                                     { label: 'Phone', value: '+91 97818 00033', icon: 'Phone' },
-                                    { label: 'Email', value: 'info@naturesboon.com', icon: 'Mail' },
+                                    { label: 'Email', value: 'info@naturesboon.net', icon: 'Mail' },
                                     { label: 'Factory Address', value: 'Plot No 123, JLPL Industrial Area, Sector 82, Mohali, Punjab - 140308', icon: 'MapPin' },
                                     { label: 'Working Hours', value: 'Mon - Sat: 9:00 AM - 6:00 PM', icon: 'Clock' },
                                 ],
                                 departmentEmails: [
-                                    { label: 'Sales', email: 'sales@naturesboon.com' },
-                                    { label: 'Support', email: 'support@naturesboon.com' },
-                                    { label: 'Export', email: 'exports@naturesboon.com' },
+                                    { label: 'Sales', email: 'sales@naturesboon.net' },
+                                    { label: 'Support', email: 'support@naturesboon.net' },
+                                    { label: 'Export', email: 'exports@naturesboon.net' },
                                 ]
                             }
                         },

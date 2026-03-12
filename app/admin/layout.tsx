@@ -82,7 +82,7 @@ export default function AdminLayout({
                         <div className="w-8 h-8 bg-nb-green rounded-lg shadow-sm flex items-center justify-center">
                             <PenTool size={16} className="text-slate-900" />
                         </div>
-                        NatureBoon
+                        Nature's Boon
                     </div>
                 </div>
 

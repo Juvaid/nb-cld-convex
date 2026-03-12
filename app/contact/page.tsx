@@ -12,7 +12,7 @@ const convex = new ConvexHttpClient(convexUrl);
 export async function generateMetadata(): Promise<Metadata> {
     try {
         const settings = await convex.query(api.siteSettings.getSiteSettings);
-        const siteName = (settings as any)?.siteTitle || "NatureBoon";
+        const siteName = (settings as any)?.siteTitle || "Nature's Boon";
 
         return {
             title: `Contact | ${siteName}`,
@@ -27,8 +27,8 @@ export async function generateMetadata(): Promise<Metadata> {
     } catch { /* fall through to defaults */ }
 
     return {
-        title: "Contact | NatureBoon",
-        description: "Get in touch with NatureBoon for B2B inquiry and partnership.",
+        title: "Contact | Nature's Boon",
+        description: "Get in touch with Nature's Boon for B2B inquiry and partnership.",
     };
 }
 

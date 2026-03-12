@@ -12,8 +12,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     try {
         const blog = await convex.query(api.blogs.getBlogBySlug, { slug });
         if (blog) {
-            const title = `${blog.title} | NatureBoon Blog`;
-            const description = blog.excerpt || `Read ${blog.title} from the NatureBoon team.`;
+            const title = `${blog.title} | Nature's Boon Blog`;
+            const description = blog.excerpt || `Read ${blog.title} from the Nature's Boon team.`;
             const imageUrl = blog.coverImage || undefined;
 
             return {
@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
                     title,
                     description,
                     type: "article",
-                    siteName: "NatureBoon",
+                    siteName: "Nature's Boon",
                     ...(imageUrl && { images: [{ url: imageUrl }] }),
                 }
             };
@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     } catch { /* fall through to defaults */ }
 
     return {
-        title: "Blog | NatureBoon",
+        title: "Blog | Nature's Boon",
         description: "Insights and stories from the world of personal care manufacturing.",
     };
 }

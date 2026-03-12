@@ -49,7 +49,7 @@ export const seedSiteData = mutation({
         const existingSettings = await ctx.db.query("siteSettings").collect();
         if (existingSettings.length === 0) {
             await ctx.db.insert("siteSettings", { key: "logoText", value: "Nature's Boon" });
-            await ctx.db.insert("siteSettings", { key: "contactEmail", value: "info@naturesboon.com" });
+            await ctx.db.insert("siteSettings", { key: "contactEmail", value: "info@naturesboon.net" });
             await ctx.db.insert("siteSettings", { key: "contactPhone", value: "+91 97818 00033" });
         }
 

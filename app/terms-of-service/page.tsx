@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Terms of Service | NatureBoon',
-    description: 'Terms of Service and conditions for using NatureBoon, your premium manufacturing partner.',
+    title: "Terms of Service | Nature's Boon",
+    description: "Terms of Service and conditions for using Nature's Boon, your premium manufacturing partner.",
 };
 
 export default function TermsOfServicePage() {
@@ -20,7 +20,7 @@ export default function TermsOfServicePage() {
                 <section className="mb-8">
                     <h2 className="text-2xl font-bold text-gray-900 mb-4">1. Agreement to Terms</h2>
                     <p className="text-gray-600 mb-4">
-                        These Terms of Service constitute a legally binding agreement made between you, whether personally or on behalf of an entity ("you") and NatureBoon ("we," "us" or "our"), concerning your access to and use of our website as well as any other media form, media channel, mobile website or mobile application related, linked, or otherwise connected thereto.
+                        These Terms of Service constitute a legally binding agreement made between you, whether personally or on behalf of an entity ("you") and Nature's Boon ("we," "us" or "our"), concerning your access to and use of our website as well as any other media form, media channel, mobile website or mobile application related, linked, or otherwise connected thereto.
                     </p>
                 </section>
 

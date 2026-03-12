@@ -21,7 +21,7 @@ export const templates: Record<string, PageTemplate> = {
       root: {
         props: {
           header: {
-            logoText: "NatureBoon",
+            logoText: "Nature's Boon",
             links: [
               { label: "Home", href: "/" },
               { label: "About", href: "/about" },
@@ -32,7 +32,7 @@ export const templates: Record<string, PageTemplate> = {
             contactText: "Get Quote",
           },
           footer: {
-            copyrightText: "© 2026 NatureBoon. All rights reserved.",
+            copyrightText: "© 2026 Nature's Boon. All rights reserved.",
           },
         },
       },
@@ -52,7 +52,7 @@ export const templates: Record<string, PageTemplate> = {
           },
         },
         {
-          type: "NatureBoonStats",
+          type: "Nature's BoonStats",
           props: {
             stats: [
               { value: "15+", label: "Years Experience" },
@@ -126,7 +126,7 @@ export const templates: Record<string, PageTemplate> = {
       root: {
         props: {
           header: {
-            logoText: "NatureBoon",
+            logoText: "Nature's Boon",
             links: [
               { label: "Home", href: "/" },
               { label: "About", href: "/about" },
@@ -137,16 +137,16 @@ export const templates: Record<string, PageTemplate> = {
             contactText: "Get Quote",
           },
           footer: {
-            copyrightText: "© 2026 NatureBoon. All rights reserved.",
+            copyrightText: "© 2026 Nature's Boon. All rights reserved.",
           },
         },
       },
       content: [
         {
-          type: "NatureBoonHero",
+          type: "Nature's BoonHero",
           props: {
             title: "Our Story",
-            subtitle: "About NatureBoon",
+            subtitle: "About Nature's Boon",
             description: "Since 2006, we've been at the forefront of natural personal care manufacturing, combining ancient wisdom with modern science.",
             buttonText: "Learn More",
             backgroundVariant: "white",
@@ -215,7 +215,7 @@ export const templates: Record<string, PageTemplate> = {
       root: {
         props: {
           header: {
-            logoText: "NatureBoon",
+            logoText: "Nature's Boon",
             links: [
               { label: "Home", href: "/" },
               { label: "About", href: "/about" },
@@ -226,7 +226,7 @@ export const templates: Record<string, PageTemplate> = {
             contactText: "Get Quote",
           },
           footer: {
-            copyrightText: "© 2026 NatureBoon. All rights reserved.",
+            copyrightText: "© 2026 Nature's Boon. All rights reserved.",
           },
         },
       },
@@ -306,7 +306,7 @@ export const templates: Record<string, PageTemplate> = {
       root: {
         props: {
           header: {
-            logoText: "NatureBoon",
+            logoText: "Nature's Boon",
             links: [
               { label: "Home", href: "/" },
               { label: "About", href: "/about" },
@@ -317,7 +317,7 @@ export const templates: Record<string, PageTemplate> = {
             contactText: "Get Quote",
           },
           footer: {
-            copyrightText: "© 2026 NatureBoon. All rights reserved.",
+            copyrightText: "© 2026 Nature's Boon. All rights reserved.",
           },
         },
       },
@@ -340,7 +340,7 @@ export const templates: Record<string, PageTemplate> = {
           type: "FeatureGrid",
           props: {
             items: [
-              { title: "Email", description: "contact@natureboon.com" },
+              { title: "Email", description: "info@naturesboon.net" },
               { title: "Phone", description: "+1 (555) 123-4567" },
               { title: "Address", description: "123 Manufacturing Way, Industry City, ST 12345" },
               { title: "Hours", description: "Mon-Fri: 9AM - 6PM EST" },
@@ -380,13 +380,13 @@ export const templates: Record<string, PageTemplate> = {
       root: {
         props: {
           header: {
-            logoText: "NatureBoon",
+            logoText: "Nature's Boon",
             links: [],
             portalText: "Client Portal",
             contactText: "Get Quote",
           },
           footer: {
-            copyrightText: "© 2026 NatureBoon. All rights reserved.",
+            copyrightText: "© 2026 Nature's Boon. All rights reserved.",
           },
         },
       },

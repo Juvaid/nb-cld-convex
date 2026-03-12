@@ -1,6 +1,6 @@
 import { internalMutation } from "./_generated/server";
 
-// Seed all NatureBoon product categories and products into the DB.
+// Seed all Nature's Boon product categories and products into the DB.
 // Safe to run multiple times - skips existing records by slug.
 export const seedProductCatalog = internalMutation({
     args: {},

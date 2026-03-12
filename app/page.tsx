@@ -13,12 +13,12 @@ export async function generateMetadata(): Promise<Metadata> {
     try {
         const settings = await convex.query(api.siteSettings.getSiteSettings);
         return {
-            title: (settings as any)?.siteTitle || "NatureBoon | Premium Manufacturing Platform",
+            title: (settings as any)?.siteTitle || "Nature's Boon | Premium Manufacturing Platform",
             description: (settings as any)?.footerDescription || "Next-generation B2B manufacturing platform for premium personal care.",
         };
     } catch {
         return {
-            title: "NatureBoon | Premium Manufacturing Platform",
+            title: "Nature's Boon | Premium Manufacturing Platform",
             description: "Next-generation B2B manufacturing platform for premium personal care.",
         };
     }
