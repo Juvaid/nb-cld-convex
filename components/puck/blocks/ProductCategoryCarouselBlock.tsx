@@ -100,11 +100,11 @@ export const ProductCategoryCarouselBlock = ({ useDesignSystem = true, heading, 
     return (
         <section className="pt-0 pb-0 md:pt-0 md:pb-0 bg-white relative overflow-hidden w-full">
             <div className="max-w-full mx-auto px-4 md:px-6">
-                {/* Header block - minimized margin */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-3 md:mb-4">
+                {/* Header block - ultra-minimized margin */}
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-2">
                     <div className="max-w-2xl">
                         {useDesignSystem ? (
-                            <Typography variant="section-title" color="slate-900" className="mb-2">
+                            <Typography variant="section-title" color="slate-900" className="m-0 mt-0 mb-0.5">
                                 {heading}
                             </Typography>
                         ) : (
@@ -114,7 +114,7 @@ export const ProductCategoryCarouselBlock = ({ useDesignSystem = true, heading, 
                         )}
                         {subheading && (
                             useDesignSystem ? (
-                                <Typography variant="section-subtitle" color="slate-600">
+                                <Typography variant="section-subtitle" color="slate-600" className="m-0 mt-0">
                                     {subheading}
                                 </Typography>
                             ) : (
@@ -131,14 +131,14 @@ export const ProductCategoryCarouselBlock = ({ useDesignSystem = true, heading, 
                     <div
                         ref={scrollContainerRef}
                         onScroll={handleScroll}
-                        className="flex overflow-x-auto gap-4 md:gap-6 pb-4 snap-x snap-mandatory hide-scrollbar"
+                        className="flex overflow-x-auto gap-4 md:gap-6 pb-0 snap-x snap-mandatory hide-scrollbar"
                     >
                         {categories.map((category, idx) => (
-                                <Link
-                                    key={idx}
-                                    href={category.link || "/products"}
-                                    className="block relative flex-none w-[85vw] sm:w-[45vw] md:w-[calc(33.333%-1rem)] xl:w-[calc(25%-1.125rem)] aspect-[4/3] rounded-xl overflow-hidden snap-start group shadow-sm hover:shadow-xl transition-all duration-300"
-                                >
+                            <Link
+                                key={idx}
+                                href={category.link || "/products"}
+                                className="block relative flex-none w-[85vw] sm:w-[45vw] md:w-[calc(33.333%-1rem)] xl:w-[calc(25%-1.125rem)] aspect-[4/3] rounded-xl overflow-hidden snap-start group shadow-sm hover:shadow-xl transition-all duration-300"
+                            >
                                 <Image
                                     src={category.image?.startsWith("http") ? category.image : (category.image ? `/api/storage/${category.image}` : "/favicon.ico")}
                                     alt={category.title}
@@ -169,8 +169,8 @@ export const ProductCategoryCarouselBlock = ({ useDesignSystem = true, heading, 
                     `}} />
                 </div>
 
-                {/* Pagination Dots - minimized top margin */}
-                <div className="flex justify-center items-center gap-1 mt-2 md:mt-2">
+                {/* Pagination Dots - ultra-tight top margin */}
+                <div className="flex justify-center items-center gap-1 mt-1">
                     {categories.map((_, idx) => (
                         <button
                             key={idx}

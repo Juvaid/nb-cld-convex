@@ -82,35 +82,34 @@ export default function ServicesGrid({
                     <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-nb-green-light/5 rounded-full blur-[120px] translate-y-1/2 pointer-events-none" />
                 </>
             )}
-            
+
             <div className="max-w-full mx-auto px-6 sm:px-8 relative z-10">
                 {(badgeText || heading || subheading) && (
-                    <div className="text-center mb-4 sm:mb-6">
+                    <div className="text-center mb-2 sm:mb-3">
                         {badgeText && (
-                            <motion.div 
+                            <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
-                                className={`inline-block px-5 py-2 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] leading-none mb-3 sm:mb-4 ${
-                                    useDesignSystem ? 'bg-nb-green/10 text-nb-green border border-nb-green/20' : 'bg-nb-green/5 text-nb-green'
-                                }`}
+                                className={`inline-block px-5 py-2 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] leading-none mb-3 sm:mb-4 ${useDesignSystem ? 'bg-nb-green/10 text-nb-green border border-nb-green/20' : 'bg-nb-green/5 text-nb-green'
+                                    }`}
                             >
                                 {badgeText}
                             </motion.div>
                         )}
-                        
+
                         {useDesignSystem ? (
                             <div className="space-y-3">
                                 {heading && (
-                                    <div className="text-center mb-6 max-w-2xl mx-auto">
-                                        <Typography variant="section-title" align="center" color="slate-900">
+                                    <div className="text-center mb-2 max-w-2xl mx-auto">
+                                        <Typography variant="section-title" align="center" color="slate-900" className="m-0 mt-0">
                                             {heading}
                                         </Typography>
-                                        <div className="w-20 h-1 bg-nb-green mx-auto mt-3 rounded-full opacity-20" />
+                                        <div className="w-20 h-1 bg-nb-green mx-auto mt-2 rounded-full opacity-20" />
                                     </div>
                                 )}
                                 {subheading && (
-                                    <Typography variant="body" className="text-slate-500 max-w-2xl mx-auto font-medium opacity-80">
+                                    <Typography variant="body" className="text-slate-500 max-w-2xl mx-auto font-medium opacity-80 m-0 mt-0">
                                         {subheading}
                                     </Typography>
                                 )}
@@ -138,18 +137,16 @@ export default function ServicesGrid({
                                 whileInView={{ opacity: 1, y: 0 }}
                                 transition={{ delay: i * 0.1 }}
                                 viewport={{ once: true }}
-                                className={`group relative rounded-[24px] sm:rounded-[32px] p-5 sm:p-7 transition-all duration-700 flex flex-col h-full transform-gpu ${
-                                    useDesignSystem 
-                                    ? 'bg-white border border-slate-100/50 hover:border-nb-green/20 hover:shadow-[0_32px_64px_-16px_rgba(43,238,108,0.15)] hover:-translate-y-2' 
-                                    : 'bg-white border border-slate-900/5 hover:-translate-y-4 hover:shadow-2xl hover:shadow-nb-green/15'
-                                }`}
+                                className={`group relative rounded-[24px] sm:rounded-[32px] p-5 sm:p-7 transition-all duration-700 flex flex-col h-full transform-gpu ${useDesignSystem
+                                        ? 'bg-white border border-slate-100/50 hover:border-nb-green/20 hover:shadow-[0_32px_64px_-16px_rgba(43,238,108,0.15)] hover:-translate-y-2'
+                                        : 'bg-white border border-slate-900/5 hover:-translate-y-4 hover:shadow-2xl hover:shadow-nb-green/15'
+                                    }`}
                             >
                                 {service.showMedia !== false && (
-                                    <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-lg sm:rounded-[16px] flex items-center justify-center mb-4 border transition-all duration-500 overflow-hidden flex-shrink-0 ${
-                                        useDesignSystem
-                                        ? 'bg-slate-50 border-slate-100 group-hover:bg-nb-green group-hover:border-nb-green group-hover:shadow-lg group-hover:shadow-nb-green/30'
-                                        : 'bg-gradient-to-br from-nb-green/10 to-nb-green-light/5 border-nb-green/10 group-hover:bg-nb-green'
-                                    }`}>
+                                    <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-lg sm:rounded-[16px] flex items-center justify-center mb-4 border transition-all duration-500 overflow-hidden flex-shrink-0 ${useDesignSystem
+                                            ? 'bg-slate-50 border-slate-100 group-hover:bg-nb-green group-hover:border-nb-green group-hover:shadow-lg group-hover:shadow-nb-green/30'
+                                            : 'bg-gradient-to-br from-nb-green/10 to-nb-green-light/5 border-nb-green/10 group-hover:bg-nb-green'
+                                        }`}>
                                         {service.mediaType === "image" && service.mediaImage ? (
                                             <img
                                                 src={service.mediaImage.startsWith('http') ? service.mediaImage : `/api/storage/${service.mediaImage}`}
@@ -157,9 +154,8 @@ export default function ServicesGrid({
                                                 alt={service.title}
                                             />
                                         ) : IconComponent ? (
-                                            <IconComponent className={`w-6 h-6 sm:w-7 sm:h-7 transition-colors duration-500 ${
-                                                useDesignSystem ? 'text-slate-400 group-hover:text-white' : 'text-nb-green group-hover:text-white'
-                                            }`} />
+                                            <IconComponent className={`w-6 h-6 sm:w-7 sm:h-7 transition-colors duration-500 ${useDesignSystem ? 'text-slate-400 group-hover:text-white' : 'text-nb-green group-hover:text-white'
+                                                }`} />
                                         ) : (
                                             <span className="text-xl sm:text-2xl group-hover:scale-110 transition-transform">
                                                 {service.mediaIcon || "✨"}
@@ -191,11 +187,10 @@ export default function ServicesGrid({
                                 {service.showButton !== false && (
                                     <Link
                                         href={service.buttonLink || `/services#${service.slug || ''}`}
-                                        className={`inline-flex items-center gap-2 text-xs sm:text-sm font-black transition-all mt-4 ${
-                                            useDesignSystem 
-                                            ? 'text-slate-400 hover:text-nb-green uppercase tracking-widest' 
-                                            : 'text-nb-green group-hover:text-slate-900'
-                                        }`}
+                                        className={`inline-flex items-center gap-2 text-xs sm:text-sm font-black transition-all mt-4 ${useDesignSystem
+                                                ? 'text-slate-400 hover:text-nb-green uppercase tracking-widest'
+                                                : 'text-nb-green group-hover:text-slate-900'
+                                            }`}
                                     >
                                         {service.buttonText || "Explore Service"}
                                         <ArrowRight className={`w-3.5 h-3.5 transition-transform ${useDesignSystem ? 'group-hover:translate-x-1' : 'group-hover:translate-x-2'}`} />
