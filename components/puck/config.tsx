@@ -23,10 +23,6 @@ import { OrbitalHeroBlockConfig } from "./blocks/OrbitalHeroBlock";
 import { SpacerBlockConfig } from "./blocks/SpacerBlock";
 import { ProductGridHeroBlockConfig } from "./blocks/ProductGridHeroBlock";
 import { TestimonialsSliderBlockConfig } from "./blocks/TestimonialsSliderBlock";
-import ServicesGrid from "../blocks/ServicesGrid";
-import TestimonialSlider from "../blocks/TestimonialSlider";
-import StatsCounter from "../blocks/StatsCounter";
-import { NatureBoonStatsConfig } from "./blocks/NatureBoonStatsBlock";
 import { BentoGridHeroBlockConfig } from "./blocks/BentoGridHeroBlock";
 import { LayeredDepthHeroBlockConfig } from "./blocks/LayeredDepthHeroBlock";
 import { KineticMarqueeHeroBlockConfig } from "./blocks/KineticMarqueeHeroBlock";
@@ -138,6 +134,7 @@ export const config: Config = {
         TestimonialsSlider: TestimonialsSliderBlockConfig,
         JourneyHero: JourneyHeroBlockConfig,
         BentoServices: BentoServicesBlockConfig,
+        ModernServices: ModernServicesBlockConfig,
         HeroCarousel: HeroCarouselBlockConfig,
         GoogleReviews: GoogleReviewsBlockConfig,
         AboutHero: {
@@ -290,6 +287,10 @@ export const config: Config = {
                 },
                 ...sharedFields
             },
+            defaultProps: {
+                useDesignSystem: true,
+                services: []
+            },
             render: (props: any) => <ServiceDetailList {...props} id={props.sectionId} />
         },
         ProcessSteps: {
@@ -351,47 +352,20 @@ export const config: Config = {
                     getItemSummary: (s: any) => s.label || "Stat",
                     arrayFields: {
                         showMedia: sharedFields.showMedia,
-                        ...NatureBoonStatsConfig.fields,
+                        mediaType: sharedFields.mediaType,
+                        mediaIcon: sharedFields.mediaIcon,
+                        mediaImage: sharedFields.mediaImage,
+                        value: { type: "text" },
+                        label: { type: "text" },
                     }
                 },
                 useGlobalStats: { type: "radio", label: "Use Global Company Stats", options: [{ label: "Yes", value: true }, { label: "No", value: false }] },
                 ...sharedFields
             },
             render: (props: any) => {
-                // eslint-disable-next-line react-hooks/rules-of-hooks
                 const globalStats = useQuery(api.siteData.getStats);
                 const finalStats = props.useGlobalStats ? (globalStats || []) : props.stats;
-                return <StatsCounter {...props} stats={finalStats as any} id={props.sectionId} />
-            }
-        },
-        ModernServices: {
-            fields: {
-                badgeText: { type: "text", contentEditable: true },
-                heading: { type: "text", contentEditable: true },
-                subheading: { type: "textarea", contentEditable: true },
-                useGlobalServices: { type: "radio", label: "Use Global Services", options: [{ label: "Yes", value: true }, { label: "No", value: false }] },
-                services: {
-                    type: "array",
-                    getItemSummary: (item: any) => item.title || "Service",
-                    arrayFields: {
-                        showMedia: sharedFields.showMedia,
-                        mediaType: sharedFields.mediaType,
-                        mediaIcon: sharedFields.mediaIcon,
-                        mediaImage: sharedFields.mediaImage,
-                        title: { type: "text", contentEditable: true },
-                        description: { type: "textarea", contentEditable: true },
-                        showButton: sharedFields.showButton,
-                        buttonText: sharedFields.buttonText,
-                        buttonLink: sharedFields.buttonLink,
-                    }
-                },
-                ...sharedFields
-            },
-            render: (props: any) => {
-                // eslint-disable-next-line react-hooks/rules-of-hooks
-                const globalServices = useQuery(api.siteData.getServices);
-                const finalServices = props.useGlobalServices ? (globalServices || []) : props.services;
-                return <ServicesGrid {...props} services={finalServices as any} id={props.sectionId} />;
+                return <ModernStats {...props} stats={finalStats as any} id={props.sectionId} />
             }
         },
         ModernTestimonials: {
@@ -430,10 +404,9 @@ export const config: Config = {
                             )
                         }
                     }
-                },
-                ...sharedFields
+                }
             },
-            render: (props: any) => <TestimonialSlider {...props} id={props.sectionId} />
+            render: (props: any) => <ModernTestimonials {...props} />
         },
         LogoMarquee: {
             fields: {

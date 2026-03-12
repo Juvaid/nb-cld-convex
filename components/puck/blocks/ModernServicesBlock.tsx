@@ -44,7 +44,6 @@ export const ModernServicesBlockConfig: ComponentConfig<ModernServicesBlockProps
             }
         },
         useGlobalServices: { type: "radio", label: "Use Global Services", options: [{ label: "Yes", value: true }, { label: "No", value: false }] },
-        useDesignSystem: { type: "radio", label: "Use Design System", options: [{ label: "Yes", value: true }, { label: "No", value: false }] },
         ...sharedFields
     },
     defaultProps: {

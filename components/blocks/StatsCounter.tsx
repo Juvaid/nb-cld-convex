@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { motion, useSpring, useTransform, useInView } from 'framer-motion';
-import { Typography } from '../ui/Typography';
+import { Section } from '@/components/ui/Section';
 
 export interface StatItem {
     value: string;
@@ -17,10 +17,9 @@ export interface StatsCounterProps {
     id?: string;
     heading?: string;
     stats?: StatItem[];
-    useDesignSystem?: boolean;
 }
 
-function AnimatedCounter({ target, label, stat, index, useDesignSystem }: { target: string, label: string, stat: StatItem, index: number, useDesignSystem?: boolean }) {
+function AnimatedCounter({ target, label, stat, index }: { target: string, label: string, stat: StatItem, index: number }) {
     const ref = useRef<HTMLDivElement>(null);
     const isInView = useInView(ref, { once: true, margin: "-100px" });
 
@@ -78,15 +77,9 @@ function AnimatedCounter({ target, label, stat, index, useDesignSystem }: { targ
                 <span className="text-2xl sm:text-3xl md:text-4xl opacity-80">{suffix}</span>
             </div>
 
-            {useDesignSystem ? (
-                <Typography variant="detail" color="slate-500" weight="bold" uppercase className="tracking-[0.2em] leading-tight max-w-[120px] mx-auto">
-                    {label}
-                </Typography>
-            ) : (
-                <div className="text-[10px] sm:text-[11px] font-bold text-slate-600 uppercase tracking-[0.2em] leading-tight max-w-[120px] mx-auto">
-                    {label}
-                </div>
-            )}
+            <div className="text-[10px] sm:text-[11px] font-bold text-slate-600 uppercase tracking-[0.2em] leading-tight max-w-[120px] mx-auto">
+                {label}
+            </div>
         </motion.div>
     );
 }
@@ -101,44 +94,28 @@ export default function StatsCounter({
         { value: '75+', label: 'Products by In-house R&D' },
         { value: '20+', label: 'Happy Clients' },
         { value: '750+', label: 'Tons Annual Capacity' },
-    ],
-    useDesignSystem = true
+    ]
 }: StatsCounterProps) {
-    const hasStats = stats && stats.length > 0;
-    const hasHeading = heading && heading.trim() !== "";
-
-    if (!hasStats && !hasHeading) return null;
-
     return (
-        <div id={id} className={`py-20 relative overflow-hidden ${useDesignSystem ? 'bg-white' : 'bg-slate-50'}`}>
+        <div id={id} className="py-20 bg-white relative overflow-hidden">
             {/* Subtle Gradient Backglow */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-nb-green/5 rounded-full blur-[160px] pointer-events-none opacity-50" />
 
             <div className="max-w-7xl mx-auto px-6 sm:px-8 relative z-10">
-                {hasHeading && (
+                {heading && (
                     <div className="text-center mb-16 max-w-2xl mx-auto">
-                        {useDesignSystem ? (
-                            <Typography variant="h2" color="slate-900" className="tracking-tight leading-tight">
-                                {heading}
-                            </Typography>
-                        ) : (
-                            <h2 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
-                                {heading}
-                            </h2>
-                        )}
+                        <h2 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+                            {heading}
+                        </h2>
                         <div className="w-20 h-1.5 bg-nb-green mx-auto mt-6 rounded-full opacity-20" />
                     </div>
                 )}
-                
-                {hasStats && (
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 sm:gap-8">
-                        {(stats || []).map((stat, i) => (
-                            <AnimatedCounter key={stat.label || i} target={stat.value} label={stat.label} stat={stat} index={i} useDesignSystem={useDesignSystem} />
-                        ))}
-                    </div>
-                )}
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 sm:gap-8">
+                    {(stats || []).map((stat, i) => (
+                        <AnimatedCounter key={stat.label || i} target={stat.value} label={stat.label} stat={stat} index={i} />
+                    ))}
+                </div>
             </div>
         </div>
     );
 }
-

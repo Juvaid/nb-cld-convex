@@ -1,10 +1,7 @@
-'use client';
-
-import { Palette, FlaskConical, BadgeCheck, Megaphone, ArrowRight, Factory, Users, Award, Target, LucideIcon } from 'lucide-react';
+import { Palette, FlaskConical, BadgeCheck, Megaphone, ArrowRight, LucideIcon } from 'lucide-react';
 import Link from 'next/link';
-import React, { useEffect, useRef } from 'react';
-import { motion, useSpring, useTransform, useInView } from 'framer-motion';
 import { Typography } from '../ui/Typography';
+import { motion } from 'framer-motion';
 
 export interface ServiceItem {
     showMedia?: boolean;
@@ -33,10 +30,6 @@ const iconMap: Record<string, LucideIcon> = {
     FlaskConical: FlaskConical,
     BadgeCheck: BadgeCheck,
     Megaphone: Megaphone,
-    Factory: Factory,
-    Users: Users,
-    Award: Award,
-    Target: Target,
 };
 
 export default function ServicesGrid({
@@ -90,49 +83,38 @@ export default function ServicesGrid({
             )}
             
             <div className="max-w-7xl mx-auto px-6 sm:px-8 relative z-10">
-                {(heading || subheading || badgeText) && (
-                    <div className="text-center mb-16 sm:mb-24">
-                        {badgeText && (
-                            <motion.div 
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                className={`inline-block px-5 py-2 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] leading-none mb-6 sm:mb-8 ${
-                                    useDesignSystem ? 'bg-nb-green/10 text-nb-green border border-nb-green/20' : 'bg-nb-green/5 text-nb-green'
-                                }`}
-                            >
-                                {badgeText}
-                            </motion.div>
-                        )}
-                        
-                        {useDesignSystem ? (
-                            <div className="space-y-6">
-                                {heading && (
-                                    <Typography variant="h1" className="text-slate-900 tracking-tight">
-                                        {heading}
-                                    </Typography>
-                                )}
-                                {subheading && (
-                                    <Typography variant="body" className="text-slate-500 max-w-2xl mx-auto font-medium opacity-80">
-                                        {subheading}
-                                    </Typography>
-                                )}
-                            </div>
-                        ) : (
-                            <>
-                                {heading && <h2 className="text-3xl sm:text-5xl md:text-6xl font-black text-slate-900 tracking-tight leading-[1.1]">{heading}</h2>}
-                                {subheading && (
-                                    <p className="text-base sm:text-xl text-slate-500 max-w-2xl mx-auto mt-4 sm:mt-6 font-medium opacity-80">
-                                        {subheading}
-                                    </p>
-                                )}
-                            </>
-                        )}
-                    </div>
-                )}
+                <div className="text-center mb-16 sm:mb-24">
+                    <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className={`inline-block px-5 py-2 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] leading-none mb-6 sm:mb-8 ${
+                            useDesignSystem ? 'bg-nb-green/10 text-nb-green border border-nb-green/20' : 'bg-nb-green/5 text-nb-green'
+                        }`}
+                    >
+                        {badgeText}
+                    </motion.div>
+                    
+                    {useDesignSystem ? (
+                        <div className="space-y-6">
+                            <Typography variant="h1" className="text-slate-900 tracking-tight">
+                                {heading}
+                            </Typography>
+                            <Typography variant="body" className="text-slate-500 max-w-2xl mx-auto font-medium opacity-80">
+                                {subheading}
+                            </Typography>
+                        </div>
+                    ) : (
+                        <>
+                            <h2 className="text-3xl sm:text-5xl md:text-6xl font-black text-slate-900 tracking-tight leading-[1.1]">{heading}</h2>
+                            <p className="text-base sm:text-xl text-slate-500 max-w-2xl mx-auto mt-4 sm:mt-6 font-medium opacity-80">
+                                {subheading}
+                            </p>
+                        </>
+                    )}
+                </div>
 
-                {services && services.length > 0 && (
-                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
                     {(services || []).map((service, i) => {
                         const IconComponent = service.mediaIcon ? (iconMap[service.mediaIcon] || null) : null;
                         return (
@@ -177,7 +159,7 @@ export default function ServicesGrid({
                                         <Typography variant="h4" className="text-slate-900 group-hover:text-nb-green transition-colors">
                                             {service.title}
                                         </Typography>
-                                        <Typography variant="body" className="text-slate-500 leading-relaxed font-medium">
+                                        <Typography variant="small" className="text-slate-500 leading-relaxed font-medium">
                                             {service.description}
                                         </Typography>
                                     </div>
@@ -210,9 +192,9 @@ export default function ServicesGrid({
                             </motion.div>
                         );
                     })}
-                    </div>
-                )}
+                </div>
             </div>
         </section>
     );
 }
+
