@@ -98,7 +98,7 @@ export const ProductCategoryCarouselBlock = ({ useDesignSystem = true, heading, 
     }
 
     return (
-        <section className="pt-8 pb-16 md:pt-12 md:pb-24 bg-white relative overflow-hidden">
+        <section className="pt-8 pb-8 md:pt-12 md:pb-12 bg-white relative overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header block */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-6 md:mb-8">
@@ -123,23 +123,6 @@ export const ProductCategoryCarouselBlock = ({ useDesignSystem = true, heading, 
                                 </p>
                             )
                         )}
-                    </div>
-                    {/* Desktop Navigation Arrows (positioned top right of header) */}
-                    <div className="hidden md:flex absolute bottom-6 right-0 gap-3">
-                        <button
-                            onClick={() => scroll("left")}
-                            className="w-10 h-10 rounded-xl border border-slate-200 bg-white shadow-sm flex items-center justify-center text-nb-green hover:bg-slate-50 transition-colors"
-                            aria-label="Scroll left"
-                        >
-                            <ChevronLeft className="w-5 h-5" />
-                        </button>
-                        <button
-                            onClick={() => scroll("right")}
-                            className="w-10 h-10 rounded-xl border border-slate-200 bg-white shadow-sm flex items-center justify-center text-nb-green hover:bg-slate-50 transition-colors"
-                            aria-label="Scroll right"
-                        >
-                            <ChevronRight className="w-5 h-5" />
-                        </button>
                     </div>
                 </div>
 
@@ -187,7 +170,7 @@ export const ProductCategoryCarouselBlock = ({ useDesignSystem = true, heading, 
                 </div>
 
                 {/* Pagination Dots */}
-                <div className="flex justify-center items-center gap-2 mt-6 md:mt-8">
+                <div className="flex justify-center items-center gap-1 mt-6 md:mt-8">
                     {categories.map((_, idx) => (
                         <button
                             key={idx}

@@ -138,9 +138,9 @@ export default function ServicesGrid({
                                 whileInView={{ opacity: 1, y: 0 }}
                                 transition={{ delay: i * 0.1 }}
                                 viewport={{ once: true }}
-                                className={`group relative rounded-[32px] sm:rounded-[40px] p-8 sm:p-10 transition-all duration-500 flex flex-col h-full ${
+                                className={`group relative rounded-[32px] sm:rounded-[40px] p-8 sm:p-10 transition-all duration-700 flex flex-col h-full transform-gpu ${
                                     useDesignSystem 
-                                    ? 'bg-white border border-slate-100 hover:border-nb-green/30 hover:shadow-[0_20px_50px_rgba(43,238,108,0.15)]' 
+                                    ? 'bg-white border border-slate-100/50 hover:border-nb-green/20 hover:shadow-[0_32px_64px_-16px_rgba(43,238,108,0.15)] hover:-translate-y-2' 
                                     : 'bg-white border border-slate-900/5 hover:-translate-y-4 hover:shadow-2xl hover:shadow-nb-green/15'
                                 }`}
                             >
@@ -171,7 +171,7 @@ export default function ServicesGrid({
                                 {useDesignSystem ? (
                                     <div className="space-y-4 flex-grow">
                                         {service.title && (
-                                            <Typography variant="section-title" color="slate-900">
+                                            <Typography variant="h3" color="slate-900" weight="black" className="leading-[1.1] group-hover:text-nb-green transition-colors duration-500">
                                                 {service.title}
                                             </Typography>
                                         )}
