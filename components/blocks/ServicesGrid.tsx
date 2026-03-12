@@ -75,7 +75,7 @@ export default function ServicesGrid({
     ]
 }: ServicesGridProps) {
     return (
-        <section id={id} className={`pt-4 pb-12 sm:pt-6 sm:pb-24 relative overflow-hidden ${useDesignSystem ? 'bg-white' : 'bg-slate-50'}`}>
+        <section id={id} className={`pt-0 pb-12 sm:pt-0 sm:pb-24 relative overflow-hidden ${useDesignSystem ? 'bg-white' : 'bg-slate-50'}`}>
             {useDesignSystem && (
                 <>
                     <div className="absolute top-0 left-1/4 w-96 h-96 bg-nb-green/5 rounded-full blur-[120px] -translate-y-1/2 pointer-events-none" />
@@ -83,7 +83,7 @@ export default function ServicesGrid({
                 </>
             )}
             
-            <div className="max-w-7xl mx-auto px-6 sm:px-8 relative z-10">
+            <div className="max-w-[1500px] mx-auto px-6 sm:px-8 relative z-10">
                 {(badgeText || heading || subheading) && (
                     <div className="text-center mb-8 sm:mb-10">
                         {badgeText && (

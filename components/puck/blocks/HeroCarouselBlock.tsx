@@ -124,14 +124,14 @@ export const HeroCarouselBlock = ({ useDesignSystem = true, autoPlay, interval, 
 
     return (
         <div className="w-full bg-transparent">
-            {/* Wrapper with side margins (no top/bottom padding to keep it flush vertically) */}
-            <div className="mx-auto max-w-[1600px] px-4 md:px-16 lg:px-20 relative">
+            {/* Wrapper with side margins (reduced for edge-to-edge feel) */}
+            <div className="mx-auto max-w-[1920px] px-0 md:px-4 lg:px-6 relative">
 
                 {/* Navigation Arrows Removed per User Request */}
 
 
-                {/* The card itself */}
-                <div className="relative w-full aspect-[4/3] md:aspect-[21/9] xl:aspect-[3/1] min-h-[320px] xl:min-h-[500px] rounded-2xl md:rounded-[2rem] overflow-hidden group shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] ring-1 ring-black/5">
+                {/* The card itself - adjusted aspect ratios for more panoramic feel */}
+                <div className="relative w-full aspect-[4/3] md:aspect-[21/8] xl:aspect-[25/8] min-h-[320px] xl:min-h-[450px] rounded-2xl md:rounded-[2.5rem] overflow-hidden group shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] ring-1 ring-black/5">
                     <AnimatePresence initial={false} custom={direction}>
                         <motion.div
                             key={activeIndex}
