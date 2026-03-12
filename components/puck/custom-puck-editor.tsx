@@ -10,6 +10,7 @@ import { useQuery, useMutation, useConvex } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { CustomSelect } from "@/components/ui/CustomSelect";
 import { Id } from "@/convex/_generated/dataModel";
+import { useAuth } from "@/lib/auth-context";
 
 interface Page {
     _id: Id<"pages">;
@@ -49,6 +50,7 @@ const ThemeSettings = () => {
     const themeData = useQuery(api.theme.getThemeSettings);
     const saveAll = useMutation(api.theme.saveAllThemeSettings);
     const reset = useMutation(api.theme.resetThemeSettings);
+    const { token } = useAuth();
     const [localTheme, setLocalTheme] = useState<ThemeData | null>(null);
     const [isSaving, setIsSaving] = useState(false);
 
@@ -80,7 +82,7 @@ const ThemeSettings = () => {
     const handleSave = async () => {
         setIsSaving(true);
         try {
-            await saveAll({ settings: localTheme });
+            await saveAll({ settings: localTheme, token: token ?? undefined });
         } catch (error) {
             console.error("Failed to save theme:", error);
         } finally {
@@ -90,7 +92,7 @@ const ThemeSettings = () => {
 
     const handleReset = async () => {
         if (confirm("Reset theme to defaults?")) {
-            await reset();
+            await reset({ token: token ?? undefined });
         }
     };
 

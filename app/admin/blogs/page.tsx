@@ -4,6 +4,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Plus, Search, PenTool, Loader2, Eye, Trash2, Globe, Lock } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "@/lib/auth-context";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -12,6 +13,7 @@ export default function BlogsAdmin() {
     const updateBlog = useMutation(api.blogs.updateBlog);
     const deleteBlog = useMutation(api.blogs.deleteBlog);
     const router = useRouter();
+    const { token } = useAuth();
 
     const [searchQuery, setSearchQuery] = useState("");
     const [isProcessing, setIsProcessing] = useState<string | null>(null);
@@ -26,7 +28,8 @@ export default function BlogsAdmin() {
         try {
             await updateBlog({
                 id: blog._id,
-                status: newStatus
+                status: newStatus,
+                token: token ?? undefined
             });
         } catch (error) {
             console.error("Failed to toggle blog status:", error);
@@ -39,7 +42,7 @@ export default function BlogsAdmin() {
         if (!confirm("Are you sure you want to delete this post? This action cannot be undone.")) return;
         setIsProcessing(id);
         try {
-            await deleteBlog({ id });
+            await deleteBlog({ id, token: token ?? undefined });
         } catch (error) {
             console.error("Failed to delete blog:", error);
         } finally {

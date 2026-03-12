@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
+import { validateAdmin } from "./auth_utils";
 
 // Theme queries and mutations
 
@@ -83,8 +84,10 @@ export const saveThemeSetting = mutation({
   args: {
     key: v.string(),
     value: v.any(),
+    token: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    await validateAdmin(ctx, args.token, "saveThemeSetting");
     const existing = await ctx.db
       .query("themeSettings")
       .withIndex("by_key", (q) => q.eq("key", args.key))
@@ -106,8 +109,10 @@ export const saveThemeSetting = mutation({
 export const saveAllThemeSettings = mutation({
   args: {
     settings: v.any(),
+    token: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    await validateAdmin(ctx, args.token, "saveAllThemeSettings");
     const flattenObject = (obj: any, prefix = "") => {
       const entries: { key: string; value: any }[] = [];
       for (const [key, value] of Object.entries(obj)) {
@@ -139,7 +144,9 @@ export const saveAllThemeSettings = mutation({
 });
 
 export const resetThemeSettings = mutation({
-  handler: async (ctx) => {
+  args: { token: v.optional(v.string()) },
+  handler: async (ctx, args) => {
+    await validateAdmin(ctx, args.token, "resetThemeSettings");
     const settings = await ctx.db.query("themeSettings").collect();
 
     for (const setting of settings) {
@@ -188,8 +195,10 @@ export const createThemeSnapshot = mutation({
     siteSettings: v.optional(v.any()), // Optional for backward compatibility/flexibility
     image: v.optional(v.string()), // Storage ID for thumbnail
     isPreset: v.optional(v.boolean()), // Flag for official gallery themes
+    token: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    await validateAdmin(ctx, args.token, "createThemeSnapshot");
     await ctx.db.insert("themeSnapshots", {
       name: args.name,
       theme: args.theme,
@@ -216,8 +225,9 @@ export const listThemeSnapshots = query({
 });
 
 export const deleteThemeSnapshot = mutation({
-  args: { id: v.id("themeSnapshots") },
+  args: { id: v.id("themeSnapshots"), token: v.optional(v.string()) },
   handler: async (ctx, args) => {
+    await validateAdmin(ctx, args.token, "deleteThemeSnapshot");
     await ctx.db.delete(args.id);
   },
 });
@@ -226,8 +236,10 @@ export const restoreThemeSnapshot = mutation({
   args: {
     theme: v.any(),
     siteSettings: v.optional(v.any()),
+    token: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    await validateAdmin(ctx, args.token, "restoreThemeSnapshot");
     // 1. Restore Theme Settings
     const themeEntries = flattenObject(args.theme);
     for (const { key, value } of themeEntries) {

@@ -5,8 +5,10 @@ import { api } from "@/convex/_generated/api";
 import { Mail, Search, Loader2, Eye, Trash2, CheckCircle2, MessageSquare, Clock, Copy, Check, Phone, Filter, Calendar, Tag, ChevronDown, Download } from "lucide-react";
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import { useAuth } from "@/lib/auth-context";
 
 export default function InquiriesAdmin() {
+    const { token } = useAuth();
     const inquiries = useQuery(api.inquiries.list);
     const updateStatus = useMutation(api.inquiries.updateStatus);
     const deleteInquiry = useMutation(api.inquiries.deleteInquiry);
@@ -88,7 +90,7 @@ export default function InquiriesAdmin() {
 
     const handleStatusUpdate = async (id: any, status: "new" | "read" | "replied") => {
         try {
-            await updateStatus({ id, status });
+            await updateStatus({ id, status, token: token ?? undefined });
             setIsStatusOpen(false); // Close menu after update
         } catch (error) {
             console.error("Failed to update status:", error);
@@ -98,7 +100,7 @@ export default function InquiriesAdmin() {
     const handleDelete = async (id: any) => {
         if (confirm("Are you sure you want to delete this inquiry?")) {
             try {
-                await deleteInquiry({ id });
+                await deleteInquiry({ id, token: token ?? undefined });
                 if (selectedId === id) setSelectedId(null);
             } catch (error) {
                 console.error("Failed to delete inquiry:", error);

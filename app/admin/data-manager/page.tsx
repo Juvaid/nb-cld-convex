@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Download, Upload, ShieldCheck, AlertTriangle, CheckCircle2, Loader2, Database } from "lucide-react";
+import { useAuth } from "@/lib/auth-context";
 
 type ImportResult = {
     success?: boolean;
@@ -16,6 +17,7 @@ type ImportResult = {
 };
 
 export default function DataManagerPage() {
+    const { token } = useAuth();
     const [importing, setImporting] = useState(false);
     const [exporting, setExporting] = useState(false);
     const [importResult, setImportResult] = useState<ImportResult | null>(null);
@@ -25,7 +27,11 @@ export default function DataManagerPage() {
     const handleExport = async () => {
         setExporting(true);
         try {
-            const res = await fetch("/api/data/export");
+            const res = await fetch("/api/data/export", {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
             if (!res.ok) throw new Error("Export failed");
             const blob = await res.blob();
             const url = URL.createObjectURL(blob);
@@ -54,6 +60,9 @@ export default function DataManagerPage() {
             const res = await fetch("/api/data/import", {
                 method: "POST",
                 body: formData,
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
             });
             const data = await res.json();
             setImportResult(data);

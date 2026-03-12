@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { query, mutation, internalQuery } from "./_generated/server";
 import { internal } from "./_generated/api";
+import { validateAdmin } from "./auth_utils";
 
 // Mutation to submit a new inquiry
 export const submit = mutation({
@@ -98,16 +99,22 @@ export const updateStatus = mutation({
     args: {
         id: v.id("inquiries"),
         status: v.union(v.literal("new"), v.literal("read"), v.literal("replied")),
+        token: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
+        await validateAdmin(ctx, args.token, "updateInquiryStatus");
         await ctx.db.patch(args.id, { status: args.status });
     },
 });
 
 // Mutation to delete an inquiry
 export const deleteInquiry = mutation({
-    args: { id: v.id("inquiries") },
+    args: {
+        id: v.id("inquiries"),
+        token: v.optional(v.string()),
+    },
     handler: async (ctx, args) => {
+        await validateAdmin(ctx, args.token, "deleteInquiry");
         await ctx.db.delete(args.id);
     },
 });

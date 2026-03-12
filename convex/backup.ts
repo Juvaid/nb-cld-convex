@@ -1,12 +1,15 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { validateAdmin } from "./auth_utils";
 
 /**
  * Export all non-sensitive site data for backup/migration purposes.
  * Excludes: users, sessions, rate_limits, inquiries (sensitive / env-specific)
  */
 export const exportAll = query({
-    handler: async (ctx) => {
+    args: { token: v.optional(v.string()) },
+    handler: async (ctx, args) => {
+        await validateAdmin(ctx, args.token, "exportAll");
         const [
             siteSettings,
             themeSettings,
@@ -64,8 +67,10 @@ export const importAll = mutation({
     args: {
         backup: v.any(),
         dryRun: v.optional(v.boolean()),
+        token: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
+        await validateAdmin(ctx, args.token, "importAll");
         const { backup, dryRun = false } = args;
 
         if (!backup?.data || !backup?.version) {

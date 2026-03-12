@@ -7,6 +7,9 @@ import { api } from "../../../../convex/_generated/api";
 // Body: multipart/form-data with field "backup" containing the JSON file
 // Or JSON body: { "backup": { ... }, "dryRun": true }
 export async function POST(request: NextRequest) {
+    const authHeader = request.headers.get("Authorization");
+    const token = authHeader?.replace("Bearer ", "");
+
     const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
     if (!convexUrl) {
         return NextResponse.json({ error: "NEXT_PUBLIC_CONVEX_URL not set" }, { status: 500 });
@@ -40,7 +43,7 @@ export async function POST(request: NextRequest) {
         }
 
         const client = new ConvexHttpClient(convexUrl);
-        const result = await client.mutation(api.backup.importAll, { backup, dryRun });
+        const result = await client.mutation(api.backup.importAll, { backup, dryRun, token });
 
         return NextResponse.json({
             success: true,

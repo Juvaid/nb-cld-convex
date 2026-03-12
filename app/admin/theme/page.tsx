@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useState, useEffect } from "react";
+import { useAuth } from "@/lib/auth-context";
 import {
     Loader2, Save, Undo, Clock, RotateCcw, Layout,
     Star, FileText, Download, Bookmark, Sparkles,
@@ -77,6 +78,7 @@ export default function ThemePage() {
     const [localTheme, setLocalTheme] = useState<any>(theme);
     const [isSaving, setIsSaving] = useState(false);
     const [isDoomed, setIsDoomed] = useState(false);
+    const { token } = useAuth();
 
     // Snapshots State
     const snapshots = useQuery(api.theme.listThemeSnapshots, {});
@@ -120,7 +122,7 @@ export default function ThemePage() {
     const handleSaveAll = async () => {
         setIsSaving(true);
         try {
-            await saveAll({ settings: localTheme });
+            await saveAll({ settings: localTheme, token: token ?? undefined });
         } catch (error) {
             console.error(error);
             alert("Failed to save design settings");
@@ -133,7 +135,7 @@ export default function ThemePage() {
         if (!confirm("Are you sure you want to reset to default brand styles?")) return;
         setIsDoomed(true);
         try {
-            await reset();
+            await reset({ token: token ?? undefined });
         } finally {
             setIsDoomed(false);
         }
@@ -147,7 +149,8 @@ export default function ThemePage() {
                 name: snapshotName,
                 theme: localTheme,
                 isPreset: false,
-                siteSettings: {} // We only care about theme here
+                siteSettings: {}, // We only care about theme here
+                token: token ?? undefined
             });
             setSnapshotName("");
         } catch (err) {
@@ -164,13 +167,24 @@ export default function ThemePage() {
         try {
             await restoreSnapshot({
                 theme: snapshot.theme,
-                siteSettings: snapshot.siteSettings || {}
+                siteSettings: snapshot.siteSettings || {},
+                token: token ?? undefined
             });
             window.location.reload();
         } catch (err) {
             console.error(err);
             alert("Failed to restore snapshot");
             setRestoringId(null);
+        }
+    };
+
+    const handleDeleteSnapshot = async (id: any) => {
+        if (!confirm("Are you sure you want to delete this snapshot?")) return;
+        try {
+            await deleteSnapshot({ id, token: token ?? undefined });
+        } catch (err) {
+            console.error(err);
+            alert("Failed to delete snapshot");
         }
     };
 
@@ -544,7 +558,7 @@ export default function ThemePage() {
                                                     {restoringId === snap._id ? <Loader2 className="w-3 h-3 animate-spin" /> : <RotateCcw size={14} />}
                                                 </button>
                                                 <button
-                                                    onClick={() => deleteSnapshot({ id: snap._id })}
+                                                    onClick={() => handleDeleteSnapshot(snap._id)}
                                                     className="p-1.5 text-slate-400 hover:text-rose-500 bg-slate-50 rounded-lg"
                                                     title="Delete"
                                                 >

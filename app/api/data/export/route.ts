@@ -4,7 +4,10 @@ import { api } from "../../../../convex/_generated/api";
 
 // Export all site data as a downloadable JSON backup
 // GET http://localhost:3000/api/data/export
-export async function GET() {
+export async function GET(request: Request) {
+    const authHeader = request.headers.get("Authorization");
+    const token = authHeader?.replace("Bearer ", "");
+
     const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
     if (!convexUrl) {
         return NextResponse.json({ error: "NEXT_PUBLIC_CONVEX_URL not set" }, { status: 500 });
@@ -12,7 +15,7 @@ export async function GET() {
 
     try {
         const client = new ConvexHttpClient(convexUrl);
-        const backup = await client.query(api.backup.exportAll, {});
+        const backup = await client.query(api.backup.exportAll, { token });
 
         const filename = `nb-backup-${new Date().toISOString().slice(0, 10)}.json`;
         const json = JSON.stringify(backup, null, 2);

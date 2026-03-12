@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { ChevronDown, ChevronRight, RotateCcw, Check, Loader2 } from "lucide-react";
+import { useAuth } from "@/lib/auth-context";
 
 const defaultTheme = {
   colors: {
@@ -183,6 +184,7 @@ export function ThemeSettings() {
   const themeData = useQuery(api.theme.getThemeSettings);
   const saveAll = useMutation(api.theme.saveAllThemeSettings);
   const reset = useMutation(api.theme.resetThemeSettings);
+  const { token } = useAuth();
 
   const [settings, setSettings] = useState<typeof defaultTheme>(defaultTheme);
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
@@ -213,7 +215,7 @@ export function ThemeSettings() {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      await saveAll({ settings });
+      await saveAll({ settings, token: token ?? undefined });
       setLastSaved(new Date());
     } catch (error) {
       console.error("Failed to save theme settings:", error);
@@ -224,7 +226,7 @@ export function ThemeSettings() {
 
   const handleReset = async () => {
     if (confirm("Are you sure you want to reset all theme settings to defaults?")) {
-      await reset();
+      await reset({ token: token ?? undefined });
       setSettings(defaultTheme);
     }
   };

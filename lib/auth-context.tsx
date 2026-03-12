@@ -30,6 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     user: null,
                     login: async () => { },
                     logout: async () => { },
+                    token: null,
                     isLoading: true,
                 }}
             >

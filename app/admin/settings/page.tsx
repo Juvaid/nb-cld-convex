@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useState, useEffect } from "react";
+import { useAuth } from "@/lib/auth-context";
 import {
     Loader2, Save, Undo, Clock, RotateCcw, Layout,
     Star, FileText, Download, Bookmark, Sparkles,
@@ -24,6 +25,7 @@ export default function SettingsPage() {
     const [localTheme, setLocalTheme] = useState<any>(theme);
     const [isSaving, setIsSaving] = useState(false);
     const [isDoomed, setIsDoomed] = useState(false);
+    const { token } = useAuth();
 
     // Site Settings State
     const siteSettings = useQuery(api.siteSettings.getSiteSettings);
@@ -117,19 +119,19 @@ export default function SettingsPage() {
             await Promise.all([
                 // We don't save theme here anymore to avoid overwriting designer changes
                 // saveAll({ settings: updatedTheme }),
-                updateSiteSetting({ key: "logoText", value: logoText }),
-                updateSiteSetting({ key: "logoImage", value: logoImage }),
-                updateSiteSetting({ key: "siteTitle", value: siteTitle }),
-                updateSiteSetting({ key: "faviconUrl", value: faviconUrl }),
-                updateSiteSetting({ key: "contactText", value: contactText }),
-                updateSiteSetting({ key: "footerDescription", value: footerDescription }),
-                updateSiteSetting({ key: "footerCopyrightText", value: footerCopyrightText }),
-                updateSiteSetting({ key: "navLinks", value: navLinks }),
-                updateSiteSetting({ key: "socialLinks", value: socialLinks }),
-                updateSiteSetting({ key: "discord_webhook_url", value: discordWebhookUrl }),
-                updateSiteSetting({ key: "whatsapp_api_key", value: whatsappApiKey }),
-                updateSiteSetting({ key: "whatsapp_phone", value: whatsappPhone }),
-                updateSiteSetting({ key: "floating_widget", value: floatingWidget }),
+                updateSiteSetting({ key: "logoText", value: logoText, token: token ?? undefined }),
+                updateSiteSetting({ key: "logoImage", value: logoImage, token: token ?? undefined }),
+                updateSiteSetting({ key: "siteTitle", value: siteTitle, token: token ?? undefined }),
+                updateSiteSetting({ key: "faviconUrl", value: faviconUrl, token: token ?? undefined }),
+                updateSiteSetting({ key: "contactText", value: contactText, token: token ?? undefined }),
+                updateSiteSetting({ key: "footerDescription", value: footerDescription, token: token ?? undefined }),
+                updateSiteSetting({ key: "footerCopyrightText", value: footerCopyrightText, token: token ?? undefined }),
+                updateSiteSetting({ key: "navLinks", value: navLinks, token: token ?? undefined }),
+                updateSiteSetting({ key: "socialLinks", value: socialLinks, token: token ?? undefined }),
+                updateSiteSetting({ key: "discord_webhook_url", value: discordWebhookUrl, token: token ?? undefined }),
+                updateSiteSetting({ key: "whatsapp_api_key", value: whatsappApiKey, token: token ?? undefined }),
+                updateSiteSetting({ key: "whatsapp_phone", value: whatsappPhone, token: token ?? undefined }),
+                updateSiteSetting({ key: "floating_widget", value: floatingWidget, token: token ?? undefined }),
             ]);
 
             // Clear cache so metadata (favicon, title) updates immediately
@@ -148,7 +150,7 @@ export default function SettingsPage() {
         if (!confirm("Are you sure you want to reset to default theme?")) return;
         setIsDoomed(true);
         try {
-            await reset();
+            await reset({ token: token ?? undefined });
         } finally {
             setIsDoomed(false);
         }
@@ -198,8 +200,9 @@ export default function SettingsPage() {
                     footerDescription,
                     footerCopyrightText,
                     navLinks,
-                    socialLinks
-                }
+                    socialLinks,
+                },
+                token: token ?? undefined
             });
             setSnapshotName("");
         } catch (err) {
@@ -216,7 +219,8 @@ export default function SettingsPage() {
         try {
             await restoreSnapshot({
                 theme: snapshot.theme,
-                siteSettings: snapshot.siteSettings
+                siteSettings: snapshot.siteSettings,
+                token: token ?? undefined
             });
             window.location.reload();
         } catch (err) {
@@ -360,7 +364,7 @@ export default function SettingsPage() {
                                                     <RotateCcw size={12} />
                                                 </button>
                                                 <button
-                                                    onClick={() => deleteSnapshot({ id: snap._id })}
+                                                    onClick={() => deleteSnapshot({ id: snap._id, token: token ?? undefined })}
                                                     className="p-1 text-slate-300 hover:text-red-400"
                                                     title="Delete"
                                                 >

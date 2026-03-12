@@ -75,8 +75,9 @@ export const remove = mutation({
 
 // Bulk delete multiple items by ID
 export const removeMany = mutation({
-    args: { ids: v.array(v.id("media")) },
+    args: { ids: v.array(v.id("media")), token: v.optional(v.string()) },
     handler: async (ctx, args) => {
+        await validateAdmin(ctx, args.token, "removeMediaMany");
         await Promise.all(
             args.ids.map(async (id) => {
                 const item = await ctx.db.get(id);
@@ -94,16 +95,18 @@ export const removeMany = mutation({
 
 // Update the folder tag on a single media item
 export const patchFolder = mutation({
-    args: { id: v.id("media"), folder: v.optional(v.string()) },
+    args: { id: v.id("media"), folder: v.optional(v.string()), token: v.optional(v.string()) },
     handler: async (ctx, args) => {
+        await validateAdmin(ctx, args.token, "patchMediaFolder");
         await ctx.db.patch(args.id, { folder: args.folder });
     },
 });
 
 // Bulk move items to a folder
 export const moveManyToFolder = mutation({
-    args: { ids: v.array(v.id("media")), folder: v.optional(v.string()) },
+    args: { ids: v.array(v.id("media")), folder: v.optional(v.string()), token: v.optional(v.string()) },
     handler: async (ctx, args) => {
+        await validateAdmin(ctx, args.token, "moveMediaManyToFolder");
         await Promise.all(args.ids.map((id) => ctx.db.patch(id, { folder: args.folder })));
         return { moved: args.ids.length };
     },

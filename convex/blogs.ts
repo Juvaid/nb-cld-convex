@@ -1,5 +1,6 @@
-import { query } from "./_generated/server";
+import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { validateAdmin } from "./auth_utils";
 
 export const listAll = query({
     args: {},
@@ -59,15 +60,17 @@ const defaultBlogContent = (title: string) => JSON.stringify({
     root: { props: { title: title } }
 });
 
-import { mutation } from "./_generated/server";
+
 
 export const createDraft = mutation({
     args: {
         title: v.string(),
         slug: v.string(),
         author: v.optional(v.string()),
+        token: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
+        await validateAdmin(ctx, args.token, "createBlogDraft");
         const blogId = await ctx.db.insert("blogs", {
             title: args.title,
             slug: args.slug,
@@ -89,9 +92,11 @@ export const updateBlog = mutation({
         status: v.optional(v.union(v.literal("draft"), v.literal("published"))),
         coverImage: v.optional(v.string()),
         excerpt: v.optional(v.string()),
+        token: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
-        const { id, ...updates } = args;
+        await validateAdmin(ctx, args.token, "updateBlog");
+        const { id, token, ...updates } = args;
         const now = Date.now();
         const patch: any = { ...updates };
 
@@ -104,8 +109,9 @@ export const updateBlog = mutation({
 });
 
 export const deleteBlog = mutation({
-    args: { id: v.id("blogs") },
+    args: { id: v.id("blogs"), token: v.optional(v.string()) },
     handler: async (ctx, args) => {
+        await validateAdmin(ctx, args.token, "deleteBlog");
         await ctx.db.delete(args.id);
     },
 });

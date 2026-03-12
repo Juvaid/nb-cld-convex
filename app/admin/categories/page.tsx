@@ -3,6 +3,7 @@
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useState } from "react";
+import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/Button";
 import { Typography } from "@/components/ui/Typography";
 import { Flex } from "@/components/ui/Flex";
@@ -15,6 +16,7 @@ export default function CategoriesPage() {
     const createCategory = useMutation(api.categories.create);
     const updateCategory = useMutation(api.categories.patch);
     const deleteCategory = useMutation(api.categories.remove);
+    const { token } = useAuth();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingCategory, setEditingCategory] = useState<any>(null);
@@ -42,10 +44,11 @@ export default function CategoriesPage() {
                 await updateCategory({
                     id: editingCategory._id,
                     ...formData,
+                    token: token ?? undefined,
                 });
                 alert("Category updated successfully");
             } else {
-                await createCategory(formData);
+                await createCategory({ ...formData, token: token ?? undefined });
                 alert("Category created successfully");
             }
             setIsModalOpen(false);
@@ -59,7 +62,7 @@ export default function CategoriesPage() {
     const handleDelete = async (id: any) => {
         if (confirm("Are you sure you want to delete this category?")) {
             try {
-                await deleteCategory({ id });
+                await deleteCategory({ id, token: token ?? undefined });
                 alert("Category deleted");
             } catch (error) {
                 alert("Error deleting category");

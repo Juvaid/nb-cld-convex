@@ -201,6 +201,9 @@ export function EditorClient({ path }: EditorClientProps) {
         saveTimeoutRef.current = setTimeout(async () => {
             const currentPage = pages?.find(p => p.path === path);
             try {
+                await savePage({
+                    path,
+                    title: pages?.find(p => p.path === path)?.title || "Untitled Page",
                     draftData: JSON.stringify(newData),
                     status: currentPage?.status || "draft",
                     token: token ?? undefined,
@@ -219,6 +222,8 @@ export function EditorClient({ path }: EditorClientProps) {
         setSaveStatus("saving");
         try {
             // First ensure the latest draft is fully saved
+            await savePage({
+                path,
                 title: pages?.find(p => p.path === path)?.title || "Untitled Page",
                 draftData: JSON.stringify(newData),
                 status: "draft",
