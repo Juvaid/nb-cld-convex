@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { useAuth } from "@/lib/auth-context";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Plus, Loader2 } from "lucide-react";
 import Link from "next/link";
 
 export default function NewBlogPage() {
     const router = useRouter();
+    const { token } = useAuth();
     const createDraft = useMutation(api.blogs.createDraft);
     const [isCreating, setIsCreating] = useState(false);
     const [title, setTitle] = useState("");
@@ -36,6 +38,7 @@ export default function NewBlogPage() {
             const blogId = await createDraft({
                 title,
                 slug,
+                token: token ?? undefined,
             });
             router.push(`/admin/blogs/${blogId}`);
         } catch (error) {

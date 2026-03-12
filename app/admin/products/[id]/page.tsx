@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { useAuth } from "@/lib/auth-context";
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/Button";
 import { Typography } from "@/components/ui/Typography";
@@ -25,9 +26,11 @@ import { MediaPickerModal } from "@/components/admin/MediaPickerModal";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
+import { ConvexError } from "convex/values";
 
 export default function ProductEditorPage() {
     const { id } = useParams() as { id: string };
+    const { token } = useAuth();
     const router = useRouter();
     const isNew = id === "new";
 
@@ -136,16 +139,17 @@ export default function ProductEditorPage() {
         setIsSaving(true);
         try {
             if (isNew) {
-                const newId = await createProduct(formData);
+                const newId = await createProduct({ ...formData, token: token ?? undefined });
                 setHasUnsavedChanges(false);
                 router.push(`/admin/products/${newId}`);
             } else {
-                await updateProduct({ id: id as any, ...formData });
+                await updateProduct({ id: id as any, ...formData, token: token ?? undefined });
                 setHasUnsavedChanges(false);
             }
         } catch (error) {
             console.error(error);
-            alert("Error saving product. Please check the console.");
+            const message = error instanceof ConvexError ? (error.data as { message: string }).message || error.data : "Error saving product. Please check the console.";
+            alert(message);
         } finally {
             setIsSaving(false);
         }
@@ -154,10 +158,11 @@ export default function ProductEditorPage() {
     const handleDelete = async () => {
         if (confirm("Are you sure you want to delete this product?")) {
             try {
-                await deleteProduct({ id: id as any });
+                await deleteProduct({ id: id as any, token: token ?? undefined });
                 router.push("/admin/products");
             } catch (error) {
-                alert("Error deleting product.");
+                const message = error instanceof ConvexError ? (error.data as { message: string }).message || error.data : "Error deleting product.";
+                alert(message);
             }
         }
     };

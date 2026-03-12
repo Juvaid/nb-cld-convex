@@ -3,6 +3,7 @@
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useEffect, useState, useCallback, useRef } from "react";
+import { useAuth } from "@/lib/auth-context";
 import { useRouter } from "next/navigation";
 import { Loader2, ArrowLeft, Save, Globe, Settings, X, Image as ImageIcon } from "lucide-react";
 import { Id } from "@/convex/_generated/dataModel";
@@ -15,6 +16,7 @@ interface BlogEditorClientProps {
 
 export function BlogEditorClient({ id }: BlogEditorClientProps) {
     const router = useRouter();
+    const { token } = useAuth();
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [loadedId, setLoadedId] = useState<string | null>(null);
@@ -73,6 +75,7 @@ export function BlogEditorClient({ id }: BlogEditorClientProps) {
                     id,
                     title: newTitle,
                     content: newContent,
+                    token: token ?? undefined,
                 });
                 setSaveStatus("saved");
             } catch (error) {
@@ -102,6 +105,7 @@ export function BlogEditorClient({ id }: BlogEditorClientProps) {
                 title,
                 content,
                 status: "published",
+                token: token ?? undefined,
             });
             setSaveStatus("saved");
         } catch (error) {
@@ -118,6 +122,7 @@ export function BlogEditorClient({ id }: BlogEditorClientProps) {
                 author,
                 excerpt,
                 coverImage,
+                token: token ?? undefined,
             });
             setSaveStatus("saved");
             setIsSettingsOpen(false);
