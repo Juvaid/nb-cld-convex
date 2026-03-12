@@ -83,9 +83,9 @@ export default function ServicesGrid({
                 </>
             )}
             
-            <div className="max-w-[1500px] mx-auto px-6 sm:px-8 relative z-10">
+            <div className="max-w-full mx-auto px-6 sm:px-8 relative z-10">
                 {(badgeText || heading || subheading) && (
-                    <div className="text-center mb-8 sm:mb-10">
+                    <div className="text-center mb-4 sm:mb-6">
                         {badgeText && (
                             <motion.div 
                                 initial={{ opacity: 0, y: 20 }}

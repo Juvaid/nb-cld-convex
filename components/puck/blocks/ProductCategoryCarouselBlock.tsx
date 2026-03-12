@@ -98,10 +98,10 @@ export const ProductCategoryCarouselBlock = ({ useDesignSystem = true, heading, 
     }
 
     return (
-        <section className="pt-0 pb-0 md:pt-0 md:pb-0 bg-white relative overflow-hidden">
-            <div className="max-w-[1500px] mx-auto px-4 md:px-6 lg:px-8">
-                {/* Header block */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-6 md:mb-8">
+        <section className="pt-0 pb-0 md:pt-0 md:pb-0 bg-white relative overflow-hidden w-full">
+            <div className="max-w-full mx-auto px-4 md:px-6">
+                {/* Header block - minimized margin */}
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-3 md:mb-4">
                     <div className="max-w-2xl">
                         {useDesignSystem ? (
                             <Typography variant="section-title" color="slate-900" className="mb-2">
@@ -131,7 +131,7 @@ export const ProductCategoryCarouselBlock = ({ useDesignSystem = true, heading, 
                     <div
                         ref={scrollContainerRef}
                         onScroll={handleScroll}
-                        className="flex overflow-x-auto gap-4 md:gap-6 pb-8 snap-x snap-mandatory hide-scrollbar"
+                        className="flex overflow-x-auto gap-4 md:gap-6 pb-4 snap-x snap-mandatory hide-scrollbar"
                     >
                         {categories.map((category, idx) => (
                                 <Link
@@ -169,8 +169,8 @@ export const ProductCategoryCarouselBlock = ({ useDesignSystem = true, heading, 
                     `}} />
                 </div>
 
-                {/* Pagination Dots - tighter top margin */}
-                <div className="flex justify-center items-center gap-1 mt-2 md:mt-3">
+                {/* Pagination Dots - minimized top margin */}
+                <div className="flex justify-center items-center gap-1 mt-2 md:mt-2">
                     {categories.map((_, idx) => (
                         <button
                             key={idx}
