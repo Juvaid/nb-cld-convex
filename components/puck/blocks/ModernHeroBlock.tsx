@@ -1,8 +1,6 @@
 import { ComponentConfig } from "@puckeditor/core";
 import ModernHero from "../../blocks/Hero";
 import { ImagePicker } from "@/components/ImagePicker";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
 import { sharedFields, SharedFieldProps } from "../fields/shared";
 
 export interface ModernHeroBlockProps extends SharedFieldProps {
@@ -25,6 +23,7 @@ export interface ModernHeroBlockProps extends SharedFieldProps {
     }[];
     useGlobalStats?: boolean;
     alignment?: "left" | "center" | "right";
+    initialData?: any;
 }
 
 export const ModernHeroBlockConfig: ComponentConfig<ModernHeroBlockProps> = {
@@ -75,8 +74,8 @@ export const ModernHeroBlockConfig: ComponentConfig<ModernHeroBlockProps> = {
         useDesignSystem: true
     },
     render: (props) => {
-        const globalStats = useQuery(api.siteData.getStats);
-        const finalStats = props.useGlobalStats ? (globalStats || []) : props.stats;
+        const globalStats = props.initialData?.globalStats;
+        const finalStats = props.useGlobalStats ? (globalStats || props.stats || []) : props.stats;
         return <ModernHero {...props} stats={finalStats as any} id={props.sectionId} />;
     }
 };

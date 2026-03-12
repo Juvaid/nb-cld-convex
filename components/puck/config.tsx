@@ -59,8 +59,7 @@ import ModernStats from '../blocks/StatsCounter';
 import ModernTestimonials from '../blocks/TestimonialSlider';
 import ProductCard from "../blocks/ProductCard";
 import { ProductSelector } from "./ProductSelector";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
+
 import { Footer } from "./blocks/Footer";
 import { Section } from "../ui/Section";
 import LogoMarquee from '../blocks/LogoMarquee';
@@ -363,8 +362,8 @@ export const config: Config = {
                 ...sharedFields
             },
             render: (props: any) => {
-                const globalStats = useQuery(api.siteData.getStats);
-                const finalStats = props.useGlobalStats ? (globalStats || []) : props.stats;
+                const globalStats = props.initialData?.globalStats;
+                const finalStats = props.useGlobalStats ? (globalStats || props.stats || []) : props.stats;
                 return <ModernStats {...props} stats={finalStats as any} id={props.sectionId} />
             }
         },

@@ -24,11 +24,15 @@ export async function CmsPageRenderer({ path, fallbackData, useDynamicData }: Cm
     let initialDbCategories = null;
     let initialDbProducts = null;
     let siteSettings = null;
+    let globalStats = null;
     let lcpImage: { src: string; alt: string } | null = null;
 
     try {
         initialPageData = await convex.query(api.pages.getPublishedPage, { path });
         siteSettings = await convex.query(api.siteSettings.getSiteSettings);
+
+        // Fetch global stats for ModernStats / ModernHero blocks (SSR-safe)
+        globalStats = await convex.query(api.siteData.getStats);
 
         // If this page contains the ProductBrowser (like /products), pre-fetch the catalog data for SEO
         if (useDynamicData || path === "/products" || initialPageData?.data?.includes('"ProductBrowser"')) {
@@ -96,7 +100,8 @@ export async function CmsPageRenderer({ path, fallbackData, useDynamicData }: Cm
                 initialPageData={{
                     ...initialPageData,
                     initialDbCategories,
-                    initialDbProducts
+                    initialDbProducts,
+                    globalStats,
                 }}
             />
         </>
