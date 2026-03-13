@@ -40,10 +40,11 @@ export const Footer = ({
     const logoText = siteSettings?.logoText ?? propLogoText ?? "Nature's Boon";
     const logoImage = siteSettings?.logoImage ?? propLogoImage;
     const description = siteSettings?.footerDescription ?? propDescription ?? "A global leader in personal care manufacturing, specializing in OEM, Private Label, and innovative R&D solutions.";
-    const copyrightText = siteSettings?.footerCopyrightText ?? propCopyrightText ?? `© ${new Date().getFullYear()} NatureBoon. All rights reserved.`;
+    const copyrightText = siteSettings?.footerCopyrightText ?? propCopyrightText ?? `© ${new Date().getFullYear()} Nature's Boon. All rights reserved.`;
     const socialLinks = siteSettings?.socialLinks ?? propSocialLinks ?? [
-        { platform: "linkedin", href: "#" },
-        { platform: "instagram", href: "#" }
+        { platform: "linkedin", href: "https://www.linkedin.com/company/naturesboon" },
+        { platform: "facebook", href: "https://www.facebook.com/naturesboon" },
+        { platform: "instagram", href: "https://www.instagram.com/natures_boon" }
     ];
 
     const subTextColor = textColor.includes('text-white') ? 'text-white/60' : 'text-slate-500';

@@ -18,13 +18,11 @@ export function CmsPageClient({
     useDynamicData?: boolean;
     siteSettings?: any;
 }) {
-
-
-    // Live data hooks (client only)
+    // Live data hooks
     const livePage = useQuery(api.pages.getPublishedPage, { path });
     const liveSettings = useQuery(api.siteSettings.getSiteSettings);
     
-    // Resolve page data: use live data if available, otherwise initial/fallback data
+    // Resolve page data: use live data if available, otherwise initial data, finally fallback data
     const page = livePage !== undefined ? livePage : initialPageData;
     const siteSettings = liveSettings !== undefined ? liveSettings : initialSettings;
 
@@ -34,18 +32,25 @@ export function CmsPageClient({
     }
 
     let liveData = null;
+    
+    // 1. Try Live/Initial Convex Data
     if (page?.data) {
         try {
-            const parsed = JSON.parse(page.data);
+            const parsed = typeof page.data === "string" ? JSON.parse(page.data) : page.data;
             if (parsed?.content?.length > 0) liveData = parsed;
         } catch (e) {
             console.error("Failed to parse CMS page data", e);
         }
     }
 
-    // Inject useDynamicData into initialData so ProductBrowser can pick it up
-    const enrichedInitialData = {
-        ...initialPageData,
+    // 2. Fallback to passed fallbackData if Convex data is empty or failed
+    if (!liveData && fallbackData) {
+        liveData = fallbackData;
+    }
+
+    // Inject useDynamicData into initialPageData so ProductBrowser can pick it up
+    const enrichedPageData = {
+        ...(initialPageData || {}),
         useDynamicData: useDynamicData ?? true, // Always use dynamic data when passed via props
     };
 
@@ -53,7 +58,7 @@ export function CmsPageClient({
         <div className="min-h-screen bg-background">
             <PuckRenderer
                 data={liveData || { root: {}, content: [] }}
-                initialData={enrichedInitialData}
+                initialData={enrichedPageData}
                 siteSettings={siteSettings}
             />
         </div>

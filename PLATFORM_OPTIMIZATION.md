@@ -102,3 +102,23 @@ This plan integrates the technical audit's corrective feedback. **Phase 1 (SSR)*
 - [x] **Rich Results**: Schema markup valid?
 - [x] **Sitemap**: `/sitemap.xml` lists all products and blogs?
 - [x] **Canonical**: Points to https://naturesboon.net?
+- [x] **Audit Remediation**: Data sync, brand consistency, and social links fixed?
+
+---
+
+## 🟣 Phase 8: Audit Remediation (March 13, 2026) [DONE]
+**Goal**: Resolve specific issues from the external audit report.
+
+### 8.1 Data Synchronization & Fallbacks
+- **Fix**: Updated `CmsPageClient.tsx` to properly resolve `page` data. 
+- **Pattern**: Priority is `Live Convex Data` \> `Server Pre-fetched Data` \> `Static JSON Fallback`.
+- **Resilience**: Added string/object parsing guards for `page.data`.
+
+### 8.2 Brand Standardization
+- **Goal**: End the "NatureBoon" vs "Nature's Boon" confusion.
+- **Action**: Forced "Nature's Boon" as the global default in `layout.tsx`, `SiteHeader.tsx`, and `Footer.tsx`.
+- **Checklist**: All OpenGraph, JSON-LD, and Header/Footer strings now use the apostrophe version.
+
+### 8.3 Social Media Connectivity
+- **Fix**: Rewired `Footer.tsx` to use actual platform URLs (LinkedIn, FB, Insta) instead of `#` placeholders.
+- **Site Settings**: Integrated these URLs into the `siteSettings` fallback logic for global control.
