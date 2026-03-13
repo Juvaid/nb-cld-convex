@@ -30,7 +30,7 @@ export const setupCorePages = mutation({
                             type: "ModernHero",
                             props: {
                                 id: "ModernHero-home",
-                                badgeText: "15+ Years of Manufacturing Excellence",
+                                badgeText: "20+ Years of Manufacturing Excellence",
                                 title: "Your Global Partner in",
                                 titleGradient: "Personal Care Excellence",
                                 description: "From formulation to finished product — we manufacture premium personal care products for world-class brands. OEM, Private Label & Contract Manufacturing.",
@@ -56,7 +56,7 @@ export const setupCorePages = mutation({
                             props: {
                                 id: "ModernStats-home",
                                 stats: [
-                                    { value: "15+", label: "Years of Experience" },
+                                    { value: "20+", label: "Years of Experience" },
                                     { value: "65+", label: "Strong Family" },
                                     { value: "200+", label: "SKUs Produced Annually" },
                                     { value: "75+", label: "Products by In-house R&D" },
@@ -119,9 +119,9 @@ export const setupCorePages = mutation({
                             type: "AboutHero",
                             props: {
                                 id: "about-hero",
-                                badgeText: "Our Story",
+                                badgeText: "20 Years of Excellence",
                                 title: "About Nature's Boon",
-                                description: "A legacy of excellence in personal care manufacturing since 2006."
+                                description: "A legacy of excellence in personal care manufacturing since 2006 (20+ Years)."
                             }
                         },
                         {

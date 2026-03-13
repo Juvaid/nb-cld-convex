@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Leaf, Mail, Phone, MapPin, Linkedin, Instagram, ArrowUpRight } from 'lucide-react';
+import { Leaf, Mail, Phone, MapPin, Linkedin, Instagram, Facebook, ArrowUpRight } from 'lucide-react';
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
@@ -27,12 +27,13 @@ export default function Footer() {
                         </p>
                         <div className="flex gap-4">
                             {[
-                                { Icon: Linkedin, label: 'LinkedIn' },
-                                { Icon: Instagram, label: 'Instagram' }
-                            ].map(({ Icon, label }, i) => (
+                                { Icon: Linkedin, label: 'LinkedIn', href: 'https://www.linkedin.com/company/natures-boon' },
+                                { Icon: Instagram, label: 'Instagram', href: 'https://www.instagram.com/natures_boon' },
+                                { Icon: Facebook, label: 'Facebook', href: 'https://www.facebook.com/naturesboon' }
+                            ].map(({ Icon, label, href }, i) => (
                                 <a
                                     key={i}
-                                    href="https://linkedin.com"
+                                    href={href}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     aria-label={`Follow us on ${label}`}

@@ -4,8 +4,8 @@ import React from "react";
 
 export function LoadingAnimation() {
     return (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#08080a]">
-            <div className="w-full max-w-[300px] md:max-w-[400px] animate-in fade-in duration-700">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/60 backdrop-blur-md">
+            <div className="w-full max-w-[300px] md:max-w-[400px] animate-in fade-in zoom-in-95 duration-1000">
                 <svg id="Premium_Loader_Logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1142.96" className="w-full h-auto">
                     <defs>
                         <linearGradient id="silver-grad" x1="0%" y1="0%" x2="100%" y2="100%">

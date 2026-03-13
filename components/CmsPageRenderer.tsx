@@ -1,5 +1,5 @@
 import { DynamicCmsPageClient as CmsPageClient } from "@/components/DynamicClients";
-import { ConvexHttpClient } from "convex/browser";
+import { fetchQuery } from "convex/nextjs";
 import { api } from "@/convex/_generated/api";
 import Image from "next/image";
 import { SeoContentSnapshot } from "@/components/SeoContentSnapshot";
@@ -12,9 +12,6 @@ interface CmsPageRendererProps {
     /** If true, ProductBrowser blocks will fetch live data from Convex instead of using static props */
     useDynamicData?: boolean;
 }
-
-const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL || "https://placeholder-url-for-build.convex.cloud";
-const convex = new ConvexHttpClient(convexUrl);
 
 /**
  * Server component wrapper for CMS pages.
@@ -30,16 +27,16 @@ export async function CmsPageRenderer({ path, fallbackData, useDynamicData }: Cm
     let parsedPuckData: any = null;
 
     try {
-        initialPageData = await convex.query(api.pages.getPublishedPage, { path });
-        siteSettings = await convex.query(api.siteSettings.getSiteSettings);
+        initialPageData = await fetchQuery(api.pages.getPublishedPage, { path });
+        siteSettings = await fetchQuery(api.siteSettings.getSiteSettings);
 
         // Fetch global stats for ModernStats / ModernHero blocks (SSR-safe)
-        globalStats = await convex.query(api.siteData.getStats);
+        globalStats = await fetchQuery(api.siteData.getStats);
 
         // If this page contains the ProductBrowser (like /products), pre-fetch the catalog data for SEO
         if (useDynamicData || path === "/products" || initialPageData?.data?.includes('"ProductBrowser"')) {
-            initialDbCategories = await convex.query(api.categories.list);
-            initialDbProducts = await convex.query(api.products.listAll, { status: "active" });
+            initialDbCategories = await fetchQuery(api.categories.list);
+            initialDbProducts = await fetchQuery(api.products.listAll, { status: "active" });
         }
 
         // Parse Puck data for both LCP optimization and SEO snapshot

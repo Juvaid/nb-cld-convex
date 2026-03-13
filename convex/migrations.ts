@@ -118,3 +118,70 @@ export const syncPuckToProducts = mutation({
         return `Successfully synced ${updateCount} product fields from Puck data.`;
     }
 });
+
+export const fixGlobalStats = mutation({
+    args: {},
+    handler: async (ctx) => {
+        const stats = await ctx.db.query("stats").collect();
+        let count = 0;
+        for (const stat of stats) {
+            if (stat.label === "Years Experience") {
+                await ctx.db.patch(stat._id, { value: "20+" });
+                count++;
+            }
+        }
+        return `Successfully updated ${count} global stat records.`;
+    }
+});
+
+export const contentRefresh2026 = mutation({
+    args: {},
+    handler: async (ctx) => {
+        const pages = await ctx.db.query("pages").collect();
+        const stats = await ctx.db.query("stats").collect();
+        
+        let pageUpdates = 0;
+        let statUpdates = 0;
+
+        // 1. Update Stats table
+        for (const stat of stats) {
+            if (stat.value === "15+" || stat.value === "17+") {
+                await ctx.db.patch(stat._id, { value: "20+" });
+                statUpdates++;
+            }
+        }
+
+        // 2. Update Pages (Surgical Replace)
+        for (const page of pages) {
+            const dataFields = ["publishedData", "draftData"];
+            const updates: any = {};
+            let changed = false;
+
+            for (const field of dataFields) {
+                const rawData = (page as any)[field];
+                if (rawData) {
+                    let newContent = rawData
+                        .replace(/15\+/g, "20+")
+                        .replace(/17\+/g, "20+")
+                        .replace(/2006-2023/g, "2006-present")
+                        .replace(/copyright \u00a9 2023/gi, "Copyright \u00a9 2026")
+                        .replace(/since 2006 \(15\+ years\)/gi, "since 2006 (20+ years)")
+                        .replace(/since 2006 \(17\+ years\)/gi, "since 2006 (20+ years)")
+                        .replace(/OUr CLIENTS/g, "Our Clients");
+                    
+                    if (newContent !== rawData) {
+                        updates[field] = newContent;
+                        changed = true;
+                    }
+                }
+            }
+
+            if (changed) {
+                await ctx.db.patch(page._id, updates);
+                pageUpdates++;
+            }
+        }
+
+        return `Success: Updated ${statUpdates} stats and ${pageUpdates} pages to 2026 standards.`;
+    }
+});

@@ -62,12 +62,77 @@ function extractBlockContent(block: any): { heading?: string; text?: string; ite
                 items: p.stats?.map((s: any) => `${s.label}: ${s.value}`).filter(Boolean),
             };
 
-        case "ServiceDetailList":
-        case "ModernServices":
-        case "BentoServices":
+        case "HomeEssentials":
+            return {
+                heading: p.heroHeading || p.featuresHeading || p.ctaHeading,
+                text: p.heroSubheading || p.heroDescription,
+                items: p.features?.map((f: any) => `${f.title}: ${f.description}`).filter(Boolean),
+            };
+
+        case "AboutCore":
+            return {
+                heading: p.heading || "About Us",
+                text: p.missionStatement || p.description,
+                items: p.values?.map((v: any) => `${v.title}: ${v.description}`).filter(Boolean),
+            };
+
+        case "CategoryPortfolio":
+            return {
+                heading: p.heading || "Our Categories",
+                items: p.categories?.map((c: any) => `${c.title}: ${c.description || ""}`).filter(Boolean),
+            };
+
+        case "ProductCategoryCarousel":
+            return {
+                heading: p.heading || "Categories",
+                text: p.subheading,
+                items: p.categories?.map((c: any) => c.title).filter(Boolean),
+            };
+
+        case "ProductDetail":
+            return {
+                heading: p.name || p.title,
+                text: p.description || p.shortDescription,
+                items: p.specifications?.map((s: any) => `${s.label}: ${s.value}`).filter(Boolean),
+            };
+
+        case "SuccessStory":
+            return {
+                heading: p.title || p.heading,
+                text: p.story || p.description || p.content,
+            };
+
+        case "BlogPostStory":
+            return {
+                heading: p.title,
+                text: p.excerpt || p.summary || p.content?.slice(0, 300),
+            };
+
+        case "NatureBoonExpertise":
+            return {
+                heading: p.heading || "Our Expertise",
+                items: p.items?.map((i: any) => `${i.title}: ${i.description}`).filter(Boolean),
+            };
+
+        case "ProductShowcase":
+            return {
+                heading: p.heading || "Featured Products",
+                items: p.products?.map((p: any) => p.name || p.title).filter(Boolean),
+            };
+
+        case "ServiceGrid":
             return {
                 heading: p.heading || "Our Services",
                 items: p.services?.map((s: any) => `${s.title}: ${s.description}`).filter(Boolean),
+            };
+
+        case "InstagramCarousel":
+        case "ImageCarousel":
+        case "VideoCarousel":
+            return {
+                heading: p.title || p.heading,
+                items: p.posts?.map((p: any) => p.caption).filter(Boolean)
+                    || p.images?.map((i: any) => i.caption || i.alt).filter(Boolean),
             };
 
         case "CallToAction":
@@ -128,9 +193,10 @@ function extractBlockContent(block: any): { heading?: string; text?: string; ite
 
 export function SeoContentSnapshot({ puckData, products, categories, globalStats, path }: SeoContentSnapshotProps) {
     let content: any[] = [];
+    let parsed: any = null;
 
     try {
-        const parsed = typeof puckData === "string" ? JSON.parse(puckData) : puckData;
+        parsed = typeof puckData === "string" ? JSON.parse(puckData) : puckData;
         content = parsed?.content || [];
     } catch {
         return null;
@@ -147,6 +213,9 @@ export function SeoContentSnapshot({ puckData, products, categories, globalStats
             itemScope
             itemType="https://schema.org/WebPage"
         >
+            {/* Added H1 as flagged by audit */}
+            <h1>{parsed?.root?.props?.title || path}</h1>
+
             {/* Semantic content from Puck blocks */}
             {blocks.map((block, i) => (
                 <section key={i}>

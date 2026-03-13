@@ -148,7 +148,7 @@ export const HomeEssentialsBlockConfig: ComponentConfig<HomeEssentialsProps> = {
     },
     defaultProps: {
         heroHeading: "Premium Personal Care Manufacturing",
-        heroSubheading: "Scale your brand with our state-of-the-art facilities, green chemistry, and 15+ years of ISO-certified excellence.",
+        heroSubheading: "Scale your brand with our state-of-the-art facilities, green chemistry, and 20+ years of ISO-certified excellence.",
         heroBackgroundImage: "https://images.unsplash.com/photo-1615397323608-662580a1811e?q=80&w=2000&auto=format&fit=crop",
         featuresHeading: "Our Core Capabilities",
         features: [

@@ -33,7 +33,6 @@ export function SiteHeader({
     contactText: propContactText,
     initialSettings,
 }: SiteHeaderProps) {
-    if (typeof window === "undefined") return null;
     const pathname = usePathname();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 

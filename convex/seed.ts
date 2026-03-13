@@ -9,7 +9,7 @@ export const seedSiteData = mutation({
             await ctx.db.insert("stats", { label: "Tons Capacity", value: "750+", order: 1 });
             await ctx.db.insert("stats", { label: "SKUs", value: "200+", order: 2 });
             await ctx.db.insert("stats", { label: "Global Clients", value: "20+", order: 3 });
-            await ctx.db.insert("stats", { label: "Years Experience", value: "15+", order: 4 });
+            await ctx.db.insert("stats", { label: "Years Experience", value: "20+", order: 4 });
         }
 
         // Seed Services
@@ -47,17 +47,35 @@ export const seedSiteData = mutation({
 
         // Seed Site Settings
         const existingSettings = await ctx.db.query("siteSettings").collect();
-        if (existingSettings.length === 0) {
-            await ctx.db.insert("siteSettings", { key: "logoText", value: "Nature's Boon" });
-            await ctx.db.insert("siteSettings", { key: "contactEmail", value: "info@naturesboon.com" });
-            await ctx.db.insert("siteSettings", { key: "contactPhone", value: "+91 97818 00033" });
-        } else {
-            // Update title specifically for audit fix
-            const titleEntry = existingSettings.find(s => s.key === "siteTitle");
-            if (titleEntry) {
-                await ctx.db.patch(titleEntry._id, { value: "Nature's Boon | Premium Personal Care Manufacturer" });
+        const settingsToSeed = [
+            { key: "logoText", value: "Nature's Boon" },
+            { key: "siteName", value: "Nature's Boon" },
+            { key: "siteTitle", value: "NatureBoon | Premium Manufacturing Platform" },
+            { key: "tagline", value: "Your Global Partner in Personal Care Excellence" },
+            { key: "contactEmail", value: "info@naturesboon.com" },
+            { key: "contactPhone", value: "+91 97818 00033" },
+            { key: "workingHours", value: "Mon - Sat: 9:00 AM - 6:00 PM" },
+            {
+                key: "socialLinks",
+                value: [
+                    {
+                        href: "https://www.instagram.com/naturesboon.cosmeticsmfg?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==",
+                        platform: "instagram"
+                    },
+                    {
+                        href: "https://www.facebook.com/people/Natures-Boon/100091906116013",
+                        platform: "facebook"
+                    }
+                ]
+            }
+        ];
+
+        for (const { key, value } of settingsToSeed) {
+            const existing = existingSettings.find(s => s.key === key);
+            if (existing) {
+                await ctx.db.patch(existing._id, { value });
             } else {
-                await ctx.db.insert("siteSettings", { key: "siteTitle", value: "Nature's Boon | Premium Personal Care Manufacturer" });
+                await ctx.db.insert("siteSettings", { key, value });
             }
         }
 

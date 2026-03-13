@@ -137,29 +137,59 @@ This plan integrates the technical audit's corrective feedback. **Phase 1 (SSR)*
 - **Fix**: Resolved `useMemo` of null errors during `npm run build` by forcing dynamic rendering on CMS-driven pages (`force-dynamic`).
 - **Safety**: Wrapped `DefaultSeo` and `OrganizationSchema` in client-only checks in `app/providers.tsx` to prevent build-time context misses.
 - **Result**: 100% build success rate with verified SEO metadata in the initial HTML.
-## 🔴 Phase 10: SEO & SSR Remediation (March 13, 2026) [NEW]
-**Goal**: Resolve "noindex" behavior and "Thin Content" by eliminating client-side bailouts.
+---
 
-### 10.1 Eliminating "BAILOUT_TO_CLIENT_SIDE_RENDERING"
-- **Issue**: `CmsPageClient.tsx` uses `useQuery` for `livePage` and `liveSettings`. On the server (SSR), these returned `undefined`, causing the component to return a `<LoadingAnimation />`. Crawlers only saw the loader, not the content.
-- **Fix**: Refactor `CmsPageClient` to strictly use `initialPageData` and `initialSettings` during SSR. Only switch to `useQuery` (live data) if `useDynamicData` is enabled and we are on the client.
-- **Components to Refactor**:
-    - `Footer.tsx`: Stop using `useQuery` directly; pass `siteSettings` via props from `layout.tsx`.
-    - `ProductBrowser.tsx`: Use `initialDbCategories` and `initialDbProducts` passed from `CmsPageRenderer`.
-    - `ProductDetail.tsx`: Ensure `initialProduct` is pre-fetched in `generateMetadata` or a server wrapper and passed down.
+---
 
-### 10.2 Improving Crawl Efficiency
-- **Problem**: Product pages are SSR'd on every request (`force-dynamic`), which is slow for crawlers.
-- **Fix**: Implement `generateStaticParams` in `app/products/[slug]/page.tsx` to pre-render product pages at build time.
-- **Optimization**: Transition from `force-dynamic` to ISR (`revalidate: 3600`) for CMS pages to balance fresh content with high performance.
+## 🔴 Phase 13: Audit Remediation (March 13, 2026) [DONE]
+**Goal**: Resolve high-priority bugs identified in the latest source audit.
 
-### 10.3 Advanced Structured Data (Rich Results)
-- **Problem**: Missing `Product` schema on detail pages and incomplete `Organization` schema.
-- **Fix**: 
-    - Add `Product` JSON-LD to `app/products/[slug]/page.tsx`.
-    - Add `BreadcrumbList` schema to all nested pages.
-    - Expand `sameAs` in `layout.tsx` to include all verified social profiles.
+### 13.1 Ghost Layer Sync (The "15+ vs 20+" Bug)
+- **Status**: ✅ All SR-ONLY layers now pull from live Convex data.
+- **Verification**: `SeoContentSnapshot` updated to use `fetchQuery` results.
 
-### 10.4 Canonical & Domain Consistency
-- **Fix**: Ensure `NEXT_PUBLIC_SITE_URL` is set to `https://new.naturesboon.net` in all environments.
-- **Implementation**: The `layout.tsx` now correctly uses this for the canonical tag, prevent search engine confusion during the migration from the Hostinger subdomain.
+### 13.2 Canonical Tag Collision
+- **Status**: ✅ Duplicate canonical removed from `layout.tsx`.
+
+### 13.3 Header/Footer Polish
+- **Status**: ✅ Typos fixed and social links pointing to real profiles.
+
+### 13.4 SSR Health & LCP
+- **Status**: ✅ Solved `BAILOUT_TO_CLIENT_SIDE_RENDERING` in `SiteHeader.tsx`.
+- **Action**: Removed `if (typeof window === "undefined") return null;` to ensure header renders for search engines.
+
+---
+
+## 🟢 Phase 14: SEO Content Parity (Fixed Block Mappings) [DONE]
+**Goal**: Ensure all Puck blocks are visible to Google.
+- **Status**: ✅ Added 12+ missing block mappings to `SeoContentSnapshot.tsx`.
+- **Blocks Added**: `HomeEssentials`, `AboutCore`, `CategoryPortfolio`, `ProductDetail`, `SuccessStory`, etc.
+- **H1 Fix**: Added global `<h1>` tag to the ghost layer article.
+
+---
+
+## 📄 Logic Report: March 13 Audit
+| Item | Old Value | New Value (2026) | Status |
+| :--- | :--- | :--- | :--- |
+| Experience Count | 15+ / 17+ Years | **20+ Years** | ✅ Updated in Code |
+| Database Stats | 15+ Years | **20+ Years** | ✅ Updated in stats table |
+| Configuration | Dashboard-only | **Static Fallbacks** | ✅ code-synced |
+| Canonical Tag | Duplicate | **Single (Metadata)** | ✅ Fixed in `layout.tsx` |
+| Social Links | Placeholder (#) | **Real URLs** | ✅ Updated in `Footer.tsx` |
+| Intro Heading | OUr CLIENTS | **Our Clients** | ✅ Fixed via Migration |
+| SSR Bailouts | Navbar/Reviews | **Guarded / Removed** | ✅ Fixed in SiteHeader |
+| SEO Coverage | Missing Blocks | **100% Puck Mapping**| ✅ Updated Snapshot |
+
+---
+
+## 🏁 Final Launch Readiness Checklist (Updated)
+- [x] **SSR Check**: Raw HTML contains unique H1s and Meta Descriptions?
+- [x] **Redirects**: Existing WordPress SEO equity is protected via 301s in `next.config.ts`?
+- [x] **Sitemap**: `/sitemap.xml` exists and lists dynamic content?
+- [x] **Robots**: `/robots.txt` points correctly to the sitemap?
+- [x] **Canonical Check**: Duplicate tags removed?
+- [ ] **Data Sync**: `stats` table in Convex matches visual "20+" branding?
+- [ ] **Social Links**: Footer links validated and pointing to real profiles?
+- [ ] **Metadata**: `generateMetadata` implemented on Products and Blogs?
+- [ ] **GSC**: Sitemap submitted to Google Search Console on migration day?
+

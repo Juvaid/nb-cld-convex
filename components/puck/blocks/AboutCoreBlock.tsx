@@ -103,7 +103,7 @@ export const AboutCoreBlockConfig: ComponentConfig<AboutCoreProps> = {
         heading: "Leading the Future of Personal Care Manufacturing",
         missionStatement: "At Nature's Boon, our mission is to deliver unparalleled quality through cutting-edge formulation science and sustainable manufacturing practices, empowering brands to scale globally.",
         stats: [
-            { value: "15+", label: "Years Experience" },
+            { value: "20+", label: "Years Experience" },
             { value: "750+", label: "Monthly Tons" },
             { value: "1500+", label: "Formulations" },
             { value: "ISO", label: "Certified Facility" },

@@ -4,9 +4,9 @@ export const aboutPageData = {
             type: "AboutHero",
             id: "about-hero",
             props: {
-                badgeText: "Our Story",
+                badgeText: "20 Years of Excellence",
                 title: "About Nature's Boon",
-                description: "A legacy of excellence in personal care manufacturing since 2006."
+                description: "A legacy of excellence in personal care manufacturing since 2006 (20+ Years)."
             }
         },
         {

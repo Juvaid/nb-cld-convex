@@ -72,13 +72,18 @@ The project features several ingestion scripts in the `scripts/` directory:
 - `uploadImages.mjs`: Automates image uploads to Convex Storage.
 - `ingestSEOContent.mjs`: Specifically populates SEO metadata.
 
-### 5.3 Theme Management
-- Theme settings are managed in the Admin panel.
-- The `ThemeProvider` (`components/theme-provider.tsx`) applies these settings globally.
-- `themeSnapshots` allow for versioning or presets of site designs.
+### 5.3 Theme & Configuration Management
+- **Dashboard Control**: Theme settings and global site data (logos, links, SEO tags) are managed in the Admin panel.
+- **Static Fallbacks**: Current customizations are persisted in the codebase to guarantee brand consistency if the database is reset.
+  - `convex/theme.ts`: Stores the `defaultThemeSettings` (Fonts, Colors).
+  - `convex/seed.ts`: Stores global site settings (Social links, Site title).
+- **Persistence Workflow**:
+  1. Update settings via the Admin UI.
+  2. Use the reasoning agent to sync these to `theme.ts` and `seed.ts`.
+  3. Deploy changes: `npx convex deploy`.
 
 ## 6. Current Context for Reasoning
-When performing tasks on this project, keep in mind:
+- **Data Persistence**: Always ensure live dashboard changes are mirrored to `convex/theme.ts` and `convex/seed.ts` before significant deployments.
 - **Real-time Synchronization**: Convex handles real-time updates automatically.
 - **Puck Editor Constraints**: Changes to components in `config.tsx` may require migrations or updates to existing page data if props change significantly.
 - **SEO Focus**: The project places high importance on metadata and content ingestion from scraped sources.
