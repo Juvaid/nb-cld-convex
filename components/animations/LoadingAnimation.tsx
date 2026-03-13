@@ -63,9 +63,11 @@ export function LoadingAnimation() {
                   resolveFill 3.5s ease-out 0.2s infinite;
               }
 
-              /* Use system fonts to prevent jitter when Google Fonts load */
-              .loader-branding {
-                font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+              /* FORCE system fonts with !important to prevent any font-shifts during hydration */
+              .loader-branding, 
+              .loader-branding h1, 
+              .loader-branding p {
+                font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
               }
 
               .brand-text {
