@@ -8,27 +8,20 @@ import { DynamicBlogsClient as BlogsClient } from "@/components/DynamicClients";
 const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL || "https://placeholder-url-for-build.convex.cloud";
 const convex = new ConvexHttpClient(convexUrl);
 
+import { buildMetadata } from "@/lib/seo.metadata";
+
 export async function generateMetadata(): Promise<Metadata> {
+    let settings = null;
     try {
-        const settings = await convex.query(api.siteSettings.getSiteSettings);
-        const siteName = (settings as any)?.siteTitle || "Nature's Boon";
+        settings = await convex.query(api.siteSettings.getSiteSettings);
+    } catch (e) {}
 
-        return {
-            title: `Blog | ${siteName}`,
-            description: `Insights and stories from the world of personal care manufacturing by ${siteName}.`,
-            openGraph: {
-                title: `Blog | ${siteName}`,
-                description: `Insights and stories from the world of personal care manufacturing.`,
-                type: "website",
-                siteName,
-            },
-        };
-    } catch { /* fall through to defaults */ }
+    const siteName = (settings as any)?.siteTitle;
 
-    return {
-        title: "Blog | Nature's Boon",
-        description: "Insights and stories from the world of personal care manufacturing.",
-    };
+    return buildMetadata("/blogs", {
+        title: siteName ? `Blog | ${siteName}` : undefined,
+        description: siteName ? `Insights and stories from the world of personal care manufacturing by ${siteName}.` : undefined,
+    });
 }
 
 export default async function BlogsPage() {

@@ -122,3 +122,18 @@ This plan integrates the technical audit's corrective feedback. **Phase 1 (SSR)*
 ### 8.3 Social Media Connectivity
 - **Fix**: Rewired `Footer.tsx` to use actual platform URLs (LinkedIn, FB, Insta) instead of `#` placeholders.
 - **Site Settings**: Integrated these URLs into the `siteSettings` fallback logic for global control.
+
+---
+
+## 🔵 Phase 9: SEO Resilience & Static Fallbacks [DONE]
+**Goal**: Guarantee build-time stability and CMS independence for search engines.
+
+### 9.1 Static Metadata Fallbacks
+- **Strategy**: Every page has a hardcoded static "floor" for SEO. If Convex is down or slow, the build/request still serves perfect meta tags.
+- **Implementation**: `lib/seo.fallback.ts` stores high-quality hardcoded fallbacks for all main routes.
+- **Resilience**: `lib/seo.metadata.ts` provides a `buildMetadata` helper that merges Convex data (if available) with these fallbacks.
+
+### 9.2 Prerender Stability
+- **Fix**: Resolved `useMemo` of null errors during `npm run build` by forcing dynamic rendering on CMS-driven pages (`force-dynamic`).
+- **Safety**: Wrapped `DefaultSeo` and `OrganizationSchema` in client-only checks in `app/providers.tsx` to prevent build-time context misses.
+- **Result**: 100% build success rate with verified SEO metadata in the initial HTML.

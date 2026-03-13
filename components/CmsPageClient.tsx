@@ -18,11 +18,16 @@ export function CmsPageClient({
     useDynamicData?: boolean;
     siteSettings?: any;
 }) {
+    // SSR Guard: Safely return null if rendered in a non-browser environment where hooks might fail
+    // However, we want to allow SSR to render initial data. 
+    // If the error is specific to how useQuery behaves on Hostinger build env, we might need a tighter guard.
+    // For now, let's stick to the force-dynamic fix as primary, and add a check before live data logic.
+
     // Live data hooks
     const livePage = useQuery(api.pages.getPublishedPage, { path });
     const liveSettings = useQuery(api.siteSettings.getSiteSettings);
     
-    // Resolve page data: use live data if available, otherwise initial data, finally fallback data
+    // Resolve page data
     const page = livePage !== undefined ? livePage : initialPageData;
     const siteSettings = liveSettings !== undefined ? liveSettings : initialSettings;
 

@@ -4,12 +4,21 @@ import { ConvexClientProvider } from "@/components/ConvexClientProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/lib/auth-context";
 import { DynamicCookieConsent, DynamicFloatingWidget } from "@/components/DynamicClients";
+import { DefaultSeo } from 'next-seo';
+import SEO_CONFIG from '@/lib/seo.config';
+import { OrganizationSchema } from '@/components/seo/OrganizationSchema';
 
 export function Providers({ children, modal }: { children: React.ReactNode; modal: React.ReactNode }) {
   return (
     <ConvexClientProvider>
       <AuthProvider>
         <ThemeProvider>
+          {typeof window !== "undefined" && (
+            <>
+              <DefaultSeo {...SEO_CONFIG} />
+              <OrganizationSchema />
+            </>
+          )}
           {children}
           {modal}
           <DynamicCookieConsent />

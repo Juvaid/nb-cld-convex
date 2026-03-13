@@ -9,34 +9,25 @@ import { aboutPageData } from "@/data/about-page-data";
 const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL || "https://placeholder-url-for-build.convex.cloud";
 const convex = new ConvexHttpClient(convexUrl);
 
+import { buildMetadata } from "@/lib/seo.metadata";
+
 export async function generateMetadata(): Promise<Metadata> {
+    let page = null;
+    let settings = null;
     try {
-        const page = await convex.query(api.pages.getPublishedPage, { path: "/about" });
-        const settings = await convex.query(api.siteSettings.getSiteSettings);
-        const siteName = (settings as any)?.siteTitle || "Nature's Boon";
+        page = await convex.query(api.pages.getPublishedPage, { path: "/about" });
+        settings = await convex.query(api.siteSettings.getSiteSettings);
+    } catch (e) {}
 
-        if (page) {
-            const puckData = page.data ? JSON.parse(page.data) : null;
-            const firstBlock = puckData?.content?.[0];
-            const title = firstBlock?.props?.title || "About Us";
+    const puckData = page?.data ? (typeof page.data === "string" ? JSON.parse(page.data) : page.data) : null;
+    const firstBlock = puckData?.content?.[0];
+    const convexTitle = firstBlock?.props?.title;
+    const siteName = (settings as any)?.siteTitle;
 
-            return {
-                title: `${title} | ${siteName}`,
-                description: "Learn about Nature's Boon's B2B manufacturing excellence and heritage.",
-                openGraph: {
-                    title: `${title} | ${siteName}`,
-                    description: "Learn about Nature's Boon's B2B manufacturing excellence and heritage.",
-                    type: "website",
-                    siteName,
-                },
-            };
-        }
-    } catch { /* fall through to defaults */ }
-
-    return {
-        title: "About Us | Nature's Boon",
+    return buildMetadata("/about", {
+        title: convexTitle && siteName ? `${convexTitle} | ${siteName}` : convexTitle,
         description: "Learn about Nature's Boon's B2B manufacturing excellence and heritage.",
-    };
+    });
 }
 
 export default function AboutPage() {

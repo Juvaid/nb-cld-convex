@@ -7,33 +7,19 @@ import React from "react";
 const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL || "https://placeholder-url-for-build.convex.cloud";
 const convex = new ConvexHttpClient(convexUrl);
 
+import { buildMetadata } from "@/lib/seo.metadata";
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const { slug } = await params;
+    let blog = null;
     try {
-        const blog = await convex.query(api.blogs.getBlogBySlug, { slug });
-        if (blog) {
-            const title = `${blog.title} | Nature's Boon Blog`;
-            const description = blog.excerpt || `Read ${blog.title} from the Nature's Boon team.`;
-            const imageUrl = blog.coverImage || undefined;
+        blog = await convex.query(api.blogs.getBlogBySlug, { slug });
+    } catch (e) {}
 
-            return {
-                title,
-                description,
-                openGraph: {
-                    title,
-                    description,
-                    type: "article",
-                    siteName: "Nature's Boon",
-                    ...(imageUrl && { images: [{ url: imageUrl }] }),
-                }
-            };
-        }
-    } catch { /* fall through to defaults */ }
-
-    return {
-        title: "Blog | Nature's Boon",
-        description: "Insights and stories from the world of personal care manufacturing.",
-    };
+    return buildMetadata("/blogs", {
+        title: blog?.title ? `${blog.title} | Nature's Boon Blog` : undefined,
+        description: blog?.excerpt || undefined,
+    });
 }
 
 interface BlogPostPageProps {

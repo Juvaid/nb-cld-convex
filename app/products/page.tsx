@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import type { Metadata } from "next";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "@/convex/_generated/api";
@@ -7,29 +9,18 @@ import { productsPageData } from "@/data/products-page-data";
 const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL || "https://placeholder-url-for-build.convex.cloud";
 const convex = new ConvexHttpClient(convexUrl);
 
+import { buildMetadata } from "@/lib/seo.metadata";
+
 export async function generateMetadata(): Promise<Metadata> {
+    let settings = null;
     try {
-        const settings = await convex.query(api.siteSettings.getSiteSettings);
-        const siteName = (settings as any)?.siteTitle || "Nature's Boon";
-        const categories = await convex.query(api.categories.list);
-        const categoryNames = categories?.map((c: any) => c.name).join(", ") || "";
+        settings = await convex.query(api.siteSettings.getSiteSettings);
+    } catch (e) {}
 
-        return {
-            title: `Our Products | ${siteName}`,
-            description: `Browse our full B2B personal care product catalog. Categories: ${categoryNames}`,
-            openGraph: {
-                title: `Our Products | ${siteName}`,
-                description: `Browse our full B2B personal care product catalog.`,
-                type: "website",
-                siteName,
-            },
-        };
-    } catch { /* fall through to defaults */ }
-
-    return {
-        title: "Our Products | Nature's Boon",
+    return buildMetadata("/products", {
+        title: (settings as any)?.siteTitle ? `Our Products | ${(settings as any).siteTitle}` : undefined,
         description: "Browse our full B2B personal care product catalog.",
-    };
+    });
 }
 
 export default function ProductsPage() {
