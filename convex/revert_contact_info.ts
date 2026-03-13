@@ -28,11 +28,13 @@ export const execute = mutation({
       .unique();
 
     if (contactPage && contactPage.publishedData) {
+      console.log("Found contact page, updating...");
       let data = JSON.parse(contactPage.publishedData);
       
       if (data.content) {
         data.content = data.content.map((block: any) => {
           if (block.type === "ContactSection") {
+            console.log("Updating ContactSection block...");
             block.props.infoItems = [
               { label: 'Phone', value: '+91-9877659808', icon: 'Phone' },
               { label: 'Email', value: 'naturesboon@yahoo.com', icon: 'Mail' },
@@ -57,6 +59,7 @@ export const execute = mutation({
         publishedData: JSON.stringify(data),
         draftData: JSON.stringify(data),
       });
+      console.log("Contact page patched.");
     }
 
     return "Successfully reverted contact information to Yahoo/Luster domain.";

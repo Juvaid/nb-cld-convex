@@ -6,7 +6,7 @@ export type PageSeoFallback = {
 };
 
 const OG_IMAGE = 'https://pub-13cf3fd8cdc643a6919ef78cee02101f.r2.dev/1773305814460-herobannerv2.png';
-const BASE_URL = 'https://darkorange-anteater-238035.hostingersite.com';
+const BASE_URL = 'https://new.naturesboon.net';
 
 export const SEO_FALLBACKS: Record<string, PageSeoFallback> = {
   '/': {

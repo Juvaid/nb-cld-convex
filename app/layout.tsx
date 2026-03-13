@@ -49,6 +49,13 @@ export async function generateMetadata(): Promise<Metadata> {
         },
       ],
     },
+    robots: {
+      index: true,
+      follow: true,
+    },
+    alternates: {
+      canonical: process.env.NEXT_PUBLIC_SITE_URL || "https://new.naturesboon.net",
+    },
     icons: faviconUrl ? { icon: faviconUrl } : undefined,
   };
 }
@@ -70,7 +77,7 @@ export default async function RootLayout({
     // Silence error during build; static fallbacks handled below
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://naturesboon.net";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://new.naturesboon.net";
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
