@@ -35,7 +35,7 @@ export const SEO_FALLBACKS: Record<string, PageSeoFallback> = {
   },
   '/contact': {
     title: "Contact Us | Nature's Boon",
-    description: "Get in touch with Nature's Boon for OEM, Private Label or contract manufacturing enquiries. Call +91 97818 00033.",
+    description: "Get in touch with Nature's Boon for OEM, Private Label or contract manufacturing enquiries. Call +91-9877659808.",
     canonical: `${BASE_URL}/contact`,
     ogImage: OG_IMAGE,
   },

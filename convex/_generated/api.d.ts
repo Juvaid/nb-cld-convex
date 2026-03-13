@@ -32,6 +32,7 @@ import type * as siteData from "../siteData.js";
 import type * as siteSettings from "../siteSettings.js";
 import type * as templates from "../templates.js";
 import type * as theme from "../theme.js";
+import type * as update_audit_data from "../update_audit_data.js";
 
 import type {
   ApiFromModules,
@@ -64,6 +65,7 @@ declare const fullApi: ApiFromModules<{
   siteSettings: typeof siteSettings;
   templates: typeof templates;
   theme: typeof theme;
+  update_audit_data: typeof update_audit_data;
 }>;
 
 /**

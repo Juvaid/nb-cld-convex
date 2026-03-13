@@ -17,7 +17,7 @@ export function OrganizationSchema() {
         ]}
         contactPoint={[
           {
-            telephone: '+91-97818-00033',
+            telephone: '+91-9877659808',
             contactType: 'customer service',
             availableLanguage: ['English', 'Hindi', 'Punjabi'],
           },
@@ -29,7 +29,7 @@ export function OrganizationSchema() {
         name="Nature's Boon"
         description="Personal care OEM, Private Label & Contract Manufacturing in Punjab, India."
         url="https://darkorange-anteater-238035.hostingersite.com"
-        telephone="+91-97818-00033"
+        telephone="+91-9877659808"
         address={{
           streetAddress: 'Plot No 123, JLPL Industrial Area, Sector 82',
           addressLocality: 'Mohali',
@@ -37,7 +37,7 @@ export function OrganizationSchema() {
           postalCode: '140308',
           addressCountry: 'IN',
         }}
-        openingHours={['Mo-Sa 09:00-18:00']}
+        openingHours={['Mo-Fr 09:00-18:00']}
         images={[
           'https://pub-13cf3fd8cdc643a6919ef78cee02101f.r2.dev/1773305814460-herobannerv2.png',
         ]}

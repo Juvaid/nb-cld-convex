@@ -437,15 +437,19 @@ export const setupCorePages = mutation({
                                 id: "contact-section",
                                 heading: "Get in Touch",
                                 infoItems: [
-                                    { label: 'Phone', value: '+91 97818 00033', icon: 'Phone' },
-                                    { label: 'Email', value: 'info@naturesboon.net', icon: 'Mail' },
+                                    { label: 'Phone', value: '+91-9877659808', icon: 'Phone' },
+                                    { label: 'Email', value: 'naturesboon@yahoo.com', icon: 'Mail' },
                                     { label: 'Factory Address', value: 'Plot No 123, JLPL Industrial Area, Sector 82, Mohali, Punjab - 140308', icon: 'MapPin' },
-                                    { label: 'Working Hours', value: 'Mon - Sat: 9:00 AM - 6:00 PM', icon: 'Clock' },
+                                    { label: 'Working Hours', value: 'Mon - Fri: 9:00 AM - 6:00 PM', icon: 'Clock' },
                                 ],
                                 departmentEmails: [
-                                    { label: 'Sales', email: 'sales@naturesboon.net' },
-                                    { label: 'Support', email: 'support@naturesboon.net' },
-                                    { label: 'Export', email: 'exports@naturesboon.net' },
+                                { label: 'Inquiry/Info', email: 'naturesboon@yahoo.com' },
+                                { label: 'Accounts', email: 'accounts.naturesboon@yahoo.com' },
+                                { label: 'Purchase', email: 'purchase.naturesboon@yahoo.com' },
+                                { label: 'Sales', email: 'sales.naturesboon@yahoo.com' },
+                                { label: 'Artwork/Designing', email: 'artwork.naturesboon@yahoo.com' },
+                                { label: 'Exports', email: 'Exports@lustercosmetics.in' },
+                                { label: 'Sales (Exports)', email: 'Sales@chitkaraexports.com' },
                                 ]
                             }
                         },
@@ -505,7 +509,7 @@ export const setupCorePages = mutation({
                                     <h2>3. Data Security</h2>
                                     <p>We implement appropriate technical and organizational measures to protect your personal data against unauthorized access or disclosure.</p>
                                     <h2>4. Contact Us</h2>
-                                    <p>If you have any questions about this Privacy Policy, please contact us at info@naturesboon.net.</p>
+                                    <p>If you have any questions about this Privacy Policy, please contact us at naturesboon@yahoo.com.</p>
                                 `,
                                 alignment: "left",
                                 maxWidth: "3xl"

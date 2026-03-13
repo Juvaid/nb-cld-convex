@@ -71,13 +71,13 @@ export default function SettingsPage() {
 
     useEffect(() => {
         if (siteSettings) {
-            setLogoText(siteSettings.logoText || "NatureBoon");
+            setLogoText(siteSettings.logoText || "Nature's Boon");
             setLogoImage(siteSettings.logoImage || "");
-            setSiteTitle(siteSettings.siteTitle || "NatureBoon | Premium Manufacturing Platform");
+            setSiteTitle(siteSettings.siteTitle || "Nature's Boon | Premium Manufacturing Platform");
             setFaviconUrl(siteSettings.faviconUrl || "");
             setContactText(siteSettings.contactText || "Contact Us");
             setFooterDescription(siteSettings.footerDescription || "A global leader in personal care manufacturing, specializing in OEM, Private Label, and innovative R&D solutions.");
-            setFooterCopyrightText(siteSettings.footerCopyrightText || `© ${new Date().getFullYear()} NatureBoon. All rights reserved.`);
+            setFooterCopyrightText(siteSettings.footerCopyrightText || `© ${new Date().getFullYear()} Nature's Boon. All rights reserved.`);
             setNavLinks(siteSettings.navLinks || [
                 { label: "Home", href: "/" },
                 { label: "About", href: "/about" },

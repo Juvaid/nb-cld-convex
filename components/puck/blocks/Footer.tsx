@@ -42,9 +42,9 @@ export const Footer = ({
     const description = siteSettings?.footerDescription ?? propDescription ?? "A global leader in personal care manufacturing, specializing in OEM, Private Label, and innovative R&D solutions.";
     const copyrightText = siteSettings?.footerCopyrightText ?? propCopyrightText ?? `© ${new Date().getFullYear()} Nature's Boon. All rights reserved.`;
     const socialLinks = siteSettings?.socialLinks ?? propSocialLinks ?? [
-        { platform: "linkedin", href: "https://www.linkedin.com/company/naturesboon" },
-        { platform: "facebook", href: "https://www.facebook.com/naturesboon" },
-        { platform: "instagram", href: "https://www.instagram.com/natures_boon" }
+        { platform: "facebook", href: "https://www.facebook.com/people/Natures-Boon/100091906116013" },
+        { platform: "instagram", href: "https://www.instagram.com/naturesboon.cosmeticsmfg" },
+        { platform: "linkedin", href: "#" }
     ];
 
     const subTextColor = textColor.includes('text-white') ? 'text-white/60' : 'text-slate-500';
@@ -132,9 +132,9 @@ export const Footer = ({
                         <h4 className={`text-base sm:text-lg font-bold mb-6 sm:mb-8 tracking-tight ${textColor}`}>Get in Touch</h4>
                         <ul className="space-y-4 sm:space-y-6">
                             {[
-                                { icon: Mail, text: 'info@naturesboon.net', sub: 'General Inquiries', href: 'mailto:info@naturesboon.net' },
-                                { icon: Phone, text: '+91-76967 71693', sub: 'WhatsApp Available', href: 'https://wa.me/917696771693' },
-                                { icon: MapPin, text: 'Ludhiana, Punjab, India', sub: 'H.O. & Manufacturing', href: 'https://www.google.com/maps/dir/?api=1&destination=Nature%27s+Boon%2C+Ludhiana%2C+Punjab%2C+India' },
+                                { icon: Mail, text: 'naturesboon@yahoo.com', sub: 'General Inquiries', href: 'mailto:naturesboon@yahoo.com' },
+                                { icon: Phone, text: '+91-9877659808', sub: 'WhatsApp Available', href: 'https://wa.me/919877659808' },
+                                { icon: MapPin, text: 'Plot No 123, JLPL Industrial Area, Sector 82, Mohali, Punjab', sub: 'Manufacturing H.O.', href: 'https://www.google.com/maps/dir/?api=1&destination=Nature%27s+Boon%2C+Sector+82%2C+Mohali%2C+Punjab+India' },
                             ].map((item, i) => (
                                 <li key={i}>
                                     <a href={item.href} target={item.icon === MapPin ? "_blank" : "_self"} rel={item.icon === MapPin ? "noopener noreferrer" : undefined} className="flex gap-4 items-start group">

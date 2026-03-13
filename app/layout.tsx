@@ -40,6 +40,14 @@ export async function generateMetadata(): Promise<Metadata> {
       description,
       type: "website",
       siteName: "Nature's Boon",
+      images: [
+        {
+          url: "https://pub-13cf3fd8cdc643a6919ef78cee02101f.r2.dev/1773305814460-herobannerv2.png",
+          width: 1200,
+          height: 600,
+          alt: "Nature's Boon Manufacturing",
+        },
+      ],
     },
     icons: faviconUrl ? { icon: faviconUrl } : undefined,
   };
@@ -77,8 +85,8 @@ export default async function RootLayout({
       "postalCode": "140308",
       "addressCountry": "IN"
     },
-    "telephone": "+91 97818 00033",
-    "email": "info@naturesboon.net",
+    "telephone": "+91-9877659808",
+    "email": "naturesboon@yahoo.com",
     "url": siteUrl,
     "sameAs": [
       "https://www.instagram.com/natures_boon",
