@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { PuckRenderer } from "@/components/PuckRenderer";
@@ -18,26 +19,26 @@ export function CmsPageClient({
     useDynamicData?: boolean;
     siteSettings?: any;
 }) {
-    // SSR Guard: Safely return null if rendered in a non-browser environment where hooks might fail
-    // However, we want to allow SSR to render initial data. 
-    // If the error is specific to how useQuery behaves on Hostinger build env, we might need a tighter guard.
-    // For now, let's stick to the force-dynamic fix as primary, and add a check before live data logic.
+    // Only activate live queries AFTER the client has mounted and the WebSocket
+    // is ready. This prevents the SSR/hydration render from showing a loader.
+    const [isClient, setIsClient] = useState(false);
+    useEffect(() => { setIsClient(true); }, []);
 
-    // Live data hooks
-    const livePage = useQuery(api.pages.getPublishedPage, { path });
-    const liveSettings = useQuery(api.siteSettings.getSiteSettings);
-    
-    // Resolve page data
-    const page = livePage !== undefined ? livePage : initialPageData;
-    const siteSettings = liveSettings !== undefined ? liveSettings : initialSettings;
+    // Live data hooks — "skip" on server by passing undefined args when not client-mounted
+    const livePage = useQuery(api.pages.getPublishedPage, isClient ? { path } : "skip");
+    const liveSettings = useQuery(api.siteSettings.getSiteSettings, isClient ? undefined : "skip");
 
-    // Show Premium Loader while Convex is fetching (page is strictly undefined)
-    if (page === undefined) {
+    // Resolve: live data wins once available, otherwise use server-pre-fetched data
+    const page = (livePage !== undefined ? livePage : initialPageData);
+    const siteSettings = (liveSettings !== undefined ? liveSettings : initialSettings);
+
+    // Show loader ONLY if we have zero data (no server pre-fetch AND no live data yet)
+    if (page === undefined && !fallbackData) {
         return <LoadingAnimation />;
     }
 
     let liveData = null;
-    
+
     // 1. Try Live/Initial Convex Data
     if (page?.data) {
         try {
@@ -56,7 +57,7 @@ export function CmsPageClient({
     // Inject useDynamicData into initialPageData so ProductBrowser can pick it up
     const enrichedPageData = {
         ...(initialPageData || {}),
-        useDynamicData: useDynamicData ?? true, // Always use dynamic data when passed via props
+        useDynamicData: useDynamicData ?? true,
     };
 
     return (
@@ -69,3 +70,4 @@ export function CmsPageClient({
         </div>
     );
 }
+

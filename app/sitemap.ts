@@ -24,7 +24,7 @@ const convex = new ConvexHttpClient(convexUrl);
         // Fallback handled below
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://naturesboon.net';
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://new.naturesboon.net';
 
     const pageUrls = pages.map((page: any) => ({
         url: `${baseUrl}${page.path}`,

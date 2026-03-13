@@ -4,11 +4,11 @@ const SEO_CONFIG: DefaultSeoProps = {
   titleTemplate: `%s | Nature's Boon`,
   defaultTitle: "Nature's Boon | Premium Personal Care Manufacturer",
   description: 'A global leader in personal care manufacturing, specializing in OEM, Private Label, and innovative R&D solutions.',
-  canonical: 'https://darkorange-anteater-238035.hostingersite.com',
+  canonical: 'https://new.naturesboon.net',
   openGraph: {
     type: 'website',
     locale: 'en_IN',
-    url: 'https://darkorange-anteater-238035.hostingersite.com',
+    url: 'https://new.naturesboon.net',
     siteName: "Nature's Boon",
     title: "Nature's Boon | Premium Personal Care Manufacturer",
     description: 'A global leader in personal care manufacturing, specializing in OEM, Private Label, and innovative R&D solutions.',

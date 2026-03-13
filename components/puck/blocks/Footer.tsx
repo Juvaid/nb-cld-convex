@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Leaf, Mail, Phone, MapPin, Linkedin, Instagram, ArrowUpRight, Facebook, Twitter, Github } from 'lucide-react';
 import { useQuery } from "convex/react";
@@ -13,6 +14,7 @@ export interface FooterProps {
     textColor?: string;
     socialLinks?: { platform: string; href: string }[];
     id?: string;
+    initialData?: any;
 }
 
 const SocialIcon = ({ platform }: { platform: string }) => {
@@ -34,8 +36,13 @@ export const Footer = ({
     backgroundColor = "bg-slate-900",
     textColor = "text-white",
     socialLinks: propSocialLinks,
+    initialData,
 }: FooterProps) => {
-    const siteSettings = useQuery(api.siteSettings.getSiteSettings);
+    // Guard live query behind client mount to prevent SSR bailout
+    const [isClient, setIsClient] = useState(false);
+    useEffect(() => { setIsClient(true); }, []);
+    const liveSettings = useQuery(api.siteSettings.getSiteSettings, isClient ? undefined : "skip");
+    const siteSettings = liveSettings ?? initialData?.siteSettings ?? null;
 
     const logoText = siteSettings?.logoText ?? propLogoText ?? "Nature's Boon";
     const logoImage = siteSettings?.logoImage ?? propLogoImage;

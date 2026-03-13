@@ -2,14 +2,16 @@
 
 import { OrganizationJsonLd, LocalBusinessJsonLd } from 'next-seo';
 
+const SITE_URL = 'https://new.naturesboon.net';
+
 export function OrganizationSchema() {
   return (
     <>
       <OrganizationJsonLd
         type="Organization"
-        id="https://darkorange-anteater-238035.hostingersite.com"
+        id={SITE_URL}
         name="Nature's Boon"
-        url="https://darkorange-anteater-238035.hostingersite.com"
+        url={SITE_URL}
         logo="https://pub-13cf3fd8cdc643a6919ef78cee02101f.r2.dev/1772786218632-blk.png"
         sameAs={[
           'https://www.instagram.com/naturesboon.cosmeticsmfg',
@@ -25,16 +27,16 @@ export function OrganizationSchema() {
       />
       <LocalBusinessJsonLd
         type="Store"
-        id="https://darkorange-anteater-238035.hostingersite.com"
+        id={SITE_URL}
         name="Nature's Boon"
         description="Personal care OEM, Private Label & Contract Manufacturing in Punjab, India."
-        url="https://darkorange-anteater-238035.hostingersite.com"
+        url={SITE_URL}
         telephone="+91-9877659808"
         address={{
-          streetAddress: 'Plot No 123, JLPL Industrial Area, Sector 82',
-          addressLocality: 'Mohali',
+          streetAddress: 'Pakhowal Rd, adj. Sri Chaitanya Techno School, Thakkarwal',
+          addressLocality: 'Ludhiana',
           addressRegion: 'Punjab',
-          postalCode: '140308',
+          postalCode: '142022',
           addressCountry: 'IN',
         }}
         openingHours={['Mo-Fr 09:00-18:00']}

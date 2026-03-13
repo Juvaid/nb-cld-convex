@@ -137,3 +137,29 @@ This plan integrates the technical audit's corrective feedback. **Phase 1 (SSR)*
 - **Fix**: Resolved `useMemo` of null errors during `npm run build` by forcing dynamic rendering on CMS-driven pages (`force-dynamic`).
 - **Safety**: Wrapped `DefaultSeo` and `OrganizationSchema` in client-only checks in `app/providers.tsx` to prevent build-time context misses.
 - **Result**: 100% build success rate with verified SEO metadata in the initial HTML.
+## 🔴 Phase 10: SEO & SSR Remediation (March 13, 2026) [NEW]
+**Goal**: Resolve "noindex" behavior and "Thin Content" by eliminating client-side bailouts.
+
+### 10.1 Eliminating "BAILOUT_TO_CLIENT_SIDE_RENDERING"
+- **Issue**: `CmsPageClient.tsx` uses `useQuery` for `livePage` and `liveSettings`. On the server (SSR), these returned `undefined`, causing the component to return a `<LoadingAnimation />`. Crawlers only saw the loader, not the content.
+- **Fix**: Refactor `CmsPageClient` to strictly use `initialPageData` and `initialSettings` during SSR. Only switch to `useQuery` (live data) if `useDynamicData` is enabled and we are on the client.
+- **Components to Refactor**:
+    - `Footer.tsx`: Stop using `useQuery` directly; pass `siteSettings` via props from `layout.tsx`.
+    - `ProductBrowser.tsx`: Use `initialDbCategories` and `initialDbProducts` passed from `CmsPageRenderer`.
+    - `ProductDetail.tsx`: Ensure `initialProduct` is pre-fetched in `generateMetadata` or a server wrapper and passed down.
+
+### 10.2 Improving Crawl Efficiency
+- **Problem**: Product pages are SSR'd on every request (`force-dynamic`), which is slow for crawlers.
+- **Fix**: Implement `generateStaticParams` in `app/products/[slug]/page.tsx` to pre-render product pages at build time.
+- **Optimization**: Transition from `force-dynamic` to ISR (`revalidate: 3600`) for CMS pages to balance fresh content with high performance.
+
+### 10.3 Advanced Structured Data (Rich Results)
+- **Problem**: Missing `Product` schema on detail pages and incomplete `Organization` schema.
+- **Fix**: 
+    - Add `Product` JSON-LD to `app/products/[slug]/page.tsx`.
+    - Add `BreadcrumbList` schema to all nested pages.
+    - Expand `sameAs` in `layout.tsx` to include all verified social profiles.
+
+### 10.4 Canonical & Domain Consistency
+- **Fix**: Ensure `NEXT_PUBLIC_SITE_URL` is set to `https://new.naturesboon.net` in all environments.
+- **Implementation**: The `layout.tsx` now correctly uses this for the canonical tag, prevent search engine confusion during the migration from the Hostinger subdomain.

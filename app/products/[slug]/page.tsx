@@ -6,6 +6,16 @@ import ProductDetail from "@/components/blocks/ProductDetail";
 const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL || "https://placeholder-url-for-build.convex.cloud";
 const convex = new ConvexHttpClient(convexUrl);
 
+// Pre-render all known product pages at build time for faster crawling
+export async function generateStaticParams() {
+    try {
+        const products = await convex.query(api.products.listNames);
+        return (products || []).map((p: any) => ({ slug: p.slug || p._id }));
+    } catch {
+        return []; // Graceful fallback if Convex is unreachable during build
+    }
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const { slug } = await params;
     try {

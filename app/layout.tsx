@@ -86,10 +86,10 @@ export default async function RootLayout({
     "description": settings.footerDescription || "Personal care manufacturing excellence.",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "Plot No 123, JLPL Industrial Area",
-      "addressLocality": "Mohali",
+      "streetAddress": "Pakhowal Rd, adj. Sri Chaitanya Techno School, Thakkarwal",
+      "addressLocality": "Ludhiana",
       "addressRegion": "Punjab",
-      "postalCode": "140308",
+      "postalCode": "142022",
       "addressCountry": "IN"
     },
     "telephone": "+91-9877659808",
