@@ -134,7 +134,7 @@ export const Footer = ({
                             {[
                                 { icon: Mail, text: 'naturesboon@yahoo.com', sub: 'General Inquiries', href: 'mailto:naturesboon@yahoo.com' },
                                 { icon: Phone, text: '+91-9877659808', sub: 'WhatsApp Available', href: 'https://wa.me/919877659808' },
-                                { icon: MapPin, text: 'Plot No 123, JLPL Industrial Area, Sector 82, Mohali, Punjab', sub: 'Manufacturing H.O.', href: 'https://www.google.com/maps/dir/?api=1&destination=Nature%27s+Boon%2C+Sector+82%2C+Mohali%2C+Punjab+India' },
+                                { icon: MapPin, text: 'Pakhowal Rd, adj. Sri Chaitanya Techno School, Thakkarwal, Ludhiana, Punjab', sub: 'Manufacturing H.O.', href: 'https://www.google.com/maps/dir/?api=1&destination=Nature%27s+Boon%2C+Pakhowal+Rd%2C+Thakkarwal%2C+Ludhiana%2C+Punjab+India' },
                             ].map((item, i) => (
                                 <li key={i}>
                                     <a href={item.href} target={item.icon === MapPin ? "_blank" : "_self"} rel={item.icon === MapPin ? "noopener noreferrer" : undefined} className="flex gap-4 items-start group">

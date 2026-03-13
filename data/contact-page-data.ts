@@ -17,7 +17,7 @@ export const contactPageData = {
                 infoItems: [
                     { label: 'Phone', value: '+91-9877659808', icon: 'Phone' },
                     { label: 'Email', value: 'naturesboon@yahoo.com', icon: 'Mail' },
-                    { label: 'Factory Address', value: 'Plot No 123, JLPL Industrial Area, Sector 82, Mohali, Punjab - 140308', icon: 'MapPin' },
+                    { label: 'Factory Address', value: 'Pakhowal Rd, adj. Sri Chaitanya Techno School, Thakkarwal, Ludhiana, Punjab - 142022', icon: 'MapPin' },
                     { label: 'Working Hours', value: 'Mon - Fri: 9:00 AM - 6:00 PM', icon: 'Clock' },
                 ],
                 departmentEmails: [

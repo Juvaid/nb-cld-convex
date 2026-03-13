@@ -25,14 +25,15 @@ import type * as notifications from "../notifications.js";
 import type * as pages from "../pages.js";
 import type * as product_mutations from "../product_mutations.js";
 import type * as products from "../products.js";
+import type * as revert_contact_info from "../revert_contact_info.js";
 import type * as seed from "../seed.js";
 import type * as seed_admin from "../seed_admin.js";
 import type * as seed_catalog from "../seed_catalog.js";
 import type * as siteData from "../siteData.js";
 import type * as siteSettings from "../siteSettings.js";
+import type * as sync_final_contact from "../sync_final_contact.js";
 import type * as templates from "../templates.js";
 import type * as theme from "../theme.js";
-import type * as update_audit_data from "../update_audit_data.js";
 
 import type {
   ApiFromModules,
@@ -58,14 +59,15 @@ declare const fullApi: ApiFromModules<{
   pages: typeof pages;
   product_mutations: typeof product_mutations;
   products: typeof products;
+  revert_contact_info: typeof revert_contact_info;
   seed: typeof seed;
   seed_admin: typeof seed_admin;
   seed_catalog: typeof seed_catalog;
   siteData: typeof siteData;
   siteSettings: typeof siteSettings;
+  sync_final_contact: typeof sync_final_contact;
   templates: typeof templates;
   theme: typeof theme;
-  update_audit_data: typeof update_audit_data;
 }>;
 
 /**

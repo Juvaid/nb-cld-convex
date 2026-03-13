@@ -56,7 +56,7 @@ export default function ContactSection({
                             if (item.icon === 'Mail') href = `mailto:${item.value}`;
                             if (item.icon === 'Phone') href = `https://wa.me/${item.value.replace(/[^0-9+]/g, '')}`;
                             if (item.icon === 'MapPin') {
-                                href = `https://www.google.com/maps/dir/?api=1&destination=Nature%27s+Boon%2C+${encodeURIComponent(item.value)}`;
+                                href = `https://www.google.com/maps/dir/?api=1&destination=Nature%27s+Boon%2C+Pakhowal+Rd%2C+Thakkarwal%2C+Ludhiana%2C+Punjab+India`;
                                 target = "_blank";
                             }
 

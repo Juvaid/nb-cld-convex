@@ -49,8 +49,8 @@ export const seedSiteData = mutation({
         const existingSettings = await ctx.db.query("siteSettings").collect();
         if (existingSettings.length === 0) {
             await ctx.db.insert("siteSettings", { key: "logoText", value: "Nature's Boon" });
-            await ctx.db.insert("siteSettings", { key: "contactEmail", value: "naturesboon@yahoo.com" });
-            await ctx.db.insert("siteSettings", { key: "contactPhone", value: "+91-9877659808" });
+            await ctx.db.insert("siteSettings", { key: "contactEmail", value: "info@naturesboon.com" });
+            await ctx.db.insert("siteSettings", { key: "contactPhone", value: "+91 97818 00033" });
         } else {
             // Update title specifically for audit fix
             const titleEntry = existingSettings.find(s => s.key === "siteTitle");
