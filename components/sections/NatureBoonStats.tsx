@@ -13,7 +13,7 @@ interface NatureBoonStatsProps {
 
 export const NatureBoonStats = ({
     stats = [
-        { value: "15+", label: "Years Experience" },
+        { value: "20+", label: "Years Experience" },
         { value: "200+", label: "Annual SKUs" },
         { value: "750+", label: "Tons Capacity" },
         { value: "65+", label: "Strong Family" }
