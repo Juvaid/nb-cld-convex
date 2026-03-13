@@ -84,10 +84,10 @@ export function LoadingAnimation() {
                     </svg>
                 </div>
                 <div className="text-center overflow-hidden loader-branding whitespace-nowrap">
-                    <h1 className="brand-text text-lg md:text-xl font-bold text-slate-900 tracking-tight opacity-0 px-4">
+                    <h1 className="brand-text text-lg md:text-xl font-semibold text-slate-900 tracking-tight opacity-0 px-4">
                         NATURE'S BOON
                     </h1>
-                    <p className="brand-subtext text-[8px] md:text-[9px] font-black text-[#15803d] tracking-[0.4em] mt-1 opacity-0 uppercase">
+                    <p className="brand-subtext text-[8px] md:text-[9px] font-medium text-[#15803d] tracking-[0.4em] mt-1 opacity-0 uppercase">
                         Since 2006
                     </p>
                 </div>
