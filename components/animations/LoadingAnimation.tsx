@@ -5,15 +5,15 @@ import React from "react";
 export function LoadingAnimation() {
     return (
         <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white">
-            <div className="w-full max-w-[240px] md:max-w-[280px] animate-in fade-in zoom-in-95 duration-1000 flex flex-col items-center">
-                <div className="relative w-full h-auto mb-8">
+            <div className="w-full max-w-[120px] md:max-w-[150px] animate-in fade-in zoom-in-95 duration-1000 flex flex-col items-center">
+                <div className="relative w-full h-auto mb-6">
                     <svg id="Premium_Loader_Logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1142.96" className="w-full h-auto">
                         <defs>
                             <style>{`
                   .loader-path {
                     fill: rgba(21, 128, 61, 0);
                     stroke: #15803d;
-                    stroke-width: 6px;
+                    stroke-width: 8px;
                     stroke-linecap: round;
                     stroke-linejoin: round;
                   }
@@ -84,10 +84,10 @@ export function LoadingAnimation() {
                     </svg>
                 </div>
                 <div className="text-center overflow-hidden loader-branding whitespace-nowrap">
-                    <h1 className="brand-text text-xl md:text-2xl font-black text-slate-900 tracking-tighter opacity-0 px-4">
+                    <h1 className="brand-text text-lg md:text-xl font-bold text-slate-900 tracking-tight opacity-0 px-4">
                         NATURE'S BOON
                     </h1>
-                    <p className="brand-subtext text-[10px] md:text-xs font-black text-[#15803d] tracking-[0.4em] mt-1 opacity-0 uppercase">
+                    <p className="brand-subtext text-[8px] md:text-[9px] font-black text-[#15803d] tracking-[0.4em] mt-1 opacity-0 uppercase">
                         Since 2006
                     </p>
                 </div>
