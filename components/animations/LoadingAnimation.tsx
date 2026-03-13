@@ -5,14 +5,14 @@ import React from "react";
 export function LoadingAnimation() {
     return (
         <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white">
-            <div className="w-full max-w-[200px] md:max-w-[250px] animate-in fade-in zoom-in-95 duration-1000 flex flex-col items-center">
-                <svg id="Premium_Loader_Logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1142.96" className="w-full h-auto mb-8">
+            <div className="w-full max-w-[140px] md:max-w-[160px] animate-in fade-in zoom-in-95 duration-1000 flex flex-col items-center">
+                <svg id="Premium_Loader_Logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1142.96" className="w-full h-auto mb-6">
                     <defs>
                         <style>{`
               .loader-path {
                 fill: rgba(43, 238, 108, 0);
                 stroke: #2bee6c;
-                stroke-width: 12px;
+                stroke-width: 6px;
                 stroke-linecap: round;
                 stroke-linejoin: round;
               }
@@ -23,57 +23,57 @@ export function LoadingAnimation() {
                   stroke-dashoffset: 0; 
                   stroke: rgba(43, 238, 108, 1);
                 }
-                40% { 
-                  stroke-dasharray: 1500, 12000; 
-                  stroke-dashoffset: -5000; 
+                60% { 
+                  stroke-dasharray: 4000, 12000; 
+                  stroke-dashoffset: -4000; 
                   stroke: rgba(43, 238, 108, 1);
-                }
-                75% { 
-                  stroke-dasharray: 12000, 0; 
-                  stroke-dashoffset: -12000; 
-                  stroke: rgba(43, 238, 108, 0.8);
                 }
                 100% { 
                   stroke-dasharray: 12000, 0; 
                   stroke-dashoffset: -12000; 
-                  stroke: rgba(43, 238, 108, 0.2);
+                  stroke: rgba(43, 238, 108, 0.8);
                 }
               }
 
               @keyframes resolveFill {
-                0%, 70% { fill-opacity: 0; }
+                0%, 50% { fill-opacity: 0; }
                 100% { fill-opacity: 1; }
               }
 
               @keyframes slideUpFade {
-                0% { opacity: 0; transform: translateY(20px); }
+                0% { opacity: 0; transform: translateY(10px); }
                 100% { opacity: 1; transform: translateY(0); }
               }
 
               .right-bowl {
                 animation: 
-                  cometTrace 3.5s cubic-bezier(0.65, 0, 0.15, 1) infinite,
+                  cometTrace 3.5s cubic-bezier(0.16, 1, 0.3, 1) infinite,
                   resolveFill 3.5s ease-out infinite;
               }
 
               .left-stem {
                 animation: 
-                  cometTrace 3.5s cubic-bezier(0.65, 0, 0.15, 1) 0.15s infinite,
-                  resolveFill 3.5s ease-out 0.15s infinite;
+                  cometTrace 3.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s infinite,
+                  resolveFill 3.5s ease-out 0.1s infinite;
               }
 
               .middle-accent {
                 animation: 
-                  cometTrace 3.5s cubic-bezier(0.65, 0, 0.15, 1) 0.3s infinite,
-                  resolveFill 3.5s ease-out 0.3s infinite;
+                  cometTrace 3.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s infinite,
+                  resolveFill 3.5s ease-out 0.2s infinite;
+              }
+
+              /* Use system fonts to prevent jitter when Google Fonts load */
+              .loader-branding {
+                font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
               }
 
               .brand-text {
-                animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+                animation: slideUpFade 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
               }
               
               .brand-subtext {
-                animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+                animation: slideUpFade 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
               }
             `}</style>
                     </defs>
@@ -82,11 +82,11 @@ export function LoadingAnimation() {
                     <path className="loader-path middle-accent" fill="#2bee6c" d="M257.74,593.15l.17,119.79c.02,13.08.19,25.28.02,38.2l-.6,45.8-16.85.16c-12.29.11-24.56.06-37.08.98l.06-329.25c8.81,5.41,19.75,25.55,25.01,34.84l18.08,31.99c4.55,8.04,9.22,16.08,10.59,25.37l1.19,8.03c1.19,8.05-.6,15.48-.59,24.09Z" />
                     <path className="loader-path right-bowl" fill="#2bee6c" fillRule="evenodd" d="M875.27,688.97l-1.3,9.35c-3.38,24.35-19.11,50.63-38.65,65.97-21.06,16.54-44.5,25.61-70.8,29.9l-9.1,1.49-10.67,1.11-36.92.24.62-51.29,8.41.56c7.44.5,15.06.85,22.53.07l12.5-1.3c18.33-1.9,39.74-11.91,51.69-26.35,12.66-15.3,20.94-35.23,17.81-55.35-2.45-15.74-9.06-30.78-20.79-41.71-13.02-12.13-33.65-18.16-50.85-19.75l-12.84-1.19c-10.34-.96-40.44-.33-51.75.42-10.12.67-20.17.43-30.91.54v438.77c73.33-15.27,142.61-48.44,197.9-98.52l10.7-9.7c81.25-73.65,137.3-185.8,150.85-293.71l1.23-9.79,1.2-11.25,1.24-15.35.81-22.24c.22-5.93.23-11.71.01-17.64l-.85-23-1.13-13.87-1.43-13.18c-10.81-99.96-62.13-207.18-135.04-276.47l-20.99-19.95-11.16-9.97-8.3-7.07c-25.57-21.79-53.07-40.73-82.78-56.88-43.42-23.59-90.1-39.19-138.97-45.31l-10.24-1.28-12.42-1.24-13.69-1.02-.05-50.13c8.6-.38,16.52.13,24.76.91l10.83,1.03,11.32,1.4c61.18,7.57,129.41,37.03,182.23,69.2,28.6,17.41,55.63,36.25,80.66,58.21l9.49,8.33,26.48,26.02c17.62,17.31,34.02,34.7,48.59,54.74,49.01,67.42,80.77,152.27,91.57,234.37l1.29,9.8,1.14,10.5,1.18,12.93c1.43,15.67,2.24,43.71,1.56,59.36l-.96,22.1-1.22,15.39-1.18,11.1-1.33,10.57c-5.49,43.74-17.12,85.83-33.06,126.97-8.07,20.83-15.88,40.71-26.38,60.52-20.33,38.39-45.29,73.22-74.71,104.99-8.31,8.97-16.35,17.42-25.37,25.52l-12.49,11.22c-67.08,60.26-161.16,105.96-250.47,119.07l-8.07,1.18-9.89,1.26c-3.79.48-7.35.84-11.21,1.05-5.06.79-10.12,1.34-15.61.63V352.3s24.41-.96,24.41-.96l26.65-1.25,30.39-.96c9.45-.3,18.77-.46,28.19,0l22,1.05,12.21,1.11,10.16,1.29c17.37,2.2,33.86,6.58,49.9,13.65,16.73,7.37,30.56,18.08,42.29,31.86,14.72,17.3,26.21,36.69,29.46,59.35l.99,6.92c.83,5.82.82,12.31,0,18.12l-1.21,8.61c-4.26,30.29-24.58,60.76-44.15,83.91,10.58,16.88,24.51,25.89,32.92,44.01,4.47,11.06,7.89,22.2,9.39,34.05l1.32,10.45c1.08,8.53,1.25,16.5,0,25.47Z M808.08,520.26c8.62-10.27,12.08-22.89,13.45-35.79,2.52-23.62-7.86-46.94-25.29-62.45-10.48-9.32-22.64-13.99-36.43-15.12l-11.6-.95c-4.56-.37-9.06-1.05-13.73-1.02l-62.87.4-17.31.79-.04,141.47,21.33.99,29.87.59c5.55.11,10.71.22,16.24.03l17.7-.61,12.09-1.37c11.53-1.31,22.37-4.29,32.88-8.93,9.32-4.11,16.94-9.97,23.7-18.03Z" />
                 </svg>
-                <div className="text-center overflow-hidden">
-                    <h1 className="brand-text text-2xl md:text-3xl font-black text-slate-900 tracking-tighter opacity-0">
+                <div className="text-center overflow-hidden loader-branding">
+                    <h1 className="brand-text text-xl md:text-2xl font-black text-slate-900 tracking-tighter opacity-0">
                         NATURE'S BOON
                     </h1>
-                    <p className="brand-subtext text-[10px] md:text-xs font-black text-[#2bee6c] tracking-[0.3em] mt-1 opacity-0 uppercase">
+                    <p className="brand-subtext text-[9px] md:text-[10px] font-black text-[#2bee6c] tracking-[0.4em] mt-1 opacity-0 uppercase">
                         Since 2006
                     </p>
                 </div>
