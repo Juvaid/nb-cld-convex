@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import type { Metadata } from "next";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "@/convex/_generated/api";
@@ -6,15 +8,6 @@ import ProductDetail from "@/components/blocks/ProductDetail";
 const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL || "https://placeholder-url-for-build.convex.cloud";
 const convex = new ConvexHttpClient(convexUrl);
 
-// Pre-render all known product pages at build time for faster crawling
-export async function generateStaticParams() {
-    try {
-        const products = await convex.query(api.products.listNames);
-        return (products || []).map((p: any) => ({ slug: p.slug || p._id }));
-    } catch {
-        return []; // Graceful fallback if Convex is unreachable during build
-    }
-}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const { slug } = await params;
@@ -55,5 +48,31 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         console.error("Failed to fetch product on server", e);
     }
 
-    return <ProductDetail slug={slug} initialProduct={initialProduct} showHeaderFooter={true} />;
+    return (
+        <>
+            {/* Server-rendered SEO content — visible in page source for crawlers */}
+            {initialProduct && (
+                <article className="sr-only" itemScope itemType="https://schema.org/Product">
+                    <h1 itemProp="name">{initialProduct.name}</h1>
+                    {initialProduct.description && <p itemProp="description">{initialProduct.description}</p>}
+                    {initialProduct.sku && <meta itemProp="sku" content={initialProduct.sku} />}
+                    {initialProduct.tags?.[0] && <meta itemProp="category" content={initialProduct.tags[0]} />}
+                    {initialProduct.images?.[0] && (
+                        <meta itemProp="image" content={
+                            initialProduct.images[0].startsWith("http") 
+                                ? initialProduct.images[0] 
+                                : `${process.env.NEXT_PUBLIC_SITE_URL || "https://new.naturesboon.net"}/api/storage/${initialProduct.images[0]}`
+                        } />
+                    )}
+                    <div itemProp="brand" itemScope itemType="https://schema.org/Brand">
+                        <meta itemProp="name" content="Nature's Boon" />
+                    </div>
+                    <div itemProp="manufacturer" itemScope itemType="https://schema.org/Organization">
+                        <meta itemProp="name" content="Nature's Boon" />
+                    </div>
+                </article>
+            )}
+            <ProductDetail slug={slug} initialProduct={initialProduct} showHeaderFooter={true} />
+        </>
+    );
 }

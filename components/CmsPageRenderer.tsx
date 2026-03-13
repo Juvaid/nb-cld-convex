@@ -2,6 +2,7 @@ import { DynamicCmsPageClient as CmsPageClient } from "@/components/DynamicClien
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "@/convex/_generated/api";
 import Image from "next/image";
+import { SeoContentSnapshot } from "@/components/SeoContentSnapshot";
 
 interface CmsPageRendererProps {
     /** The canonical path, e.g. "/about" */
@@ -26,6 +27,7 @@ export async function CmsPageRenderer({ path, fallbackData, useDynamicData }: Cm
     let siteSettings = null;
     let globalStats = null;
     let lcpImage: { src: string; alt: string } | null = null;
+    let parsedPuckData: any = null;
 
     try {
         initialPageData = await convex.query(api.pages.getPublishedPage, { path });
@@ -40,11 +42,14 @@ export async function CmsPageRenderer({ path, fallbackData, useDynamicData }: Cm
             initialDbProducts = await convex.query(api.products.listAll, { status: "active" });
         }
 
-        // LCP Optimization: Pre-parse the Puck data to find the first Hero image and preload it
+        // Parse Puck data for both LCP optimization and SEO snapshot
         if (initialPageData?.data) {
             try {
-                const puckData = JSON.parse(initialPageData.data);
-                const firstBlock = puckData?.content?.[0];
+                parsedPuckData = typeof initialPageData.data === "string"
+                    ? JSON.parse(initialPageData.data)
+                    : initialPageData.data;
+
+                const firstBlock = parsedPuckData?.content?.[0];
                 
                 if (firstBlock) {
                     let imageId = "";
@@ -73,8 +78,25 @@ export async function CmsPageRenderer({ path, fallbackData, useDynamicData }: Cm
         console.error("Failed to fetch CMS page data on server", e);
     }
 
+    // Use fallback data for SEO snapshot if no Convex data
+    const snapshotData = parsedPuckData || fallbackData;
+
     return (
         <>
+            {/* 
+              SEO Content Snapshot — Server-rendered semantic HTML for crawlers.
+              Always in the page source, visually hidden with sr-only.
+            */}
+            {snapshotData && (
+                <SeoContentSnapshot
+                    puckData={snapshotData}
+                    products={initialDbProducts}
+                    categories={initialDbCategories}
+                    globalStats={globalStats}
+                    path={path}
+                />
+            )}
+
             {/* 
               Preload the Hero image found in Puck data. 
               This Link rel="preload" is inserted into the head by Next.js <Image priority /> 
@@ -107,3 +129,4 @@ export async function CmsPageRenderer({ path, fallbackData, useDynamicData }: Cm
         </>
     );
 }
+
