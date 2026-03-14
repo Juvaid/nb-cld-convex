@@ -5,7 +5,7 @@ import { fetchQuery } from "convex/nextjs";
 import { api } from "@/convex/_generated/api";
 import { DynamicBlogsClient as BlogsClient } from "@/components/DynamicClients";
 
-import { buildMetadata } from "@/lib/seo.metadata";
+import { buildMetadata } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
     let settings = null;

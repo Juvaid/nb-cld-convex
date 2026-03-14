@@ -6,7 +6,7 @@ import { api } from "@/convex/_generated/api";
 import { CmsPageRenderer } from "@/components/CmsPageRenderer";
 import { servicesPageData } from "@/data/services-page-data";
 
-import { buildMetadata } from "@/lib/seo.metadata";
+import { buildMetadata } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
     let page = null;

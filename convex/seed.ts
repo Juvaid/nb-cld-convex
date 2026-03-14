@@ -50,7 +50,7 @@ export const seedSiteData = mutation({
         const settingsToSeed = [
             { key: "logoText", value: "Nature's Boon" },
             { key: "siteName", value: "Nature's Boon" },
-            { key: "siteTitle", value: "NatureBoon | Premium Manufacturing Platform" },
+            { key: "siteTitle", value: "Nature's Boon | Premium Manufacturing Platform" },
             { key: "tagline", value: "Your Global Partner in Personal Care Excellence" },
             { key: "contactEmail", value: "info@naturesboon.com" },
             { key: "contactPhone", value: "+91 97818 00033" },

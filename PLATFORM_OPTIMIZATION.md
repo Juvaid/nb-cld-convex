@@ -52,92 +52,13 @@ This plan integrates the technical audit's corrective feedback. **Phase 1 (SSR)*
 
 ---
 
-## 🟣 Phase 4: SEO Content Parity [IN PROGRESS]
+## 🟣 Phase 4: SEO Content Parity [DONE]
 **Goal**: Don't lose your WordPress rankings.
 - **Instruction**: Ensure the following exists in the SSR HTML:
     - **Founder/Date**: "Founded 2006", "Archana Dhingra".
     - **Client Roster**: "Luster Cosmetics, The Man Company, Glamveda" (In text, not images).
     - **H1 Integrity**: Exactly one `<h1>` per page. Use `Typography` variant="h1".
-- **SSR Fix**: Address **"BAILOUT_TO_CLIENT_SIDE_RENDERING"** by moving Providers to a leaf client component.
-
----
-
-## 🔴 Phase 5: Infrastructure & Launch Mastery [DONE]
-**Goal**: Zero-downtime, safe transition.
-- **Status**: Completed redirects for major categories.
-- **P2 Step**: Implement sitemap.xml and robots.txt (See Phase 7).
-
----
-
-## 🟠 Phase 6: Crawler Remediation (P1) [DONE]
-**Goal**: Remove bad signals (404s) and provide rich semantics (Schema.org).
-
-### 6.1 Fix 404 Routes
-- **Issue**: `/about-us` is throwing a 404.
-- **Fix**: Add a permanent redirect in `next.config.ts` from `/about-us` to `/about`.
-
-### 6.2 JSON-LD Structured Data
-- **Instruction**: Inject `<script type="application/ld+json">` into `layout.tsx`.
-- **Target**: `Organization` and `LocalBusiness` schemas.
-
-### 6.3 Canonical URLs
-- **Instruction**: Add `<link rel="canonical" href="..." />` to handle potential duplicate content from various staging/hosting domains.
-
----
-
-## 🟢 Phase 7: Search Visibility (P2) [DONE]
-**Goal**: Ensure 100% discoverability of all products and blogs.
-
-### 7.1 Dynamic Sitemap (`sitemap.ts`)
-- **Instruction**: Create `app/sitemap.ts` to automatically generate `sitemap.xml` by fetching all categories and blog slugs from Convex.
-
-### 7.2 Robots.txt (`robots.ts`)
-- **Instruction**: Create `app/robots.ts` to manage crawler behavior and point to the sitemap.
-
----
-
-## 🏁 Final Pre-Launch Verification
-- [x] **View Source**: Text is visible (no CSR bailouts)?
-- [x] **Redirects**: `/about-us` points to `/about`?
-- [x] **Rich Results**: Schema markup valid?
-- [x] **Sitemap**: `/sitemap.xml` lists all products and blogs?
-- [x] **Canonical**: Points to https://naturesboon.net?
-- [x] **Audit Remediation**: Data sync, brand consistency, and social links fixed?
-
----
-
-## 🟣 Phase 8: Audit Remediation (March 13, 2026) [DONE]
-**Goal**: Resolve specific issues from the external audit report.
-
-### 8.1 Data Synchronization & Fallbacks
-- **Fix**: Updated `CmsPageClient.tsx` to properly resolve `page` data. 
-- **Pattern**: Priority is `Live Convex Data` \> `Server Pre-fetched Data` \> `Static JSON Fallback`.
-- **Resilience**: Added string/object parsing guards for `page.data`.
-
-### 8.2 Brand Standardization
-- **Goal**: End the "NatureBoon" vs "Nature's Boon" confusion.
-- **Action**: Forced "Nature's Boon" as the global default in `layout.tsx`, `SiteHeader.tsx`, and `Footer.tsx`.
-- **Checklist**: All OpenGraph, JSON-LD, and Header/Footer strings now use the apostrophe version.
-
-### 8.3 Social Media Connectivity
-- **Fix**: Rewired `Footer.tsx` to use actual platform URLs (LinkedIn, FB, Insta) instead of `#` placeholders.
-- **Site Settings**: Integrated these URLs into the `siteSettings` fallback logic for global control.
-
----
-
-## 🔵 Phase 9: SEO Resilience & Static Fallbacks [DONE]
-**Goal**: Guarantee build-time stability and CMS independence for search engines.
-
-### 9.1 Static Metadata Fallbacks
-- **Strategy**: Every page has a hardcoded static "floor" for SEO. If Convex is down or slow, the build/request still serves perfect meta tags.
-- **Implementation**: `lib/seo.fallback.ts` stores high-quality hardcoded fallbacks for all main routes.
-- **Resilience**: `lib/seo.metadata.ts` provides a `buildMetadata` helper that merges Convex data (if available) with these fallbacks.
-
-### 9.2 Prerender Stability
-- **Fix**: Resolved `useMemo` of null errors during `npm run build` by forcing dynamic rendering on CMS-driven pages (`force-dynamic`).
-- **Safety**: Wrapped `DefaultSeo` and `OrganizationSchema` in client-only checks in `app/providers.tsx` to prevent build-time context misses.
-- **Result**: 100% build success rate with verified SEO metadata in the initial HTML.
----
+- **SSR Fix**: ✅ RESOLVED - Implemented `preloadQuery` in `CmsPageRenderer.tsx` and removed `SeoContentSnapshot.tsx` to prevent cloaking risks.
 
 ---
 
@@ -145,8 +66,8 @@ This plan integrates the technical audit's corrective feedback. **Phase 1 (SSR)*
 **Goal**: Resolve high-priority bugs identified in the latest source audit.
 
 ### 13.1 Ghost Layer Sync (The "15+ vs 20+" Bug)
-- **Status**: ✅ All SR-ONLY layers now pull from live Convex data.
-- **Verification**: `SeoContentSnapshot` updated to use `fetchQuery` results.
+- **Status**: ✅ All content layers now pull from live Convex data via `preloadQuery`.
+- **Note**: Removed the "ghost layer" (`SeoContentSnapshot`) in favor of direct SSR.
 
 ### 13.2 Canonical Tag Collision
 - **Status**: ✅ Duplicate canonical removed from `layout.tsx`.
@@ -162,9 +83,8 @@ This plan integrates the technical audit's corrective feedback. **Phase 1 (SSR)*
 
 ## 🟢 Phase 14: SEO Content Parity (Fixed Block Mappings) [DONE]
 **Goal**: Ensure all Puck blocks are visible to Google.
-- **Status**: ✅ Added 12+ missing block mappings to `SeoContentSnapshot.tsx`.
-- **Blocks Added**: `HomeEssentials`, `AboutCore`, `CategoryPortfolio`, `ProductDetail`, `SuccessStory`, etc.
-- **H1 Fix**: Added global `<h1>` tag to the ghost layer article.
+- **Status**: ✅ Transitioned to full Server-Side Rendering (SSR). All blocks are now natively visible in the initial HTML source.
+- **H1 Fix**: Verified global `<h1>` tag in `ModernHeroBlock`.
 
 ---
 
@@ -178,7 +98,7 @@ This plan integrates the technical audit's corrective feedback. **Phase 1 (SSR)*
 | Social Links | Placeholder (#) | **Real URLs** | ✅ Updated in `Footer.tsx` |
 | Intro Heading | OUr CLIENTS | **Our Clients** | ✅ Fixed via Migration |
 | SSR Bailouts | Navbar/Reviews | **Guarded / Removed** | ✅ Fixed in SiteHeader |
-| SEO Coverage | Missing Blocks | **100% Puck Mapping**| ✅ Updated Snapshot |
+| SEO Coverage | Missing Blocks | **100% Native SSR**| ✅ Refactored |
 
 ---
 
@@ -188,8 +108,8 @@ This plan integrates the technical audit's corrective feedback. **Phase 1 (SSR)*
 - [x] **Sitemap**: `/sitemap.xml` exists and lists dynamic content?
 - [x] **Robots**: `/robots.txt` points correctly to the sitemap?
 - [x] **Canonical Check**: Duplicate tags removed?
-- [ ] **Data Sync**: `stats` table in Convex matches visual "20+" branding?
-- [ ] **Social Links**: Footer links validated and pointing to real profiles?
-- [ ] **Metadata**: `generateMetadata` implemented on Products and Blogs?
+- [x] **Data Sync**: `stats` table in Convex matches visual "20+" branding?
+- [x] **Social Links**: Footer links validated and pointing to real profiles?
+- [x] **Metadata**: `generateMetadata` implemented on Products and Blogs?
 - [ ] **GSC**: Sitemap submitted to Google Search Console on migration day?
 

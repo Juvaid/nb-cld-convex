@@ -38,6 +38,20 @@ const nextConfig: NextConfig = {
   transpilePackages: ["@convex-dev/auth"],
   serverExternalPackages: ["convex"],
 
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'X-Robots-Tag',
+            value: 'noindex',
+          },
+        ],
+      },
+    ];
+  },
+
   // 301 Redirects: WordPress → Next.js URL mappings for SEO continuity
   async redirects() {
     return [
