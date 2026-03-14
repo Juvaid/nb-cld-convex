@@ -112,7 +112,13 @@ export function EditorClient({ path }: EditorClientProps) {
                         setData(parsed);
                     }
                 } else {
-                    setData(parsed);
+                    // Inject metadata from database if it's missing or different in the root props
+                if (parsed.root && parsed.root.props) {
+                    parsed.root.props.title = parsed.root.props.title || pageData.title;
+                    parsed.root.props.description = parsed.root.props.description || pageData.description;
+                }
+
+                setData(parsed);
                 }
                 setLoadedPath(path);
                 setSaveStatus("saved");
@@ -203,7 +209,8 @@ export function EditorClient({ path }: EditorClientProps) {
             try {
                 await savePage({
                     path,
-                    title: pages?.find(p => p.path === path)?.title || "Untitled Page",
+                    title: (newData.root.props as any)?.title || currentPage?.title || "Untitled Page",
+                    description: (newData.root.props as any)?.description,
                     draftData: JSON.stringify(newData),
                     status: currentPage?.status || "draft",
                     token: token ?? undefined,
@@ -221,10 +228,12 @@ export function EditorClient({ path }: EditorClientProps) {
         setData(newData);
         setSaveStatus("saving");
         try {
+            const currentPage = pages?.find(p => p.path === path);
             // First ensure the latest draft is fully saved
             await savePage({
                 path,
-                title: pages?.find(p => p.path === path)?.title || "Untitled Page",
+                title: (newData.root.props as any)?.title || currentPage?.title || "Untitled Page",
+                description: (newData.root.props as any)?.description,
                 draftData: JSON.stringify(newData),
                 status: "draft",
                 token: token ?? undefined,

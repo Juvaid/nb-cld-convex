@@ -10,15 +10,19 @@ import { buildMetadata } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
     let settings = null;
+    let page = null;
     try {
-        settings = await fetchQuery(api.siteSettings.getSiteSettings);
+        [settings, page] = await Promise.all([
+            fetchQuery(api.siteSettings.getSiteSettings),
+            fetchQuery(api.pages.getPublishedPage, { path: "/" })
+        ]);
     } catch (e) {
         // Fallback used in buildMetadata
     }
 
     return buildMetadata("/", {
-        title: (settings as any)?.siteTitle,
-        description: (settings as any)?.footerDescription,
+        title: page?.title || (settings as any)?.siteTitle,
+        description: page?.description || (settings as any)?.footerDescription,
     });
 }
 

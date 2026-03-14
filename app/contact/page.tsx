@@ -10,15 +10,17 @@ import { buildMetadata } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
     let settings = null;
+    let page = null;
     try {
-        settings = await fetchQuery(api.siteSettings.getSiteSettings);
+        [settings, page] = await Promise.all([
+            fetchQuery(api.siteSettings.getSiteSettings),
+            fetchQuery(api.pages.getPublishedPage, { path: "/contact" })
+        ]);
     } catch (e) {}
 
-    const siteName = (settings as any)?.siteTitle;
-
     return buildMetadata("/contact", {
-        title: siteName ? `Contact | ${siteName}` : undefined,
-        description: siteName ? `Get in touch with ${siteName} for B2B inquiry and partnership.` : undefined,
+        title: page?.title || ((settings as any)?.siteTitle ? `Contact | ${(settings as any).siteTitle}` : undefined),
+        description: page?.description || ((settings as any)?.siteTitle ? `Get in touch with ${(settings as any).siteTitle} for B2B inquiry and partnership.` : undefined),
     });
 }
 

@@ -73,6 +73,8 @@ import { ProductDetailBlockConfig } from "./blocks/ProductDetailBlock";
 export const config: Config = {
     root: {
         fields: {
+            title: { type: "text", label: "Page Title (SEO)" },
+            description: { type: "textarea", label: "Meta Description" },
             inquiryEmail: { type: "text", label: "Inquiry Notification Email" },
             enableInquiryNotifications: { type: "radio", label: "Enable Email Alerts", options: [{ label: "Yes", value: true }, { label: "No", value: false }] }
         },
