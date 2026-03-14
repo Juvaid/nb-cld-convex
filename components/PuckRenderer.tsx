@@ -7,6 +7,7 @@ import { Section } from "./ui/Section";
 import { Flex } from "./ui/Flex";
 import { Typography } from "./ui/Typography";
 import { ErrorBoundary } from "./ui/ErrorBoundary";
+import { Footer } from "./puck/blocks/Footer";
 
 const legacyMap: Record<string, string> = {
     Hero: "ModernHero",
@@ -14,6 +15,7 @@ const legacyMap: Record<string, string> = {
     Stats: "ModernStats",
     Testimonial: "ModernTestimonials",
     SiteFooter: "Footer",
+    CatalogSection: "CategoryPortfolio",
 };
 
 export function PuckRenderer({ data, initialData, configOverride, siteSettings }: { data: any; initialData?: any; configOverride?: Config; siteSettings?: any }) {
@@ -70,6 +72,19 @@ export function PuckRenderer({ data, initialData, configOverride, siteSettings }
                         })
                     )}
                 </main>
+
+                {/* Render footer from root.props if no Footer block exists in content */}
+                {footer && Object.keys(footer).length > 0 && 
+                 !content.some((b: any) => b.type === "Footer" || b.type === "SiteFooter") && (
+                    <Footer {...footer} />
+                )}
+
+                {process.env.NODE_ENV === "development" && 
+                 !content.some((b: any) => b.type === "Footer" || b.type === "SiteFooter") && (
+                    <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 text-xs p-3 text-center font-mono">
+                        ⚠ DEV ONLY: No Footer block in content array for this page. Add one in /admin.
+                    </div>
+                )}
             </div>
     );
 };

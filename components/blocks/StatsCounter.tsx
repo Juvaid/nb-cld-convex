@@ -96,7 +96,7 @@ export default function StatsCounter({
     id,
     heading = "Nature's Boon milestones and metric",
     stats = [
-        { value: '15+', label: 'Years of Experience' },
+        { value: '20+', label: 'Years of Experience' },
         { value: '65+', label: 'Strong Family' },
         { value: '200+', label: 'SKUs Produced Annually' },
         { value: '75+', label: 'Products by In-house R&D' },
