@@ -3,6 +3,7 @@
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { FileText, Edit2, ExternalLink, Plus } from "lucide-react";
+import { OGPreviewCard } from "@/components/admin/OGPreviewCard";
 import { TemplateSelector } from "@/components/editor/TemplateSelector";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -97,6 +98,7 @@ export default function PagesAdmin() {
                                 <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-widest">Page Name</th>
                                 <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-widest hidden sm:table-cell">Path</th>
                                 <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-widest">Status</th>
+                                <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-widest hidden md:table-cell">SEO</th>
                                 <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-widest text-right">Actions</th>
                             </tr>
                         </thead>
@@ -131,8 +133,37 @@ export default function PagesAdmin() {
                                             {page.status || "draft"}
                                         </button>
                                     </td>
+                                    <td className="px-6 py-4 hidden md:table-cell">
+                                        {/* SEO quick status dot */}
+                                        <div className="flex items-center gap-2">
+                                            <span className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                                                !page.title || page.title.includes("||") || !page.publishedData
+                                                    ? "bg-red-400"
+                                                    : !page.description || !page.ogImage
+                                                        ? "bg-amber-400"
+                                                        : "bg-emerald-400"
+                                            }`} />
+                                            <span className="text-xs text-slate-400 font-medium">
+                                                {!page.publishedData
+                                                    ? "Not published"
+                                                    : !page.description
+                                                        ? "No description"
+                                                        : !page.ogImage
+                                                            ? "No OG image"
+                                                            : "OK"
+                                                }
+                                            </span>
+                                        </div>
+                                    </td>
                                     <td className="px-6 py-4 text-right">
                                         <div className="flex items-center justify-end gap-2">
+                                            <OGPreviewCard
+                                                trigger="button"
+                                                title={page.title}
+                                                description={page.description}
+                                                imageUrl={page.ogImage}
+                                                url={page.path}
+                                            />
                                             <a
                                                 href={`/admin/editor?path=${page.path}`}
                                                 className="p-2 text-slate-400 bg-white border border-slate-200 hover:text-nb-green hover:bg-nb-green/5 hover:border-nb-green/30 rounded-lg transition-all shadow-sm"
