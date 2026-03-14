@@ -17,6 +17,9 @@ export const savePage = mutation({
         path: v.string(),
         title: v.string(),
         description: v.optional(v.string()),
+        keywords: v.optional(v.string()),
+        ogImage: v.optional(v.string()),
+        schemaType: v.optional(v.string()),
         draftData: v.string(),
         data: v.optional(v.string()), // Deprecated, keep optional for strict validation fixes
         status: v.optional(v.union(v.literal("draft"), v.literal("published"))),
@@ -39,9 +42,10 @@ export const savePage = mutation({
                 lastModified: now,
             };
 
-            if (args.description !== undefined) {
-                updateFields.description = args.description;
-            }
+            if (args.description !== undefined) updateFields.description = args.description;
+            if (args.keywords !== undefined) updateFields.keywords = args.keywords;
+            if (args.ogImage !== undefined) updateFields.ogImage = args.ogImage;
+            if (args.schemaType !== undefined) updateFields.schemaType = args.schemaType;
 
             const statusToSave = args.status || existing.status || "draft";
             updateFields.status = statusToSave;
@@ -57,6 +61,9 @@ export const savePage = mutation({
                 path: args.path,
                 title: args.title,
                 description: args.description,
+                keywords: args.keywords,
+                ogImage: args.ogImage,
+                schemaType: args.schemaType,
                 draftData: args.draftData,
                 publishedData: args.status === "published" ? args.draftData : undefined,
                 status: args.status || "draft",

@@ -19,6 +19,9 @@ export interface ModernServicesProps {
         mediaImage?: string;
         showMedia?: boolean;
         link?: string;
+        showButton?: boolean;
+        buttonText?: string;
+        buttonLink?: string;
     }>;
 }
 
@@ -43,7 +46,16 @@ export const ModernServicesBlockConfig: ComponentConfig<ModernServicesProps> = {
         services: {
             type: "array",
             getItemSummary: (item) => item.title || "Service",
-            defaultItemProps: { title: "New Service", description: "Service description", mediaIcon: "Palette", mediaType: "icon", showMedia: true },
+            defaultItemProps: { 
+                title: "New Service", 
+                description: "Service description", 
+                mediaIcon: "Palette", 
+                mediaType: "icon", 
+                showMedia: true,
+                showButton: true,
+                buttonText: "EXPLORE SERVICE",
+                buttonLink: "#"
+            },
             arrayFields: {
                 title: { type: "text" },
                 description: { type: "text" },
@@ -51,7 +63,10 @@ export const ModernServicesBlockConfig: ComponentConfig<ModernServicesProps> = {
                 mediaType: { type: "radio", options: [{ label: "Icon", value: "icon" }, { label: "Image", value: "image" }] },
                 mediaIcon: { type: "text", label: "Icon (Lucide Name)" },
                 mediaImage: { type: "custom", render: ({ value, onChange }: any) => <ImagePicker value={value || ""} onChange={onChange} /> as any },
-                link: { type: "text" },
+                showButton: { type: "radio", options: [{ label: "Yes", value: true }, { label: "No", value: false }] },
+                buttonText: { type: "text" },
+                buttonLink: { type: "text" },
+                link: { type: "text", label: "Card Link (Optional)" },
             }
         }
     },
@@ -64,7 +79,7 @@ export const ModernServicesBlockConfig: ComponentConfig<ModernServicesProps> = {
         services: [],
     },
     render: (props) => {
-        const [currentServices, setCurrentServices] = useState<any[]>([]);
+        const [currentServices] = useState<any[]>([]);
 
         // initialData is passed by PuckRenderer
         const initialGlobal = (props as { initialData?: { globalServices?: any[] } }).initialData?.globalServices || [];
@@ -76,15 +91,16 @@ export const ModernServicesBlockConfig: ComponentConfig<ModernServicesProps> = {
             mediaIcon: s.icon,
             mediaType: "icon",
             showMedia: true,
+            showButton: true,
+            buttonText: "EXPLORE SERVICE",
+            buttonLink: `/services#${s.slug}`,
+            link: `/services#${s.slug}`
         }));
 
         const finalServices = props.useGlobalServices ? mappedGlobal : props.services;
         
         return (
             <>
-                {typeof window !== "undefined" && props.useGlobalServices && (
-                    <LiveServices onServicesFound={setCurrentServices} />
-                )}
                 <ModernServices 
                     {...props} 
                     heading={props.heading}

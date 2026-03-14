@@ -5,21 +5,15 @@ import { fetchQuery } from "convex/nextjs";
 import { api } from "@/convex/_generated/api";
 import { CmsPageRenderer } from "@/components/CmsPageRenderer";
 import { servicesPageData } from "@/data/services-page-data";
-
-import { buildMetadata } from "@/lib/seo";
+import { generatePageMetadata } from "@/lib/generatePageMetadata";
+import { PageRecord } from "@/types";
 
 export async function generateMetadata(): Promise<Metadata> {
-    let page = null;
-    let settings = null;
-    try {
-        page = await fetchQuery(api.pages.getPublishedPage, { path: "/services" });
-        settings = await fetchQuery(api.siteSettings.getSiteSettings);
-    } catch (e) {}
-
-    return buildMetadata("/services", {
-        title: page?.title || (settings as any)?.siteTitle,
-        description: page?.description || "End-to-end private label and contract manufacturing services.",
-    });
+    const page = await fetchQuery(api.pages.getPublishedPage, { path: "/services" });
+    if (!page) {
+        return {};
+    }
+    return generatePageMetadata(page as PageRecord, "/services");
 }
 
 export default function ServicesPage() {

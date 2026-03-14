@@ -3,73 +3,34 @@ import { fetchQuery } from 'convex/nextjs';
 import { api } from '@/convex/_generated/api';
 import BlogPostClient from './BlogPostClient';
 import React from 'react';
-import { generateArticleJsonLd, generateBaseMetadata } from '@/lib/seo';
+import { generateBlogMetadata } from '@/lib/generatePageMetadata';
+import { BlogRecord } from '@/types';
 
 export async function generateMetadata({
-  params,
+    params,
 }: {
-  params: Promise<{ slug: string }>;
+    params: { slug: string };
 }): Promise<Metadata> {
-  const { slug } = await params;
-  let blog: any = null;
-  let settings: any = null;
-  
-  try {
-    [blog, settings] = await Promise.all([
-      fetchQuery(api.blogs.getBlogBySlug, { slug }),
-      fetchQuery(api.siteSettings.getSiteSettings)
-    ]);
-  } catch (e) {}
-
-  const baseMetadata = generateBaseMetadata(settings);
-  if (!blog) return baseMetadata;
-
-  return {
-    ...baseMetadata,
-    title: blog.title,
-    description: blog.excerpt || undefined,
-    openGraph: {
-      ...baseMetadata.openGraph,
-      title: blog.title,
-      description: blog.excerpt || undefined,
-    },
-  };
+    const blog = await fetchQuery(api.blogs.getBlogBySlug, { slug: params.slug });
+    if (!blog) {
+        return {};
+    }
+    return generateBlogMetadata(blog as BlogRecord, `/blogs/blog/${params.slug}`);
 }
 
 interface BlogPostPageProps {
-  params: Promise<{ slug: string }>;
+    params: { slug: string };
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
-  const { slug } = await params;
+    const { slug } = params;
 
-  let initialBlog = null;
-  try {
-    initialBlog = await fetchQuery(api.blogs.getBlogBySlug, { slug });
-  } catch (e) {
-    console.error('Failed to fetch blog post on server', e);
-  }
+    const initialBlog = await fetchQuery(api.blogs.getBlogBySlug, { slug });
 
-  let settings = null;
-  try {
-    settings = await fetchQuery(api.siteSettings.getSiteSettings);
-  } catch (e) {
-    console.error('Failed to fetch settings for blog post page', e);
-  }
-
-  const jsonLd = initialBlog ? generateArticleJsonLd(initialBlog) : {};
-
-  return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <BlogPostClient
-        slug={slug}
-        initialBlog={initialBlog}
-        initialSettings={settings}
-      />
-    </>
-  );
+    return (
+        <BlogPostClient
+            slug={slug}
+            initialBlog={initialBlog}
+        />
+    );
 }

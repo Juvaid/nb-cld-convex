@@ -5,21 +5,15 @@ import { fetchQuery } from "convex/nextjs";
 import { api } from "@/convex/_generated/api";
 import { CmsPageRenderer } from "@/components/CmsPageRenderer";
 import { aboutPageData } from "@/data/about-page-data";
-
-import { buildMetadata } from "@/lib/seo";
+import { generatePageMetadata } from "@/lib/generatePageMetadata";
+import { PageRecord } from "@/types";
 
 export async function generateMetadata(): Promise<Metadata> {
-    let page = null;
-    let settings = null;
-    try {
-        page = await fetchQuery(api.pages.getPublishedPage, { path: "/about" });
-        settings = await fetchQuery(api.siteSettings.getSiteSettings);
-    } catch (e) {}
-
-    return buildMetadata("/about", {
-        title: page?.title || (settings as any)?.siteTitle,
-        description: page?.description || "Learn about Nature's Boon's B2B manufacturing excellence and heritage.",
-    });
+    const page = await fetchQuery(api.pages.getPublishedPage, { path: "/about" });
+    if (!page) {
+        return {};
+    }
+    return generatePageMetadata(page as PageRecord, "/about");
 }
 
 export default function AboutPage() {

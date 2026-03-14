@@ -1,6 +1,8 @@
 import { CmsPageClient } from "@/components/CmsPageClient";
 import { preloadQuery, fetchQuery } from "convex/nextjs";
 import { api } from "@/convex/_generated/api";
+import { getPageSchema } from "@/lib/getPageSchema";
+import { PageRecord } from "@/types";
 
 interface CmsPageRendererProps {
     /** The canonical path, e.g. "/about" */
@@ -38,22 +40,32 @@ export async function CmsPageRenderer({ path, fallbackData, useDynamicData }: Cm
         initialProducts = await fetchQuery(api.products.listAll, { status: "active" });
     }
 
+    const schema = initialPage ? getPageSchema(initialPage.schemaType || "none", initialPage as PageRecord, "https://new.naturesboon.net") : null;
+
     return (
-        <CmsPageClient
-            path={path}
-            fallbackData={fallbackData}
-            useDynamicData={useDynamicData}
-            preloadedPageData={preloadedPageData}
-            preloadedSettings={preloadedSettings}
-            preloadedStats={preloadedStats}
-            preloadedCategories={preloadedCategories as any}
-            preloadedProducts={preloadedProducts as any}
-            initialPage={initialPage}
-            initialSettings={initialSettings}
-            initialStats={initialStats}
-            initialCategories={initialCategories}
-            initialProducts={initialProducts}
-        />
+        <>
+            {schema && (
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+                />
+            )}
+            <CmsPageClient
+                path={path}
+                fallbackData={fallbackData}
+                useDynamicData={useDynamicData}
+                preloadedPageData={preloadedPageData}
+                preloadedSettings={preloadedSettings}
+                preloadedStats={preloadedStats}
+                preloadedCategories={preloadedCategories as any}
+                preloadedProducts={preloadedProducts as any}
+                initialPage={initialPage}
+                initialSettings={initialSettings}
+                initialStats={initialStats}
+                initialCategories={initialCategories}
+                initialProducts={initialProducts}
+            />
+        </>
     );
 }
 

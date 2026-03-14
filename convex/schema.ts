@@ -22,6 +22,10 @@ export default defineSchema({
     data: v.optional(v.string()), // Legacy field, kept so existing rows don't crash schema validation
     title: v.string(), // Page title for SEO
     description: v.optional(v.string()),
+    keywords: v.optional(v.string()),
+    ogImage: v.optional(v.string()),
+    ogDescription: v.optional(v.string()),
+    schemaType: v.optional(v.string()),
     status: v.optional(v.union(v.literal("draft"), v.literal("published"))),
     publishedAt: v.optional(v.number()),
     lastModified: v.optional(v.number()),
@@ -58,6 +62,7 @@ export default defineSchema({
     sku: v.optional(v.string()),
     usp: v.optional(v.string()),
     tags: v.array(v.string()),
+    keywords: v.optional(v.string()),
     meta: v.optional(v.any()), // For flexible structured data
 
     // B2B Wholesale Fields
@@ -122,6 +127,7 @@ export default defineSchema({
     excerpt: v.optional(v.string()),
     coverImage: v.optional(v.string()), // Storage ID or URL
     author: v.string(),
+    keywords: v.optional(v.string()),
     status: v.union(v.literal("draft"), v.literal("published")),
     publishedAt: v.optional(v.number()),
   }).index("by_slug", ["slug"])

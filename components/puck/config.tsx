@@ -75,6 +75,24 @@ export const config: Config = {
         fields: {
             title: { type: "text", label: "Page Title (SEO)" },
             description: { type: "textarea", label: "Meta Description" },
+            keywords: { type: "text", label: "Keywords (Comma separated)" },
+            ogImage: { 
+                type: "custom", 
+                label: "OG Image (1200x600)",
+                render: ({ value, onChange }: any) => <ImagePicker value={value} onChange={onChange} /> as any
+            },
+            schemaType: {
+                type: "select",
+                label: "Schema Type",
+                options: [
+                    { label: "None (Global Only)", value: "none" },
+                    { label: "Product List", value: "product-list" },
+                    { label: "Service", value: "service" },
+                    { label: "About / Person", value: "about" },
+                    { label: "Blog Post", value: "blog-post" },
+                    { label: "Contact", value: "contact" }
+                ]
+            },
             inquiryEmail: { type: "text", label: "Inquiry Notification Email" },
             enableInquiryNotifications: { type: "radio", label: "Enable Email Alerts", options: [{ label: "Yes", value: true }, { label: "No", value: false }] }
         },

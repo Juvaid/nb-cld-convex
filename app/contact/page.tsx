@@ -5,23 +5,15 @@ import { fetchQuery } from "convex/nextjs";
 import { api } from "@/convex/_generated/api";
 import { CmsPageRenderer } from "@/components/CmsPageRenderer";
 import { contactPageData } from "@/data/contact-page-data";
-
-import { buildMetadata } from "@/lib/seo";
+import { generatePageMetadata } from "@/lib/generatePageMetadata";
+import { PageRecord } from "@/types";
 
 export async function generateMetadata(): Promise<Metadata> {
-    let settings = null;
-    let page = null;
-    try {
-        [settings, page] = await Promise.all([
-            fetchQuery(api.siteSettings.getSiteSettings),
-            fetchQuery(api.pages.getPublishedPage, { path: "/contact" })
-        ]);
-    } catch (e) {}
-
-    return buildMetadata("/contact", {
-        title: page?.title || ((settings as any)?.siteTitle ? `Contact | ${(settings as any).siteTitle}` : undefined),
-        description: page?.description || ((settings as any)?.siteTitle ? `Get in touch with ${(settings as any).siteTitle} for B2B inquiry and partnership.` : undefined),
-    });
+    const page = await fetchQuery(api.pages.getPublishedPage, { path: "/contact" });
+    if (!page) {
+        return {};
+    }
+    return generatePageMetadata(page as PageRecord, "/contact");
 }
 
 export default function ContactPage() {

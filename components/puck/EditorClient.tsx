@@ -112,10 +112,13 @@ export function EditorClient({ path }: EditorClientProps) {
                         setData(parsed);
                     }
                 } else {
-                    // Inject metadata from database if it's missing or different in the root props
+                   // Inject metadata from database if it's missing or different in the root props
                 if (parsed.root && parsed.root.props) {
                     parsed.root.props.title = parsed.root.props.title || pageData.title;
                     parsed.root.props.description = parsed.root.props.description || pageData.description;
+                    parsed.root.props.keywords = parsed.root.props.keywords || pageData.keywords;
+                    parsed.root.props.ogImage = parsed.root.props.ogImage || pageData.ogImage;
+                    parsed.root.props.schemaType = parsed.root.props.schemaType || pageData.schemaType;
                 }
 
                 setData(parsed);
@@ -206,11 +209,15 @@ export function EditorClient({ path }: EditorClientProps) {
 
         saveTimeoutRef.current = setTimeout(async () => {
             const currentPage = pages?.find(p => p.path === path);
+            const props = newData.root.props as any;
             try {
                 await savePage({
                     path,
-                    title: (newData.root.props as any)?.title || currentPage?.title || "Untitled Page",
-                    description: (newData.root.props as any)?.description,
+                    title: props?.title || currentPage?.title || "Untitled Page",
+                    description: props?.description,
+                    keywords: props?.keywords,
+                    ogImage: props?.ogImage,
+                    schemaType: props?.schemaType,
                     draftData: JSON.stringify(newData),
                     status: currentPage?.status || "draft",
                     token: token ?? undefined,
@@ -229,11 +236,15 @@ export function EditorClient({ path }: EditorClientProps) {
         setSaveStatus("saving");
         try {
             const currentPage = pages?.find(p => p.path === path);
+            const props = newData.root.props as any;
             // First ensure the latest draft is fully saved
             await savePage({
                 path,
-                title: (newData.root.props as any)?.title || currentPage?.title || "Untitled Page",
-                description: (newData.root.props as any)?.description,
+                title: props?.title || currentPage?.title || "Untitled Page",
+                description: props?.description,
+                keywords: props?.keywords,
+                ogImage: props?.ogImage,
+                schemaType: props?.schemaType,
                 draftData: JSON.stringify(newData),
                 status: "draft",
                 token: token ?? undefined,
