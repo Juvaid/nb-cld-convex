@@ -84,7 +84,7 @@ export function generateBusinessJsonLd(settings?: any): object[] {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     '@id': `${siteUrl}/#organization`,
-    name: settings?.siteTitle || "Nature's Boon",
+    name: "Nature's Boon",
     url: siteUrl,
     logo: settings?.logoUrl || `${siteUrl}/logo-high-res.png`,
     contactPoint: [
@@ -107,7 +107,7 @@ export function generateBusinessJsonLd(settings?: any): object[] {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     '@id': `${siteUrl}/#localbusiness`,
-    name: settings?.siteTitle || "Nature's Boon Cosmetics",
+    name: "Nature's Boon",
     description: "Leading Private Label Cosmetics & Skincare Manufacturer in India.",
     url: siteUrl,
     telephone: settings?.phoneNumber || '+91-97818 00033',
