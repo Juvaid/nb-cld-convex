@@ -21,13 +21,13 @@ export const contactPageData = {
                     { label: 'Working Hours', value: 'Mon - Fri: 9:00 AM - 6:00 PM', icon: 'Clock' },
                 ],
                 departmentEmails: [
-                    { label: 'Inquiry/Info', email: 'naturesboon@yahoo.com' },
-                    { label: 'Accounts', email: 'accounts.naturesboon@yahoo.com' },
-                    { label: 'Purchase', email: 'purchase.naturesboon@yahoo.com' },
-                    { label: 'Sales', email: 'sales.naturesboon@yahoo.com' },
-                    { label: 'Artwork/Designing', email: 'artwork.naturesboon@yahoo.com' },
-                    { label: 'Exports', email: 'Exports@lustercosmetics.in' },
-                    { label: 'Sales (Exports)', email: 'Sales@chitkaraexports.com' },
+                    { label: 'General Inquiry', email: 'naturesboon@yahoo.com' },
+                    { label: 'Domestic Sales', email: 'sales.naturesboon@yahoo.com' },
+                    { label: 'Export Sales', email: 'exports@lustercosmetics.in' },
+                    { label: 'Quality Assurance', email: 'quality.naturesboon@yahoo.com' },
+                    { label: 'Purchase/Sourcing', email: 'purchase.naturesboon@yahoo.com' },
+                    { label: 'Artwork & Designing', email: 'artwork.naturesboon@yahoo.com' },
+                    { label: 'Human Resources', email: 'hr.naturesboon@yahoo.com' },
                 ]
             }
         }

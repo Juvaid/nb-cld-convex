@@ -4,9 +4,9 @@ export const servicesPageData = {
             type: "AboutHero",
             id: "services-hero",
             props: {
-                badgeText: "What We Offer",
-                title: "End-to-End Solutions for Your Personal Care Brand",
-                description: "From concept to shelf — we provide comprehensive services to build, grow, and scale your brand."
+                badgeText: "Manufacturing & R&D Services",
+                title: "Scale Your Brand with Scientific Precision",
+                description: "From clinical formulation to mass production — we provide specialized B2B services to help personal care brands dominate their market."
             }
         },
         {
@@ -15,28 +15,28 @@ export const servicesPageData = {
             props: {
                 services: [
                     {
-                        title: 'Label & Packaging Designing',
-                        description: 'Label and packaging designing is an essential aspect of branding and marketing strategy. It involves creating visual designs and layouts for product labels and packaging materials to attract consumers and communicate key information about the product.',
-                        icon: 'Palette',
-                        slug: 'label-packaging-designing',
+                        title: 'Contract Manufacturing (OEM/ODM)',
+                        description: 'Specialized manufacturing for Skin Care, Hair Care, and Ayurvedic products. We offer flexible production runs, from boutique batches to high-volume commercial manufacturing.',
+                        icon: 'Factory',
+                        slug: 'contract-manufacturing',
                     },
                     {
-                        title: 'Customised Finished Product',
-                        description: 'A personal care product design must account for market demand. We help in creating products that are tailored to the specific needs of your target audience, ensuring success in the competitive market.',
+                        title: 'Private Label Solutions',
+                        description: 'Launch your brand quickly with our pre-verified, high-performance formulations. Choose from our library of 75+ tested products and customize with your own branding.',
+                        icon: 'Package',
+                        slug: 'private-label',
+                    },
+                    {
+                        title: 'R&D and Custom Formulations',
+                        description: 'Our in-house laboratory specializes in creating proprietary formulas tailored to your specific performance requirements and ingredient preferences.',
                         icon: 'FlaskConical',
-                        slug: 'customised-finished-product',
+                        slug: 'custom-formulation',
                     },
                     {
-                        title: 'Trademark & Logo',
-                        description: 'We create trademarks and logos that effectively represent your brand identity. Our team ensures that your brand stands out with a unique and memorable visual identity.',
-                        icon: 'BadgeCheck',
-                        slug: 'trademark-logo',
-                    },
-                    {
-                        title: 'Digital Marketing',
-                        description: 'We help brands promote their products and services to their target audience involving SEO, social media marketing, email marketing, and more to increase visibility and sales.',
-                        icon: 'Megaphone',
-                        slug: 'digital-marketing',
+                        title: 'Regulatory & Compliance Support',
+                        description: 'We handle all necessary testing and documentation including COA, MSDS, and AYUSH licensing support to ensure your brand is market-ready.',
+                        icon: 'ShieldCheck',
+                        slug: 'compliance-support',
                     },
                 ]
             }
@@ -45,13 +45,13 @@ export const servicesPageData = {
             type: "ProcessSteps",
             id: "services-process",
             props: {
-                heading: "Our Process",
-                subheading: "How It Works",
+                heading: "Our Production Workflow",
+                subheading: "Efficient & Transparent",
                 steps: [
-                    { icon: 'ClipboardList', title: 'Consultation', description: 'Discuss your brand vision, target market, and product requirements.' },
-                    { icon: 'Beaker', title: 'R&D / Formulation', description: 'Our in-house R&D team develops custom formulas tailored to your brand.' },
-                    { icon: 'Factory', title: 'Production', description: 'Scalable manufacturing with rigorous quality control at every stage.' },
-                    { icon: 'Rocket', title: 'Launch Support', description: 'Packaging design, branding, and marketing support for a successful launch.' },
+                    { icon: 'ClipboardList', title: 'Consultation & Strategy', description: 'Define your product goals, target demographics, and formulation requirements.' },
+                    { icon: 'Beaker', title: 'R&D Phase', description: 'Sample development and laboratory testing to ensure performance and stability.' },
+                    { icon: 'Factory', title: 'Mass Production', description: 'High-speed manufacturing using precision machinery and real-time quality monitoring.' },
+                    { icon: 'Rocket', title: 'Dispatch & Logistics', description: 'Secure packaging and global shipping with full documentation for international customs.' },
                 ]
             }
         },
@@ -59,9 +59,9 @@ export const servicesPageData = {
             type: "CallToAction",
             id: "services-cta",
             props: {
-                heading: "Start Your Brand Journey With Us",
-                description: "Let our team of experts help you create the perfect personal care product line.",
-                buttonText: "Request a Consultation",
+                heading: "Ready to Scale Your Production?",
+                description: "Consult with our manufacturing experts today to bring your vision to life.",
+                buttonText: "Request a Manufacturing Quote",
                 buttonLink: "/contact"
             }
         }

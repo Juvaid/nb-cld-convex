@@ -50,8 +50,11 @@ export function BlogsClient({ initialSettings }: { initialSettings?: any }) {
                                     <div className="w-20 h-20 bg-white rounded-3xl shadow-xl shadow-slate-200/50 flex items-center justify-center mx-auto mb-8 border border-slate-100 text-slate-300">
                                         <PenTool size={32} />
                                     </div>
-                                    <h2 className="text-2xl font-black text-slate-900 mb-4">No published stories yet</h2>
-                                    <p className="text-slate-500 font-medium mb-8">Our editorial team is busy preparing amazing content for you. Check back soon!</p>
+                                    <h2 className="text-2xl font-black text-slate-900 mb-4">No stories published yet</h2>
+                                    <p className="text-slate-500 font-medium mb-8 leading-relaxed">
+                                        We're working on our first posts. Check back soon for insights on <br className="hidden sm:block" />
+                                        private label manufacturing, skincare formulation, and brand building.
+                                    </p>
                                     <Link href="/" className="inline-flex items-center gap-2 text-nb-green font-black hover:gap-4 transition-all">
                                         Return Home <ArrowRight size={20} />
                                     </Link>

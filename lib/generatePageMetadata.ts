@@ -23,21 +23,36 @@ function getAbsoluteImageUrl(imageUrl?: string): string {
   return `${SITE_URL}/${imageUrl}`;
 }
 
+const BRAND_NAME = "Nature's Boon";
+
+/**
+ * Strips accidental brand name suffixes and trailing pipes from page titles
+ * to prevent doubling up when the root layout template is applied.
+ */
+function sanitizeTitle(title?: string): string {
+  if (!title) return "";
+  return title
+    .replace(new RegExp(`\\s*\\|\\s*${BRAND_NAME.replace(/'/g, "[''\"'\"']")}\\s*$`, "i"), "")
+    .replace(/\s*\|\s*$/, "")
+    .trim();
+}
+
 export function generateProductMetadata(product: ProductRecord, path: string): Metadata {
   const url = `${SITE_URL}${path}`
   const imageUrl = getAbsoluteImageUrl(product.images[0]);
+  const cleanTitle = sanitizeTitle(product.name);
 
   return {
-    title: product.name,
+    title: cleanTitle,
     description: product.description,
     keywords: product.keywords,
     robots: "index, follow",
     alternates: { canonical: url },
     openGraph: {
-      title: product.name,
+      title: cleanTitle,
       description: product.description,
       url,
-      siteName: "Nature's Boon",
+      siteName: BRAND_NAME,
       images: [{
         url: imageUrl,
         width: 1200,
@@ -48,7 +63,7 @@ export function generateProductMetadata(product: ProductRecord, path: string): M
     },
     twitter: {
       card: "summary_large_image",
-      title: product.name,
+      title: cleanTitle,
       description: product.description,
       images: [imageUrl],
     },
@@ -58,18 +73,19 @@ export function generateProductMetadata(product: ProductRecord, path: string): M
 export function generateBlogMetadata(blog: BlogRecord, path: string): Metadata {
   const url = `${SITE_URL}${path}`
   const imageUrl = getAbsoluteImageUrl(blog.coverImage);
+  const cleanTitle = sanitizeTitle(blog.title);
 
   return {
-    title: blog.title,
+    title: cleanTitle,
     description: blog.excerpt,
     keywords: blog.keywords,
     robots: "index, follow",
     alternates: { canonical: url },
     openGraph: {
-      title: blog.title,
+      title: cleanTitle,
       description: blog.excerpt,
       url,
-      siteName: "Nature's Boon",
+      siteName: BRAND_NAME,
       images: [{
         url: imageUrl,
         width: 1200,
@@ -80,7 +96,7 @@ export function generateBlogMetadata(blog: BlogRecord, path: string): Metadata {
     },
     twitter: {
       card: "summary_large_image",
-      title: blog.title,
+      title: cleanTitle,
       description: blog.excerpt,
       images: [imageUrl],
     },
@@ -90,18 +106,19 @@ export function generateBlogMetadata(blog: BlogRecord, path: string): Metadata {
 export function generatePageMetadata(page: PageRecord, path: string): Metadata {
   const url = `${SITE_URL}${path}`
   const imageUrl = getAbsoluteImageUrl(page.ogImage);
+  const cleanTitle = sanitizeTitle(page.title);
 
   return {
-    title: page.title,
+    title: cleanTitle,
     description: page.description,
     keywords: page.keywords,
     robots: "index, follow",
     alternates: { canonical: url },
     openGraph: {
-      title: page.title,
+      title: cleanTitle,
       description: page.ogDescription ?? page.description,
       url,
-      siteName: "Nature's Boon",
+      siteName: BRAND_NAME,
       images: [{
         url: imageUrl,
         width: 1200,
@@ -112,9 +129,10 @@ export function generatePageMetadata(page: PageRecord, path: string): Metadata {
     },
     twitter: {
       card: "summary_large_image",
-      title: page.title,
+      title: cleanTitle,
       description: page.ogDescription ?? page.description,
       images: [imageUrl],
     },
   }
 }
+

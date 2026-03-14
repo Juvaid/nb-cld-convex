@@ -151,6 +151,10 @@ export default defineSchema({
     productId: v.optional(v.string()),
     productName: v.optional(v.string()),
     productCategory: v.optional(v.string()),
+    brandName: v.optional(v.string()),
+    requestType: v.optional(v.string()),
+    formulaStatus: v.optional(v.string()),
+    timeline: v.optional(v.string()),
 
     // B2B Lead Qualification
     companyType: v.optional(v.string()),

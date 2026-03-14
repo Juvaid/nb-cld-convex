@@ -22,14 +22,20 @@ export interface StatsCounterProps {
 
 function AnimatedCounter({ target, label, stat, index }: { target: string, label: string, stat: StatItem, index: number }) {
     const ref = useRef<HTMLDivElement>(null);
-    const isInView = useInView(ref, { once: true, margin: "-100px" });
+    const isInView = useInView(ref, { once: true, margin: "-5%" });
 
     const numericTarget = parseInt(target.replace(/[^0-9]/g, '')) || 0;
     const suffix = target.replace(/[0-9]/g, '');
 
+    // FIX: start display at numericTarget, not 0 — SSR always shows real number
+    const [displayValue, setDisplayValue] = useState(numericTarget);
+
     const springConfig = { damping: 60, stiffness: 100, mass: 1 };
     const countProgress = useSpring(0, springConfig);
-    const countValue = useTransform(countProgress, (latest) => Math.floor(latest));
+    
+    useEffect(() => {
+        return countProgress.on("change", (v) => setDisplayValue(Math.floor(v)));
+    }, [countProgress]);
 
     useEffect(() => {
         if (isInView) {
@@ -74,7 +80,7 @@ function AnimatedCounter({ target, label, stat, index }: { target: string, label
             )}
 
             <div className="text-3xl sm:text-4xl md:text-5xl font-black text-nb-green mb-1 whitespace-nowrap leading-none flex items-baseline">
-                <motion.span className="pr-1">{countValue}</motion.span>
+                <span className="pr-1">{displayValue}</span>
                 <span className="text-2xl sm:text-3xl md:text-4xl opacity-80">{suffix}</span>
             </div>
 
@@ -84,6 +90,7 @@ function AnimatedCounter({ target, label, stat, index }: { target: string, label
         </motion.div>
     );
 }
+
 
 export default function StatsCounter({
     id,

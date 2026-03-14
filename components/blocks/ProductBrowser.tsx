@@ -16,6 +16,8 @@ export interface ProductItem {
     slug: string;
     sku?: string;
     images?: string[];
+    moq?: number;
+    pricingTiers?: { minQty: number; price: number }[];
 }
 
 export interface ProductCategoryData {
@@ -61,7 +63,9 @@ export default function ProductBrowser({ categories: initialCategories = [], use
                     usp: p.usp || "",
                     slug: p.slug,
                     sku: p.sku,
-                    images: p.images
+                    images: p.images,
+                    moq: p.moq,
+                    pricingTiers: p.pricingTiers
                 })),
             documents: (cat as any).meta?.documents
         })).filter(cat => cat.products.length > 0);
@@ -248,8 +252,26 @@ export default function ProductBrowser({ categories: initialCategories = [], use
                                                             {product.name}
                                                         </h3>
                                                         {product.sku && (
-                                                            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">
+                                                            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
                                                                 SKU: {product.sku}
+                                                            </div>
+                                                        )}
+                                                        {product.moq && (
+                                                            <div className="text-[10px] font-bold text-nb-green uppercase tracking-widest mb-4 flex items-center gap-1.5">
+                                                                <span className="w-1.5 h-1.5 rounded-full bg-nb-green" />
+                                                                MOQ: {product.moq} Units
+                                                            </div>
+                                                        )}
+                                                        {product.pricingTiers && product.pricingTiers.length > 0 && (
+                                                            <div className="mb-4">
+                                                                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Wholesale Tiers:</div>
+                                                                <div className="flex flex-wrap gap-1.5">
+                                                                    {product.pricingTiers.map((tier, i) => (
+                                                                        <div key={i} className="text-[10px] font-bold bg-slate-50 border border-slate-900/5 px-2 py-0.5 rounded-md text-slate-600">
+                                                                            {tier.minQty}+: ₹{tier.price}
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
                                                             </div>
                                                         )}
                                                     </div>

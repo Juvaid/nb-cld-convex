@@ -66,7 +66,8 @@ import LogoMarquee from '../blocks/LogoMarquee';
 import ImageCarousel from '../blocks/ImageCarousel';
 import VideoCarousel from '../blocks/VideoCarousel';
 import { QuickOrderPad } from "./blocks/QuickOrderPad";
-import { ComplianceBadges } from "./blocks/ComplianceBadges";
+import { ComplianceBadges, ComplianceBadgesConfig } from "./blocks/ComplianceBadges";
+import { DownloadCenterBlock, DownloadCenterBlockConfig } from "./blocks/DownloadCenterBlock";
 import { InstagramCarouselBlockConfig } from "./blocks/InstagramCarouselBlock";
 import { ProductDetailBlockConfig } from "./blocks/ProductDetailBlock";
 
@@ -114,7 +115,7 @@ export const config: Config = {
         "Modern Blocks": { components: ["FeatureGrid", "ModernHero", "ModernServices", "ModernStats", "ModernTestimonials", "AboutHero", "AboutJourney", "WhyChooseUs", "ProductBrowser", "CallToAction", "ServiceDetailList", "ProcessSteps", "ContactSection", "ProductShowcase", "GoogleReviews"] },
         Layout: { components: ["DynamicLayout", "Section", "Spacer"] },
         Marketing: { components: ["ServiceGrid", "CTA", "SuccessStory", "IconBenefits"] },
-        B2B: { components: ["QuickOrderPad", "ComplianceBadges", "ProductDetail"] },
+        B2B: { components: ["QuickOrderPad", "ComplianceBadges", "DownloadCenter", "ProductDetail"] },
         Blog: { components: ["BlogPostStory"] },
         Content: { components: ["TextBlock", "ProcessTimeline", "FAQAccordion", "Section"] },
         Sections: { components: ["TestimonialsSlider", "JourneyHero", "BentoServices"] },
@@ -383,7 +384,9 @@ export const config: Config = {
             },
             render: (props: any) => {
                 const globalStats = props.initialData?.globalStats;
-                const finalStats = props.useGlobalStats ? (globalStats || props.stats || []) : props.stats;
+                const finalStats = props.useGlobalStats && globalStats?.length > 0
+                  ? globalStats
+                  : (props.stats || []);
                 return <ModernStats {...props} stats={finalStats as any} id={props.sectionId} />
             }
         },
@@ -577,9 +580,8 @@ export const config: Config = {
         QuickOrderPad: {
             render: () => <QuickOrderPad />
         },
-        ComplianceBadges: {
-            render: () => <ComplianceBadges />
-        },
+        ComplianceBadges: ComplianceBadgesConfig as any,
+        DownloadCenter: DownloadCenterBlockConfig as any,
     },
 };
 

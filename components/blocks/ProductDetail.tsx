@@ -280,6 +280,37 @@ export default function ProductDetail({
                                 </div>
                             )}
 
+                            {/* FAQ & Ordering Info */}
+                            <div className="space-y-4 pt-6">
+                                <h3 className="text-lg font-black text-slate-900 mb-4 px-2 tracking-tight">Product FAQ & Ordering Info</h3>
+                                {[
+                                    {
+                                        q: "What is the Minimum Order Quantity (MOQ)?",
+                                        a: `Our standard MOQ for ${product.name} is ${product.moq || '500'} units. However, for initial trial orders or specific private label requirements, we may offer flexible quantities. Please inquire for details.`
+                                    },
+                                    {
+                                        q: "What is the typical manufacturing lead time?",
+                                        a: "Once the formulation and packaging are finalized, our standard production lead time is 15-25 business days. This can vary based on raw material availability and order volume."
+                                    },
+                                    {
+                                        q: "Do you provide export and compliance documentation?",
+                                        a: "Yes. As an ISO certified manufacturer, we provide all necessary documentation including Certificate of Analysis (COA), MSDS, and relevant quality certificates for global export."
+                                    }
+                                ].map((item, i) => (
+                                    <details key={i} className="group p-6 rounded-[24px] bg-white border border-slate-100 hover:border-nb-green/30 transition-all">
+                                        <summary className="flex items-center justify-between cursor-pointer font-bold text-slate-900 text-sm list-none">
+                                            {item.q}
+                                            <span className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-open:rotate-180 transition-transform">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                                            </span>
+                                        </summary>
+                                        <p className="mt-4 text-sm text-slate-500 font-medium leading-relaxed border-t border-slate-50 pt-4">
+                                            {item.a}
+                                        </p>
+                                    </details>
+                                ))}
+                            </div>
+
                             {product.documents && product.documents.length > 0 && (
                                 <div className="p-8 rounded-[32px] bg-white border border-slate-900/5 shadow-xl shadow-slate-200/50">
                                     <DocumentList documents={product.documents} title="Technical Data Sheets & Catalogs" />

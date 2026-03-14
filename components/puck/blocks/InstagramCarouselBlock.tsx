@@ -249,10 +249,12 @@ export function InstagramCarouselBlock({
                         </svg>
                         Social Feed
                     </div>
-                    <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight leading-tight mb-3">
-                        {title}
-                    </h2>
-                    {subtitle && (
+                    {title?.trim() && (
+                        <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight leading-tight mb-3">
+                            {title}
+                        </h2>
+                    )}
+                    {subtitle?.trim() && (
                         <p className="text-sm md:text-base text-slate-600 font-medium leading-relaxed opacity-80">
                             {subtitle}
                         </p>
@@ -358,7 +360,7 @@ export function InstagramCarouselBlock({
                                                         <div className="relative w-full h-full">
                                                             <Image
                                                                 src={post.thumbnailUrl || post.imageUrl}
-                                                                alt={post.caption}
+                                                                alt={post.caption ? `${post.caption.substring(0, 100)} - Nature's Boon Manufacturing` : "Nature's Boon Cosmetics Manufacturing Process"}
                                                                 fill
                                                                 className="object-cover transition-transform duration-700 group-hover:scale-105"
                                                                 sizes="(max-width: 640px) 80vw, (max-width: 1024px) 40vw, 20vw"
@@ -374,7 +376,7 @@ export function InstagramCarouselBlock({
                                             ) : (post.imageUrl && post.imageUrl.trim() !== "") ? (
                                                 <Image
                                                     src={post.imageUrl}
-                                                    alt={post.caption}
+                                                    alt={post.caption ? `${post.caption.substring(0, 100)} - Nature's Boon` : "Nature's Boon Personal Care Product"}
                                                     fill
                                                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                                                     sizes="(max-width: 640px) 80vw, (max-width: 1024px) 40vw, 20vw"
