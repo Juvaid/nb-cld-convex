@@ -9,21 +9,22 @@ import { BlogRecord } from '@/types';
 export async function generateMetadata({
     params,
 }: {
-    params: { slug: string };
+    params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-    const blog = await fetchQuery(api.blogs.getBlogBySlug, { slug: params.slug });
+    const { slug } = await params;
+    const blog = await fetchQuery(api.blogs.getBlogBySlug, { slug });
     if (!blog) {
         return {};
     }
-    return generateBlogMetadata(blog as BlogRecord, `/blogs/blog/${params.slug}`);
+    return generateBlogMetadata(blog as BlogRecord, `/blogs/blog/${slug}`);
 }
 
 interface BlogPostPageProps {
-    params: { slug: string };
+    params: Promise<{ slug: string }>;
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
-    const { slug } = params;
+    const { slug } = await params;
 
     const initialBlog = await fetchQuery(api.blogs.getBlogBySlug, { slug });
 

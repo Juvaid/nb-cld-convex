@@ -8,21 +8,22 @@ import { ProductRecord } from '@/types';
 export async function generateMetadata({
     params,
 }: {
-    params: { slug: string };
+    params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-    const product = await fetchQuery(api.products.getBySlug, { slug: params.slug });
+    const { slug } = await params;
+    const product = await fetchQuery(api.products.getBySlug, { slug });
     if (!product) {
         return {};
     }
-    return generateProductMetadata(product as ProductRecord, `/products/${params.slug}`);
+    return generateProductMetadata(product as ProductRecord, `/products/${slug}`);
 }
 
 export default async function ProductPage({
     params,
 }: {
-    params: { slug: string };
+    params: Promise<{ slug: string }>;
 }) {
-    const { slug } = params;
+    const { slug } = await params;
 
     const initialProduct = await fetchQuery(api.products.getBySlug, { slug });
 
