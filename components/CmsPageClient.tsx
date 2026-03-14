@@ -5,6 +5,53 @@ import { usePreloadedQuery, Preloaded } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { PuckRenderer } from "@/components/PuckRenderer";
 
+/**
+ * Inner component that attaches to live Convex data.
+ * This only runs on the client.
+ */
+function LiveContent({
+    preloadedPageData,
+    preloadedSettings,
+    preloadedStats,
+    preloadedCategories,
+    preloadedProducts,
+    useDynamicData,
+    fallbackData
+}: any) {
+    const livePage = usePreloadedQuery(preloadedPageData);
+    const liveSettings = usePreloadedQuery(preloadedSettings);
+    const liveStats = usePreloadedQuery(preloadedStats);
+    const liveCategories = preloadedCategories ? usePreloadedQuery(preloadedCategories) : null;
+    const liveProducts = preloadedProducts ? usePreloadedQuery(preloadedProducts) : null;
+
+    let displayData = null;
+    if (livePage?.data) {
+        try {
+            const parsed = typeof livePage.data === "string" ? JSON.parse(livePage.data) : livePage.data;
+            if (parsed?.content?.length > 0) displayData = parsed;
+        } catch (e) {
+            console.error("Failed to parse CMS page data", e);
+        }
+    }
+
+    if (!displayData && fallbackData) {
+        displayData = fallbackData;
+    }
+
+    return (
+        <PuckRenderer
+            data={displayData || { root: {}, content: [] }}
+            initialData={{
+                initialDbCategories: liveCategories,
+                initialDbProducts: liveProducts,
+                globalStats: liveStats,
+                useDynamicData: useDynamicData ?? true,
+            }}
+            siteSettings={liveSettings}
+        />
+    );
+}
+
 export function CmsPageClient({
     fallbackData,
     path,
@@ -14,6 +61,11 @@ export function CmsPageClient({
     preloadedStats,
     preloadedCategories,
     preloadedProducts,
+    initialPage,
+    initialSettings,
+    initialStats,
+    initialCategories,
+    initialProducts,
 }: {
     fallbackData: any;
     path: string;
@@ -23,46 +75,54 @@ export function CmsPageClient({
     preloadedStats: Preloaded<typeof api.siteData.getStats>;
     preloadedCategories?: Preloaded<typeof api.categories.list>;
     preloadedProducts?: Preloaded<typeof api.products.listAll>;
+    initialPage?: any;
+    initialSettings?: any;
+    initialStats?: any;
+    initialCategories?: any;
+    initialProducts?: any;
 }) {
-    // 1. Consume preloaded data instantly from the server
-    const page = usePreloadedQuery(preloadedPageData);
-    const siteSettings = usePreloadedQuery(preloadedSettings);
-    const globalStats = usePreloadedQuery(preloadedStats);
-    
-    // Optional catalog data
-    const dbCategories = preloadedCategories ? usePreloadedQuery(preloadedCategories) : null;
-    const dbProducts = preloadedProducts ? usePreloadedQuery(preloadedProducts) : null;
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => setMounted(true), []);
 
-    let liveData = null;
-
-    // Resolve: Convex Data wins, otherwise use fallbackData
-    if (page?.data) {
-        try {
-            const parsed = typeof page.data === "string" ? JSON.parse(page.data) : page.data;
-            if (parsed?.content?.length > 0) liveData = parsed;
-        } catch (e) {
-            console.error("Failed to parse CMS page data", e);
+    // 1. Server-side render (or first client pass): Use static data
+    if (!mounted) {
+        let displayData = null;
+        if (initialPage?.data) {
+            try {
+                const parsed = typeof initialPage.data === "string" ? JSON.parse(initialPage.data) : initialPage.data;
+                if (parsed?.content?.length > 0) displayData = parsed;
+            } catch (e) {}
         }
+
+        if (!displayData && fallbackData) displayData = fallbackData;
+
+        return (
+            <div className="min-h-screen bg-background">
+                <PuckRenderer
+                    data={displayData || { root: {}, content: [] }}
+                    initialData={{
+                        initialDbCategories: initialCategories,
+                        initialDbProducts: initialProducts,
+                        globalStats: initialStats,
+                        useDynamicData: useDynamicData ?? true,
+                    }}
+                    siteSettings={initialSettings}
+                />
+            </div>
+        );
     }
 
-    if (!liveData && fallbackData) {
-        liveData = fallbackData;
-    }
-
-    // Inject metadata for blocks like ProductBrowser
-    const initialData = {
-        initialDbCategories: dbCategories,
-        initialDbProducts: dbProducts,
-        globalStats,
-        useDynamicData: useDynamicData ?? true,
-    };
-
+    // 2. Client-side: Attach to live Convex stream
     return (
         <div className="min-h-screen bg-background">
-            <PuckRenderer
-                data={liveData || { root: {}, content: [] }}
-                initialData={initialData}
-                siteSettings={siteSettings}
+            <LiveContent
+                preloadedPageData={preloadedPageData}
+                preloadedSettings={preloadedSettings}
+                preloadedStats={preloadedStats}
+                preloadedCategories={preloadedCategories}
+                preloadedProducts={preloadedProducts}
+                useDynamicData={useDynamicData}
+                fallbackData={fallbackData}
             />
         </div>
     );

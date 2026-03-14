@@ -1,7 +1,6 @@
-import { DynamicCmsPageClient as CmsPageClient } from "@/components/DynamicClients";
-import { preloadQuery } from "convex/nextjs";
+import { CmsPageClient } from "@/components/CmsPageClient";
+import { preloadQuery, fetchQuery } from "convex/nextjs";
 import { api } from "@/convex/_generated/api";
-import Image from "next/image";
 
 interface CmsPageRendererProps {
     /** The canonical path, e.g. "/about" */
@@ -17,35 +16,44 @@ interface CmsPageRendererProps {
  * Fetches initial data server-side for SEO and passes it to the client component.
  */
 export async function CmsPageRenderer({ path, fallbackData, useDynamicData }: CmsPageRendererProps) {
-    // PRELOAD everything on the server to avoid CSR/SSR bails
+    // PRELOAD handles for the client to attach to live data
     const preloadedPageData = await preloadQuery(api.pages.getPublishedPage, { path });
     const preloadedSettings = await preloadQuery(api.siteSettings.getSiteSettings);
     const preloadedStats = await preloadQuery(api.siteData.getStats);
     
+    // FETCH actual data for initial SSR markup
+    const initialPage = await fetchQuery(api.pages.getPublishedPage, { path });
+    const initialSettings = await fetchQuery(api.siteSettings.getSiteSettings);
+    const initialStats = await fetchQuery(api.siteData.getStats);
+
     let preloadedCategories = null;
     let preloadedProducts = null;
+    let initialCategories = null;
+    let initialProducts = null;
 
-    // Fetch catalog data if we're on the products page OR the page data hints at it
-    // We can't access page data content yet since preloadQuery returns a handle, 
-    // but the /products path check is a solid start for SSR indexing.
     if (useDynamicData || path === "/products") {
         preloadedCategories = await preloadQuery(api.categories.list);
         preloadedProducts = await preloadQuery(api.products.listAll, { status: "active" });
+        initialCategories = await fetchQuery(api.categories.list);
+        initialProducts = await fetchQuery(api.products.listAll, { status: "active" });
     }
 
     return (
-        <>
-            <CmsPageClient
-                path={path}
-                fallbackData={fallbackData}
-                useDynamicData={useDynamicData}
-                preloadedPageData={preloadedPageData}
-                preloadedSettings={preloadedSettings}
-                preloadedStats={preloadedStats}
-                preloadedCategories={preloadedCategories as any}
-                preloadedProducts={preloadedProducts as any}
-            />
-        </>
+        <CmsPageClient
+            path={path}
+            fallbackData={fallbackData}
+            useDynamicData={useDynamicData}
+            preloadedPageData={preloadedPageData}
+            preloadedSettings={preloadedSettings}
+            preloadedStats={preloadedStats}
+            preloadedCategories={preloadedCategories as any}
+            preloadedProducts={preloadedProducts as any}
+            initialPage={initialPage}
+            initialSettings={initialSettings}
+            initialStats={initialStats}
+            initialCategories={initialCategories}
+            initialProducts={initialProducts}
+        />
     );
 }
 

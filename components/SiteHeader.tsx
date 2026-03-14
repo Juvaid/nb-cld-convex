@@ -26,6 +26,17 @@ export interface SiteHeaderProps {
     initialSettings?: any;
 }
 
+/**
+ * Inner component to handle live updates on the client.
+ */
+function LiveHeaderSettings({ onSettingsFound, initialSettings }: { onSettingsFound: (s: any) => void, initialSettings: any }) {
+    const liveSettings = useQuery(api.siteSettings.getSiteSettings);
+    useEffect(() => {
+        if (liveSettings) onSettingsFound(liveSettings);
+    }, [liveSettings, onSettingsFound]);
+    return null;
+}
+
 export function SiteHeader({
     logoText: propLogoText,
     logoImage: propLogoImage,
@@ -35,14 +46,13 @@ export function SiteHeader({
 }: SiteHeaderProps) {
     const pathname = usePathname();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [currentSettings, setCurrentSettings] = useState(initialSettings);
 
-    // Fetch settings from Convex
-    const liveSettings = useQuery(api.siteSettings.getSiteSettings);
-    const siteSettings = liveSettings !== undefined ? liveSettings : initialSettings;
+    const siteSettings = currentSettings || initialSettings;
     const isLoading = siteSettings === undefined;
 
     if (typeof window !== "undefined") {
-        console.log("SiteHeader state - isLoading:", isLoading, "hasSettings:", !!siteSettings);
+        console.log("SiteHeader state - hasSettings:", !!siteSettings);
     }
 
     // Default fallbacks
@@ -65,6 +75,9 @@ export function SiteHeader({
 
     return (
         <header className="bg-slate-50/95 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100/50">
+            {typeof window !== "undefined" && (
+                <LiveHeaderSettings onSettingsFound={setCurrentSettings} initialSettings={initialSettings} />
+            )}
             <div className="container mx-auto px-4 h-14 md:h-16 lg:h-20 flex items-center justify-between transition-all duration-300">
                 <Link href="/" className="font-semibold text-2xl tracking-tight text-slate-900 flex items-center gap-3 group">
                     {isLoading ? (

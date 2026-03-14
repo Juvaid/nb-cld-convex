@@ -10,9 +10,10 @@ interface ProductSelectorProps {
 }
 
 export function ProductSelector({ value, onChange }: ProductSelectorProps) {
-    const products = useQuery(api.products.listNames);
+    const isClient = typeof window !== "undefined";
+    const products = useQuery(api.products.listNames, isClient ? undefined : "skip");
 
-    if (products === undefined) {
+    if (!isClient || products === undefined) {
         return (
             <div className="flex items-center gap-2 p-3 text-slate-500 bg-slate-50 rounded-lg text-sm italic">
                 <Loader2 className="w-4 h-4 animate-spin" />

@@ -2,11 +2,6 @@
 
 import dynamic from "next/dynamic";
 
-export const DynamicCmsPageClient = dynamic(
-    () => import("./CmsPageClient").then((mod) => mod.CmsPageClient),
-    { ssr: true }
-);
-
 export const DynamicBlogsClient = dynamic(
     () => import("../app/blogs/BlogsClient").then((mod) => mod.BlogsClient),
     { ssr: false }

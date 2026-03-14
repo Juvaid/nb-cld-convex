@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { ComponentConfig } from "@puckeditor/core";
 import ProductDetail from "@/components/blocks/ProductDetail";
 import { ProductSelector } from "../ProductSelector";
@@ -14,14 +14,28 @@ export interface ProductDetailBlockProps {
     showTrust?: boolean;
 }
 
+/**
+ * Inner component to handle live updates on the client.
+ */
+function LiveProductDetail({ onProductsFound }: { onProductsFound: (p: any[]) => void }) {
+    const liveProducts = useQuery(api.products.listAll, { status: "active" });
+    useEffect(() => {
+        if (liveProducts) onProductsFound(liveProducts);
+    }, [liveProducts, onProductsFound]);
+    return null;
+}
+
 export const ProductDetailBlock = ({
     productId,
     showHeaderFooter = false,
     showSpecs = true,
     showTrust = true,
-}: ProductDetailBlockProps) => {
-    const products = useQuery(api.products.listAll, { status: "active" });
-    const selectedProduct = products?.find((p) => p._id === productId);
+    initialData, // Puck passes this now
+}: ProductDetailBlockProps & { initialData?: any }) => {
+    const [currentProducts, setCurrentProducts] = useState<any[]>(initialData?.initialDbProducts || []);
+
+    const products = currentProducts.length > 0 ? currentProducts : (initialData?.initialDbProducts || []);
+    const selectedProduct = products?.find((p: any) => p._id === productId);
 
     if (!productId) {
         return (
@@ -46,13 +60,18 @@ export const ProductDetailBlock = ({
     }
 
     return (
-        <ProductDetail
-            slug={selectedProduct.slug}
-            initialProduct={selectedProduct}
-            showHeaderFooter={showHeaderFooter}
-            showSpecs={showSpecs}
-            showTrust={showTrust}
-        />
+        <>
+            {typeof window !== "undefined" && (
+                <LiveProductDetail onProductsFound={setCurrentProducts} />
+            )}
+            <ProductDetail
+                slug={selectedProduct.slug}
+                initialProduct={selectedProduct}
+                showHeaderFooter={showHeaderFooter}
+                showSpecs={showSpecs}
+                showTrust={showTrust}
+            />
+        </>
     );
 };
 

@@ -28,6 +28,17 @@ const SocialIcon = ({ platform }: { platform: string }) => {
     }
 };
 
+/**
+ * Inner component to handle live updates on the client.
+ */
+function LiveFooterSettings({ onSettingsFound }: { onSettingsFound: (s: any) => void }) {
+    const liveSettings = useQuery(api.siteSettings.getSiteSettings);
+    useEffect(() => {
+        if (liveSettings) onSettingsFound(liveSettings);
+    }, [liveSettings, onSettingsFound]);
+    return null;
+}
+
 export const Footer = ({
     logoText: propLogoText,
     logoImage: propLogoImage,
@@ -38,11 +49,9 @@ export const Footer = ({
     socialLinks: propSocialLinks,
     initialData,
 }: FooterProps) => {
-    // Guard live query behind client mount to prevent SSR bailout
-    const [isClient, setIsClient] = useState(false);
-    useEffect(() => { setIsClient(true); }, []);
-    const liveSettings = useQuery(api.siteSettings.getSiteSettings, isClient ? undefined : "skip");
-    const siteSettings = liveSettings ?? initialData?.siteSettings ?? null;
+    const [currentSettings, setCurrentSettings] = useState<any>(initialData?.siteSettings || null);
+
+    const siteSettings = currentSettings;
 
     const logoText = siteSettings?.logoText ?? propLogoText ?? "Nature's Boon";
     const logoImage = siteSettings?.logoImage ?? propLogoImage;
@@ -58,6 +67,9 @@ export const Footer = ({
 
     return (
         <footer className={`${backgroundColor} ${textColor} pt-20 sm:pt-24 pb-12 overflow-hidden relative transition-colors duration-300`}>
+            {typeof window !== "undefined" && (
+                <LiveFooterSettings onSettingsFound={setCurrentSettings} />
+            )}
             {/* Decorative background blur */}
             <div className={`absolute top-0 right-0 w-[40%] h-[40%] bg-nb-green/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 ${backgroundColor === 'bg-white' ? 'opacity-60' : 'opacity-30'}`} />
 

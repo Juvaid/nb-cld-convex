@@ -1,98 +1,77 @@
+import { useState, useEffect } from "react";
 import { ComponentConfig } from "@puckeditor/core";
 import ModernServices from "../../blocks/ServicesGrid";
 import { ImagePicker } from "@/components/ImagePicker";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { sharedFields, SharedFieldProps } from "../fields/shared";
 
-export interface ModernServicesBlockProps extends SharedFieldProps {
-    badgeText?: string;
-    heading?: string;
-    subheading?: string;
-    services?: {
-        showMedia?: boolean;
-        mediaType?: "icon" | "image";
-        mediaIcon?: string;
-        mediaImage?: string;
+export interface ModernServicesProps {
+    sectionId?: string;
+    title?: string;
+    subtitle?: string;
+    useGlobalServices?: boolean;
+    services: Array<{
         title: string;
         description: string;
-        showButton?: boolean;
-        buttonText?: string;
-        buttonLink?: string;
-    }[];
-    useGlobalServices?: boolean;
+        icon: string;
+        link?: string;
+        image?: string;
+    }>;
 }
 
-export const ModernServicesBlockConfig: ComponentConfig<ModernServicesBlockProps> = {
+/**
+ * Inner component to handle live updates on the client.
+ */
+function LiveServices({ onServicesFound }: { onServicesFound: (s: any) => void }) {
+    const liveServices = useQuery(api.siteData.getServices);
+    useEffect(() => {
+        if (liveServices) onServicesFound(liveServices);
+    }, [liveServices, onServicesFound]);
+    return null;
+}
+
+export const ModernServicesBlock: ComponentConfig<ModernServicesProps> = {
     fields: {
-        badgeText: { type: "text", contentEditable: true },
-        heading: { type: "text", contentEditable: true },
-        subheading: { type: "textarea", contentEditable: true },
+        sectionId: { type: "text" },
+        title: { type: "text" },
+        subtitle: { type: "text" },
+        useGlobalServices: { type: "radio", options: [{ label: "Global", value: true }, { label: "Manual", value: false }] },
         services: {
             type: "array",
-            getItemSummary: (s: any) => s.title || "Service",
+            getItemSummary: (item) => item.title || "Service",
+            defaultItemProps: { title: "New Service", description: "Service description", icon: "Package" },
             arrayFields: {
-                showMedia: sharedFields.showMedia,
-                mediaType: sharedFields.mediaType,
-                mediaIcon: sharedFields.mediaIcon,
-                mediaImage: sharedFields.mediaImage,
-                title: { type: "text", contentEditable: true },
-                description: { type: "textarea", contentEditable: true },
-                showButton: sharedFields.showButton,
-                buttonText: sharedFields.buttonText,
-                buttonLink: sharedFields.buttonLink,
+                title: { type: "text" },
+                description: { type: "text" },
+                icon: { type: "text" },
+                link: { type: "text" },
+                image: { type: "custom", render: (props) => <ImagePicker {...props} /> as any }
             }
-        },
-        useGlobalServices: { type: "radio", label: "Use Global Services", options: [{ label: "Yes", value: true }, { label: "No", value: false }] },
-        ...sharedFields
+        }
     },
     defaultProps: {
-        useDesignSystem: true,
-        badgeText: "Our Capability",
-        heading: "Expert Solutions for Your Brand",
-        subheading: "We provide comprehensive, end-to-end manufacturing services to help you build a world-class personal care brand.",
-        services: [
-            {
-                title: 'Label & Packaging Designing',
-                description: 'Label and packaging designing is an essential aspect of branding and marketing strategy.',
-                showMedia: true,
-                mediaType: "icon",
-                mediaIcon: 'Palette',
-                buttonText: "Explore Service",
-                showButton: true,
-            },
-            {
-                title: 'Customised Finished Product',
-                description: 'A personal care product design must account for market demand.',
-                showMedia: true,
-                mediaType: "icon",
-                mediaIcon: 'FlaskConical',
-                buttonText: "Explore Service",
-                showButton: true,
-            },
-            {
-                title: 'Trademark & Logo',
-                description: 'We create trademarks and logos that effectively represent your brand.',
-                showMedia: true,
-                mediaType: "icon",
-                mediaIcon: 'BadgeCheck',
-                buttonText: "Explore Service",
-                showButton: true,
-            },
-            {
-                title: 'Digital Marketing',
-                description: 'We help brands promote their products and services to their target audience.',
-                showMedia: true,
-                mediaType: "icon",
-                mediaIcon: 'Megaphone',
-                buttonText: "Explore Service",
-                showButton: true,
-            },
-        ]
+        sectionId: "services",
+        title: "Our Specialized Services",
+        subtitle: "Comprehensive solutions tailored to your needs.",
+        useGlobalServices: true,
+        services: [],
     },
     render: (props) => {
-        const globalServices = useQuery(api.siteData.getServices);
-        const finalServices = props.useGlobalServices ? (globalServices || []) : props.services;
-        return <ModernServices {...props} services={finalServices as any} id={props.sectionId} />;
+        const [currentServices, setCurrentServices] = useState<any[]>([]);
+
+        // initialData is passed by PuckRenderer
+        const initialGlobal = (props as any).initialData?.globalServices || [];
+        const globalServices = currentServices.length > 0 ? currentServices : initialGlobal;
+
+        const finalServices = props.useGlobalServices ? globalServices : props.services;
+        
+        return (
+            <>
+                {typeof window !== "undefined" && props.useGlobalServices && (
+                    <LiveServices onServicesFound={setCurrentServices} />
+                )}
+                <ModernServices {...props} services={finalServices as any} id={props.sectionId} />
+            </>
+        );
     }
 };

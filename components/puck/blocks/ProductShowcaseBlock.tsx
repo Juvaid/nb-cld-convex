@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { ComponentConfig } from "@puckeditor/core";
 import { sharedFields } from "../fields/shared";
@@ -41,6 +41,17 @@ export interface ProductShowcaseProps {
     paddingBottom?: string;
 }
 
+/**
+ * Inner component to handle live updates on the client.
+ */
+function LiveProductShowcase({ onProductsFound }: { onProductsFound: (p: any[]) => void }) {
+    const liveProducts = useQuery(api.products.listAll, { status: "active" });
+    useEffect(() => {
+        if (liveProducts) onProductsFound(liveProducts);
+    }, [liveProducts, onProductsFound]);
+    return null;
+}
+
 export const ProductShowcaseBlock = ({
     heading,
     subheading,
@@ -50,8 +61,11 @@ export const ProductShowcaseBlock = ({
     viewAllText,
     paddingTop = "py-24",
     paddingBottom = "pb-24",
-}: ProductShowcaseProps) => {
-    const products = useQuery(api.products.listAll, { status: "active" });
+    initialData,
+}: ProductShowcaseProps & { initialData?: any }) => {
+    const [currentProducts, setCurrentProducts] = useState<any[]>(initialData?.initialDbProducts || []);
+
+    const products = currentProducts.length > 0 ? currentProducts : (initialData?.initialDbProducts || []);
 
     // Helper to merge manual data with dynamic product data
     const getProductData = (manual: any, isFeatured = false) => {
@@ -86,6 +100,9 @@ export const ProductShowcaseBlock = ({
 
     return (
         <section className={`w-full bg-slate-50 px-6 ${paddingTop} ${paddingBottom}`}>
+            {typeof window !== "undefined" && (
+                <LiveProductShowcase onProductsFound={setCurrentProducts} />
+            )}
             <div className="max-w-7xl mx-auto flex flex-col">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
