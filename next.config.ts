@@ -39,7 +39,26 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["convex"],
 
   async headers() {
-    return [];
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, s-maxage=1, stale-while-revalidate=59', // Cache on CDN but check for fresh content frequently
+          },
+        ],
+      },
+      {
+        source: '/admin/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-store, max-age=0, must-revalidate', // Never cache admin pages
+          },
+        ],
+      },
+    ];
   },
 
   // 301 Redirects: WordPress → Next.js URL mappings for SEO continuity

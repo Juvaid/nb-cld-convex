@@ -88,16 +88,12 @@ export const getPublishedPage = query({
             .withIndex("by_path", (q) => q.eq("path", args.path))
             .unique();
 
-        if (!page) {
+        if (!page || !page.publishedData) {
             return null;
         }
 
-        const pageStatus = page.status || "published";
-        if (pageStatus !== "published" || !page.publishedData) {
-            return null;
-        }
-
-        // Return a mock object mapping publishedData to 'data' for client compatibility
+        // Return the published version. Status "draft" means there are UNPUBLISHED changes,
+        // but the current published version should still be visible.
         return {
             ...page,
             data: page.publishedData,
