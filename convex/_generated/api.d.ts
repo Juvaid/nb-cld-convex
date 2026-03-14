@@ -34,6 +34,7 @@ import type * as siteSettings from "../siteSettings.js";
 import type * as sync_final_contact from "../sync_final_contact.js";
 import type * as templates from "../templates.js";
 import type * as theme from "../theme.js";
+import type * as update_titles from "../update_titles.js";
 
 import type {
   ApiFromModules,
@@ -68,6 +69,7 @@ declare const fullApi: ApiFromModules<{
   sync_final_contact: typeof sync_final_contact;
   templates: typeof templates;
   theme: typeof theme;
+  update_titles: typeof update_titles;
 }>;
 
 /**
