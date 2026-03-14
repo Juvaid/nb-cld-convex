@@ -37,8 +37,8 @@ export function generateBaseMetadata(settings?: any): Metadata {
       ],
     },
     robots: {
-        index: false,
-        follow: false,
+        index: true,
+        follow: true,
     },
     alternates: {
       canonical: SITE_CONFIG.url,
