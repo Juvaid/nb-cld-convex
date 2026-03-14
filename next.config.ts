@@ -39,17 +39,7 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["convex"],
 
   async headers() {
-    return [
-      {
-        source: '/:path*',
-        headers: [
-          {
-            key: 'X-Robots-Tag',
-            value: 'noindex',
-          },
-        ],
-      },
-    ];
+    return [];
   },
 
   // 301 Redirects: WordPress → Next.js URL mappings for SEO continuity
