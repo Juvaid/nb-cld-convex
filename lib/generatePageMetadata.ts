@@ -1,8 +1,31 @@
 import type { Metadata } from "next"
 import type { PageRecord, BlogRecord, ProductRecord } from "@/types"
 
+const SITE_URL = "https://new.naturesboon.net";
+const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.jpg`;
+
+/**
+ * Resolves a media ID or relative URL into an absolute URL for social crawlers.
+ */
+function getAbsoluteImageUrl(imageUrl?: string): string {
+  if (!imageUrl) return DEFAULT_OG_IMAGE;
+  if (imageUrl.startsWith("http")) return imageUrl;
+  
+  // Handle storage IDs (which might not be full URLs)
+  // If it's a relative path, prepend site URL
+  if (imageUrl.startsWith("/")) return `${SITE_URL}${imageUrl}`;
+  
+  // If it's just an ID (contains no dots or slashes), assume it's a storage ID
+  if (!imageUrl.includes("/") && !imageUrl.includes(".")) {
+    return `${SITE_URL}/api/storage/${imageUrl}`;
+  }
+
+  return `${SITE_URL}/${imageUrl}`;
+}
+
 export function generateProductMetadata(product: ProductRecord, path: string): Metadata {
-  const url = `https://new.naturesboon.net${path}`
+  const url = `${SITE_URL}${path}`
+  const imageUrl = getAbsoluteImageUrl(product.images[0]);
 
   return {
     title: product.name,
@@ -16,7 +39,7 @@ export function generateProductMetadata(product: ProductRecord, path: string): M
       url,
       siteName: "Nature's Boon",
       images: [{
-        url: product.images[0],
+        url: imageUrl,
         width: 1200,
         height: 600,
         alt: product.name,
@@ -27,13 +50,14 @@ export function generateProductMetadata(product: ProductRecord, path: string): M
       card: "summary_large_image",
       title: product.name,
       description: product.description,
-      images: [product.images[0]],
+      images: [imageUrl],
     },
   }
 }
 
 export function generateBlogMetadata(blog: BlogRecord, path: string): Metadata {
-  const url = `https://new.naturesboon.net${path}`
+  const url = `${SITE_URL}${path}`
+  const imageUrl = getAbsoluteImageUrl(blog.coverImage);
 
   return {
     title: blog.title,
@@ -47,7 +71,7 @@ export function generateBlogMetadata(blog: BlogRecord, path: string): Metadata {
       url,
       siteName: "Nature's Boon",
       images: [{
-        url: blog.coverImage!,
+        url: imageUrl,
         width: 1200,
         height: 600,
         alt: blog.title,
@@ -58,18 +82,19 @@ export function generateBlogMetadata(blog: BlogRecord, path: string): Metadata {
       card: "summary_large_image",
       title: blog.title,
       description: blog.excerpt,
-      images: [blog.coverImage!],
+      images: [imageUrl],
     },
   }
 }
 
 export function generatePageMetadata(page: PageRecord, path: string): Metadata {
-  const url = `https://new.naturesboon.net${path}`
+  const url = `${SITE_URL}${path}`
+  const imageUrl = getAbsoluteImageUrl(page.ogImage);
 
   return {
     title: page.title,
-    description: page.description,            // Must come from page record
-    keywords: page.keywords,                  // Must come from page record
+    description: page.description,
+    keywords: page.keywords,
     robots: "index, follow",
     alternates: { canonical: url },
     openGraph: {
@@ -78,7 +103,7 @@ export function generatePageMetadata(page: PageRecord, path: string): Metadata {
       url,
       siteName: "Nature's Boon",
       images: [{
-        url: page.ogImage || "https://new.naturesboon.net/og-image.jpg",
+        url: imageUrl,
         width: 1200,
         height: 600,
         alt: page.title,
@@ -89,7 +114,7 @@ export function generatePageMetadata(page: PageRecord, path: string): Metadata {
       card: "summary_large_image",
       title: page.title,
       description: page.ogDescription ?? page.description,
-      images: [page.ogImage || "https://new.naturesboon.net/og-image.jpg"],
+      images: [imageUrl],
     },
   }
 }
