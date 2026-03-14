@@ -167,7 +167,7 @@ export default function ServicesGrid({
                                 {useDesignSystem ? (
                                     <div className="space-y-2 flex-grow">
                                         {service.title && (
-                                            <Typography variant="h4" color="slate-900" weight="black" className="leading-[1.1] group-hover:text-nb-green transition-colors duration-500">
+                                            <Typography variant="h3" color="slate-900" weight="black" className="text-xl sm:text-2xl leading-[1.1] group-hover:text-nb-green transition-colors duration-500">
                                                 {service.title}
                                             </Typography>
                                         )}

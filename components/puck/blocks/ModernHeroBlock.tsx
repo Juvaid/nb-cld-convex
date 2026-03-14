@@ -29,8 +29,8 @@ export interface ModernHeroBlockProps extends SharedFieldProps {
 export const ModernHeroBlockConfig: ComponentConfig<ModernHeroBlockProps> = {
     fields: {
         badgeText: { type: "text", contentEditable: true },
-        title: { type: "text", contentEditable: true },
-        titleGradient: { type: "text", contentEditable: true },
+        title: { type: "text", contentEditable: true, label: "Main Heading (H1)" },
+        titleGradient: { type: "text", contentEditable: true, label: "Heading Accent" },
         alignment: {
             type: "radio",
             label: "Content Alignment",
@@ -71,7 +71,11 @@ export const ModernHeroBlockConfig: ComponentConfig<ModernHeroBlockProps> = {
         ...sharedFields
     },
     defaultProps: {
-        useDesignSystem: true
+        useDesignSystem: true,
+        badgeText: "15+ Years of Manufacturing Excellence",
+        title: "Leading Private Label Cosmetics",
+        titleGradient: "& Skincare Manufacturer in India",
+        description: "From custom formulation to premium packaging — we manufacture world-class personal care products. ISO Certified OEM, Private Label & Contract Manufacturing solutions for your brand.",
     },
     render: (props) => {
         const globalStats = props.initialData?.globalStats;

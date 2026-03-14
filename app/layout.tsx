@@ -81,20 +81,19 @@ export default async function RootLayout({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    "name": settings.siteTitle || "Nature's Boon",
-    "image": settings.logoUrl || `${siteUrl}/logo.png`,
-    "description": settings.footerDescription || "Personal care manufacturing excellence.",
+    "name": settings.siteTitle || "Nature's Boon Cosmetics",
+    "image": settings.logoUrl || "https://naturesboon.in/og-image.jpg",
+    "@id": "https://naturesboon.in/#localbusiness",
+    "url": siteUrl || "https://naturesboon.in",
+    "telephone": settings.phoneNumber || "+91-9876543210",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "Pakhowal Rd, adj. Sri Chaitanya Techno School, Thakkarwal",
-      "addressLocality": "Ludhiana",
-      "addressRegion": "Punjab",
-      "postalCode": "142022",
-      "addressCountry": "IN"
+      "streetAddress": settings.addressStreet || "Plot No. 123, Industrial Area",
+      "addressLocality": settings.addressLocality || "Bawana",
+      "addressRegion": settings.addressRegion || "Delhi",
+      "postalCode": settings.addressPostalCode || "110039",
+      "addressCountry": settings.addressCountry || "IN"
     },
-    "telephone": "+91-9877659808",
-    "email": "naturesboon@yahoo.com",
-    "url": siteUrl,
     "sameAs": [
       "https://www.instagram.com/natures_boon",
       "https://www.facebook.com/naturesboon"

@@ -198,13 +198,13 @@ export const ProductCategoryCarouselBlock = ({ useDesignSystem = true, heading, 
 export const ProductCategoryCarouselBlockConfig: ComponentConfig<ProductCategoryCarouselProps> = {
     fields: {
         useDesignSystem: sharedFields.useDesignSystem,
-        heading: { type: "text", label: "Section Heading" },
+        heading: { type: "text", label: "Section Heading (H2)" },
         subheading: { type: "text", label: "Section Subheading" },
         categories: {
             type: "array",
             getItemSummary: (item) => item.title || "Category",
             arrayFields: {
-                title: { type: "text", label: "Category Title" },
+                title: { type: "text", label: "Category Title (Visible)" },
                 image: {
                     type: "custom",
                     label: "Cover Image",

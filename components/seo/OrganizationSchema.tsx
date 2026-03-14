@@ -2,48 +2,67 @@
 
 import { OrganizationJsonLd, LocalBusinessJsonLd } from 'next-seo';
 
-const SITE_URL = 'https://new.naturesboon.net';
-
-export function OrganizationSchema() {
-  return (
-    <>
-      <OrganizationJsonLd
-        type="Organization"
-        id={SITE_URL}
-        name="Nature's Boon"
-        url={SITE_URL}
-        logo="https://pub-13cf3fd8cdc643a6919ef78cee02101f.r2.dev/1772786218632-blk.png"
-        sameAs={[
-          'https://www.instagram.com/naturesboon.cosmeticsmfg',
-          'https://www.facebook.com/people/Natures-Boon/100091906116013',
-        ]}
-        contactPoint={[
-          {
-            telephone: '+91-9877659808',
-            contactType: 'customer service',
-            availableLanguage: ['English', 'Hindi', 'Punjabi'],
-          },
-        ]}
-      />
-      <LocalBusinessJsonLd
-        type="Store"
-        id={SITE_URL}
-        name="Nature's Boon"
-        description="Personal care OEM, Private Label & Contract Manufacturing in Punjab, India."
-        url={SITE_URL}
-        telephone="+91-9877659808"
-        address={{
-          streetAddress: 'Pakhowal Rd, adj. Sri Chaitanya Techno School, Thakkarwal',
-          addressLocality: 'Ludhiana',
-          addressRegion: 'Punjab',
-          postalCode: '142022',
-          addressCountry: 'IN',
-        }}
-        openingHours={['Mo-Fr 09:00-18:00']}
-        images={[
-          'https://pub-13cf3fd8cdc643a6919ef78cee02101f.r2.dev/1773305814460-herobannerv2.png',
-        ]}
-      />
-    </>
-  );
-}
+export const OrganizationSchema = () => {
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://naturesboon.in';
+    
+    return (
+        <>
+            <OrganizationJsonLd
+                type="Organization"
+                id={`${siteUrl}/#organization`}
+                name="Nature's Boon"
+                url={siteUrl}
+                logo={`${siteUrl}/logo-high-res.png`}
+                contactPoints={[
+                    {
+                        telephone: '+91-9876543210',
+                        contactType: 'customer service',
+                        areaServed: 'IN',
+                        availableLanguage: ['Hindi', 'English'],
+                    },
+                ]}
+                sameAs={[
+                    'https://www.facebook.com/naturesboon',
+                    'https://www.instagram.com/naturesboon',
+                    'https://www.linkedin.com/company/naturesboon',
+                ]}
+            />
+            <LocalBusinessJsonLd
+                type="LocalBusiness"
+                id={`${siteUrl}/#localbusiness`}
+                name="Nature's Boon Cosmetics"
+                description="Leading Private Label Cosmetics & Skincare Manufacturer in India."
+                url={siteUrl}
+                telephone="+91-9876543210"
+                address={{
+                    streetAddress: 'Plot No. 123, Industrial Area',
+                    addressLocality: 'Bawana',
+                    addressRegion: 'Delhi',
+                    postalCode: '110039',
+                    addressCountry: 'IN',
+                }}
+                geo={{
+                    latitude: '28.7997',
+                    longitude: '77.0330',
+                }}
+                images={[
+                    `${siteUrl}/og-image.jpg`,
+                ]}
+                openingHours={[
+                    {
+                        opens: '09:00',
+                        closes: '18:00',
+                        dayOfWeek: [
+                            'Monday',
+                            'Tuesday',
+                            'Wednesday',
+                            'Thursday',
+                            'Friday',
+                            'Saturday',
+                        ],
+                    },
+                ]}
+            />
+        </>
+    );
+};

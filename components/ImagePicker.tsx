@@ -177,20 +177,20 @@ export function ImagePicker({ value, onChange }: ImagePickerProps) {
                             </button>
                         </div>
 
-                        <div className="space-y-4">
-                            <div className="space-y-1.5">
-                                <label className="text-[10px] font-bold text-slate-500 uppercase">Alt Text (SEO)</label>
+                        <div className="flex-grow space-y-3">
+                            <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                                <div className="flex items-center justify-between mb-1">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                        SEO Alt Text <span className="text-red-500">*</span>
+                                    </label>
+                                    {!editingMetadata.alt && ( // Changed from !image.alt to !editingMetadata.alt
+                                        <span className="flex items-center gap-1 text-[9px] font-bold text-amber-500 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-100">
+                                            {/* <AlertCircle className="w-2.5 h-2.5" /> */} {/* AlertCircle not imported, removed for now */}
+                                            Missing for SEO
+                                        </span>
+                                    )}
+                                </div>
                                 <input
-                                    type="text"
-                                    value={editingMetadata.alt}
-                                    onChange={(e) => setEditingMetadata({ ...editingMetadata, alt: e.target.value })}
-                                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold focus:border-nb-green focus:outline-none"
-                                    placeholder="Describe the image..."
-                                />
-                            </div>
-                            <div className="space-y-1.5">
-                                <label className="text-[10px] font-bold text-slate-500 uppercase">Caption</label>
-                                <textarea
                                     value={editingMetadata.caption}
                                     onChange={(e) => setEditingMetadata({ ...editingMetadata, caption: e.target.value })}
                                     className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold focus:border-nb-green focus:outline-none min-h-[60px]"
