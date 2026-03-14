@@ -48,24 +48,24 @@ const getBgStyles = (variant: BackgroundVariant) => {
     }
 };
 
-const getPaddingValue = (val: string) => {
+const getPaddingValue = (val: string, side: 't' | 'b') => {
     const map: Record<string, string> = {
-        "32": "py-8 md:py-16",
-        "24": "py-6 md:py-12",
-        "16": "py-4 md:py-8",
-        "12": "py-3 md:py-6",
-        "8": "py-2 md:py-4",
-        "4": "py-1 md:py-2",
-        "0": "py-0"
+        "32": side === 't' ? "pt-8 md:pt-16" : "pb-8 md:pb-16",
+        "24": side === 't' ? "pt-6 md:pt-12" : "pb-6 md:pb-12",
+        "16": side === 't' ? "pt-4 md:pt-8" : "pb-4 md:pb-8",
+        "12": side === 't' ? "pt-3 md:pt-6" : "pb-3 md:pb-6",
+        "8": side === 't' ? "pt-2 md:pt-4" : "pb-2 md:pb-4",
+        "4": side === 't' ? "pt-1 md:pt-2" : "pb-1 md:pb-2",
+        "0": side === 't' ? "pt-0" : "pb-0"
     };
-    return map[val] || "py-4 md:py-8";
+    return map[val] || (side === 't' ? "pt-4 md:pt-8" : "pb-4 md:pb-8");
 };
 
 export const Section = ({
     children,
     variant = 'white',
-    paddingTop = "16", // Default reduced from 24
-    paddingBottom = "16", // Default reduced from 24
+    paddingTop = "0",
+    paddingBottom = "0",
     backgroundColor,
     isGlass = false,
     blur = "0",
@@ -87,8 +87,8 @@ export const Section = ({
     overlayOpacity = "0.4",
     containerWidth = 'normal'
 }: SectionProps) => {
-    const pt = getPaddingValue(paddingTop);
-    const pb = getPaddingValue(paddingBottom);
+    const pt = getPaddingValue(paddingTop, 't');
+    const pb = getPaddingValue(paddingBottom, 'b');
 
 
 

@@ -39,7 +39,7 @@ export function generateBaseMetadata(settings?: any): Metadata {
     metadataBase: new URL(SITE_CONFIG.url),
     title: {
       default: title,
-      template: `%s | ${settings?.siteTitle || SITE_CONFIG.name}`,
+      template: `%s | ${SITE_CONFIG.name}`,
     },
     description,
     keywords: SITE_CONFIG.keywords,
@@ -269,8 +269,9 @@ export function buildMetadata(
   const description = convexOverrides?.description || fallback.description;
 
   return {
-    title,
-    description,
+    title: {
+      absolute: title,
+    },
     metadataBase: new URL(SITE_CONFIG.url),
     alternates: {
       canonical: fallback.canonical,

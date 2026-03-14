@@ -23,6 +23,8 @@ const client = new ConvexHttpClient(url);
 
 async function main() {
     console.log("Checking Convex Pages...");
+    const settings = await client.query(api.siteSettings.getSiteSettings);
+    console.log("Site Settings:", JSON.stringify(settings, null, 2));
     const pages = await client.query(api.pages.listLite);
     console.log("Pages found:", pages.length);
     pages.forEach(p => {
@@ -40,6 +42,9 @@ async function main() {
                 console.log("Content blocks:", parsed.content?.length || 0);
                 if (parsed.content) {
                     parsed.content.forEach((b, i) => console.log(`  [${i}] Type: ${b.type}`));
+                    if (parsed.content[0]) {
+                        console.log("\nFirst Block Props:", JSON.stringify(parsed.content[0].props, null, 2));
+                    }
                 }
             } catch (e) {
                 console.log("Data is not valid JSON string.");

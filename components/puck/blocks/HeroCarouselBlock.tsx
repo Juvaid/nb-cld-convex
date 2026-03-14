@@ -123,7 +123,7 @@ export const HeroCarouselBlock = ({ useDesignSystem = true, autoPlay, interval, 
             : "justify-end pb-14 md:justify-center md:pb-0"; // default to bottom with adjusted padding
 
     return (
-        <div className="w-full bg-transparent">
+        <div className="w-full bg-transparent p-0 m-0">
             {/* Wrapper with side margins (reduced for edge-to-edge feel) */}
             <div className="mx-auto max-w-[1920px] px-0 md:px-4 lg:px-6 relative">
 
@@ -131,7 +131,7 @@ export const HeroCarouselBlock = ({ useDesignSystem = true, autoPlay, interval, 
 
 
                 {/* The card itself - adjusted aspect ratios for more panoramic feel */}
-                <div className="relative w-full aspect-[4/3] md:aspect-[21/8] xl:aspect-[25/8] min-h-[320px] xl:min-h-[450px] rounded-2xl md:rounded-[2.5rem] overflow-hidden group shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] ring-1 ring-black/5">
+                <div className="relative w-full aspect-[4/3] md:aspect-[21/8] xl:aspect-[25/8] min-h-[320px] xl:min-h-[450px] rounded-none md:rounded-[2.5rem] overflow-hidden group shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] ring-1 ring-black/5">
                     <AnimatePresence initial={false} custom={direction}>
                         <motion.div
                             key={activeIndex}
@@ -229,77 +229,71 @@ export const HeroCarouselBlock = ({ useDesignSystem = true, autoPlay, interval, 
 
                     <div className="absolute inset-0 z-10 pointer-events-none">
                         <div className="w-full h-full relative pointer-events-auto">
-                            <AnimatePresence mode="wait">
-                                <motion.div
-                                    key={activeIndex}
-                                    initial={{ y: 20, opacity: 0 }}
-                                    animate={{ y: 0, opacity: 1 }}
-                                    exit={{ y: -20, opacity: 0 }}
-                                    transition={{ duration: 0.5, delay: 0.2 }}
-                                    className={`absolute inset-0 flex flex-col px-4 sm:px-10 lg:px-16 ${alignClass} ${contentWidthClass} ${verticalAlignClass}`}
-                                >
-                                    <div className="w-full max-w-full pb-4 sm:pb-0">
-                                        {slide.tagline && (
-                                            useDesignSystem ? (
-                                                <Typography variant="detail" color="nb-green" uppercase className="mb-4 inline-block px-4 py-1.5 bg-nb-green/10 rounded-full border border-nb-green/20 backdrop-blur-sm">
-                                                    {slide.tagline}
-                                                </Typography>
-                                            ) : (
-                                                <span className="mb-4 inline-block px-4 py-1.5 bg-nb-green/10 text-nb-green text-[10px] font-black uppercase tracking-widest rounded-full border border-nb-green/20 backdrop-blur-sm">
-                                                    {slide.tagline}
-                                                </span>
-                                            )
-                                        )}
+                            <div
+                                key={activeIndex}
+                                className={`absolute inset-0 flex flex-col px-6 sm:px-10 lg:px-16 ${alignClass} ${contentWidthClass} ${verticalAlignClass}`}
+                            >
+                                <div className="w-full max-w-full pb-4 sm:pb-0">
+                                    {slide.tagline && (
+                                        useDesignSystem ? (
+                                            <Typography variant="detail" color="nb-green" uppercase className="mb-4 inline-block px-4 py-1.5 bg-nb-green/10 rounded-full border border-nb-green/20 backdrop-blur-sm">
+                                                {slide.tagline}
+                                            </Typography>
+                                        ) : (
+                                            <span className="mb-4 inline-block px-4 py-1.5 bg-nb-green/10 text-nb-green text-[10px] font-black uppercase tracking-widest rounded-full border border-nb-green/20 backdrop-blur-sm">
+                                                {slide.tagline}
+                                            </span>
+                                        )
+                                    )}
 
-                                        {slide.title && (
-                                            useDesignSystem ? (
-                                                <Typography variant="h1" color="white" className="mb-4 md:mb-6 drop-shadow-lg">
-                                                    {slide.title}
-                                                </Typography>
-                                            ) : (
-                                                <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4 md:mb-6 drop-shadow-lg leading-[1.1]">
-                                                    {slide.title}
-                                                </h1>
-                                            )
-                                        )}
+                                    {slide.title && (
+                                        useDesignSystem ? (
+                                            <Typography variant="h1" color="white" className="mb-4 md:mb-6 drop-shadow-lg">
+                                                {slide.title}
+                                            </Typography>
+                                        ) : (
+                                            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4 md:mb-6 drop-shadow-lg leading-[1.1]">
+                                                {slide.title}
+                                            </h1>
+                                        )
+                                    )}
 
-                                        {slide.description && (
-                                            useDesignSystem ? (
-                                                <Typography variant="body" color="slate-400" weight="medium" className="text-slate-200 drop-shadow max-w-xl">
-                                                    {slide.description}
-                                                </Typography>
-                                            ) : (
-                                                <p className="text-lg md:text-xl text-slate-200 drop-shadow max-w-xl font-medium">
-                                                    {slide.description}
-                                                </p>
-                                            )
-                                        )}
-                                    </div>
+                                    {slide.description && (
+                                        useDesignSystem ? (
+                                            <Typography variant="body" color="slate-400" weight="medium" className="text-slate-200 drop-shadow-md max-w-xl text-sm sm:text-base md:text-lg leading-relaxed">
+                                                {slide.description}
+                                            </Typography>
+                                        ) : (
+                                            <p className="text-base md:text-xl text-slate-200 drop-shadow-md max-w-xl font-medium leading-relaxed">
+                                                {slide.description}
+                                            </p>
+                                        )
+                                    )}
+                                </div>
 
-                                    <div className={cn(
-                                        "flex flex-row flex-wrap gap-2 sm:gap-4",
-                                        slide.ctaPositioning === "fixed"
-                                            ? "absolute bottom-12 md:bottom-16 lg:bottom-20 left-0 right-0 px-4 sm:px-10 lg:px-16"
-                                            : "relative mt-4 md:mt-8",
-                                        slide.align === "center" ? "justify-center" : slide.align === "right" ? "justify-end" : "justify-start"
-                                    )}>
-                                        {(slide.primaryCtaText || slide.primaryCtaLink) && (
-                                            <Link href={slide.primaryCtaLink || "/contact"} className="inline-block">
-                                                <Button variant="primary" className="rounded-full shadow-lg px-4 py-2 sm:py-3 sm:px-8 h-9 sm:h-11 text-[12px] sm:text-sm whitespace-nowrap">
-                                                    {slide.primaryCtaText || "Contact us"}
-                                                </Button>
-                                            </Link>
-                                        )}
-                                        {slide.secondaryCtaText && slide.secondaryCtaLink && (
-                                            <Link href={slide.secondaryCtaLink} className="inline-block">
-                                                <Button variant="glass" className="rounded-full shadow-lg px-4 py-2 sm:py-3 sm:px-8 h-9 sm:h-11 text-[12px] sm:text-sm whitespace-nowrap">
-                                                    {slide.secondaryCtaText}
-                                                </Button>
-                                            </Link>
-                                        )}
-                                    </div>
-                                </motion.div>
-                            </AnimatePresence>
+                                <div className={cn(
+                                    "flex flex-row flex-wrap gap-2 sm:gap-4",
+                                    slide.ctaPositioning === "fixed"
+                                        ? "absolute bottom-12 md:bottom-16 lg:bottom-20 left-0 right-0 px-6 sm:px-10 lg:px-16"
+                                        : "relative mt-4 md:mt-8",
+                                    slide.align === "center" ? "justify-center" : slide.align === "right" ? "justify-end" : "justify-start"
+                                )}>
+                                    {(slide.primaryCtaText || slide.primaryCtaLink) && (
+                                        <Link href={slide.primaryCtaLink || "/contact"} className="inline-block">
+                                            <Button variant="primary" className="rounded-full shadow-lg px-4 py-2 sm:py-3 sm:px-8 h-9 sm:h-11 text-[12px] sm:text-sm whitespace-nowrap">
+                                                {slide.primaryCtaText || "Contact us"}
+                                            </Button>
+                                        </Link>
+                                    )}
+                                    {slide.secondaryCtaText && slide.secondaryCtaLink && (
+                                        <Link href={slide.secondaryCtaLink} className="inline-block">
+                                            <Button variant="glass" className="rounded-full shadow-lg px-4 py-2 sm:py-3 sm:px-8 h-9 sm:h-11 text-[12px] sm:text-sm whitespace-nowrap">
+                                                {slide.secondaryCtaText}
+                                            </Button>
+                                        </Link>
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     </div>
 

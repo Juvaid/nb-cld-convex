@@ -39,7 +39,7 @@ export const FloatingWidget = () => {
 
     const items = [
         {
-            icon: <WhatsAppIcon className="w-6 h-6 md:w-8 md:h-8" />,
+            icon: <WhatsAppIcon className="w-5 h-5 md:w-8 md:h-8" />,
             label: "WhatsApp",
             href: `https://wa.me/${widgetConfig.whatsapp?.replace(/\D/g, "")}`,
             show: !!widgetConfig.whatsapp,
@@ -47,7 +47,7 @@ export const FloatingWidget = () => {
             hoverColor: "hover:bg-[#128C7E]",
         },
         {
-            icon: <Phone className="w-6 h-6 md:w-8 md:h-8" />,
+            icon: <Phone className="w-5 h-5 md:w-8 md:h-8" />,
             label: "Call Us",
             href: `tel:${widgetConfig.phone?.replace(/\D/g, "")}`,
             show: !!widgetConfig.phone,
@@ -55,7 +55,7 @@ export const FloatingWidget = () => {
             hoverColor: "hover:bg-blue-700",
         },
         {
-            icon: <FileText className="w-6 h-6 md:w-8 md:h-8" />,
+            icon: <FileText className="w-5 h-5 md:w-8 md:h-8" />,
             label: "Catalog",
             href: widgetConfig.catalogStorageId ? (widgetConfig.catalogStorageId.startsWith('http') ? widgetConfig.catalogStorageId : `/api/storage/${widgetConfig.catalogStorageId}`) : "#",
             show: !!widgetConfig.catalogStorageId && widgetConfig.catalogStorageId.trim() !== "",
@@ -107,7 +107,7 @@ export const FloatingWidget = () => {
                         rel="noopener noreferrer"
                         download={item.download}
                         className={cn(
-                            "w-14 h-14 md:w-16 md:h-16 rounded-[22px] flex items-center justify-center text-white shadow-[0_10px_30px_rgba(0,0,0,0.2)] hover:scale-110 active:scale-95 transition-all duration-300 ring-4 ring-white/20 hover:ring-white/40",
+                            "w-11 h-11 md:w-16 md:h-16 rounded-[18px] md:rounded-[22px] flex items-center justify-center text-white shadow-[0_10px_30px_rgba(0,0,0,0.2)] hover:scale-110 active:scale-95 transition-all duration-300 ring-2 md:ring-4 ring-white/20 hover:ring-white/40",
                             item.color,
                             item.hoverColor
                         )}

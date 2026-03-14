@@ -30,7 +30,7 @@ function LiveServices({ onServicesFound }: { onServicesFound: (s: any) => void }
     return null;
 }
 
-export const ModernServicesBlock: ComponentConfig<ModernServicesProps> = {
+export const ModernServicesBlockConfig: ComponentConfig<ModernServicesProps> = {
     fields: {
         sectionId: { type: "text" },
         title: { type: "text" },
@@ -45,7 +45,7 @@ export const ModernServicesBlock: ComponentConfig<ModernServicesProps> = {
                 description: { type: "text" },
                 icon: { type: "text" },
                 link: { type: "text" },
-                image: { type: "custom", render: (props) => <ImagePicker {...props} /> as any }
+                image: { type: "custom", render: ({ value, onChange }: any) => <ImagePicker value={value || ""} onChange={onChange} /> as any }
             }
         }
     },
@@ -60,7 +60,7 @@ export const ModernServicesBlock: ComponentConfig<ModernServicesProps> = {
         const [currentServices, setCurrentServices] = useState<any[]>([]);
 
         // initialData is passed by PuckRenderer
-        const initialGlobal = (props as any).initialData?.globalServices || [];
+        const initialGlobal = (props as { initialData?: { globalServices?: any[] } }).initialData?.globalServices || [];
         const globalServices = currentServices.length > 0 ? currentServices : initialGlobal;
 
         const finalServices = props.useGlobalServices ? globalServices : props.services;
@@ -70,7 +70,7 @@ export const ModernServicesBlock: ComponentConfig<ModernServicesProps> = {
                 {typeof window !== "undefined" && props.useGlobalServices && (
                     <LiveServices onServicesFound={setCurrentServices} />
                 )}
-                <ModernServices {...props} services={finalServices as any} id={props.sectionId} />
+                <ModernServices {...props} services={finalServices} id={props.sectionId} />
             </>
         );
     }

@@ -72,7 +72,7 @@ export const ProductShowcaseBlock = ({
         let result = { ...manual };
 
         if (manual?.productId && products) {
-            const dbProduct = products.find((p) => p._id === manual.productId);
+            const dbProduct = products.find((p: any) => p._id === manual.productId);
             if (dbProduct) {
                 const dbImg = (dbProduct.images && Array.isArray(dbProduct.images) && dbProduct.images.length > 0)
                     ? dbProduct.images[0]
@@ -163,17 +163,17 @@ export const ProductShowcaseBlock = ({
 
                     {/* 4 Item Grid */}
                     <div className="lg:col-span-5 grid grid-cols-2 gap-4 md:gap-8">
-                        {gridProducts.slice(0, 4).map((product, idx) => (
+                        {gridProducts.slice(0, 4).map((p: any, idx) => (
                             <Link
                                 key={idx}
-                                href={product.link || "#"}
+                                href={p.link || "#"}
                                 className="group flex flex-col rounded-[24px] overflow-hidden bg-white shadow-[0_10px_30px_rgba(0,0,0,0.02)] border border-slate-100 hover:shadow-premium transition-all duration-300 hover:-translate-y-1"
                             >
                                 <div className="relative w-full aspect-square bg-slate-100 overflow-hidden">
-                                    {product.image && (
+                                    {p.image && (
                                         <Image
-                                            src={product.image}
-                                            alt={product.title || "Product"}
+                                            src={p.image}
+                                            alt={p.title || "Product"}
                                             fill
                                             className="object-cover group-hover:scale-105 transition-transform duration-500"
                                             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
@@ -182,7 +182,7 @@ export const ProductShowcaseBlock = ({
                                 </div>
                                 <div className="p-5">
                                     <h4 className="text-base font-bold text-slate-900 tracking-tight line-clamp-2 group-hover:text-nb-green transition-colors">
-                                        {product.title}
+                                        {p.title}
                                     </h4>
                                 </div>
                             </Link>
