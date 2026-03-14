@@ -52,7 +52,9 @@ export default async function RootLayout({
       <head>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd, null, 2) }}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(jsonLd, null, 2),
+          }}
         />
       </head>
       <body className={`${inter.variable} font-sans antialiased text-slate-900`}>

@@ -160,9 +160,9 @@ export function SiteFooter({
                         <h4 className={`text-base sm:text-lg font-black mb-6 sm:mb-8 tracking-tight ${textColor}`}>Get in Touch</h4>
                         <ul className="space-y-4 sm:space-y-6">
                             {[
-                                { icon: Mail, text: 'info@naturesboon.net', sub: 'General Inquiries', href: 'mailto:info@naturesboon.net' },
-                                { icon: Phone, text: '+91-76967 71693', sub: 'WhatsApp Available', href: 'https://wa.me/917696771693' },
-                                { icon: MapPin, text: 'Ludhiana, Punjab, India', sub: 'H.O. & Manufacturing', href: 'https://www.google.com/maps/dir/?api=1&destination=Nature%27s+Boon%2C+Ludhiana%2C+Punjab%2C+India' },
+                                { icon: Mail, text: siteSettings?.contactEmail || 'info@naturesboon.net', sub: 'General Inquiries', href: `mailto:${siteSettings?.contactEmail || 'info@naturesboon.net'}` },
+                                { icon: Phone, text: siteSettings?.contactPhone || '+91-76967 71693', sub: 'WhatsApp Available', href: `https://wa.me/${(siteSettings?.contactPhone || '917696771693').replace(/[^0-9]/g, '')}` },
+                                { icon: MapPin, text: `${siteSettings?.addressLocality || 'Ludhiana'}, ${siteSettings?.addressRegion || 'Punjab'}`, sub: 'H.O. & Manufacturing', href: `https://www.google.com/maps/dir/?api=1&destination=Nature%27s+Boon%2C+${siteSettings?.addressLocality || 'Ludhiana'}%2C+Punjab%2C+India` },
                             ].map((item, i) => (
                                 <li key={i}>
                                     <a href={item.href} target={item.icon === MapPin ? "_blank" : "_self"} rel={item.icon === MapPin ? "noopener noreferrer" : undefined} className="flex gap-4 items-start group">

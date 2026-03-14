@@ -50,11 +50,11 @@ export const seedSiteData = mutation({
         const settingsToSeed = [
             { key: "logoText", value: "Nature's Boon" },
             { key: "siteName", value: "Nature's Boon" },
-            { key: "siteTitle", value: "Nature's Boon | Premium Manufacturing Platform" },
+            { key: "siteTitle", value: "Nature's Boon" },
             { key: "tagline", value: "Your Global Partner in Personal Care Excellence" },
-            { key: "contactEmail", value: "info@naturesboon.com" },
-            { key: "contactPhone", value: "+91 97818 00033" },
-            { key: "workingHours", value: "Mon - Sat: 9:00 AM - 6:00 PM" },
+            { key: "contactEmail", value: "naturesboon@yahoo.com" },
+            { key: "contactPhone", value: "+91 98776 59808" },
+            { key: "workingHours", value: "Mon - Sat: 9:00 AM - 6:30 PM" },
             {
                 key: "socialLinks",
                 value: [
@@ -67,7 +67,12 @@ export const seedSiteData = mutation({
                         platform: "facebook"
                     }
                 ]
-            }
+            },
+            { key: "addressStreet", value: "Pakhowal Road, Thakkarwal" },
+            { key: "addressLocality", value: "Ludhiana" },
+            { key: "addressRegion", value: "Punjab" },
+            { key: "addressPostalCode", value: "141013" },
+            { key: "addressCountry", value: "IN" },
         ];
 
         for (const { key, value } of settingsToSeed) {

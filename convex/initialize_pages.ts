@@ -7,12 +7,12 @@ export const setupCorePages = mutation({
         const pages = [
             {
                 path: "/",
-                title: "Nature's Boon | Home",
-                description: "Your Global Partner in Personal Care Excellence - OEM, Private Label & Contract Manufacturing.",
+                title: "Nature's Boon",
+                description: "Your Global Partner in Manufacturing Excellence - OEM, Private Label & Contract Manufacturing.",
                 data: JSON.stringify({
                     root: {
                         props: {
-                            title: "Nature's Boon | Home",
+                            title: "Nature's Boon",
                             header: {
                                 contactText: "Expert Advice",
                                 links: [
@@ -100,8 +100,8 @@ export const setupCorePages = mutation({
                                 backgroundColor: "bg-slate-900",
                                 textColor: "text-white",
                                 socialLinks: [
-                                    { platform: "facebook", href: "#" },
-                                    { platform: "instagram", href: "#" },
+                                    { platform: "facebook", href: "https://www.facebook.com/people/Natures-Boon/100091906116013" },
+                                    { platform: "instagram", href: "https://www.instagram.com/naturesboon.cosmeticsmfg?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" },
                                     { platform: "linkedin", href: "#" }
                                 ]
                             }
@@ -164,8 +164,8 @@ export const setupCorePages = mutation({
                                 backgroundColor: "bg-slate-900",
                                 textColor: "text-white",
                                 socialLinks: [
-                                    { platform: "facebook", href: "#" },
-                                    { platform: "instagram", href: "#" },
+                                    { platform: "facebook", href: "https://www.facebook.com/people/Natures-Boon/100091906116013" },
+                                    { platform: "instagram", href: "https://www.instagram.com/naturesboon.cosmeticsmfg?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" },
                                     { platform: "linkedin", href: "#" }
                                 ]
                             }
@@ -270,8 +270,8 @@ export const setupCorePages = mutation({
                                 backgroundColor: "bg-slate-900",
                                 textColor: "text-white",
                                 socialLinks: [
-                                    { platform: "facebook", href: "#" },
-                                    { platform: "instagram", href: "#" },
+                                    { platform: "facebook", href: "https://www.facebook.com/people/Natures-Boon/100091906116013" },
+                                    { platform: "instagram", href: "https://www.instagram.com/naturesboon.cosmeticsmfg?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" },
                                     { platform: "linkedin", href: "#" }
                                 ]
                             }
@@ -391,8 +391,8 @@ export const setupCorePages = mutation({
                                 backgroundColor: "bg-slate-900",
                                 textColor: "text-white",
                                 socialLinks: [
-                                    { platform: "facebook", href: "#" },
-                                    { platform: "instagram", href: "#" },
+                                    { platform: "facebook", href: "https://www.facebook.com/people/Natures-Boon/100091906116013" },
+                                    { platform: "instagram", href: "https://www.instagram.com/naturesboon.cosmeticsmfg?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" },
                                     { platform: "linkedin", href: "#" }
                                 ]
                             }
@@ -439,8 +439,8 @@ export const setupCorePages = mutation({
                                 infoItems: [
                                     { label: 'Phone', value: '+91-9877659808', icon: 'Phone' },
                                     { label: 'Email', value: 'naturesboon@yahoo.com', icon: 'Mail' },
-                                    { label: 'Factory Address', value: 'Plot No 123, JLPL Industrial Area, Sector 82, Mohali, Punjab - 140308', icon: 'MapPin' },
-                                    { label: 'Working Hours', value: 'Mon - Fri: 9:00 AM - 6:00 PM', icon: 'Clock' },
+                                    { label: 'Factory Address', value: 'Pakhowal Road, Thakkarwal, Ludhiana, Punjab - 141013', icon: 'MapPin' },
+                                    { label: 'Working Hours', value: 'Mon - Sat: 9:00 AM - 6:30 PM', icon: 'Clock' },
                                 ],
                                 departmentEmails: [
                                 { label: 'Inquiry/Info', email: 'naturesboon@yahoo.com' },
@@ -463,8 +463,8 @@ export const setupCorePages = mutation({
                                 backgroundColor: "bg-slate-900",
                                 textColor: "text-white",
                                 socialLinks: [
-                                    { platform: "facebook", href: "#" },
-                                    { platform: "instagram", href: "#" },
+                                    { platform: "facebook", href: "https://www.facebook.com/people/Natures-Boon/100091906116013" },
+                                    { platform: "instagram", href: "https://www.instagram.com/naturesboon.cosmeticsmfg?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" },
                                     { platform: "linkedin", href: "#" }
                                 ]
                             }

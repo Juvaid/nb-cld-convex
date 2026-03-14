@@ -10,9 +10,9 @@ const SITE_CONFIG = {
   url: process.env.NEXT_PUBLIC_SITE_URL || 'https://new.naturesboon.net',
   ogImage:
     'https://pub-13cf3fd8cdc643a6919ef78cee02101f.r2.dev/1773305814460-herobannerv2.png',
-  title: "Nature's Boon | Premium Manufacturing Platform",
+  title: "Nature's Boon | Manufacturing Excellence",
   description:
-    'Next-generation B2B manufacturing platform for premium personal care, specializing in OEM, Private Label, and innovative R&D solutions.',
+    "Leading B2B manufacturing platform for premium personal care, specializing in OEM, Private Label, and innovative R&D solutions.",
   keywords: [
     'B2B Manufacturing',
     'Personal Care',
@@ -97,9 +97,8 @@ export function generateBusinessJsonLd(settings?: any): object[] {
       },
     ],
     sameAs: [
-      'https://www.facebook.com/naturesboon',
-      'https://www.instagram.com/natures_boon',
-      'https://www.linkedin.com/company/naturesboon',
+      'https://www.facebook.com/people/Natures-Boon/100091906116013',
+      'https://www.instagram.com/naturesboon.cosmeticsmfg?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==',
     ],
   };
 
@@ -110,19 +109,19 @@ export function generateBusinessJsonLd(settings?: any): object[] {
     name: "Nature's Boon",
     description: "Leading Private Label Cosmetics & Skincare Manufacturer in India.",
     url: siteUrl,
-    telephone: settings?.phoneNumber || '+91-97818 00033',
+    telephone: settings?.phoneNumber || '+91-9877659808',
     address: {
       '@type': 'PostalAddress',
-      streetAddress: settings?.addressStreet || 'Plot No. 123, Industrial Area',
-      addressLocality: settings?.addressLocality || 'Bawana',
-      addressRegion: settings?.addressRegion || 'Delhi',
-      postalCode: settings?.addressPostalCode || '110039',
+      streetAddress: settings?.addressStreet || 'Pakhowal Road, Thakkarwal',
+      addressLocality: settings?.addressLocality || 'Ludhiana',
+      addressRegion: settings?.addressRegion || 'Punjab',
+      postalCode: settings?.addressPostalCode || '141013',
       addressCountry: settings?.addressCountry || 'IN',
     },
     geo: {
       '@type': 'GeoCoordinates',
-      latitude: '28.7997',
-      longitude: '77.0330',
+      latitude: '30.8467',
+      longitude: '75.8197',
     },
     image: [
       settings?.logoUrl || `${siteUrl}/og-image.jpg`,
@@ -205,8 +204,8 @@ export type PageSeoFallback = {
 
 export const SEO_FALLBACKS: Record<string, PageSeoFallback> = {
   '/': {
-    title: "Nature's Boon | Personal Care Manufacturer India",
-    description: "India's trusted OEM, Private Label & Contract Manufacturer for skincare, haircare & personal care products. Based in Mohali, Punjab.",
+    title: "Nature's Boon | Manufacturing Excellence",
+    description: "India's trusted OEM, Private Label & Contract Manufacturer for skincare, haircare & personal care products.",
     canonical: `${SITE_CONFIG.url}/`,
     ogImage: SITE_CONFIG.ogImage,
   },
@@ -246,8 +245,8 @@ export function getSeoFallback(path: string): PageSeoFallback {
   // Normalize path by removing trailing slash except for root
   const normalizedPath = path === '/' ? path : path.replace(/\/$/, '');
   return SEO_FALLBACKS[normalizedPath] ?? {
-    title: "Nature's Boon | Personal Care Manufacturer",
-    description: "OEM, Private Label & Contract Manufacturing for personal care brands. Based in Mohali, Punjab, India.",
+    title: "Nature's Boon",
+    description: "OEM, Private Label & Contract Manufacturing for personal care brands.",
     canonical: `${SITE_CONFIG.url}${path}`,
     ogImage: SITE_CONFIG.ogImage,
   };
