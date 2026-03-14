@@ -78,7 +78,7 @@ export function generatePageMetadata(page: PageRecord, path: string): Metadata {
       url,
       siteName: "Nature's Boon",
       images: [{
-        url: page.ogImage,                    // Must come from page record
+        url: page.ogImage || "https://new.naturesboon.net/og-image.jpg",
         width: 1200,
         height: 600,
         alt: page.title,
@@ -89,7 +89,7 @@ export function generatePageMetadata(page: PageRecord, path: string): Metadata {
       card: "summary_large_image",
       title: page.title,
       description: page.ogDescription ?? page.description,
-      images: [page.ogImage],                 // Must come from page record
+      images: [page.ogImage || "https://new.naturesboon.net/og-image.jpg"],
     },
   }
 }
