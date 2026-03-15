@@ -83,7 +83,7 @@ export function FloatingActionHub({ settings, whatsappMessage }: FloatingActionH
             id: 'catalog',
             icon: <FileText size={20} />,
             label: 'Catalog',
-            href: catalogStorageId?.startsWith('http') ? catalogStorageId : `https://lovely-peccary-641.eu-west-1.convex.site/api/storage/${catalogStorageId}`,
+            href: catalogStorageId?.startsWith('http') ? catalogStorageId : `/api/storage/${catalogStorageId}`,
             color: 'bg-nb-green',
         }
     ].filter(Boolean) as any[];
