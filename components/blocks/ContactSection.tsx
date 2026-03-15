@@ -36,11 +36,15 @@ export default function ContactSection({
     infoItems = [],
     departmentEmails = [],
     productId,
-    productName
-}: ContactSectionProps) {
+    productName,
+    ...pProps
+}: ContactSectionProps & Record<string, any>) {
+
+    const id = (pProps as any).id;
+    const dataBlock = (pProps as any)["data-block"];
 
     return (
-        <section className="py-12 bg-transparent">
+        <section id={id} data-block={dataBlock} className="py-12 bg-transparent">
             <div className="max-w-7xl mx-auto px-6 sm:px-8">
                 <div className="grid lg:grid-cols-5 gap-12">
                     {/* Contact info */}

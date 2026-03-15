@@ -45,12 +45,16 @@ export const CategoryPortfolio = ({
     paddingTop = "32",
     paddingBottom = "32",
     backgroundVariant = "white",
-}: CategoryPortfolioProps) => {
+    id,
+    ...props
+}: CategoryPortfolioProps & Record<string, any>) => {
     return (
         <Section
             variant={backgroundVariant}
             paddingTop={paddingTop}
             paddingBottom={paddingBottom}
+            id={id || (props as any).id}
+            dataBlock={(props as any)["data-block"]}
         >
             <Flex direction="col" gap="16">
                 <div className="max-w-xl space-y-6">

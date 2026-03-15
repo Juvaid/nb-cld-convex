@@ -44,6 +44,7 @@ export default function SettingsPage() {
     const [discordWebhookUrl, setDiscordWebhookUrl] = useState("");
     const [whatsappApiKey, setWhatsappApiKey] = useState("");
     const [whatsappPhone, setWhatsappPhone] = useState("");
+    const [whatsappMessage, setWhatsappMessage] = useState("");
     const [floatingWidget, setFloatingWidget] = useState<any>({
         enabled: false,
         position: "right",
@@ -92,6 +93,7 @@ export default function SettingsPage() {
             setDiscordWebhookUrl(siteSettings.discord_webhook_url || "");
             setWhatsappApiKey(siteSettings.whatsapp_api_key || "");
             setWhatsappPhone(siteSettings.whatsapp_phone || "");
+            setWhatsappMessage(siteSettings.whatsapp_message || "Hi, I'd like to enquire about manufacturing services.");
             setFloatingWidget(siteSettings.floating_widget || {
                 enabled: false,
                 position: "right",
@@ -138,6 +140,7 @@ export default function SettingsPage() {
                 updateSiteSetting({ key: "discord_webhook_url", value: discordWebhookUrl, token: token ?? undefined }),
                 updateSiteSetting({ key: "whatsapp_api_key", value: whatsappApiKey, token: token ?? undefined }),
                 updateSiteSetting({ key: "whatsapp_phone", value: whatsappPhone, token: token ?? undefined }),
+                updateSiteSetting({ key: "whatsapp_message", value: whatsappMessage, token: token ?? undefined }),
                 updateSiteSetting({ key: "floating_widget", value: floatingWidget, token: token ?? undefined }),
             ]);
 
@@ -643,6 +646,17 @@ export default function SettingsPage() {
                                                         onChange={(e) => setFloatingWidget({ ...floatingWidget, whatsapp: e.target.value })}
                                                         placeholder="+91 98765 43210"
                                                         className="h-10 text-sm font-semibold border-slate-200"
+                                                    />
+                                                </div>
+                                                <div className="space-y-1.5">
+                                                    <label className="text-[10px] font-black text-slate-500 flex items-center gap-1.5 uppercase">
+                                                        <MessageSquare className="w-3 h-3 text-[#25D366]" /> WhatsApp Preset Message
+                                                    </label>
+                                                    <textarea
+                                                        value={whatsappMessage}
+                                                        onChange={(e) => setWhatsappMessage(e.target.value)}
+                                                        placeholder="Write the message users will send you..."
+                                                        className="w-full min-h-[80px] p-3 text-sm rounded-lg border border-slate-200 focus:ring-2 focus:ring-nb-green focus:border-nb-green resize-none transition-all"
                                                     />
                                                 </div>
                                                 <div className="space-y-1.5">

@@ -29,10 +29,14 @@ export default function ProcessSteps({
         { icon: 'Beaker', title: 'R&D / Formulation', description: 'Our in-house R&D team develops custom formulas tailored to your brand.' },
         { icon: 'Factory', title: 'Production', description: 'Scalable manufacturing with rigorous quality control at every stage.' },
         { icon: 'Rocket', title: 'Launch Support', description: 'Packaging design, branding, and marketing support for a successful launch.' },
-    ]
-}: ProcessStepsProps) {
+    ],
+    ...pProps
+}: ProcessStepsProps & Record<string, any>) {
+    const sectionId = id || (pProps as any).id;
+    const dataBlock = (pProps as any)["data-block"];
+
     return (
-        <section id={id} className="py-20 bg-slate-50">
+        <section id={sectionId} data-block={dataBlock} className="py-20 bg-slate-50">
             <div className="max-w-7xl mx-auto px-6 sm:px-8">
                 <div className="text-center mb-16">
                     <span className="text-nb-green font-bold text-sm tracking-widest uppercase">{subheading}</span>

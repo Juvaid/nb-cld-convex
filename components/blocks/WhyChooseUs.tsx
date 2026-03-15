@@ -24,10 +24,14 @@ export default function WhyChooseUs({
         { icon: 'CheckCircle', title: 'ISO Certified Quality', desc: 'All products meet international quality standards with rigorous testing at every stage.' },
         { icon: 'FlaskConical', title: 'In-house R&D', desc: '75+ products developed by our dedicated research and development team.' },
         { icon: 'Factory', title: 'Scalable Operations', desc: '750+ tons annual capacity with flexible production for brands of all sizes.' },
-    ]
-}: WhyChooseUsProps) {
+    ],
+    ...pProps
+}: WhyChooseUsProps & Record<string, any>) {
+    const id = (pProps as any).id;
+    const dataBlock = (pProps as any)["data-block"];
+
     return (
-        <section className="py-12 sm:py-20 bg-slate-50">
+        <section id={id} data-block={dataBlock} className="py-12 sm:py-20 bg-slate-50">
             <div className="max-w-7xl mx-auto px-6 sm:px-8 text-center">
                 <h2 className="text-3xl font-black text-slate-900 mb-12 tracking-tight">{heading}</h2>
                 <div className="grid md:grid-cols-3 gap-8">

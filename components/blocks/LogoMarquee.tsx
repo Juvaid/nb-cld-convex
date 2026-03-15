@@ -32,15 +32,24 @@ export default function LogoMarquee({
     gap = 5,
     paddingTop = 6,
     paddingBottom = 6,
-}: LogoMarqueeProps) {
+    ...props
+}: LogoMarqueeProps & Record<string, any>) {
     if (!logos || logos.length === 0) return null;
+
+    const dataBlock = props["data-block"];
+    const sectionId = props.id;
 
     // Duplicate exactly once → animate -50% = one full set width
     const allLogos = [...logos, ...logos];
     const animName = `marquee-${direction}`;
 
     return (
-        <div className="bg-white overflow-hidden">
+        <section 
+            id={sectionId}
+            data-block={dataBlock}
+            aria-label="Client logos"
+            className="bg-white overflow-hidden"
+        >
             {/* Keyframe injection — purely CSS, no JS dependence */}
             <style>{`
                 @keyframes marquee-left  { from { transform: translateX(0); } to { transform: translateX(-50%); } }
@@ -110,6 +119,6 @@ export default function LogoMarquee({
                     })}
                 </div>
             </div>
-        </div>
+        </section>
     );
 }

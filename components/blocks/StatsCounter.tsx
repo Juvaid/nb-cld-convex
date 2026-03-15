@@ -102,10 +102,18 @@ export default function StatsCounter({
         { value: '75+', label: 'Products by In-house R&D' },
         { value: '20+', label: 'Happy Clients' },
         { value: '750+', label: 'Tons Annual Capacity' },
-    ]
-}: StatsCounterProps) {
+    ],
+    ...props
+}: StatsCounterProps & Record<string, any>) {
+    const dataBlock = props["data-block"];
+    const sectionId = props.id || (props as any).id;
     return (
-        <div id={id} className="py-20 bg-white relative overflow-hidden">
+        <section 
+            id={sectionId} 
+            data-block={dataBlock}
+            aria-label="Company statistics"
+            className="py-20 bg-white relative overflow-hidden"
+        >
             {/* Subtle Gradient Backglow */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-nb-green/5 rounded-full blur-[160px] pointer-events-none opacity-50" />
 
@@ -124,6 +132,6 @@ export default function StatsCounter({
                     ))}
                 </div>
             </div>
-        </div>
+        </section>
     );
 }

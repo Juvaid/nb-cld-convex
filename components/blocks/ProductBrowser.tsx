@@ -35,7 +35,9 @@ export interface ProductBrowserProps {
     initialDbProducts?: any[];
 }
 
-export default function ProductBrowser({ categories: initialCategories = [], useDynamicData = false, initialDbCategories, initialDbProducts }: ProductBrowserProps) {
+export default function ProductBrowser({ categories: initialCategories = [], useDynamicData = false, initialDbCategories, initialDbProducts, ...props }: ProductBrowserProps & Record<string, any>) {
+    const id = props.id;
+    const dataBlock = props["data-block"];
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -97,7 +99,7 @@ export default function ProductBrowser({ categories: initialCategories = [], use
     if (!displayCategories || displayCategories.length === 0) {
         if (shouldShowDynamic && (!dbCategories || !dbProducts)) {
             return (
-                <div className="py-20 max-w-7xl mx-auto px-4 w-full">
+                <section id={id} data-block={dataBlock} aria-label="Product catalog skeleton" className="py-20 max-w-7xl mx-auto px-4 w-full">
                     {/* Header Skeleton */}
                     <div className="flex items-center gap-4 mb-8">
                         <Skeleton className="w-1/4 h-10" />
@@ -109,16 +111,16 @@ export default function ProductBrowser({ categories: initialCategories = [], use
                             <Skeleton key={i} className="w-full h-80 rounded-[32px]" />
                         ))}
                     </div>
-                </div>
+                </section>
             );
         }
-        return <div className="py-20 text-center text-slate-500">No products configured.</div>;
+        return <section id={id} data-block={dataBlock} aria-label="Product catalog empty" className="py-20 text-center text-slate-500">No products configured.</section>;
     }
 
     const categories = filteredCategories;
 
     return (
-        <>
+        <section id={id} data-block={dataBlock} aria-label="Product catalog">
             {/* Category filters */}
             <div
                 className="sticky top-[56px] md:top-[80px] z-40 bg-white/95 backdrop-blur-xl border-b border-slate-900/5 !py-0 !p-0"
@@ -310,6 +312,6 @@ export default function ProductBrowser({ categories: initialCategories = [], use
                     )}
                 </div>
             </section >
-        </>
+        </section>
     );
 }
