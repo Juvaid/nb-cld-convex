@@ -83,3 +83,64 @@ export const findAndMigrateFooter = mutation({
     return { updatedCount, bestFooter, settingsSynced: true };
   }
 });
+
+export const migrateToDirectUrls = mutation({
+  args: {
+    token: v.optional(v.string()),
+  },
+  handler: async (ctx) => {
+    let productUpdates = 0;
+    let blogUpdates = 0;
+
+    // 1. Migrate Products
+    const allProducts = await ctx.db.query("products").collect();
+    for (const product of allProducts) {
+      const newImages = [];
+      let changed = false;
+
+      for (const img of product.images) {
+        if (img.startsWith("http")) {
+          newImages.push(img);
+        } else {
+          // Assume it's a storage ID and try to find the R2 URL
+          const mediaItem = await ctx.db
+            .query("media")
+            .withIndex("by_storageId", (q) => q.eq("storageId", img))
+            .unique();
+          
+          if (mediaItem) {
+            newImages.push(mediaItem.url);
+            changed = true;
+          } else {
+            // Fallback if media item not found
+            newImages.push(img);
+          }
+        }
+      }
+
+      if (changed) {
+        await ctx.db.patch(product._id, { images: newImages });
+        productUpdates++;
+      }
+    }
+
+    // 2. Migrate Blogs
+    const allBlogs = await ctx.db.query("blogs").collect();
+    for (const blog of allBlogs) {
+      // Use type assertion blog.coverImage as string after non-null/non-url check
+      if (blog.coverImage && !blog.coverImage.startsWith("http")) {
+        const mediaItem = await ctx.db
+          .query("media")
+          .withIndex("by_storageId", (q) => q.eq("storageId", blog.coverImage as string))
+          .unique();
+        
+        if (mediaItem) {
+          await ctx.db.patch(blog._id, { coverImage: mediaItem.url });
+          blogUpdates++;
+        }
+      }
+    }
+
+    return { productUpdates, blogUpdates };
+  }
+});
