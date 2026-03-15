@@ -22,17 +22,28 @@ export function generateBaseMetadata(settings?: any): Metadata {
     },
     description,
     keywords: SITE_CONFIG.keywords,
+    verification: {
+      google: "mLTi_aqCQQLYZ7bwSOZo_QWvXVn6C7DPjJCLZ6zDTpk",
+    },
+    other: {
+      "geo.region": "IN-PB",
+      "geo.placename": "Ludhiana, Punjab, India",
+      "geo.position": "30.8467;75.8197",
+      "ICBM": "30.8467, 75.8197",
+    },
     openGraph: {
       title,
       description,
       type: 'website',
       siteName: SITE_CONFIG.name,
+      locale: 'en_IN',
       images: [
         {
           url: SITE_CONFIG.ogImage,
           width: 1200,
-          height: 600,
+          height: 630,
           alt: `${SITE_CONFIG.name} Manufacturing`,
+          secureUrl: SITE_CONFIG.ogImage,
         },
       ],
     },
@@ -80,6 +91,11 @@ export function generateBusinessJsonLd(settings?: any): object[] {
     description: "Leading Private Label Cosmetics & Skincare Manufacturer in India.",
     url: siteUrl,
     telephone: settings?.phoneNumber || '+91-9877659808',
+    additionalType: "https://schema.org/ProfessionalService",
+    priceRange: "₹₹",
+    openingHours: "Mo-Fr 09:00-18:00",
+    currenciesAccepted: "INR",
+    paymentAccepted: "Cash, Bank Transfer",
     address: {
       '@type': 'PostalAddress',
       streetAddress: settings?.addressStreet || 'Pakhowal Road, Thakkarwal',

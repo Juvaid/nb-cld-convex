@@ -13,11 +13,11 @@ export interface StatItem {
     mediaIcon?: string;
     mediaImage?: string;
 }
-
 export interface StatsCounterProps {
     id?: string;
     heading?: string;
     stats?: StatItem[];
+    "data-block"?: string;
 }
 
 function AnimatedCounter({ target, label, stat, index }: { target: string, label: string, stat: StatItem, index: number }) {
@@ -93,7 +93,6 @@ function AnimatedCounter({ target, label, stat, index }: { target: string, label
 
 
 export default function StatsCounter({
-    id,
     heading = "Nature's Boon milestones and metric",
     stats = [
         { value: '20+', label: 'Years of Experience' },
@@ -103,14 +102,17 @@ export default function StatsCounter({
         { value: '20+', label: 'Happy Clients' },
         { value: '750+', label: 'Tons Annual Capacity' },
     ],
+    id,
+    dataBlock,
+    "data-block": dataBlockKebab,
     ...pProps
 }: StatsCounterProps & Record<string, any>) {
-    const dataBlock = (pProps as any)["data-block"];
     const sectionId = id || (pProps as any).id;
+    const finalDataBlock = dataBlock || dataBlockKebab;
     return (
         <section 
             id={sectionId} 
-            data-block={dataBlock}
+            data-block={finalDataBlock}
             aria-label="Company statistics"
             className="py-20 bg-white relative overflow-hidden"
         >

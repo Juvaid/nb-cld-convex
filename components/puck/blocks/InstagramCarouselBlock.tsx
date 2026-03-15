@@ -29,6 +29,9 @@ export interface InstagramCarouselBlockProps {
     autoplayDelay?: number;
     autoScroll?: boolean;
     autoScrollInterval?: number;
+    id?: string;
+    dataBlock?: string;
+    "data-block"?: string;
 }
 
 export function InstagramCarouselBlock({
@@ -44,10 +47,13 @@ export function InstagramCarouselBlock({
     autoplayDelay = 3000,
     autoScroll = true,
     autoScrollInterval = 4000,
+    id,
+    dataBlock,
+    "data-block": dataBlockKebab,
     ...pProps
 }: InstagramCarouselBlockProps) {
-    const id = (pProps as any).id;
-    const dataBlock = (pProps as any)["data-block"];
+    const finalDataBlock = dataBlock || dataBlockKebab;
+
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
     const [activeVideoIndex, setActiveVideoIndex] = useState<number | null>(null);
@@ -241,7 +247,7 @@ export function InstagramCarouselBlock({
     };
 
     return (
-        <Section id={id} dataBlock={dataBlock} className={`${bgColors[backgroundColor]} overflow-hidden`}>
+        <Section id={id} dataBlock={finalDataBlock} className={`${bgColors[backgroundColor]} overflow-hidden`}>
             <div className={`py-8 md:py-12 ${spacing === 'none' ? 'py-0' : spacing === 'sm' ? 'py-4' : spacing === 'md' ? 'py-8' : spacing === 'lg' ? 'py-12' : 'py-16'}`}>
                 <div className={`mb-8 md:mb-10 ${headingAlignment === "center" ? "text-center mx-auto max-w-2xl" : "max-w-xl"}`}>
                     <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-pink-50 text-pink-600 text-[10px] font-bold uppercase tracking-wider mb-3 ${headingAlignment === "center" ? "mx-auto" : ""}`}>

@@ -132,6 +132,7 @@ export const Section = ({
     }[containerWidth] || "container";
 
     const generatedId = React.useId();
+    // Stabilize the ID fallback to avoid hydration mismatches if possible
     const uniqueSectionId = id || `section-${generatedId.replace(/:/g, '')}`;
 
     return (
@@ -145,7 +146,7 @@ export const Section = ({
                 className
             )}
         >
-            <style>{`
+            <style suppressHydrationWarning>{`
                 #${uniqueSectionId} {
                     background-color: ${backgroundColor || "transparent"};
                     background-image: ${backgroundImage ? `url(${backgroundImage})` : "none"};

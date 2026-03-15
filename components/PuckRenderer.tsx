@@ -55,11 +55,12 @@ export function PuckRenderer({ data, initialData, configOverride, siteSettings }
                             if (componentConfig && componentConfig.render) {
                                 const Render = componentConfig.render;
                                 return (
-                                    <ErrorBoundary key={safeProps.id || `${block.type}-${index}`}>
+                                    <ErrorBoundary key={safeProps.id || block.id || `${block.type}-${index}`}>
                                         <Render 
                                             {...safeProps} 
-                                            id={safeProps.id || block.id}
+                                            id={safeProps.id || block.id || `${block.type}-${index}`}
                                             data-block={block.type}
+                                            dataBlock={block.type}
                                             puck={{ renderDropZone: () => null }} 
                                             initialData={initialData} 
                                         />

@@ -37,14 +37,17 @@ export default function ContactSection({
     departmentEmails = [],
     productId,
     productName,
+    id,
+    dataBlock,
+    "data-block": dataBlockKebab,
     ...pProps
 }: ContactSectionProps & Record<string, any>) {
 
-    const id = (pProps as any).id;
-    const dataBlock = (pProps as any)["data-block"];
+    const sectionId = id || (pProps as any).id;
+    const finalDataBlock = dataBlock || dataBlockKebab;
 
     return (
-        <section id={id} data-block={dataBlock} className="py-12 bg-transparent">
+        <section id={sectionId} data-block={finalDataBlock} className="py-12 bg-transparent">
             <div className="max-w-7xl mx-auto px-6 sm:px-8">
                 <div className="grid lg:grid-cols-5 gap-12">
                     {/* Contact info */}

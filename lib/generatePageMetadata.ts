@@ -56,8 +56,9 @@ export function generateProductMetadata(product: ProductRecord, path: string): M
       images: [{
         url: imageUrl,
         width: 1200,
-        height: 600,
+        height: 630,
         alt: product.name,
+        secureUrl: imageUrl,
       }],
       type: "website",
     },
@@ -89,8 +90,9 @@ export function generateBlogMetadata(blog: BlogRecord, path: string): Metadata {
       images: [{
         url: imageUrl,
         width: 1200,
-        height: 600,
+        height: 630,
         alt: blog.title,
+        secureUrl: imageUrl,
       }],
       type: "article",
     },
@@ -122,8 +124,9 @@ export function generatePageMetadata(page: PageRecord, path: string): Metadata {
       images: [{
         url: imageUrl,
         width: 1200,
-        height: 600,
+        height: 630,
         alt: page.title,
+        secureUrl: imageUrl,
       }],
       type: "website",
     },
