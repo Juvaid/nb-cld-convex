@@ -10,7 +10,7 @@ export interface JourneyCard {
 export interface AboutJourneyProps {
     heading?: string;
     introduction?: string;
-    paragraphs?: string[];
+    paragraphs?: (string | { Paragraph: string })[];
     cards?: JourneyCard[];
 }
 
@@ -43,8 +43,8 @@ export default function AboutJourney({
                         <h2 className="text-3xl font-black text-slate-900 mb-6 tracking-tight">{heading}</h2>
                         <div className="space-y-4 text-slate-500 leading-relaxed font-medium text-lg opacity-80">
                             <p>{introduction}</p>
-                            {paragraphs.map((para, idx) => (
-                                <p key={idx}>{para}</p>
+                            {paragraphs.map((para: any, idx) => (
+                                <p key={idx}>{typeof para === 'string' ? para : para.Paragraph}</p>
                             ))}
                         </div>
                     </div>
