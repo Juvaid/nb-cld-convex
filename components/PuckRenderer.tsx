@@ -23,9 +23,6 @@ export function PuckRenderer({ data, initialData, configOverride, siteSettings }
     const content = Array.isArray(data?.content) ? data.content : [];
     const { header = {}, footer = {}, ...rootProps } = root.props || {};
 
-    if (typeof window !== "undefined") {
-        console.log("PuckRenderer starting - Data:", !!data, "Content Length:", content.length);
-    }
 
     // Use the override config if provided, otherwise fallback to the default global config.
     const activeConfig = configOverride || config;
@@ -45,9 +42,6 @@ export function PuckRenderer({ data, initialData, configOverride, siteSettings }
                             const type = legacyMap[block.type] || block.type;
                             const componentConfig = (activeConfig.components as any)[type];
 
-                            if (typeof window !== "undefined") {
-                                console.log(`PuckRenderer: Rendering block type "${block.type}" (mapped to "${type}") with props:`, block.props);
-                            }
 
                             // Defensive guard for block.props
                             const safeProps = block.props || {};
