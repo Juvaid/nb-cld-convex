@@ -123,7 +123,7 @@ export const Footer = ({
                         <h4 className={`text-base sm:text-lg font-bold mb-6 sm:mb-8 tracking-tight ${textColor}`}>Quick Links</h4>
                         <ul className="space-y-3 sm:space-y-4">
                             {['Home', 'About Us', 'Services', 'Our Products', 'Contact'].map((link) => {
-                                const href = link === 'Home' ? '/' : `/${link.toLowerCase().replace(' ', '-').replace('our-', '')}`;
+                                const href = link === 'Home' ? '/' : link === 'About Us' ? '/about' : `/${link.toLowerCase().replace(' ', '-').replace('our-', '')}`;
                                 return (
                                     <li key={link}>
                                         <Link href={href} className={`${subTextColor} hover:text-nb-green transition-colors font-semibold flex items-center gap-2 group text-xs sm:text-sm`}>

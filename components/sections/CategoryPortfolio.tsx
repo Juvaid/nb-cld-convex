@@ -46,8 +46,10 @@ export const CategoryPortfolio = ({
     paddingBottom = "32",
     backgroundVariant = "white",
     id,
+    catalogs,
     ...props
 }: CategoryPortfolioProps & Record<string, any>) => {
+    const displayCategories = categories || catalogs || [];
     return (
         <Section
             variant={backgroundVariant}
@@ -68,7 +70,7 @@ export const CategoryPortfolio = ({
                 </div>
 
                 <Flex direction="row" mobileDirection="col" gap="8" className="w-full">
-                    {categories.map((category, i) => (
+                    {displayCategories.map((category, i) => (
                         <div
                             key={i}
                             className="group relative flex-1 aspect-[3/4] rounded-[48px] overflow-hidden bg-slate-100 flex flex-col justify-end p-10 hover:-translate-y-4 transition-all duration-700 shadow-2xl"

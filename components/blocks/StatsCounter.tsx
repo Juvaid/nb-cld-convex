@@ -103,10 +103,10 @@ export default function StatsCounter({
         { value: '20+', label: 'Happy Clients' },
         { value: '750+', label: 'Tons Annual Capacity' },
     ],
-    ...props
+    ...pProps
 }: StatsCounterProps & Record<string, any>) {
-    const dataBlock = props["data-block"];
-    const sectionId = props.id || (props as any).id;
+    const dataBlock = (pProps as any)["data-block"];
+    const sectionId = id || (pProps as any).id;
     return (
         <section 
             id={sectionId} 

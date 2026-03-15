@@ -387,7 +387,7 @@ export const config: Config = {
                 const finalStats = props.useGlobalStats && globalStats?.length > 0
                   ? globalStats
                   : (props.stats || []);
-                return <ModernStats {...props} stats={finalStats as any} id={props.sectionId} />
+                return <ModernStats {...props} stats={finalStats as any} id={props.id} />
             }
         },
         ModernTestimonials: {
