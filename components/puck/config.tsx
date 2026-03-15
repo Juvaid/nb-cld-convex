@@ -134,6 +134,7 @@ export const config: Config = {
         NatureBoonExpertise: NatureBoonExpertiseConfig as any,
         NatureBoonStats: NatureBoonStatsConfig as any,
         CategoryPortfolio: CategoryPortfolioConfig as any,
+        CatalogSection: CategoryPortfolioConfig as any,
         ProductCategoryCarousel: ProductCategoryCarouselBlockConfig as any,
         ServiceGrid: ServiceGridBlockConfig,
         CTA: CTABlockConfig,

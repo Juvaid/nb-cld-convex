@@ -3,11 +3,11 @@
 import React, { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { 
-    MessageSquare, 
-    Phone, 
-    Download, 
-    X, 
+import {
+    MessageSquare,
+    Phone,
+    Download,
+    X,
     Plus,
     ChevronUp,
     ChevronDown,
@@ -137,88 +137,66 @@ export function FloatingActionHub({ settings, whatsappMessage }: FloatingActionH
                 )}
             </AnimatePresence>
 
+            {/* Support Message Tooltip */}
+            {!isOpen && (
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    className={cn(
+                        "absolute bottom-[84px] shadow-2xl rounded-2xl px-4 py-2 pointer-events-none select-none border border-slate-100 bg-white",
+                        position === "right" ? "right-0" : "left-0"
+                    )}
+                >
+                    <p className="text-[10px] font-black text-slate-800 uppercase tracking-widest whitespace-nowrap">
+                        Need help? Contact us here
+                    </p>
+                    <div className={cn(
+                        "absolute -bottom-2 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-white",
+                        position === "right" ? "right-4" : "left-4"
+                    )} />
+                </motion.div>
+            )}
+
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className={cn(
-                    "w-14 h-14 rounded-full flex items-center justify-center text-white shadow-2xl transition-all duration-300 relative group overflow-hidden",
-                    isOpen ? "bg-slate-800 rotate-90" : "bg-nb-green"
+                    "w-16 h-16 !rounded-full flex items-center justify-center text-white shadow-2xl transition-all duration-300 relative group overflow-hidden bg-white border-2 border-slate-100 ring-4 ring-nb-green/20 hover:ring-nb-green/40 aspect-square shrink-0 flex-none",
+                    isOpen ? "rotate-90 !bg-slate-800 !ring-slate-900/20" : ""
                 )}
             >
                 <AnimatePresence mode="wait">
                     {isOpen ? (
                         <motion.div
                             key="close"
-                            initial={{ opacity: 0, rotate: -90 }}
-                            animate={{ opacity: 1, rotate: 0 }}
-                            exit={{ opacity: 0, rotate: 90 }}
+                            initial={{ opacity: 0, scale: 0.5, rotate: -90 }}
+                            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                            exit={{ opacity: 0, scale: 0.5, rotate: 90 }}
                         >
-                            <X size={24} />
+                            <X size={28} />
                         </motion.div>
                     ) : (
                         <motion.div
                             key="open"
-                            initial={{ opacity: 0, rotate: 90 }}
-                            animate={{ opacity: 1, rotate: 0 }}
-                            exit={{ opacity: 0, rotate: -90 }}
-                            className="relative flex items-center justify-center"
+                            initial={{ opacity: 0, scale: 0.2 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.2 }}
+                            className="relative w-full h-full flex items-center justify-center"
                         >
-                            <Plus size={28} className="relative z-10" />
-                            {!isOpen && (
-                                <div className="absolute inset-0 bg-white/20 animate-ping rounded-full" />
-                            )}
+                            <div className="absolute inset-0 bg-gradient-to-tr from-nb-green/10 via-transparent to-nb-green/5 animate-pulse rounded-full" />
+                            <div className="relative w-full h-full">
+                                <Image
+                                    src="/images/support-mascot.png"
+                                    alt="Support Mascot"
+                                    fill
+                                    className="object-cover"
+                                    priority
+                                />
+                            </div>
                         </motion.div>
                     )}
                 </AnimatePresence>
             </button>
 
-            {/* Support Mascot & Tooltip */}
-            {!isOpen && (
-                <motion.div 
-                    initial={{ opacity: 0, x: position === "right" ? 20 : -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className={cn(
-                        "absolute bottom-20 flex flex-col items-center pointer-events-none select-none",
-                        position === "right" ? "right-0 items-end" : "left-0 items-start"
-                    )}
-                >
-                    <motion.div
-                        animate={{ 
-                            y: [0, -10, 0],
-                        }}
-                        transition={{ 
-                            duration: 4, 
-                            repeat: Infinity,
-                            ease: "easeInOut"
-                        }}
-                        className="relative"
-                    >
-                        <div className={cn(
-                            "bg-white border border-slate-100 shadow-2xl rounded-2xl px-4 py-2 mb-4 relative",
-                            position === "right" ? "mr-2" : "ml-2"
-                        )}>
-                            <p className="text-[10px] font-black text-slate-800 uppercase tracking-widest whitespace-nowrap">
-                                Need help? Contact us here
-                            </p>
-                            <div className={cn(
-                                "absolute -bottom-2 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-white",
-                                position === "right" ? "right-6" : "left-6"
-                            )} />
-                        </div>
-                        
-                        <div className={cn(
-                            "w-20 h-20 relative bg-white rounded-full overflow-hidden",
-                            position === "right" ? "mr-[-10px]" : "ml-[-10px]"
-                        )}>
-                            <Image 
-                                src="/images/support-mascot.png" 
-                                alt="Support Mascot"
-                                fill
-                                className="object-contain"
-                            />
-                        </div>
-                    </motion.div>
-                </motion.div>
-            )}
         </div>
     );
 }
