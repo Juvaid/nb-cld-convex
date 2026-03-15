@@ -114,12 +114,17 @@ export default function InquiriesAdmin() {
             return;
         }
 
-        const headers = ["ID", "Name", "Email", "Phone", "Status", "Product", "Category", "Message", "Submitted At"];
+        const headers = ["ID", "Name", "Email", "Phone", "Brand", "Request Type", "Quantity", "Timeline", "Formula", "Status", "Product", "Category", "Message", "Submitted At"];
         const rows = filteredInquiries.map(item => [
-            item._id,
+            `"=""${item._id}"""`,
             `"${item.name.replace(/"/g, '""')}"`,
             `"${item.email.replace(/"/g, '""')}"`,
-            `"${(item.phone || "").replace(/"/g, '""')}"`,
+            `"=""${(item.phone || "").replace(/"/g, '""')}"""`,
+            `"${(item.brandName || "").replace(/"/g, '""')}"`,
+            `"${(item.requestType || "").replace(/"/g, '""')}"`,
+            `"${(item.annualVolume || "").replace(/"/g, '""')}"`,
+            `"${(item.timeline || "").replace(/"/g, '""')}"`,
+            `"${(item.formulaStatus || "").replace(/"/g, '""')}"`,
             item.status,
             `"${(item.productName || "").replace(/"/g, '""')}"`,
             `"${(item.productCategory || "").replace(/"/g, '""')}"`,
@@ -449,6 +454,40 @@ export default function InquiriesAdmin() {
                                             Automatic timestamp verified
                                         </span>
                                     </div>
+                                </div>
+
+                                {/* B2B Details Grid */}
+                                <div className="mt-6 grid grid-cols-2 md:grid-cols-3 gap-4">
+                                    {selectedInquiry.brandName && (
+                                        <div className="bg-slate-50/50 p-3 rounded-xl border border-slate-100">
+                                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Brand</span>
+                                            <span className="text-xs font-bold text-slate-700 block truncate">{selectedInquiry.brandName}</span>
+                                        </div>
+                                    )}
+                                    {selectedInquiry.requestType && (
+                                        <div className="bg-slate-50/50 p-3 rounded-xl border border-slate-100">
+                                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Request</span>
+                                            <span className="text-xs font-bold text-slate-700 block truncate">{selectedInquiry.requestType}</span>
+                                        </div>
+                                    )}
+                                    {selectedInquiry.annualVolume && (
+                                        <div className="bg-slate-50/50 p-3 rounded-xl border border-slate-100">
+                                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Quantity</span>
+                                            <span className="text-xs font-bold text-slate-700 block truncate">{selectedInquiry.annualVolume}</span>
+                                        </div>
+                                    )}
+                                    {selectedInquiry.timeline && (
+                                        <div className="bg-slate-50/50 p-3 rounded-xl border border-slate-100">
+                                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Timeline</span>
+                                            <span className="text-xs font-bold text-slate-700 block truncate">{selectedInquiry.timeline}</span>
+                                        </div>
+                                    )}
+                                    {selectedInquiry.formulaStatus && (
+                                        <div className="bg-slate-50/50 p-3 rounded-xl border border-slate-100">
+                                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Formula</span>
+                                            <span className="text-xs font-bold text-slate-700 block truncate">{selectedInquiry.formulaStatus}</span>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {selectedInquiry.productName && (

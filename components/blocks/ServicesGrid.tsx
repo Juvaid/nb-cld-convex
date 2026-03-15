@@ -72,10 +72,14 @@ export default function ServicesGrid({
             mediaIcon: 'Megaphone',
             slug: 'digital-marketing',
         },
-    ]
-}: ServicesGridProps) {
+    ],
+    ...pProps
+}: ServicesGridProps & Record<string, any>) {
+    const sectionId = id || (pProps as any).id;
+    const dataBlock = (pProps as any)["data-block"];
+
     return (
-        <section id={id} className={`pt-0 pb-12 sm:pt-0 sm:pb-24 relative overflow-hidden ${useDesignSystem ? 'bg-white' : 'bg-slate-50'}`}>
+        <section id={sectionId} data-block={dataBlock} className={`pt-0 pb-12 sm:pt-0 sm:pb-24 relative overflow-hidden ${useDesignSystem ? 'bg-white' : 'bg-slate-50'}`}>
             {useDesignSystem && (
                 <>
                     <div className="absolute top-0 left-1/4 w-96 h-96 bg-nb-green/5 rounded-full blur-[120px] -translate-y-1/2 pointer-events-none" />

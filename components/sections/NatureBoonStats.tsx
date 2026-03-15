@@ -5,6 +5,9 @@ import { Flex } from "@/components/ui/Flex";
 import { Typography } from "@/components/ui/Typography";
 
 interface NatureBoonStatsProps {
+    id?: string;
+    dataBlock?: string;
+    "data-block"?: string;
     stats?: { value: string; label: string }[];
     paddingTop?: string;
     paddingBottom?: string;
@@ -12,6 +15,9 @@ interface NatureBoonStatsProps {
 }
 
 export const NatureBoonStats = ({
+    id,
+    dataBlock,
+    "data-block": dataBlockKebab,
     stats = [
         { value: "20+", label: "Years Experience" },
         { value: "200+", label: "Annual SKUs" },
@@ -22,8 +28,11 @@ export const NatureBoonStats = ({
     paddingBottom = "12",
     backgroundVariant = "white",
 }: NatureBoonStatsProps) => {
+    const finalDataBlock = dataBlock || dataBlockKebab;
     return (
         <Section
+            id={id}
+            dataBlock={finalDataBlock}
             variant={backgroundVariant}
             paddingTop={paddingTop}
             paddingBottom={paddingBottom}

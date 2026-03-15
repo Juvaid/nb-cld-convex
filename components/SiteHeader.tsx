@@ -62,7 +62,7 @@ export function SiteHeader({
         { label: "About", href: "/about" },
         { label: "Services", href: "/services" },
         { label: "Products", href: "/products" },
-        { label: "Blogs", href: "/blogs" },
+        // { label: "Blogs", href: "/blogs" },
     ];
     const defaultPortalText = "Blogs";
     const defaultContactText = "Contact Sales";
