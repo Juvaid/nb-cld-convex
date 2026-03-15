@@ -5,6 +5,7 @@ import { Flex } from "@/components/ui/Flex";
 import { Typography } from "@/components/ui/Typography";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
+import NextImage from "next/image";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
@@ -88,7 +89,13 @@ export const NatureBoonHero = ({
                 <div className="flex-1 relative group">
                     <div className="relative z-10 aspect-[4/5] bg-white rounded-[60px] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] overflow-hidden ring-1 ring-slate-100 hover:scale-[1.02] transition-transform duration-700">
                         {image ? (
-                            <img src={image} alt="Manufacturing Excellence" className="w-full h-full object-cover" />
+                            <NextImage 
+                                src={image} 
+                                alt="Manufacturing Excellence" 
+                                fill
+                                className="object-cover" 
+                                sizes="(max-width: 768px) 100vw, 50vw"
+                            />
                         ) : (
                             <div className="w-full h-full bg-slate-50 flex items-center justify-center p-12 text-center">
                                 <div className="space-y-4">

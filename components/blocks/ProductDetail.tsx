@@ -18,6 +18,7 @@ import {
     FlaskConical,
     FileCheck2
 } from "lucide-react";
+import NextImage from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
@@ -136,10 +137,13 @@ export default function ProductDetail({
                                     >
                                         {images.map((img: string, i: number) => (
                                             <div key={i} className="relative flex-shrink-0 w-full h-full snap-start snap-always">
-                                                <img
+                                                <NextImage
                                                     src={img.startsWith('http') ? img : `/api/storage/${img}`}
-                                                    className="w-full h-full object-cover relative z-10 transition-transform duration-[2s]"
+                                                    fill
+                                                    className="object-cover relative z-10 transition-transform duration-[2s]"
                                                     alt={`${product.name} - Image ${i + 1}`}
+                                                    sizes="(max-width: 768px) 100vw, 40vw"
+                                                    priority={i === 0}
                                                 />
                                             </div>
                                         ))}
@@ -178,15 +182,18 @@ export default function ProductDetail({
                                         <button
                                             key={i}
                                             onClick={() => scrollToImage(i)}
+                                            title={`Scroll to image ${i + 1}`}
                                             className={`snap-start relative aspect-square rounded-2xl overflow-hidden border-2 transition-all cursor-pointer ${i === activeImageIndex
                                                 ? 'border-nb-green shadow-premium scale-[1.02]'
                                                 : 'border-transparent hover:border-slate-200 opacity-60 hover:opacity-100'
                                                 }`}
                                         >
-                                            <img
+                                            <NextImage
                                                 src={img.startsWith('http') ? img : `/api/storage/${img}`}
-                                                className="w-full h-full object-cover"
+                                                fill
+                                                className="object-cover"
                                                 alt={`Thumbnail ${i + 1}`}
+                                                sizes="80px"
                                             />
                                         </button>
                                     ))}

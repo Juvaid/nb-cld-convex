@@ -171,6 +171,7 @@ export const listNames = query({
         return products.map((p) => ({
             _id: p._id,
             name: p.name,
+            slug: p.slug,
         }));
     },
 });

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Factory, Users, Award, Target, LucideIcon } from 'lucide-react';
+import NextImage from 'next/image';
 
 export interface JourneyCard {
     icon: string;
@@ -58,11 +59,15 @@ export default function AboutJourney({
                                         {iconMap[item.icon] ? (
                                             <IconComp className="w-8 h-8 text-white" />
                                         ) : (
-                                            <img
-                                                src={item.icon?.startsWith('http') ? item.icon : `/api/storage/${item.icon}`}
-                                                className="w-full h-full object-cover"
-                                                alt={item.title}
-                                            />
+                                            <div className="relative w-full h-full">
+                                                <NextImage
+                                                    src={item.icon?.startsWith('http') ? item.icon : `/api/storage/${item.icon}`}
+                                                    fill
+                                                    className="object-cover"
+                                                    alt={item.title}
+                                                    sizes="64px"
+                                                />
+                                            </div>
                                         )}
                                     </div>
                                     <div>
