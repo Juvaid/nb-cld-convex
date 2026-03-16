@@ -14,31 +14,24 @@ export function BlogsClient({ initialSettings }: { initialSettings?: any }) {
         <div className="flex min-h-screen flex-col bg-background font-outfit">
                 <SiteHeader initialSettings={initialSettings} />
                 <main className="flex-1">
-                    {/* Hero Section */}
-                    <section className="relative py-24 md:py-32 overflow-hidden">
-                        <div className="absolute inset-0 bg-slate-900 -z-10" />
-                        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2560&auto=format&fit=crop')] bg-cover bg-center opacity-20 -z-10" />
-                        <div className="absolute inset-0 bg-gradient-to-b from-slate-900/50 to-slate-900 -z-10" />
-
+                    {/* Header Section */}
+                    <section className="pt-16 pb-8">
                         <div className="container mx-auto px-4">
-                            <div className="max-w-3xl">
-                                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-nb-green/20 border border-nb-green/20 text-nb-green text-xs font-black uppercase tracking-[0.2em] mb-6">
-                                    <PenTool size={14} />
-                                    Nature's Boon Editorial
-                                </div>
-                                <h1 className="text-5xl md:text-7xl font-black text-white mb-8 tracking-tighter leading-[0.9]">
-                                    Insights into <br />
-                                    <span className="text-nb-green">Sustainable</span> Beauty.
-                                </h1>
-                                <p className="text-xl text-slate-300 font-medium leading-relaxed max-w-2xl">
-                                    Discover the science, craftsmanship, and stories behind India's leading personal care manufacturing.
-                                </p>
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-nb-green/10 border border-nb-green/20 text-nb-green text-[10px] font-black uppercase tracking-widest mb-4">
+                                <PenTool size={12} />
+                                Nature's Boon Editorial
                             </div>
+                            <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
+                                Latest <span className="text-nb-green">Stories</span>
+                            </h1>
+                            <p className="text-slate-500 font-medium max-w-2xl text-sm leading-relaxed">
+                                Insights into private label manufacturing, skincare formulation, and the stories behind India's leading personal care manufacturing.
+                            </p>
                         </div>
                     </section>
 
                     {/* Blog Feed */}
-                    <section className="py-24">
+                    <section className="pb-24">
                         <div className="container mx-auto px-4">
                             {!blogs ? (
                                 <div className="flex flex-col items-center justify-center py-32">

@@ -27,7 +27,6 @@ function extractCleanContent(raw) {
   let title = "";
   let bodyLines = [];
   let seenLines = new Set();
-  let skipUntilContent = true;
   
   for (const line of lines) {
     if (line.startsWith("Title:")) { title = line.replace("Title:", "").trim(); continue; }
@@ -48,33 +47,95 @@ function extractCleanContent(raw) {
   return { title, bodyLines };
 }
 
-function buildMarkdown(title, bodyLines) {
-  const md = [];
-  md.push(`# ${title}\n`);
-  
-  let i = 0;
-  while (i < bodyLines.length) {
-    const line = bodyLines[i];
+/**
+ * Builds a Puck JSON object from the scraped lines.
+ * Groups content into TextBlocks and inserts InlineImage placeholders.
+ */
+function buildPuckJSON(title, bodyLines) {
+  const content = [];
+  let currentGroup = [];
+  let blockCount = 0;
+
+  function pushTextBlock() {
+    if (currentGroup.length === 0) return;
     
-    // Detect section headings (usually short, end with ?, or are repeated)
-    const isHeading = line.length < 80 && (
-      line.endsWith("?") || 
-      line.match(/^(Why|How|What|Benefits|Features|Process|Contact|About|FAQ|Our|Best|Top|Private|Face|Hair|Body|Men|Skin)/i) ||
-      line.match(/^[A-Z][^a-z]{0,5}[A-Z]/) // ALL CAPS
-    );
-    
-    if (isHeading && i < bodyLines.length - 1) {
-      md.push(`\n## ${line}\n`);
-    } else {
-      md.push(line + "\n");
-    }
-    i++;
+    const html = currentGroup.map(line => {
+      // Detect if line is likely a heading
+      const isHeading = line.length < 80 && (
+        line.endsWith("?") || 
+        line.match(/^(Why|How|What|Benefits|Features|Process|Contact|About|FAQ|Our|Best|Top|Private|Face|Hair|Body|Men|Skin)/i) ||
+        line.match(/^[A-Z][^a-z]{0,5}[A-Z]/) // ALL CAPS
+      );
+      
+      if (isHeading) {
+        return `<h2>${line}</h2>`;
+      }
+      return `<p>${line}</p>`;
+    }).join("");
+
+    content.push({
+      type: "TextBlock",
+      props: {
+        id: `text-${blockCount++}`,
+        content: html,
+        alignment: "left",
+        maxWidth: "none",
+      },
+    });
+    currentGroup = [];
   }
-  
-  // Add CTA at end
-  md.push(`\n---\n\n## Get in Touch\n\nLooking for a trusted manufacturing partner in India? [Contact Nature's Boon](/contact) today to discuss your private label requirements, MOQ, and pricing.\n`);
-  
-  return md.join("\n");
+
+  // Header TextBlock
+  content.push({
+    type: "TextBlock",
+    props: {
+      id: "header-title",
+      content: `<h1>${title}</h1>`,
+      alignment: "left",
+      maxWidth: "none",
+    }
+  });
+
+  // Body content
+  for (let i = 0; i < bodyLines.length; i++) {
+    currentGroup.push(bodyLines[i]);
+    
+    // Every 5-7 lines or at a heading, push a TextBlock and maybe an Image
+    if (currentGroup.length >= 6 || (i > 0 && bodyLines[i].length < 60 && bodyLines[i].match(/^[A-Z]/))) {
+      pushTextBlock();
+      
+      // Inline Image Placeholder every ~15 lines
+      if (i % 15 === 0 && i > 0) {
+        content.push({
+          type: "InlineImage",
+          props: {
+            id: `image-${blockCount++}`,
+            imageUrl: "",
+            size: "large",
+            altText: title
+          }
+        });
+      }
+    }
+  }
+
+  pushTextBlock(); // final group
+
+  // Final CTA
+  content.push({
+    type: "TextBlock",
+    props: {
+        id: "cta-text",
+        content: `<hr><h2>Get in Touch</h2><p>Looking for a trusted manufacturing partner in India? <a href="/contact">Contact Nature's Boon</a> today to discuss your private label requirements, MOQ, and pricing.</p>`,
+        alignment: "left",
+        maxWidth: "none",
+    }
+  });
+
+  return JSON.stringify({
+    content,
+    root: { props: {} },
+  });
 }
 
 function buildExcerpt(bodyLines) {
@@ -164,7 +225,7 @@ async function run() {
     
     const raw = fs.readFileSync(filePath, "utf-8");
     const { bodyLines } = extractCleanContent(raw);
-    const content = buildMarkdown(page.title, bodyLines);
+    const content = buildPuckJSON(page.title, bodyLines);
     const excerpt = buildExcerpt(bodyLines);
     
     try {
