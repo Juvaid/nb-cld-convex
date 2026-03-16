@@ -12,10 +12,14 @@ export default function CallToAction({
     heading = "Need a Custom Formulation?",
     description = "Our in-house R&D team can develop unique formulations tailored to your brand's requirements.",
     buttonText = "Request Custom Formula",
-    buttonLink = "/contact"
-}: CallToActionProps) {
+    buttonLink = "/contact",
+    ...pProps
+}: CallToActionProps & Record<string, any>) {
+    const id = (pProps as any).id;
+    const dataBlock = (pProps as any)["data-block"];
+
     return (
-        <section className="py-6 md:py-10 bg-gradient-to-br from-nb-green-soft to-nb-green-deep">
+        <section id={id} data-block={dataBlock} className="py-6 md:py-10 bg-gradient-to-br from-nb-green-soft to-nb-green-deep">
             <div className="max-w-3xl mx-auto text-center px-4">
                 <h2 className="text-3xl font-bold text-white mb-4">{heading}</h2>
                 <p className="text-white/70 mb-8 max-w-2xl mx-auto">

@@ -110,6 +110,12 @@ export const seedProductCatalog = internalMutation({
                         tags: [],
                         status: "active",
                         categoryId,
+                        moq: 100, // Default MOQ for B2B verification
+                        pricingTiers: [
+                            { minQty: 100, price: 250 },
+                            { minQty: 500, price: 210 },
+                            { minQty: 1000, price: 180 }
+                        ]
                     });
                     productsCreated++;
                 }

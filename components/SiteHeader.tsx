@@ -2,10 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
+import { MegaMenu, MegaMenuConfig } from "./MegaMenu";
 
 import { Button } from "@/components/ui/Button";
 
@@ -16,6 +19,7 @@ import { AnimatedLogo } from "@/components/animations/AnimatedLogo";
 export interface NavLink {
     label: string;
     href: string;
+    megaMenu?: MegaMenuConfig;
 }
 
 export interface SiteHeaderProps {
@@ -29,6 +33,80 @@ export interface SiteHeaderProps {
 /**
  * Inner component to handle live updates on the client.
  */
+/**
+ * NavItem component to handle Mega Menu hover logic.
+ */
+function NavItem({ link, pathname }: { link: NavLink, pathname: string }) {
+    const [isOpen, setIsOpen] = useState(false);
+    const closeTimer = useRef<NodeJS.Timeout | null>(null);
+
+    // Close menu on route change
+    useEffect(() => {
+        setIsOpen(false);
+    }, [pathname]);
+
+    const handleMouseEnter = () => {
+        if (closeTimer.current) clearTimeout(closeTimer.current);
+        setIsOpen(true);
+    };
+
+    const handleMouseLeave = () => {
+        closeTimer.current = setTimeout(() => {
+            setIsOpen(false);
+        }, 150);
+    };
+
+    if (!link.megaMenu?.enabled) {
+        return (
+            <Link
+                href={link.href || "#"}
+                className={cn(
+                    "hover:text-nb-green transition-colors relative group py-2",
+                    pathname === link.href ? "text-nb-green" : ""
+                )}
+            >
+                {link.label}
+                <span className={cn(
+                    "absolute bottom-0 left-0 w-full h-0.5 bg-nb-green transform origin-left transition-transform duration-300",
+                    pathname === link.href ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+                )} />
+            </Link>
+        );
+    }
+
+    return (
+        <div
+            className="relative"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+        >
+            <button
+                className={cn(
+                    "hover:text-nb-green transition-colors relative group py-2 flex items-center gap-1",
+                    pathname === link.href ? "text-nb-green" : ""
+                )}
+            >
+                {link.label}
+                <ChevronDown size={14} className={cn("transition-transform duration-300", isOpen && "rotate-180")} />
+                <span className={cn(
+                    "absolute bottom-0 left-0 w-full h-0.5 bg-nb-green transform origin-left transition-transform duration-300",
+                    pathname === link.href || isOpen ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+                )} />
+            </button>
+
+            <AnimatePresence>
+                {isOpen && (
+                    <MegaMenu
+                        config={link.megaMenu}
+                        isOpen={isOpen}
+                        onClose={() => setIsOpen(false)}
+                    />
+                )}
+            </AnimatePresence>
+        </div>
+    );
+}
+
 function LiveHeaderSettings({ onSettingsFound, initialSettings }: { onSettingsFound: (s: any) => void, initialSettings: any }) {
     const liveSettings = useQuery(api.siteSettings.getSiteSettings);
     useEffect(() => {
@@ -61,7 +139,7 @@ export function SiteHeader({
         { label: "About", href: "/about" },
         { label: "Services", href: "/services" },
         { label: "Products", href: "/products" },
-        { label: "Blogs", href: "/blogs" },
+        // { label: "Blogs", href: "/blogs" },
     ];
     const defaultPortalText = "Blogs";
     const defaultContactText = "Contact Sales";
@@ -111,16 +189,7 @@ export function SiteHeader({
                         ))
                     ) : (
                         links.map((link: NavLink, i: number) => (
-                            <Link
-                                key={i}
-                                href={link.href || "#"}
-                                className={`hover:text-nb-green transition-colors relative group py-2 ${pathname === link.href ? "text-nb-green" : ""
-                                    }`}
-                            >
-                                {link.label}
-                                <span className={`absolute bottom-0 left-0 w-full h-0.5 bg-nb-green transform origin-left transition-transform duration-300 ${pathname === link.href ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
-                                    }`} />
-                            </Link>
+                            <NavItem key={i} link={link} pathname={pathname} />
                         ))
                     )}
                 </nav>

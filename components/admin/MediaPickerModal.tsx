@@ -34,11 +34,11 @@ export function MediaPickerModal({ isOpen, onClose, onSelect, selectedIds }: Med
     };
 
     const handleConfirm = () => {
-        // Find storage IDs of localSelected items that aren't already in selectedIds
+        // Find URLs of localSelected items that aren't already in selectedIds
         const selectedItems = filteredMedia.filter(item => localSelected.includes(item._id));
-        const newStorageIds = selectedItems.map(item => item.storageId);
+        const newUrls = selectedItems.map(item => item.url);
 
-        onSelect(newStorageIds);
+        onSelect(newUrls);
         onClose();
         setLocalSelected([]);
     };
@@ -79,7 +79,7 @@ export function MediaPickerModal({ isOpen, onClose, onSelect, selectedIds }: Med
                     ) : (
                         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
                             {filteredMedia.map((item) => {
-                                const isAlreadyAdded = selectedIds.includes(item.storageId);
+                                const isAlreadyAdded = selectedIds.includes(item.url) || selectedIds.includes(item.storageId);
                                 const isSelected = localSelected.includes(item._id);
 
                                 return (

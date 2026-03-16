@@ -3,6 +3,7 @@
 import { Section } from "@/components/ui/Section";
 import { Flex } from "@/components/ui/Flex";
 import { Typography } from "@/components/ui/Typography";
+import NextImage from "next/image";
 
 interface CategoryPortfolioProps {
     title?: string;
@@ -45,12 +46,18 @@ export const CategoryPortfolio = ({
     paddingTop = "32",
     paddingBottom = "32",
     backgroundVariant = "white",
-}: CategoryPortfolioProps) => {
+    id,
+    catalogs,
+    ...props
+}: CategoryPortfolioProps & Record<string, any>) => {
+    const displayCategories = categories || catalogs || [];
     return (
         <Section
             variant={backgroundVariant}
             paddingTop={paddingTop}
             paddingBottom={paddingBottom}
+            id={id || (props as any).id}
+            dataBlock={(props as any)["data-block"]}
         >
             <Flex direction="col" gap="16">
                 <div className="max-w-xl space-y-6">
@@ -64,7 +71,7 @@ export const CategoryPortfolio = ({
                 </div>
 
                 <Flex direction="row" mobileDirection="col" gap="8" className="w-full">
-                    {categories.map((category, i) => (
+                    {displayCategories.map((category, i) => (
                         <div
                             key={i}
                             className="group relative flex-1 aspect-[3/4] rounded-[48px] overflow-hidden bg-slate-100 flex flex-col justify-end p-10 hover:-translate-y-4 transition-all duration-700 shadow-2xl"
@@ -74,7 +81,13 @@ export const CategoryPortfolio = ({
 
                             {/* Image placeholder/rendering */}
                             {category.image ? (
-                                <img src={category.image} alt={category.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
+                                <NextImage 
+                                    src={category.image} 
+                                    alt={category.title} 
+                                    fill
+                                    className="object-cover group-hover:scale-110 transition-transform duration-1000" 
+                                    sizes="(max-width: 768px) 100vw, 33vw"
+                                />
                             ) : (
                                 <div className="absolute inset-0 flex items-center justify-center text-6xl opacity-20 filter grayscale group-hover:grayscale-0 transition-all">
                                     {category.title === "Hair Care" ? "🧴" : category.title === "Skin Care" ? "✨" : "🧔"}
@@ -83,11 +96,15 @@ export const CategoryPortfolio = ({
 
                             <div className="relative z-20 space-y-6">
                                 <div className="flex flex-wrap gap-2">
-                                    {category.tags.map((tag, j) => (
-                                        <span key={j} className="text-[10px] font-black uppercase tracking-widest px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-white border border-white/10">
-                                            {tag}
-                                        </span>
-                                    ))}
+                                    {(category.tags || []).map((tag: any, j: number) => {
+                                        const tagName = typeof tag === 'string' ? tag : (tag?.name || "");
+                                        if (!tagName) return null;
+                                        return (
+                                            <span key={j} className="text-[10px] font-black uppercase tracking-widest px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-white border border-white/10">
+                                                {tagName}
+                                            </span>
+                                        );
+                                    })}
                                 </div>
 
                                 <h3 className="text-4xl font-black text-white italic">

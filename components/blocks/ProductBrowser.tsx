@@ -16,6 +16,8 @@ export interface ProductItem {
     slug: string;
     sku?: string;
     images?: string[];
+    moq?: number;
+    pricingTiers?: { minQty: number; price: number }[];
 }
 
 export interface ProductCategoryData {
@@ -33,7 +35,9 @@ export interface ProductBrowserProps {
     initialDbProducts?: any[];
 }
 
-export default function ProductBrowser({ categories: initialCategories = [], useDynamicData = false, initialDbCategories, initialDbProducts }: ProductBrowserProps) {
+export default function ProductBrowser({ categories: initialCategories = [], useDynamicData = false, initialDbCategories, initialDbProducts, ...props }: ProductBrowserProps & Record<string, any>) {
+    const id = props.id;
+    const dataBlock = props["data-block"];
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -61,7 +65,9 @@ export default function ProductBrowser({ categories: initialCategories = [], use
                     usp: p.usp || "",
                     slug: p.slug,
                     sku: p.sku,
-                    images: p.images
+                    images: p.images,
+                    moq: p.moq,
+                    pricingTiers: p.pricingTiers
                 })),
             documents: (cat as any).meta?.documents
         })).filter(cat => cat.products.length > 0);
@@ -93,7 +99,7 @@ export default function ProductBrowser({ categories: initialCategories = [], use
     if (!displayCategories || displayCategories.length === 0) {
         if (shouldShowDynamic && (!dbCategories || !dbProducts)) {
             return (
-                <div className="py-20 max-w-7xl mx-auto px-4 w-full">
+                <section id={id} data-block={dataBlock} aria-label="Product catalog skeleton" className="py-20 max-w-7xl mx-auto px-4 w-full">
                     {/* Header Skeleton */}
                     <div className="flex items-center gap-4 mb-8">
                         <Skeleton className="w-1/4 h-10" />
@@ -105,16 +111,16 @@ export default function ProductBrowser({ categories: initialCategories = [], use
                             <Skeleton key={i} className="w-full h-80 rounded-[32px]" />
                         ))}
                     </div>
-                </div>
+                </section>
             );
         }
-        return <div className="py-20 text-center text-slate-500">No products configured.</div>;
+        return <section id={id} data-block={dataBlock} aria-label="Product catalog empty" className="py-20 text-center text-slate-500">No products configured.</section>;
     }
 
     const categories = filteredCategories;
 
     return (
-        <>
+        <section id={id} data-block={dataBlock} aria-label="Product catalog">
             {/* Category filters */}
             <div
                 className="sticky top-[56px] md:top-[80px] z-40 bg-white/95 backdrop-blur-xl border-b border-slate-900/5 !py-0 !p-0"
@@ -248,8 +254,26 @@ export default function ProductBrowser({ categories: initialCategories = [], use
                                                             {product.name}
                                                         </h3>
                                                         {product.sku && (
-                                                            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">
+                                                            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
                                                                 SKU: {product.sku}
+                                                            </div>
+                                                        )}
+                                                        {product.moq && (
+                                                            <div className="text-[10px] font-bold text-nb-green uppercase tracking-widest mb-4 flex items-center gap-1.5">
+                                                                <span className="w-1.5 h-1.5 rounded-full bg-nb-green" />
+                                                                MOQ: {product.moq} Units
+                                                            </div>
+                                                        )}
+                                                        {product.pricingTiers && product.pricingTiers.length > 0 && (
+                                                            <div className="mb-4">
+                                                                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Wholesale Tiers:</div>
+                                                                <div className="flex flex-wrap gap-1.5">
+                                                                    {product.pricingTiers.map((tier, i) => (
+                                                                        <div key={i} className="text-[10px] font-bold bg-slate-50 border border-slate-900/5 px-2 py-0.5 rounded-md text-slate-600">
+                                                                            {tier.minQty}+: ₹{tier.price}
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
                                                             </div>
                                                         )}
                                                     </div>
@@ -288,6 +312,6 @@ export default function ProductBrowser({ categories: initialCategories = [], use
                     )}
                 </div>
             </section >
-        </>
+        </section>
     );
 }

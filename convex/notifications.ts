@@ -34,6 +34,11 @@ export const sendInquiryToDiscord = internalAction({
                 { name: "Name", value: inquiry.name, inline: true },
                 { name: "Email", value: inquiry.email, inline: true },
                 { name: "Phone", value: inquiry.phone || "N/A", inline: true },
+                { name: "Brand Name", value: inquiry.brandName || "N/A", inline: true },
+                { name: "Request Type", value: inquiry.requestType || "N/A", inline: true },
+                { name: "Quantity", value: inquiry.annualVolume || "N/A", inline: true },
+                { name: "Timeline", value: inquiry.timeline || "N/A", inline: true },
+                { name: "Formula Status", value: inquiry.formulaStatus || "N/A", inline: true },
                 { name: "Message", value: inquiry.message },
             ],
             timestamp: new Date(inquiry.submittedAt).toISOString(),
@@ -88,6 +93,9 @@ export const sendInquiryToDiscord = internalAction({
                 let waText = `*📩 New Inquiry: ${inquiry.name}*\n`;
                 waText += `Email: ${inquiry.email}\n`;
                 if (inquiry.phone) waText += `Phone: ${inquiry.phone}\n`;
+                if (inquiry.brandName) waText += `Brand: ${inquiry.brandName}\n`;
+                if (inquiry.requestType) waText += `Request: ${inquiry.requestType}\n`;
+                if (inquiry.annualVolume) waText += `Qty: ${inquiry.annualVolume}\n`;
                 if (inquiry.productName) waText += `Product: ${inquiry.productName}\n`;
                 waText += `\n*Message:*\n${inquiry.message}`;
 

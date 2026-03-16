@@ -13,6 +13,7 @@ import type * as auth_utils from "../auth_utils.js";
 import type * as backup from "../backup.js";
 import type * as blogs from "../blogs.js";
 import type * as categories from "../categories.js";
+import type * as final_launch_cleanup from "../final_launch_cleanup.js";
 import type * as http from "../http.js";
 import type * as importProducts from "../importProducts.js";
 import type * as ingestion_mutations from "../ingestion_mutations.js";
@@ -48,6 +49,7 @@ declare const fullApi: ApiFromModules<{
   backup: typeof backup;
   blogs: typeof blogs;
   categories: typeof categories;
+  final_launch_cleanup: typeof final_launch_cleanup;
   http: typeof http;
   importProducts: typeof importProducts;
   ingestion_mutations: typeof ingestion_mutations;

@@ -7,6 +7,7 @@ import { Section } from "./ui/Section";
 import { Flex } from "./ui/Flex";
 import { Typography } from "./ui/Typography";
 import { ErrorBoundary } from "./ui/ErrorBoundary";
+import { Footer } from "./puck/blocks/Footer";
 
 const legacyMap: Record<string, string> = {
     Hero: "ModernHero",
@@ -14,6 +15,7 @@ const legacyMap: Record<string, string> = {
     Stats: "ModernStats",
     Testimonial: "ModernTestimonials",
     SiteFooter: "Footer",
+    CatalogSection: "CategoryPortfolio",
 };
 
 export function PuckRenderer({ data, initialData, configOverride, siteSettings }: { data: any; initialData?: any; configOverride?: Config; siteSettings?: any }) {
@@ -21,7 +23,10 @@ export function PuckRenderer({ data, initialData, configOverride, siteSettings }
     const content = Array.isArray(data?.content) ? data.content : [];
     const { header = {}, footer = {}, ...rootProps } = root.props || {};
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> b856db2f9083dcb27cc3a4b3b771b1e01e90ceea
 
     // Use the override config if provided, otherwise fallback to the default global config.
     const activeConfig = configOverride || config;
@@ -29,7 +34,7 @@ export function PuckRenderer({ data, initialData, configOverride, siteSettings }
     return (
         <div className="flex flex-col min-h-screen font-sans selection:bg-nb-green/30">
                 <SiteHeader {...header} initialSettings={siteSettings} />
-                <main className="flex-grow">
+                <main id="main-content" className="flex-grow" aria-label="Page content">
                     {content.length === 0 ? (
                         <div className="py-20 text-center">
                             <p className="text-slate-500">No content found for this section.</p>
@@ -41,7 +46,10 @@ export function PuckRenderer({ data, initialData, configOverride, siteSettings }
                             const type = legacyMap[block.type] || block.type;
                             const componentConfig = (activeConfig.components as any)[type];
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> b856db2f9083dcb27cc3a4b3b771b1e01e90ceea
 
                             // Defensive guard for block.props
                             const safeProps = block.props || {};
@@ -49,10 +57,15 @@ export function PuckRenderer({ data, initialData, configOverride, siteSettings }
                             if (componentConfig && componentConfig.render) {
                                 const Render = componentConfig.render;
                                 return (
-                                    <ErrorBoundary key={safeProps.id || `${block.type}-${index}`}>
-                                        <div className="puck-block">
-                                            <Render {...safeProps} puck={{ renderDropZone: () => null }} initialData={initialData} />
-                                        </div>
+                                    <ErrorBoundary key={safeProps.id || block.id || `${block.type}-${index}`}>
+                                        <Render 
+                                            {...safeProps} 
+                                            id={safeProps.id || block.id || `${block.type}-${index}`}
+                                            data-block={block.type}
+                                            dataBlock={block.type}
+                                            puck={{ renderDropZone: () => null }} 
+                                            initialData={initialData} 
+                                        />
                                     </ErrorBoundary>
                                 );
                             }
@@ -66,7 +79,12 @@ export function PuckRenderer({ data, initialData, configOverride, siteSettings }
                         })
                     )}
                 </main>
+
+                {/* Render footer from root.props if no Footer block exists in content */}
+                {footer && Object.keys(footer).length > 0 && 
+                 !content.some((b: any) => b.type === "Footer" || b.type === "SiteFooter") && (
+                    <Footer {...footer} />
+                )}
             </div>
     );
 };
-

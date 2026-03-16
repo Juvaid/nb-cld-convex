@@ -1,5 +1,6 @@
 import React from 'react';
 import { Factory, Users, Award, Target, LucideIcon } from 'lucide-react';
+import NextImage from 'next/image';
 
 export interface JourneyCard {
     icon: string;
@@ -10,7 +11,7 @@ export interface JourneyCard {
 export interface AboutJourneyProps {
     heading?: string;
     introduction?: string;
-    paragraphs?: string[];
+    paragraphs?: (string | { Paragraph: string })[];
     cards?: JourneyCard[];
 }
 
@@ -43,8 +44,8 @@ export default function AboutJourney({
                         <h2 className="text-3xl font-black text-slate-900 mb-6 tracking-tight">{heading}</h2>
                         <div className="space-y-4 text-slate-500 leading-relaxed font-medium text-lg opacity-80">
                             <p>{introduction}</p>
-                            {paragraphs.map((para, idx) => (
-                                <p key={idx}>{para}</p>
+                            {paragraphs.map((para: any, idx) => (
+                                <p key={idx}>{typeof para === 'string' ? para : para.Paragraph}</p>
                             ))}
                         </div>
                     </div>
@@ -58,11 +59,15 @@ export default function AboutJourney({
                                         {iconMap[item.icon] ? (
                                             <IconComp className="w-8 h-8 text-white" />
                                         ) : (
-                                            <img
-                                                src={item.icon?.startsWith('http') ? item.icon : `/api/storage/${item.icon}`}
-                                                className="w-full h-full object-cover"
-                                                alt={item.title}
-                                            />
+                                            <div className="relative w-full h-full">
+                                                <NextImage
+                                                    src={item.icon?.startsWith('http') ? item.icon : `/api/storage/${item.icon}`}
+                                                    fill
+                                                    className="object-cover"
+                                                    alt={item.title}
+                                                    sizes="64px"
+                                                />
+                                            </div>
                                         )}
                                     </div>
                                     <div>

@@ -47,8 +47,10 @@ export const Footer = ({
     backgroundColor = "bg-slate-900",
     textColor = "text-white",
     socialLinks: propSocialLinks,
+    id: propId,
     initialData,
-}: FooterProps) => {
+    ...pProps
+}: FooterProps & Record<string, any>) => {
     const [currentSettings, setCurrentSettings] = useState<any>(initialData?.siteSettings || null);
 
     const siteSettings = currentSettings;
@@ -65,8 +67,11 @@ export const Footer = ({
 
     const subTextColor = textColor.includes('text-white') ? 'text-white/60' : 'text-slate-500';
 
+    const id = propId || (pProps as any).id;
+    const dataBlock = (pProps as any)["data-block"];
+
     return (
-        <footer className={`${backgroundColor} ${textColor} pt-20 sm:pt-24 pb-12 overflow-hidden relative transition-colors duration-300`}>
+        <footer id={id} data-block={dataBlock} className={`${backgroundColor} ${textColor} pt-20 sm:pt-24 pb-12 overflow-hidden relative transition-colors duration-300`}>
             {typeof window !== "undefined" && (
                 <LiveFooterSettings onSettingsFound={setCurrentSettings} />
             )}
@@ -118,7 +123,7 @@ export const Footer = ({
                         <h4 className={`text-base sm:text-lg font-bold mb-6 sm:mb-8 tracking-tight ${textColor}`}>Quick Links</h4>
                         <ul className="space-y-3 sm:space-y-4">
                             {['Home', 'About Us', 'Services', 'Our Products', 'Contact'].map((link) => {
-                                const href = link === 'Home' ? '/' : `/${link.toLowerCase().replace(' ', '-').replace('our-', '')}`;
+                                const href = link === 'Home' ? '/' : link === 'About Us' ? '/about' : `/${link.toLowerCase().replace(' ', '-').replace('our-', '')}`;
                                 return (
                                     <li key={link}>
                                         <Link href={href} className={`${subTextColor} hover:text-nb-green transition-colors font-semibold flex items-center gap-2 group text-xs sm:text-sm`}>

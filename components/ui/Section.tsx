@@ -31,6 +31,7 @@ interface SectionProps {
     overlayColor?: string;
     overlayOpacity?: string;
     containerWidth?: 'narrow' | 'normal' | 'wide' | 'full';
+    dataBlock?: string;
 }
 
 const getBgStyles = (variant: BackgroundVariant) => {
@@ -85,7 +86,8 @@ export const Section = ({
     backgroundRepeat = 'no-repeat',
     overlayColor,
     overlayOpacity = "0.4",
-    containerWidth = 'normal'
+    containerWidth = 'normal',
+    dataBlock,
 }: SectionProps) => {
     const pt = getPaddingValue(paddingTop, 't');
     const pb = getPaddingValue(paddingBottom, 'b');
@@ -130,11 +132,13 @@ export const Section = ({
     }[containerWidth] || "container";
 
     const generatedId = React.useId();
+    // Stabilize the ID fallback to avoid hydration mismatches if possible
     const uniqueSectionId = id || `section-${generatedId.replace(/:/g, '')}`;
 
     return (
         <section
             id={uniqueSectionId}
+            data-block={dataBlock}
             className={cn(
                 "relative overflow-hidden",
                 !backgroundColor && !backgroundImage ? getBgStyles(variant) : "",
@@ -142,7 +146,7 @@ export const Section = ({
                 className
             )}
         >
-            <style>{`
+            <style suppressHydrationWarning>{`
                 #${uniqueSectionId} {
                     background-color: ${backgroundColor || "transparent"};
                     background-image: ${backgroundImage ? `url(${backgroundImage})` : "none"};

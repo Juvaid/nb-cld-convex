@@ -29,6 +29,9 @@ export interface InstagramCarouselBlockProps {
     autoplayDelay?: number;
     autoScroll?: boolean;
     autoScrollInterval?: number;
+    id?: string;
+    dataBlock?: string;
+    "data-block"?: string;
 }
 
 export function InstagramCarouselBlock({
@@ -43,8 +46,14 @@ export function InstagramCarouselBlock({
     autoplayMode = "sequential",
     autoplayDelay = 3000,
     autoScroll = true,
-    autoScrollInterval = 4000
+    autoScrollInterval = 4000,
+    id,
+    dataBlock,
+    "data-block": dataBlockKebab,
+    ...pProps
 }: InstagramCarouselBlockProps) {
+    const finalDataBlock = dataBlock || dataBlockKebab;
+
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
     const [activeVideoIndex, setActiveVideoIndex] = useState<number | null>(null);
@@ -238,7 +247,7 @@ export function InstagramCarouselBlock({
     };
 
     return (
-        <Section className={`${bgColors[backgroundColor]} overflow-hidden`}>
+        <Section id={id} dataBlock={finalDataBlock} className={`${bgColors[backgroundColor]} overflow-hidden`}>
             <div className={`py-8 md:py-12 ${spacing === 'none' ? 'py-0' : spacing === 'sm' ? 'py-4' : spacing === 'md' ? 'py-8' : spacing === 'lg' ? 'py-12' : 'py-16'}`}>
                 <div className={`mb-8 md:mb-10 ${headingAlignment === "center" ? "text-center mx-auto max-w-2xl" : "max-w-xl"}`}>
                     <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-pink-50 text-pink-600 text-[10px] font-bold uppercase tracking-wider mb-3 ${headingAlignment === "center" ? "mx-auto" : ""}`}>
@@ -249,10 +258,12 @@ export function InstagramCarouselBlock({
                         </svg>
                         Social Feed
                     </div>
-                    <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight leading-tight mb-3">
-                        {title}
-                    </h2>
-                    {subtitle && (
+                    {title?.trim() && (
+                        <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight leading-tight mb-3">
+                            {title}
+                        </h2>
+                    )}
+                    {subtitle?.trim() && (
                         <p className="text-sm md:text-base text-slate-600 font-medium leading-relaxed opacity-80">
                             {subtitle}
                         </p>
@@ -358,7 +369,7 @@ export function InstagramCarouselBlock({
                                                         <div className="relative w-full h-full">
                                                             <Image
                                                                 src={post.thumbnailUrl || post.imageUrl}
-                                                                alt={post.caption}
+                                                                alt={post.caption ? `${post.caption.substring(0, 100)} - Nature's Boon Manufacturing` : "Nature's Boon Cosmetics Manufacturing Process"}
                                                                 fill
                                                                 className="object-cover transition-transform duration-700 group-hover:scale-105"
                                                                 sizes="(max-width: 640px) 80vw, (max-width: 1024px) 40vw, 20vw"
@@ -374,7 +385,7 @@ export function InstagramCarouselBlock({
                                             ) : (post.imageUrl && post.imageUrl.trim() !== "") ? (
                                                 <Image
                                                     src={post.imageUrl}
-                                                    alt={post.caption}
+                                                    alt={post.caption ? `${post.caption.substring(0, 100)} - Nature's Boon` : "Nature's Boon Personal Care Product"}
                                                     fill
                                                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                                                     sizes="(max-width: 640px) 80vw, (max-width: 1024px) 40vw, 20vw"

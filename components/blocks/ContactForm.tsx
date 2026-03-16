@@ -29,14 +29,25 @@ export default function ContactForm({
     productName,
     productCategory
 }: ContactFormProps) {
-    const [form, setForm] = useState({ name: '', email: '', phone: '', message: initialMessage });
+    const [form, setForm] = useState({
+        name: '',
+        brandName: '',
+        email: '',
+        phone: '',
+        message: initialMessage,
+        productCategory: productCategory || '',
+        requestType: '',
+        annualVolume: '',
+        formulaStatus: '',
+        timeline: ''
+    });
     const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
     const [messageError, setMessageError] = useState<string | null>(null);
     const submitInquiry = useMutation(api.inquiries.submit);
 
-    const isProductInquiry = !!productId;
+    const isRFQ = !!form.requestType || !!productId;
     const words = wordCount(form.message);
-    const needsMoreWords = !isProductInquiry && words < MIN_WORDS;
+    const needsMoreWords = !isRFQ && words < MIN_WORDS;
 
     const handleMessageChange = (val: string) => {
         setForm({ ...form, message: val });
@@ -46,8 +57,8 @@ export default function ContactForm({
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Word count guard — only for general queries
-        if (needsMoreWords) {
+        // Word count guard — only for general queries (waived for RFQ)
+        if (needsMoreWords && form.message.trim().length > 0) {
             setMessageError(`Please describe your query in at least ${MIN_WORDS} words. (${words} / ${MIN_WORDS})`);
             return;
         }
@@ -56,12 +67,17 @@ export default function ContactForm({
         try {
             await submitInquiry({
                 name: form.name,
+                brandName: form.brandName,
                 email: form.email,
                 phone: form.phone,
                 message: form.message,
                 productId,
                 productName,
-                productCategory,
+                productCategory: form.productCategory,
+                requestType: form.requestType,
+                annualVolume: form.annualVolume,
+                formulaStatus: form.formulaStatus,
+                timeline: form.timeline,
             });
             setStatus('sent');
             if (onSuccess) setTimeout(onSuccess, 3000);
@@ -71,7 +87,18 @@ export default function ContactForm({
     };
 
     const reset = () => {
-        setForm({ name: '', email: '', phone: '', message: '' });
+        setForm({
+            name: '',
+            brandName: '',
+            email: '',
+            phone: '',
+            message: '',
+            productCategory: '',
+            requestType: '',
+            annualVolume: '',
+            formulaStatus: '',
+            timeline: ''
+        });
         setStatus('idle');
         setMessageError(null);
     };
@@ -128,10 +155,11 @@ export default function ContactForm({
         <div className={`${compact ? 'p-0' : 'bg-slate-50 rounded-[24px] sm:rounded-[32px] p-6 md:p-10 border border-slate-900/5'}`}>
             {!compact && <h2 className="text-2xl font-bold text-slate-900 mb-6">Send Us a Message</h2>}
 
-            <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-                <div className={`grid ${compact ? 'grid-cols-1' : 'sm:grid-cols-2'} gap-5`}>
+            <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+                {/* 1. Basic Info */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
-                        <label className="block text-sm font-medium text-slate-900 mb-1.5">Full Name *</label>
+                        <label className="block text-sm font-bold text-slate-900 mb-1.5 uppercase tracking-tighter">Full Name *</label>
                         <input
                             type="text"
                             required
@@ -142,7 +170,7 @@ export default function ContactForm({
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-slate-900 mb-1.5">Email *</label>
+                        <label className="block text-sm font-bold text-slate-900 mb-1.5 uppercase tracking-tighter">Email *</label>
                         <input
                             type="email"
                             required
@@ -155,31 +183,133 @@ export default function ContactForm({
                     </div>
                 </div>
 
-                <div>
-                    <label className="block text-sm font-medium text-slate-900 mb-1.5">Phone Number</label>
-                    <input
-                        type="tel"
-                        inputMode="numeric"
-                        maxLength={10}
-                        value={form.phone}
-                        onChange={(e) => {
-                            const digits = e.target.value.replace(/\D/g, "").slice(0, 10);
-                            setForm({ ...form, phone: digits });
-                        }}
-                        pattern="[0-9]{10}"
-                        title="Enter a valid 10-digit mobile number"
-                        className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#16a34a]/20 focus:border-[#16a34a]/40 text-sm transition-all text-black"
-                        placeholder="10-digit mobile number"
-                    />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div>
+                        <label className="block text-sm font-bold text-slate-900 mb-1.5 uppercase tracking-tighter">Phone / WhatsApp *</label>
+                        <input
+                            type="tel"
+                            required
+                            value={form.phone}
+                            onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                            className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#16a34a]/20 focus:border-[#16a34a]/40 text-sm transition-all text-black"
+                            placeholder="+91-XXXXX-XXXXX"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-bold text-slate-900 mb-1.5 uppercase tracking-tighter">Brand Name (Optional)</label>
+                        <input
+                            type="text"
+                            value={form.brandName}
+                            onChange={(e) => setForm({ ...form, brandName: e.target.value })}
+                            className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#16a34a]/20 focus:border-[#16a34a]/40 text-sm transition-all text-black"
+                            placeholder="Your Brand / Company"
+                        />
+                    </div>
                 </div>
 
+                <div className="pt-4 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div>
+                        <label className="block text-sm font-bold text-slate-900 mb-1.5 uppercase tracking-tighter">Product Category *</label>
+                        <select
+                            required
+                            aria-label="Product Category"
+                            value={form.productCategory}
+                            onChange={(e) => setForm({ ...form, productCategory: e.target.value })}
+                            className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#16a34a]/20 focus:border-[#16a34a]/40 text-sm transition-all text-black appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M5%207L10%2012L15%207%22%20stroke%3D%22%2364748B%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E')] bg-[length:20px_20px] bg-[right_16px_center] bg-no-repeat"
+                        >
+                            <option value="">Select Category</option>
+                            <option value="Skin Care">Skin Care</option>
+                            <option value="Hair Care">Hair Care</option>
+                            <option value="Herbal / Ayurvedic">Herbal / Ayurvedic</option>
+                            <option value="Personal Care">Personal Care</option>
+                            <option value="Essential Oils">Essential Oils</option>
+                            <option value="Home Care">Home Care</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-bold text-slate-900 mb-1.5 uppercase tracking-tighter">Type of Request *</label>
+                        <select
+                            required
+                            aria-label="Type of Request"
+                            value={form.requestType}
+                            onChange={(e) => setForm({ ...form, requestType: e.target.value })}
+                            className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#16a34a]/20 focus:border-[#16a34a]/40 text-sm transition-all text-black appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M5%207L10%2012L15%207%22%20stroke%3D%22%2364748B%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E')] bg-[length:20px_20px] bg-[right_16px_center] bg-no-repeat"
+                        >
+                            <option value="">Select Request Type</option>
+                            <option value="Private Labeling">Private Labeling (Your Brand)</option>
+                            <option value="OEM Manufacturing">OEM (Custom Manufacturing)</option>
+                            <option value="Custom Formulation">R&D / New Product Development</option>
+                            <option value="Bulk Purchase">Bulk / Raw Material Purchase</option>
+                            <option value="Other">General Inquiry</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div>
+                        <label className="block text-sm font-bold text-slate-900 mb-1.5 uppercase tracking-tighter">Approximate Quantity *</label>
+                        <select
+                            required
+                            aria-label="Approximate Quantity"
+                            value={form.annualVolume}
+                            onChange={(e) => setForm({ ...form, annualVolume: e.target.value })}
+                            className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#16a34a]/20 focus:border-[#16a34a]/40 text-sm transition-all text-black appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M5%207L10%2012L15%207%22%20stroke%3D%22%2364748B%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E')] bg-[length:20px_20px] bg-[right_16px_center] bg-no-repeat"
+                        >
+                            <option value="">Select Quantity Range</option>
+                            <option value="100 - 500 units">100 - 500 units</option>
+                            <option value="500 - 1,000 units">500 - 1,000 units</option>
+                            <option value="1,000 - 5,000 units">1,000 - 5,000 units</option>
+                            <option value="5,000+ units">5,000+ units</option>
+                            <option value="Sample Request">Sample Request / Prototype</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-bold text-slate-900 mb-1.5 uppercase tracking-tighter">Timeline *</label>
+                        <select
+                            required
+                            aria-label="Launch Timeline"
+                            value={form.timeline}
+                            onChange={(e) => setForm({ ...form, timeline: e.target.value })}
+                            className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#16a34a]/20 focus:border-[#16a34a]/40 text-sm transition-all text-black appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M5%207L10%2012L15%207%22%20stroke%3D%22%2364748B%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E')] bg-[length:20px_20px] bg-[right_16px_center] bg-no-repeat"
+                        >
+                            <option value="">Select Launch Timeline</option>
+                            <option value="Immediately">Immediately (ASAP)</option>
+                            <option value="1-3 Months">1 - 3 Months</option>
+                            <option value="3-6 Months">3 - 6 Months</option>
+                            <option value="Planning Stage">Just Researching / Planning</option>
+                        </select>
+                    </div>
+                </div>
+
+                {/* 3. Formulation Status */}
+                <div className="pt-4">
+                    <label className="block text-sm font-bold text-slate-900 mb-3 uppercase tracking-tighter">Do you have an existing formula? *</label>
+                    <div className="flex flex-wrap gap-4">
+                        {['Yes', 'No', 'Not sure / Need help'].map((opt) => (
+                            <label key={opt} className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl border border-slate-200 bg-white cursor-pointer hover:border-nb-green/30 transition-all">
+                                <input
+                                    type="radio"
+                                    name="formulaStatus"
+                                    required
+                                    value={opt}
+                                    checked={form.formulaStatus === opt}
+                                    onChange={(e) => setForm({ ...form, formulaStatus: e.target.value })}
+                                    className="w-4 h-4 text-nb-green focus:ring-nb-green"
+                                />
+                                <span className="text-sm font-medium text-slate-700">{opt}</span>
+                            </label>
+                        ))}
+                    </div>
+                </div>
+
+                {/* 4. Message */}
                 <div>
                     <div className="flex items-baseline justify-between mb-1.5">
-                        <label className="block text-sm font-medium text-slate-900">
-                            Message *
+                        <label className="block text-sm font-bold text-slate-900 uppercase tracking-tighter">
+                            Additional Details {isRFQ ? '(Optional)' : '*'}
                         </label>
-                        {/* Live word counter — only for general queries */}
-                        {!isProductInquiry && (
+                        {!isRFQ && (
                             <span className={`text-xs font-medium tabular-nums transition-colors ${words === 0 ? 'text-slate-400'
                                     : words < MIN_WORDS ? 'text-amber-500'
                                         : 'text-[#16a34a]'
@@ -189,17 +319,17 @@ export default function ContactForm({
                         )}
                     </div>
                     <textarea
-                        required
-                        rows={compact ? 3 : 5}
+                        required={!isRFQ}
+                        rows={4}
                         value={form.message}
                         onChange={(e) => handleMessageChange(e.target.value)}
                         className={`w-full px-4 py-3 rounded-xl border bg-white focus:outline-none focus:ring-2 text-sm resize-none transition-all text-black ${messageError
                                 ? 'border-amber-400 focus:ring-amber-400/20'
                                 : 'border-slate-200 focus:ring-[#16a34a]/20 focus:border-[#16a34a]/40'
                             }`}
-                        placeholder={isProductInquiry
-                            ? "Any specific requirements or questions about this product?"
-                            : "Describe your query in detail — the more context you give, the better we can help you. (minimum 20 words)"}
+                        placeholder={isRFQ
+                            ? "Tell us more about your target audience, packaging preferences, or any specific ingredients."
+                            : "Describe your query in detail (minimum 20 words for faster response)."}
                     />
                     {messageError && (
                         <p className="mt-1.5 text-xs text-amber-600 font-medium flex items-center gap-1">

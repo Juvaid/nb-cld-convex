@@ -13,23 +13,29 @@ export interface StatItem {
     mediaIcon?: string;
     mediaImage?: string;
 }
-
 export interface StatsCounterProps {
     id?: string;
     heading?: string;
     stats?: StatItem[];
+    "data-block"?: string;
 }
 
 function AnimatedCounter({ target, label, stat, index }: { target: string, label: string, stat: StatItem, index: number }) {
     const ref = useRef<HTMLDivElement>(null);
-    const isInView = useInView(ref, { once: true, margin: "-100px" });
+    const isInView = useInView(ref, { once: true, margin: "-5%" });
 
     const numericTarget = parseInt(target.replace(/[^0-9]/g, '')) || 0;
     const suffix = target.replace(/[0-9]/g, '');
 
+    // FIX: start display at numericTarget, not 0 — SSR always shows real number
+    const [displayValue, setDisplayValue] = useState(numericTarget);
+
     const springConfig = { damping: 60, stiffness: 100, mass: 1 };
     const countProgress = useSpring(0, springConfig);
-    const countValue = useTransform(countProgress, (latest) => Math.floor(latest));
+    
+    useEffect(() => {
+        return countProgress.on("change", (v) => setDisplayValue(Math.floor(v)));
+    }, [countProgress]);
 
     useEffect(() => {
         if (isInView) {
@@ -74,7 +80,7 @@ function AnimatedCounter({ target, label, stat, index }: { target: string, label
             )}
 
             <div className="text-3xl sm:text-4xl md:text-5xl font-black text-nb-green mb-1 whitespace-nowrap leading-none flex items-baseline">
-                <motion.span className="pr-1">{countValue}</motion.span>
+                <span className="pr-1">{displayValue}</span>
                 <span className="text-2xl sm:text-3xl md:text-4xl opacity-80">{suffix}</span>
             </div>
 
@@ -85,20 +91,31 @@ function AnimatedCounter({ target, label, stat, index }: { target: string, label
     );
 }
 
+
 export default function StatsCounter({
-    id,
     heading = "Nature's Boon milestones and metric",
     stats = [
-        { value: '15+', label: 'Years of Experience' },
+        { value: '20+', label: 'Years of Experience' },
         { value: '65+', label: 'Strong Family' },
         { value: '200+', label: 'SKUs Produced Annually' },
         { value: '75+', label: 'Products by In-house R&D' },
         { value: '20+', label: 'Happy Clients' },
         { value: '750+', label: 'Tons Annual Capacity' },
-    ]
-}: StatsCounterProps) {
+    ],
+    id,
+    dataBlock,
+    "data-block": dataBlockKebab,
+    ...pProps
+}: StatsCounterProps & Record<string, any>) {
+    const sectionId = id || (pProps as any).id;
+    const finalDataBlock = dataBlock || dataBlockKebab;
     return (
-        <div id={id} className="py-20 bg-white relative overflow-hidden">
+        <section 
+            id={sectionId} 
+            data-block={finalDataBlock}
+            aria-label="Company statistics"
+            className="py-20 bg-white relative overflow-hidden"
+        >
             {/* Subtle Gradient Backglow */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-nb-green/5 rounded-full blur-[160px] pointer-events-none opacity-50" />
 
@@ -117,6 +134,6 @@ export default function StatsCounter({
                     ))}
                 </div>
             </div>
-        </div>
+        </section>
     );
 }

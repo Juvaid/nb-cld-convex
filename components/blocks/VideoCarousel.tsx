@@ -23,8 +23,9 @@ export default function VideoCarousel({
     videos = [
         { url: "https://www.youtube.com/watch?v=f9v71N1CmqE", title: "State of the art facility", description: "Take a virtual tour of our high-hygiene manufacturing plant." },
         { url: "https://www.youtube.com/watch?v=rXy8N9Tf1T8", title: "Quality Assurance", description: "See how we maintain the highest standards for every product." },
-    ]
-}: VideoCarouselProps) {
+    ],
+    ...pProps
+}: VideoCarouselProps & Record<string, any>) {
     const [current, setCurrent] = useState(0);
     const [direction, setDirection] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -67,8 +68,11 @@ export default function VideoCarousel({
         return '';
     };
 
+    const id = (pProps as any).id;
+    const dataBlock = (pProps as any)["data-block"];
+
     return (
-        <section className="py-12 sm:py-20 bg-slate-50 relative overflow-hidden">
+        <section id={id} data-block={dataBlock} className="py-12 sm:py-20 bg-slate-50 relative overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
                 {/* Header */}
                 <div className="text-center mb-8 sm:mb-16">

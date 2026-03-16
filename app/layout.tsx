@@ -9,6 +9,7 @@ import {
   generateBaseMetadata,
   generateBusinessJsonLd,
 } from '@/lib/seo';
+import { FloatingActionHub } from '@/components/FloatingActionHub';
 
 const inter = Inter({
   variable: '--font-inter',
@@ -59,6 +60,7 @@ export default async function RootLayout({
       </head>
       <body className={`${inter.variable} font-sans antialiased text-slate-900`}>
         <Providers children={children} modal={modal} />
+        <FloatingActionHub settings={settings?.floating_widget} whatsappMessage={settings?.whatsapp_message} />
       </body>
     </html>
   );

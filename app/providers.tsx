@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { ConvexClientProvider } from "@/components/ConvexClientProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/lib/auth-context";
-import { DynamicCookieConsent, DynamicFloatingWidget } from "@/components/DynamicClients";
+import { DynamicCookieConsent } from "@/components/DynamicClients";
 export function Providers({ children, modal }: { children: React.ReactNode; modal: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
@@ -20,7 +20,6 @@ export function Providers({ children, modal }: { children: React.ReactNode; moda
           {mounted && (
             <>
               <DynamicCookieConsent />
-              <DynamicFloatingWidget />
             </>
           )}
         </ThemeProvider>

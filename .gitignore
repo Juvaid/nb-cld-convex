@@ -62,3 +62,12 @@ build*.log
 *.swp
 *.bak
 
+# dev artifacts
+tmp/
+build.log
+build-log.txt
+lint*.txt
+lint*.json
+lint_output.txt
+inspection_output*.txt
+

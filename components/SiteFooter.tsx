@@ -126,12 +126,17 @@ export function SiteFooter({
                     <div>
                         <h4 className={`text-base sm:text-lg font-black mb-6 sm:mb-8 tracking-tight ${textColor}`}>Quick Links</h4>
                         <ul className="space-y-3 sm:space-y-4">
-                            {['Home', 'About Us', 'Services', 'Our Products', 'Contact'].map((link) => {
-                                const href = link === 'Home' ? '/' : `/${link.toLowerCase().replace(' ', '-').replace('our-', '')}`;
+                            {[
+                                { label: 'Home', href: '/' },
+                                { label: 'About Us', href: '/about' },
+                                { label: 'Services', href: '/services' },
+                                { label: 'Our Products', href: '/products' },
+                                { label: 'Contact', href: '/contact' }
+                            ].map((link) => {
                                 return (
-                                    <li key={link}>
-                                        <Link href={href} className={`${subTextColor} hover:text-nb-green transition-colors font-semibold flex items-center gap-2 group text-xs sm:text-sm`}>
-                                            {link}
+                                    <li key={link.label}>
+                                        <Link href={link.href} className={`${subTextColor} hover:text-nb-green transition-colors font-semibold flex items-center gap-2 group text-xs sm:text-sm`}>
+                                            {link.label}
                                             <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-all -translate-x-1 group-hover:translate-x-0" />
                                         </Link>
                                     </li>

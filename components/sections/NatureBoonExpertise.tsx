@@ -3,6 +3,7 @@
 import { Section } from "@/components/ui/Section";
 import { Flex } from "@/components/ui/Flex";
 import { Typography } from "@/components/ui/Typography";
+import NextImage from "next/image";
 
 interface ServiceItem {
     title: string;
@@ -63,11 +64,14 @@ export const NatureBoonExpertise = ({
                             {item.showMedia !== false && (
                                 <div className="w-16 h-16 bg-nb-green/10 rounded-2xl flex items-center justify-center text-3xl overflow-hidden flex-shrink-0">
                                     {item.mediaType === "image" && item.mediaImage ? (
-                                        <img
-                                            src={item.mediaImage.startsWith('http') ? item.mediaImage : `/api/storage/${item.mediaImage}`}
-                                            className="w-full h-full object-cover"
-                                            alt={item.title}
-                                        />
+                                        <div className="relative w-full h-full">
+                                            <NextImage
+                                                src={item.mediaImage.startsWith('http') ? item.mediaImage : `/api/storage/${item.mediaImage}`}
+                                                fill
+                                                className="object-cover"
+                                                alt={item.title}
+                                            />
+                                        </div>
                                     ) : (
                                         <div>
                                             {item.mediaIcon || "✨"}

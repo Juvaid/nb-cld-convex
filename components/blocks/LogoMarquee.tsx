@@ -13,6 +13,8 @@ export interface LogoMarqueeProps {
     gap?: number;
     paddingTop?: number;
     paddingBottom?: number;
+    id?: string;
+    "data-block"?: string;
 }
 
 export default function LogoMarquee({
@@ -32,17 +34,29 @@ export default function LogoMarquee({
     gap = 5,
     paddingTop = 6,
     paddingBottom = 6,
-}: LogoMarqueeProps) {
+    id,
+    dataBlock,
+    "data-block": dataBlockKebab,
+    ...props
+}: LogoMarqueeProps & Record<string, any>) {
     if (!logos || logos.length === 0) return null;
+
+    const sectionId = id || props.id;
+    const finalDataBlock = dataBlock || dataBlockKebab;
 
     // Duplicate exactly once → animate -50% = one full set width
     const allLogos = [...logos, ...logos];
     const animName = `marquee-${direction}`;
 
     return (
-        <div className="bg-white overflow-hidden">
+        <section 
+            id={sectionId}
+            data-block={finalDataBlock}
+            aria-label="Client logos"
+            className="bg-white overflow-hidden"
+        >
             {/* Keyframe injection — purely CSS, no JS dependence */}
-            <style>{`
+            <style suppressHydrationWarning>{`
                 @keyframes marquee-left  { from { transform: translateX(0); } to { transform: translateX(-50%); } }
                 @keyframes marquee-right { from { transform: translateX(-50%); } to { transform: translateX(0); } }
                 .nb-marquee-track {
@@ -110,6 +124,6 @@ export default function LogoMarquee({
                     })}
                 </div>
             </div>
-        </div>
+        </section>
     );
 }

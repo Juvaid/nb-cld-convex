@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { OGPreviewCard } from "@/components/admin/OGPreviewCard";
 
 export default function ProductsIndexPage() {
     const { token } = useAuth();
@@ -206,6 +207,7 @@ export default function ProductsIndexPage() {
                                     <th className="px-5 py-4 text-xs font-semibold text-slate-500 uppercase tracking-widest">Status</th>
                                     <th className="px-5 py-4 text-xs font-semibold text-slate-500 uppercase tracking-widest">Inventory / SKU</th>
                                     <th className="px-5 py-4 text-xs font-semibold text-slate-500 uppercase tracking-widest">Category</th>
+                                    <th className="px-5 py-4 text-xs font-semibold text-slate-500 uppercase tracking-widest text-right">SEO / Preview</th>
                                 </tr>
                             </thead>
                         )}
@@ -271,6 +273,15 @@ export default function ProductsIndexPage() {
                                             <span className="px-2.5 py-1 bg-slate-100 text-slate-600 font-semibold text-xs rounded-lg whitespace-nowrap">
                                                 {categories?.find(c => c._id === product.categoryId)?.name || "Uncategorized"}
                                             </span>
+                                        </td>
+                                        <td className="px-5 py-4 align-middle text-right">
+                                            <OGPreviewCard
+                                                trigger="button"
+                                                title={product.name}
+                                                description={product.description}
+                                                imageUrl={product.images?.[0]}
+                                                url={`/products/${product.slug || product._id}`}
+                                            />
                                         </td>
                                     </tr>
                                 );
