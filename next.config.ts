@@ -74,9 +74,9 @@ const nextConfig: NextConfig = {
       // Contact (indexed as /contact — same slug, keep anyway)
       { source: '/contact-us', destination: '/contact', permanent: true },
 
-      // Blog
+      // Blog — fix: old /blog/:slug now correctly points to /blogs/:slug (not /blogs/blog/:slug)
       { source: '/blog', destination: '/blogs', permanent: true },
-      { source: '/blog/:slug', destination: '/blogs/blog/:slug', permanent: true },
+      { source: '/blog/:slug', destination: '/blogs/:slug', permanent: true },
 
       // Product category pages → products page with hash anchors
       { source: '/skin-care-products', destination: '/products#skin-care', permanent: true },
@@ -88,11 +88,66 @@ const nextConfig: NextConfig = {
       { source: '/personal-care', destination: '/products#personal-care', permanent: true },
       { source: '/personal-care/:path*', destination: '/products', permanent: true },
 
-      // OLD keyword landing pages → new dedicated pages (CREATE THESE FIRST - see Phase 2)
+      // ─── PHASE 2: 13 SEO LANDING PAGES → BLOG POSTS ────────────────────────
+      // These old WordPress SEO pages are indexed by Google. Each 301s to the
+      // equivalent blog post. Both with and without trailing slash.
+
+      // 1. Face Wash
+      { source: '/best-face-wash-manufacturers-in-india', destination: '/blogs/best-face-wash-manufacturers-in-india', permanent: true },
+      { source: '/best-face-wash-manufacturers-in-india/', destination: '/blogs/best-face-wash-manufacturers-in-india', permanent: true },
+
+      // 2. Facial Kit
+      { source: '/best-facial-kit-manufacturers-in-india', destination: '/blogs/best-facial-kit-manufacturers-in-india', permanent: true },
+      { source: '/best-facial-kit-manufacturers-in-india/', destination: '/blogs/best-facial-kit-manufacturers-in-india', permanent: true },
+
+      // 3. Hair Serum
+      { source: '/best-hair-serum-manufacturers-in-india', destination: '/blogs/best-hair-serum-manufacturers-in-india', permanent: true },
+      { source: '/best-hair-serum-manufacturers-in-india/', destination: '/blogs/best-hair-serum-manufacturers-in-india', permanent: true },
+
+      // 4. Shampoo
+      { source: '/best-shampoo-manufacturers-in-india', destination: '/blogs/best-shampoo-manufacturers-in-india', permanent: true },
+      { source: '/best-shampoo-manufacturers-in-india/', destination: '/blogs/best-shampoo-manufacturers-in-india', permanent: true },
+
+      // 5. Body Lotion
+      { source: '/best-body-lotion-manufacturers-in-india', destination: '/blogs/best-body-lotion-manufacturers-in-india', permanent: true },
+      { source: '/best-body-lotion-manufacturers-in-india/', destination: '/blogs/best-body-lotion-manufacturers-in-india', permanent: true },
+
+      // 6. Body Scrub
+      { source: '/best-body-scrub-manufacturers-in-india', destination: '/blogs/best-body-scrub-manufacturers-in-india', permanent: true },
+      { source: '/best-body-scrub-manufacturers-in-india/', destination: '/blogs/best-body-scrub-manufacturers-in-india', permanent: true },
+
+      // 7. Face Serum
+      { source: '/best-face-serum-manufacturers-in-india', destination: '/blogs/best-face-serum-manufacturers-in-india', permanent: true },
+      { source: '/best-face-serum-manufacturers-in-india/', destination: '/blogs/best-face-serum-manufacturers-in-india', permanent: true },
+
+      // 8. Sunscreen
+      { source: '/best-sunscreen-manufacturers-in-india', destination: '/blogs/best-sunscreen-manufacturers-in-india', permanent: true },
+      { source: '/best-sunscreen-manufacturers-in-india/', destination: '/blogs/best-sunscreen-manufacturers-in-india', permanent: true },
+
+      // 9. Hair Oil
+      { source: '/hair-oil-manufacturers-in-india', destination: '/blogs/hair-oil-manufacturers-in-india', permanent: true },
+      { source: '/hair-oil-manufacturers-in-india/', destination: '/blogs/hair-oil-manufacturers-in-india', permanent: true },
+
+      // 10. Private Label Skin Care (was wrongly → /services, now → correct blog)
+      { source: '/private-label-skin-care-products-manufacturers-in-india', destination: '/blogs/private-label-skin-care-products-manufacturers-in-india', permanent: true },
+      { source: '/private-label-skin-care-products-manufacturers-in-india/', destination: '/blogs/private-label-skin-care-products-manufacturers-in-india', permanent: true },
+
+      // 11. Beard Oil
+      { source: '/private-label-third-party-beard-oil-manufacturers-in-india', destination: '/blogs/private-label-third-party-beard-oil-manufacturers-in-india', permanent: true },
+      { source: '/private-label-third-party-beard-oil-manufacturers-in-india/', destination: '/blogs/private-label-third-party-beard-oil-manufacturers-in-india', permanent: true },
+
+      // 12. Third Party Cosmetics
+      { source: '/third-party-contract-cosmetics-products-manufacturers-in-india', destination: '/blogs/third-party-contract-cosmetics-products-manufacturers-in-india', permanent: true },
+      { source: '/third-party-contract-cosmetics-products-manufacturers-in-india/', destination: '/blogs/third-party-contract-cosmetics-products-manufacturers-in-india', permanent: true },
+
+      // 13. Derma Products (was wrongly → /services, now → correct blog)
+      { source: '/top-derma-products-manufacturers-in-india', destination: '/blogs/top-derma-products-manufacturers-in-india', permanent: true },
+      { source: '/top-derma-products-manufacturers-in-india/', destination: '/blogs/top-derma-products-manufacturers-in-india', permanent: true },
+
+      // ─── PHASE 3: OTHER WORDPRESS REDIRECTS ─────────────────────────────────
+
+      // Partial-match keyword landing pages (generic → services)
       { source: '/private-label-skin-care-products-manufacturer', destination: '/services#private-label', permanent: true },
-      { source: '/private-label-skin-care-products-:slug', destination: '/services#private-label', permanent: true },
-      { source: '/top-derma-products-manufacturers-india', destination: '/services#derma', permanent: true },
-      { source: '/top-derma-products-m', destination: '/services#derma', permanent: true },
       { source: '/customised-finished-product', destination: '/services#custom-formulation', permanent: true },
 
       // Case study → blog or about (no exact equivalent yet)
@@ -124,13 +179,14 @@ const nextConfig: NextConfig = {
       { source: '/our-services', destination: '/services', permanent: true },
       { source: '/services-offered', destination: '/services', permanent: true },
 
-      // ─── PHASE 2: TRAILING SLASH NORMALISATION ──────────────────────────────
+      // ─── PHASE 4: TRAILING SLASH NORMALISATION ──────────────────────────────
       // Uncomment these if you see duplicate canonicals in GSC later
       // { source: '/about/', destination: '/about', permanent: true },
       // { source: '/products/', destination: '/products', permanent: true },
       // { source: '/services/', destination: '/services', permanent: true },
       // { source: '/contact/', destination: '/contact', permanent: true },
       // { source: '/blogs/', destination: '/blogs', permanent: true },
+
     ];
   },
 };

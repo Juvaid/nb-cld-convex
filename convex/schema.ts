@@ -128,6 +128,7 @@ export default defineSchema({
     coverImage: v.optional(v.string()), // Storage ID or URL
     author: v.string(),
     keywords: v.optional(v.string()),
+    category: v.optional(v.union(v.literal("article"), v.literal("seo-page"))),
     status: v.union(v.literal("draft"), v.literal("published")),
     publishedAt: v.optional(v.number()),
   }).index("by_slug", ["slug"])

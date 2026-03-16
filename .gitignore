@@ -51,6 +51,10 @@ db_dump.json
 *-results.txt
 *-final.txt
 inspection_output.txt
+tmp/
+lint*.txt
+build*.log
+
 
 # local editors and IDEs
 .vscode/
