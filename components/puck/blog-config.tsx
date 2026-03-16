@@ -4,8 +4,6 @@ import { Config } from "@puckeditor/core";
 // Blocks
 import { TextBlockConfig } from "./blocks/TextBlock";
 import { SpacerBlockConfig } from "./blocks/SpacerBlock";
-import { InlineImageBlockConfig } from "./blocks/InlineImageBlock";
-import { FAQBlockConfig } from "./blocks/FAQBlock";
 import { ModernHeroBlockConfig } from "./blocks/ModernHeroBlock";
 import { CTABlockConfig } from "./blocks/CTABlock";
 import { ModernServicesBlockConfig } from "./blocks/ModernServicesBlock";
@@ -14,9 +12,7 @@ import { SuccessStoryBlockConfig } from "./blocks/SuccessStoryBlock";
 export const blogConfig: Config = {
     components: {
         TextBlock: TextBlockConfig,
-        InlineImage: InlineImageBlockConfig,
         Spacer: SpacerBlockConfig,
-        FAQ: FAQBlockConfig,
         ModernHero: ModernHeroBlockConfig,
         CTA: CTABlockConfig,
         ModernServices: ModernServicesBlockConfig,
@@ -24,7 +20,7 @@ export const blogConfig: Config = {
     },
     categories: {
         "Blog Content": {
-            components: ["TextBlock", "InlineImage", "FAQ", "Spacer"],
+            components: ["TextBlock", "Spacer"],
         },
         "Marketing": {
             components: ["ModernHero", "CTA", "ModernServices", "SuccessStory"],
