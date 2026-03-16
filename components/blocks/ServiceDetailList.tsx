@@ -64,18 +64,22 @@ export default function ServiceDetailList({ services = [], useDesignSystem = tru
                                 <div className="space-y-4">
                                     {useDesignSystem ? (
                                         <>
-                                            <Typography variant="h2" weight="black" className="text-slate-900 leading-tight">
-                                                {service.title}
-                                            </Typography>
+                                            <Link href={`/${service.slug}`} className="inline-block">
+                                                <Typography variant="h2" weight="black" className="text-slate-900 leading-tight hover:text-nb-green transition-colors">
+                                                    {service.title}
+                                                </Typography>
+                                            </Link>
                                             <Typography variant="body" weight="medium" className="text-slate-500 leading-relaxed">
                                                 {service.description}
                                             </Typography>
                                         </>
                                     ) : (
                                         <>
-                                            <h2 className="text-3xl md:text-4xl font-black text-slate-900 leading-tight">
-                                                {service.title}
-                                            </h2>
+                                            <Link href={`/${service.slug}`} className="inline-block">
+                                                <h2 className="text-3xl md:text-4xl font-black text-slate-900 leading-tight hover:text-nb-green transition-colors">
+                                                    {service.title}
+                                                </h2>
+                                            </Link>
                                             <div className="text-lg text-slate-500 leading-relaxed font-medium">
                                                 {service.description}
                                             </div>
@@ -84,7 +88,7 @@ export default function ServiceDetailList({ services = [], useDesignSystem = tru
                                 </div>
 
                                 <Link
-                                    href="/contact"
+                                    href={service.slug ? `/${service.slug}` : "/services"}
                                     className={`inline-flex items-center gap-3 px-8 py-4 text-sm font-black transition-all group ${
                                         useDesignSystem 
                                         ? 'text-slate-900 bg-white border border-slate-200 rounded-full hover:bg-slate-900 hover:text-white' 
