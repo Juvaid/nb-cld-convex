@@ -48,6 +48,8 @@ export default defineSchema({
     slug: v.string(), // e.g., "skin-care"
     description: v.optional(v.string()),
     image: v.optional(v.string()), // Cover image
+    defaultShowcaseTitle: v.optional(v.string()),
+    defaultShowcaseProductIds: v.optional(v.array(v.id("products"))),
   }).index("by_slug", ["slug"]),
 
   products: defineTable({
@@ -82,6 +84,10 @@ export default defineSchema({
       name: v.string(),
       storageId: v.string()
     }))),
+
+    // Related Products / Showcase
+    showcaseTitle: v.optional(v.string()),
+    showcaseProductIds: v.optional(v.array(v.id("products"))),
   }).index("by_slug", ["slug"])
     .index("by_status", ["status"])
     .index("by_categoryId", ["categoryId"]),

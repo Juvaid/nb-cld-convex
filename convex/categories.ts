@@ -9,6 +9,13 @@ export const list = query({
     },
 });
 
+export const getById = query({
+    args: { id: v.id("categories") },
+    handler: async (ctx, args) => {
+        return await ctx.db.get(args.id);
+    },
+});
+
 export const getBySlug = query({
     args: { slug: v.string() },
     handler: async (ctx, args) => {
@@ -25,6 +32,8 @@ export const create = mutation({
         slug: v.string(),
         description: v.optional(v.string()),
         image: v.optional(v.string()),
+        defaultShowcaseTitle: v.optional(v.string()),
+        defaultShowcaseProductIds: v.optional(v.array(v.id("products"))),
         token: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
@@ -42,6 +51,8 @@ export const patch = mutation({
         slug: v.optional(v.string()),
         description: v.optional(v.string()),
         image: v.optional(v.string()),
+        defaultShowcaseTitle: v.optional(v.string()),
+        defaultShowcaseProductIds: v.optional(v.array(v.id("products"))),
         token: v.optional(v.string()),
     },
     handler: async (ctx, args) => {

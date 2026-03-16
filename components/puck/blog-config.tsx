@@ -5,16 +5,18 @@ import { Config } from "@puckeditor/core";
 import { TextBlockConfig } from "./blocks/TextBlock";
 import { SpacerBlockConfig } from "./blocks/SpacerBlock";
 import { InlineImageBlockConfig } from "./blocks/InlineImageBlock";
+import { FAQBlockConfig } from "./blocks/FAQBlock";
 
 export const blogConfig: Config = {
     components: {
         TextBlock: TextBlockConfig,
         InlineImage: InlineImageBlockConfig,
         Spacer: SpacerBlockConfig,
+        FAQ: FAQBlockConfig,
     },
     categories: {
         "Blog Content": {
-            components: ["TextBlock", "InlineImage", "Spacer"],
+            components: ["TextBlock", "InlineImage", "FAQ", "Spacer"],
         }
     },
     root: {

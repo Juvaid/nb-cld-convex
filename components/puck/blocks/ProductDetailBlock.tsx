@@ -1,11 +1,15 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { ComponentConfig } from "@puckeditor/core";
-import ProductDetail from "@/components/blocks/ProductDetail";
 import { ProductSelector } from "../ProductSelector";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+
+const ProductDetail = dynamic(() => import("@/components/blocks/ProductDetail"), {
+    ssr: false,
+});
 
 export interface ProductDetailBlockProps {
     productId?: string;

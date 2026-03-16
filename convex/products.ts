@@ -65,6 +65,13 @@ export const getById = query({
     },
 });
 
+export const getMany = query({
+    args: { ids: v.array(v.id("products")) },
+    handler: async (ctx, args) => {
+        return await Promise.all(args.ids.map(id => ctx.db.get(id)));
+    },
+});
+
 export const getBySlug = query({
     args: { slug: v.string(), token: v.optional(v.string()) },
     handler: async (ctx, args) => {
@@ -115,6 +122,8 @@ export const create = mutation({
         extractionMethod: v.optional(v.string()),
         activeCompounds: v.optional(v.string()),
         documents: v.optional(v.array(v.object({ name: v.string(), storageId: v.string() }))),
+        showcaseTitle: v.optional(v.string()),
+        showcaseProductIds: v.optional(v.array(v.id("products"))),
         token: v.optional(v.string()), // Added token for auth
     },
     handler: async (ctx, args) => {
@@ -145,6 +154,8 @@ export const update = mutation({
         extractionMethod: v.optional(v.string()),
         activeCompounds: v.optional(v.string()),
         documents: v.optional(v.array(v.object({ name: v.string(), storageId: v.string() }))),
+        showcaseTitle: v.optional(v.string()),
+        showcaseProductIds: v.optional(v.array(v.id("products"))),
         token: v.optional(v.string()), // Added token for auth
     },
     handler: async (ctx, args) => {

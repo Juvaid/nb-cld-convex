@@ -21,6 +21,22 @@ export const submit = mutation({
         annualVolume: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
+        // 0. Server-side validation (cannot be bypassed from client)
+        const name = args.name.trim();
+        const email = args.email.trim();
+        const message = args.message.trim();
+        const phone = (args.phone || "").trim();
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!name || !email || !phone || !message) {
+            throw new Error("Please provide your name, email, phone, and a short message.");
+        }
+
+        if (!emailRegex.test(email)) {
+            throw new Error("Please provide a valid email address.");
+        }
+
         // 1. Rate Limiting Check (Simple Implementation)
         const RATE_LIMIT_WINDOW = 10 * 60 * 1000; // 10 minutes
         const MAX_SUBMISSIONS = 5;

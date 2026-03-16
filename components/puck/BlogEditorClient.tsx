@@ -250,6 +250,7 @@ export function BlogEditorClient({ id }: BlogEditorClientProps) {
                             <button
                                 onClick={() => setIsSettingsOpen(false)}
                                 className="p-2 hover:bg-slate-50 text-slate-400 rounded-xl transition-colors"
+                                title="Close"
                             >
                                 <X size={20} />
                             </button>

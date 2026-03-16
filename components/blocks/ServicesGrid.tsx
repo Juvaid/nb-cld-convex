@@ -190,7 +190,13 @@ export default function ServicesGrid({
 
                                 {service.showButton !== false && (
                                     <Link
-                                        href={service.buttonLink || `/services#${service.slug || ''}`}
+                                        href={
+                                            service.buttonLink
+                                                ? service.buttonLink
+                                                : service.slug
+                                                    ? `/${service.slug}`
+                                                    : "/services"
+                                        }
                                         className={`inline-flex items-center gap-2 text-xs sm:text-sm font-black transition-all mt-4 ${useDesignSystem
                                                 ? 'text-slate-400 hover:text-nb-green uppercase tracking-widest'
                                                 : 'text-nb-green group-hover:text-slate-900'

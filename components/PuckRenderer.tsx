@@ -18,7 +18,19 @@ const legacyMap: Record<string, string> = {
     CatalogSection: "CategoryPortfolio",
 };
 
-export function PuckRenderer({ data, initialData, configOverride, siteSettings }: { data: any; initialData?: any; configOverride?: Config; siteSettings?: any }) {
+export function PuckRenderer({
+    data,
+    initialData,
+    configOverride,
+    siteSettings,
+    hideHeader,
+}: {
+    data: any;
+    initialData?: any;
+    configOverride?: Config;
+    siteSettings?: any;
+    hideHeader?: boolean;
+}) {
     const root = data?.root || {};
     const content = Array.isArray(data?.content) ? data.content : [];
     const { header = {}, footer = {}, ...rootProps } = root.props || {};
@@ -27,7 +39,7 @@ export function PuckRenderer({ data, initialData, configOverride, siteSettings }
 
     return (
         <div className="flex flex-col min-h-screen font-sans selection:bg-nb-green/30">
-            <SiteHeader {...header} initialSettings={siteSettings} />
+            {!hideHeader && <SiteHeader {...header} initialSettings={siteSettings} />}
             <main id="main-content" className="flex-grow" aria-label="Page content">
                 {content.length === 0 ? (
                     <div className="py-20 text-center">

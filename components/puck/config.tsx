@@ -34,6 +34,7 @@ import { TextBlockConfig } from "./blocks/TextBlock";
 import { HeroCarouselBlockConfig } from "./blocks/HeroCarouselBlock";
 import { ProductCategoryCarouselBlockConfig } from "./blocks/ProductCategoryCarouselBlock";
 import { GoogleReviewsBlockConfig } from "./blocks/GoogleReviewsBlock";
+import { FAQBlockConfig } from "./blocks/FAQBlock";
 
 // Composite Macro Blocks
 import { HomeEssentialsBlockConfig } from "./blocks/HomeEssentialsBlock";
@@ -116,8 +117,8 @@ export const config: Config = {
         Layout: { components: ["DynamicLayout", "Section", "Spacer"] },
         Marketing: { components: ["ServiceGrid", "CTA", "SuccessStory", "IconBenefits"] },
         B2B: { components: ["QuickOrderPad", "ComplianceBadges", "DownloadCenter", "ProductDetail"] },
-        Blog: { components: ["BlogPostStory"] },
-        Content: { components: ["TextBlock", "ProcessTimeline", "FAQAccordion", "Section"] },
+        Blog: { components: ["BlogPostStory", "FAQ"] },
+        Content: { components: ["TextBlock", "ProcessTimeline", "FAQAccordion", "FAQ", "Section"] },
         Sections: { components: ["TestimonialsSlider", "JourneyHero", "BentoServices"] },
         Footer: { components: ["Footer"] },
         "Page Templates": { components: ["HomeEssentials", "AboutCore", "ProductShowcase"] },
@@ -158,6 +159,7 @@ export const config: Config = {
         ModernServices: ModernServicesBlockConfig,
         HeroCarousel: HeroCarouselBlockConfig,
         GoogleReviews: GoogleReviewsBlockConfig,
+        FAQ: FAQBlockConfig,
         AboutHero: {
             fields: {
                 badgeText: { type: "text" },

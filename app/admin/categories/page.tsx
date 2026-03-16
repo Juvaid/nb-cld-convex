@@ -16,16 +16,18 @@ export default function CategoriesPage() {
     const createCategory = useMutation(api.categories.create);
     const updateCategory = useMutation(api.categories.patch);
     const deleteCategory = useMutation(api.categories.remove);
+    const listNames = useQuery(api.products.listNames);
     const { token } = useAuth();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingCategory, setEditingCategory] = useState<any>(null);
     const [searchQuery, setSearchQuery] = useState("");
-
     const [formData, setFormData] = useState({
         name: "",
         slug: "",
         description: "",
+        defaultShowcaseTitle: "",
+        defaultShowcaseProductIds: [] as string[],
     });
 
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,16 +46,21 @@ export default function CategoriesPage() {
                 await updateCategory({
                     id: editingCategory._id,
                     ...formData,
+                    defaultShowcaseProductIds: formData.defaultShowcaseProductIds as any,
                     token: token ?? undefined,
                 });
                 alert("Category updated successfully");
             } else {
-                await createCategory({ ...formData, token: token ?? undefined });
+                await createCategory({ 
+                    ...formData, 
+                    defaultShowcaseProductIds: formData.defaultShowcaseProductIds as any,
+                    token: token ?? undefined 
+                });
                 alert("Category created successfully");
             }
             setIsModalOpen(false);
             setEditingCategory(null);
-            setFormData({ name: "", slug: "", description: "" });
+            setFormData({ name: "", slug: "", description: "", defaultShowcaseTitle: "", defaultShowcaseProductIds: [] });
         } catch (error) {
             alert("Error saving category");
         }
@@ -92,7 +99,7 @@ export default function CategoriesPage() {
                 <Button
                     onClick={() => {
                         setEditingCategory(null);
-                        setFormData({ name: "", slug: "", description: "" });
+                        setFormData({ name: "", slug: "", description: "", defaultShowcaseTitle: "", defaultShowcaseProductIds: [] });
                         setIsModalOpen(true);
                     }}
                     className="bg-nb-green hover:bg-nb-green/90 text-slate-900 font-bold"
@@ -143,6 +150,8 @@ export default function CategoriesPage() {
                                                         name: category.name,
                                                         slug: category.slug,
                                                         description: category.description || "",
+                                                        defaultShowcaseTitle: category.defaultShowcaseTitle || "",
+                                                        defaultShowcaseProductIds: category.defaultShowcaseProductIds || [],
                                                     });
                                                     setIsModalOpen(true);
                                                 }}
@@ -212,6 +221,60 @@ export default function CategoriesPage() {
                                         value={formData.description}
                                         onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                                     />
+                                </div>
+                                <div className="space-y-2">
+                                    <Typography variant="detail">Default Showcase Title</Typography>
+                                    <Input
+                                        title="Default Showcase Title"
+                                        placeholder="e.g. Recommended Products"
+                                        value={formData.defaultShowcaseTitle}
+                                        onChange={(e) => setFormData(prev => ({ ...prev, defaultShowcaseTitle: e.target.value }))}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Typography variant="detail">Default Showcase Products</Typography>
+                                    <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
+                                        {formData.defaultShowcaseProductIds.map((pid: string) => {
+                                            const p = listNames?.find(n => n._id === pid);
+                                            return (
+                                                <div key={pid} className="flex items-center justify-between p-2 rounded-md border border-slate-200 bg-slate-50">
+                                                    <span className="text-sm font-medium text-slate-700">{p?.name || pid}</span>
+                                                    <button 
+                                                        type="button" 
+                                                        onClick={() => {
+                                                            setFormData(prev => ({
+                                                                ...prev,
+                                                                defaultShowcaseProductIds: prev.defaultShowcaseProductIds.filter(id => id !== pid)
+                                                            }));
+                                                        }} 
+                                                        className="text-slate-400 hover:text-red-500"
+                                                        title="Remove product"
+                                                    >
+                                                        <Trash2 size={14} />
+                                                    </button>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                    <select 
+                                        title="Add product to showcase"
+                                        className="w-full h-10 px-3 bg-white border border-slate-200 rounded-md text-sm outline-none focus:border-nb-green"
+                                        onChange={(e) => {
+                                            if (e.target.value && !formData.defaultShowcaseProductIds.includes(e.target.value)) {
+                                                setFormData(prev => ({
+                                                    ...prev,
+                                                    defaultShowcaseProductIds: [...prev.defaultShowcaseProductIds, e.target.value]
+                                                }));
+                                            }
+                                            e.target.value = "";
+                                        }}
+                                        value=""
+                                    >
+                                        <option value="">+ Add Product to Default Showcase</option>
+                                        {listNames?.filter(n => !formData.defaultShowcaseProductIds.includes(n._id)).map(p => (
+                                            <option key={p._id} value={p._id}>{p.name}</option>
+                                        ))}
+                                    </select>
                                 </div>
                             </CardContent>
                             <Flex justify="end" gap="3" className="p-6 bg-slate-50 border-t border-slate-100 rounded-b-xl">
