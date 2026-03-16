@@ -8,6 +8,7 @@ import { ArrowLeft, ArrowRight, Calendar, ImageIcon, Tag } from 'lucide-react';
 import { PageSkeleton } from '@/components/ui/Skeleton';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
+import { PuckRenderer } from '@/components/PuckRenderer';
 import Link from 'next/link';
 import React from 'react';
 
@@ -155,13 +156,22 @@ export default function BlogPostClient({ slug, initialBlog, initialSettings }: B
   }
 
   let markdownContent = displayBlog.content || '';
-  if (markdownContent.startsWith('{') && markdownContent.includes('"content"')) {
+  let puckData = null;
+
+  if (markdownContent.trim().startsWith('{')) {
     try {
-      const parsed = JSON.parse(markdownContent);
-      markdownContent = parsed.content
-        ?.map((block: any) => block.props?.text || block.props?.heading || '')
-        .filter(Boolean).join('\n\n') || '';
-    } catch { /* leave as-is */ }
+      puckData = JSON.parse(markdownContent);
+      // Improved flattening logic to extract text contents if the component structure is known
+      if (puckData.content) {
+        markdownContent = puckData.content
+          .map((block: any) => {
+            const p = block.props || {};
+            return p.text || p.heading || p.title || p.subtitle || p.description || '';
+          })
+          .filter(Boolean)
+          .join('\n\n');
+      }
+    } catch { /* parse failed, treat as literal */ }
   }
 
   const related = allBlogs?.filter((b: any) => b.slug !== slug).slice(0, 3) || [];
@@ -248,7 +258,13 @@ export default function BlogPostClient({ slug, initialBlog, initialSettings }: B
 
         {/* Article body */}
         <div className="max-w-[760px] mx-auto px-4 sm:px-8 pb-8">
-          <ReactMarkdown components={markdownComponents}>{markdownContent}</ReactMarkdown>
+          {puckData ? (
+            <div className="prose-container prose-nb">
+              <PuckRenderer data={puckData} siteSettings={initialSettings} />
+            </div>
+          ) : (
+            <ReactMarkdown components={markdownComponents}>{markdownContent}</ReactMarkdown>
+          )}
         </div>
 
         {/* Tags */}
