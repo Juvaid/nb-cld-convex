@@ -129,7 +129,6 @@ export function SiteHeader({
     const siteSettings = currentSettings || initialSettings;
     const isLoading = siteSettings === undefined;
 
-
     // Default fallbacks
     const defaultLogoText = "Nature's Boon";
     const defaultLinks = [
