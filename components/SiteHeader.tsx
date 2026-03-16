@@ -129,6 +129,9 @@ export function SiteHeader({
     const siteSettings = currentSettings || initialSettings;
     const isLoading = siteSettings === undefined;
 
+
+
+
     // Default fallbacks
     const defaultLogoText = "Nature's Boon";
     const defaultLinks = [
@@ -160,13 +163,13 @@ export function SiteHeader({
                             <div className="hidden sm:block w-32 h-6 bg-slate-200/60 rounded animate-pulse" />
                         </>
                     ) : logoImage ? (
-                        <Image 
-                            src={logoImage.startsWith('http') || logoImage.startsWith('/') ? logoImage : `/api/storage/${logoImage}`} 
-                            alt={logoText} 
+                        <Image
+                            src={logoImage.startsWith('http') || logoImage.startsWith('/') ? logoImage : `/api/storage/${logoImage}`}
+                            alt={logoText}
                             width={200}
                             height={60}
                             priority
-                            className="h-10 w-auto object-contain transition-transform group-hover:scale-105" 
+                            className="h-10 w-auto object-contain transition-transform group-hover:scale-105"
                         />
                     ) : (
                         <AnimatedLogo />

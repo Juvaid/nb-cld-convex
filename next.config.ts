@@ -74,7 +74,7 @@ const nextConfig: NextConfig = {
       // Contact (indexed as /contact — same slug, keep anyway)
       { source: '/contact-us', destination: '/contact', permanent: true },
 
-      // Blog
+      // Blog — fix: old /blog/:slug now correctly points to /blogs/:slug (not /blogs/blog/:slug)
       { source: '/blog', destination: '/blogs', permanent: true },
       { source: '/blog/:slug', destination: '/blogs/:slug', permanent: true },
       // Redirect old /blogs/blog/:slug to the clean /blogs/:slug path
@@ -152,13 +152,14 @@ const nextConfig: NextConfig = {
       { source: '/our-services', destination: '/services', permanent: true },
       { source: '/services-offered', destination: '/services', permanent: true },
 
-      // ─── PHASE 2: TRAILING SLASH NORMALISATION ──────────────────────────────
+      // ─── PHASE 4: TRAILING SLASH NORMALISATION ──────────────────────────────
       // Uncomment these if you see duplicate canonicals in GSC later
       // { source: '/about/', destination: '/about', permanent: true },
       // { source: '/products/', destination: '/products', permanent: true },
       // { source: '/services/', destination: '/services', permanent: true },
       // { source: '/contact/', destination: '/contact', permanent: true },
       // { source: '/blogs/', destination: '/blogs', permanent: true },
+
     ];
   },
 };
