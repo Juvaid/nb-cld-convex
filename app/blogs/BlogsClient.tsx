@@ -64,7 +64,7 @@ export function BlogsClient({ initialSettings }: { initialSettings?: any }) {
                                     {blogs.map((blog) => (
                                         <Link
                                             key={blog._id}
-                                            href={`/blogs/blog/${blog.slug}`}
+                                            href={`/blogs/${blog.slug}`}
                                             className="group flex flex-col bg-white rounded-[32px] overflow-hidden border border-slate-100 transition-all hover:shadow-2xl hover:shadow-slate-200/50 hover:-translate-y-2"
                                         >
                                             <div className="aspect-[16/10] overflow-hidden bg-slate-100 relative">

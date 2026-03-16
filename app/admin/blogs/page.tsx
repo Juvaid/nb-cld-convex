@@ -130,7 +130,7 @@ export default function BlogsAdmin() {
                                         {isProcessing === blog._id ? <Loader2 size={16} className="animate-spin" /> : (blog.status === 'published' ? <Globe size={16} /> : <Lock size={16} />)}
                                     </button>
                                     <Link
-                                        href={`/blogs/blog/${blog.slug}`}
+                                        href={`/blogs/${blog.slug}`}
                                         target="_blank"
                                         className="p-2 text-slate-400 bg-white border border-slate-200 hover:text-blue-500 hover:bg-blue-50 hover:border-blue-200 rounded-lg transition-all shadow-sm"
                                         title="View Public Post"
