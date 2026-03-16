@@ -1,6 +1,6 @@
 'use client';
 
-import { useQuery } from 'convex/react';
+import { useQuery, usePreloadedQuery, Preloaded } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import ReactMarkdown from 'react-markdown';
 import type { Components } from 'react-markdown';
@@ -15,8 +15,8 @@ import React from 'react';
 
 interface BlogPostClientProps {
   slug: string;
-  initialBlog: any;
-  initialSettings?: any;
+  preloadedBlog: Preloaded<typeof api.blogs.getBlogBySlug>;
+  preloadedSettings: Preloaded<typeof api.siteSettings.getSiteSettings>;
 }
 
 const markdownComponents: Components = {
@@ -174,13 +174,14 @@ function RelatedCard({ blog }: { blog: any }) {
   );
 }
 
-export default function BlogPostClient({ slug, initialBlog, initialSettings }: BlogPostClientProps) {
-  const blog = useQuery(api.blogs.getBlogBySlug, { slug });
+export default function BlogPostClient({ slug, preloadedBlog, preloadedSettings }: BlogPostClientProps) {
+  const blog = usePreloadedQuery(preloadedBlog);
+  const settings = usePreloadedQuery(preloadedSettings);
   const allBlogs = useQuery(api.blogs.listBlogs);
 
-  if (blog === undefined && initialBlog === undefined) return <PageSkeleton />;
+  if (blog === undefined) return <PageSkeleton />;
 
-  const displayBlog = blog === undefined ? initialBlog : blog;
+  const displayBlog = blog;
 
   if (!displayBlog) {
     return (
@@ -257,7 +258,7 @@ export default function BlogPostClient({ slug, initialBlog, initialSettings }: B
 
   return (
     <div className="bg-white min-h-screen">
-      <SiteHeader initialSettings={initialSettings} />
+      <SiteHeader initialSettings={settings} />
 
       <article>
         {/* Hero */}
@@ -336,7 +337,7 @@ export default function BlogPostClient({ slug, initialBlog, initialSettings }: B
           {puckData ? (
             <PuckRenderer
               data={puckData}
-              siteSettings={initialSettings}
+              siteSettings={settings}
               configOverride={blogConfig}
               hideHeader
             />
@@ -413,7 +414,7 @@ export default function BlogPostClient({ slug, initialBlog, initialSettings }: B
         </div>
       )}
 
-      <SiteFooter initialSettings={initialSettings} />
+      <SiteFooter initialSettings={settings} />
     </div>
   );
 }
