@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: "Terms of Service | Nature's Boon",
+    title: "Terms of Service",
     description: "Terms of Service and conditions for using Nature's Boon, your premium manufacturing partner.",
 };
 

@@ -62,8 +62,10 @@ inspection_output.txt
 tmp/
 build.log
 build-log.txt
+build*.log
 lint*.txt
 lint*.json
 lint_output.txt
 inspection_output*.txt
-
+.gemini/
+.antigravity/

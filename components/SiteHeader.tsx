@@ -129,9 +129,6 @@ export function SiteHeader({
     const siteSettings = currentSettings || initialSettings;
     const isLoading = siteSettings === undefined;
 
-    if (typeof window !== "undefined") {
-        console.log("SiteHeader state - hasSettings:", !!siteSettings);
-    }
 
     // Default fallbacks
     const defaultLogoText = "Nature's Boon";

@@ -326,24 +326,32 @@ export const performLaunchCleanup = mutation({
       const patch: any = {};
       let updated = false;
 
-      // Cleanup Titles
-      if (page.title.endsWith(BRAND_SUFFIX)) {
-        patch.title = page.title.replace(BRAND_SUFFIX, "").trim();
+      // Cleanup Titles - More robust regex to handle multiple pipes or specific brand suffix
+      const rawTitle = page.title;
+      // Remove brand suffix if present
+      let cleanTitle = rawTitle.split("|")[0].trim();
+      
+      // Special case for home page
+      if (page.path === "/") {
+        cleanTitle = "Personal Care & Cosmetics Manufacturer";
+      }
+
+      if (cleanTitle !== rawTitle || page.path === "/") {
+        patch.title = cleanTitle;
         updated = true;
       }
 
       // Optimize Home Page
       if (page.path === "/") {
-        patch.title = "Personal Care & Cosmetics Manufacturer";
         patch.description = "Nature's Boon is a global leader in personal care manufacturing, specializing in OEM, Private Label, and innovative R&D solutions for skincare and hair care.";
         patch.schemaType = "organization";
         updated = true;
       }
 
-      // Set Schema Types
+      // Set Schema Types - Updated based on audit
       if (page.path === "/about") { patch.schemaType = "about"; updated = true; }
       if (page.path === "/services") { patch.schemaType = "service"; updated = true; }
-      if (page.path === "/products") { patch.schemaType = "collection"; updated = true; }
+      if (page.path === "/products") { patch.schemaType = "product-list"; updated = true; }
       if (page.path === "/contact") { patch.schemaType = "contact"; updated = true; }
 
       if (updated) {

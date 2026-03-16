@@ -48,7 +48,7 @@ export const DownloadCenterBlock = ({
                         return (
                             <a
                                 key={idx}
-                                href={item.url?.startsWith('http') || item.url?.startsWith('#') ? item.url : `https://lovely-peccary-641.eu-west-1.convex.site/api/storage/${item.url}`}
+                                href={item.url?.startsWith('http') || item.url?.startsWith('#') ? item.url : `${process.env.NEXT_PUBLIC_CONVEX_SITE_URL}/api/storage/${item.url}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="group flex flex-col p-10 rounded-[40px] bg-white border border-slate-100 hover:border-nb-green/30 hover:shadow-[0_30px_60px_-15px_rgba(30,58,138,0.1)] transition-all duration-700 hover:-translate-y-2 relative overflow-hidden"
