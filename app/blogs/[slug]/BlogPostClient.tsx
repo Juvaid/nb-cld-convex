@@ -155,24 +155,38 @@ export default function BlogPostClient({ slug, initialBlog, initialSettings }: B
     );
   }
 
+  const cleanMarkdownContent = (content: string) => {
+    if (!content) return "";
+    return content
+      .split('\n')
+      .map(line => line.trim()) // Remove leading/trailing spaces that trigger code blocks
+      .map(line => line.replace(/\u00A0/g, ' ')) // Replace NBSP with space
+      .join('\n')
+      .replace(/\n{3,}/g, '\n\n') // Normalize multiple newlines
+      .trim();
+  };
+
   let markdownContent = displayBlog.content || '';
   let puckData = null;
 
   if (markdownContent.trim().startsWith('{')) {
     try {
       puckData = JSON.parse(markdownContent);
-      // Improved flattening logic to extract text contents if the component structure is known
       if (puckData.content) {
         markdownContent = puckData.content
           .map((block: any) => {
             const p = block.props || {};
+            // For rich content components, extract the core text values
             return p.text || p.heading || p.title || p.subtitle || p.description || '';
           })
           .filter(Boolean)
           .join('\n\n');
       }
-    } catch { /* parse failed, treat as literal */ }
+    } catch { /* parse failed */ }
   }
+
+  // Sanitize the content for all renderers to remove scraping artifacts
+  markdownContent = cleanMarkdownContent(markdownContent);
 
   const related = allBlogs?.filter((b: any) => b.slug !== slug).slice(0, 3) || [];
   const publishedDate = displayBlog.publishedAt || displayBlog._creationTime;
