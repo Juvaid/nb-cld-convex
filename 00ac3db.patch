@@ -1,0 +1,932 @@
+From 00ac3db121579827c1f6e1d3974c006ecd76351b Mon Sep 17 00:00:00 2001
+From: Nature's Boon Dev <dev@naturesboon.net>
+Date: Mon, 16 Mar 2026 07:10:22 +0000
+Subject: [PATCH] fix: resolve merge conflict, rebuild blog system, add all 13
+ SEO redirects
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+- Resolve MediaPickerModal merge conflict (keep upstream item.url approach)
+- Rewrite BlogPostClient: custom markdown renderers, placeholder image block,
+  related articles, tags, dual CTA — no typography plugin dependency needed
+- Delete duplicate app/blogs/blog/[slug]/ directory
+- Move blog [slug] to clean /blogs/[slug] URL path
+- Add all 13 missing SEO page 301 redirects with trailing slash variants
+- Fix 2 wrong redirects (services -> blog posts)
+- Add scripts/seed-seo-blogs.mjs
+---
+ app/admin/blogs/new/page.tsx             |   2 +-
+ app/admin/blogs/page.tsx                 |   2 +-
+ app/blogs/BlogsClient.tsx                |   2 +-
+ app/blogs/[slug]/BlogPostClient.tsx      | 318 +++++++++++++++++++++++
+ app/blogs/{blog => }/[slug]/page.tsx     |   3 +-
+ app/blogs/blog/[slug]/BlogPostClient.tsx | 196 --------------
+ lib/generatePageMetadata.ts              |   8 +-
+ next.config.ts                           |  40 ++-
+ scripts/seed-seo-blogs.mjs               | 216 +++++++++++++++
+ 9 files changed, 577 insertions(+), 210 deletions(-)
+ create mode 100644 app/blogs/[slug]/BlogPostClient.tsx
+ rename app/blogs/{blog => }/[slug]/page.tsx (92%)
+ delete mode 100644 app/blogs/blog/[slug]/BlogPostClient.tsx
+ create mode 100644 scripts/seed-seo-blogs.mjs
+
+diff --git a/app/admin/blogs/new/page.tsx b/app/admin/blogs/new/page.tsx
+index dc10186..0dda0b9 100644
+--- a/app/admin/blogs/new/page.tsx
++++ b/app/admin/blogs/new/page.tsx
+@@ -79,7 +79,7 @@ export default function NewBlogPage() {
+                     <div className="space-y-3">
+                         <label htmlFor="slug-input" className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">URL Slug</label>
+                         <div className="flex items-center gap-2 px-6 py-4 bg-slate-100 rounded-2xl border border-slate-200">
+-                            <span className="text-slate-400 font-bold text-sm italic">.../blogs/blog/</span>
++                            <span className="text-slate-400 font-bold text-sm italic">.../blogs/</span>
+                             <input
+                                 id="slug-input"
+                                 type="text"
+diff --git a/app/admin/blogs/page.tsx b/app/admin/blogs/page.tsx
+index 5ddda24..11ca42a 100644
+--- a/app/admin/blogs/page.tsx
++++ b/app/admin/blogs/page.tsx
+@@ -130,7 +130,7 @@ export default function BlogsAdmin() {
+                                         {isProcessing === blog._id ? <Loader2 size={16} className="animate-spin" /> : (blog.status === 'published' ? <Globe size={16} /> : <Lock size={16} />)}
+                                     </button>
+                                     <Link
+-                                        href={`/blogs/blog/${blog.slug}`}
++                                        href={`/blogs/${blog.slug}`}
+                                         target="_blank"
+                                         className="p-2 text-slate-400 bg-white border border-slate-200 hover:text-blue-500 hover:bg-blue-50 hover:border-blue-200 rounded-lg transition-all shadow-sm"
+                                         title="View Public Post"
+diff --git a/app/blogs/BlogsClient.tsx b/app/blogs/BlogsClient.tsx
+index e5121d7..dd8d3aa 100644
+--- a/app/blogs/BlogsClient.tsx
++++ b/app/blogs/BlogsClient.tsx
+@@ -64,7 +64,7 @@ export function BlogsClient({ initialSettings }: { initialSettings?: any }) {
+                                     {blogs.map((blog) => (
+                                         <Link
+                                             key={blog._id}
+-                                            href={`/blogs/blog/${blog.slug}`}
++                                            href={`/blogs/${blog.slug}`}
+                                             className="group flex flex-col bg-white rounded-[32px] overflow-hidden border border-slate-100 transition-all hover:shadow-2xl hover:shadow-slate-200/50 hover:-translate-y-2"
+                                         >
+                                             <div className="aspect-[16/10] overflow-hidden bg-slate-100 relative">
+diff --git a/app/blogs/[slug]/BlogPostClient.tsx b/app/blogs/[slug]/BlogPostClient.tsx
+new file mode 100644
+index 0000000..6726f9a
+--- /dev/null
++++ b/app/blogs/[slug]/BlogPostClient.tsx
+@@ -0,0 +1,318 @@
++'use client';
++
++import { useQuery } from 'convex/react';
++import { api } from '@/convex/_generated/api';
++import ReactMarkdown from 'react-markdown';
++import type { Components } from 'react-markdown';
++import { ArrowLeft, ArrowRight, Calendar, ImageIcon, Tag } from 'lucide-react';
++import { PageSkeleton } from '@/components/ui/Skeleton';
++import { SiteHeader } from '@/components/SiteHeader';
++import { SiteFooter } from '@/components/SiteFooter';
++import Link from 'next/link';
++import React from 'react';
++
++interface BlogPostClientProps {
++  slug: string;
++  initialBlog: any;
++  initialSettings?: any;
++}
++
++const markdownComponents: Components = {
++  h1: ({ children }) => (
++    <h1 className="text-3xl md:text-4xl font-black text-slate-900 mt-12 mb-5 leading-tight tracking-tight">{children}</h1>
++  ),
++  h2: ({ children }) => (
++    <h2 className="text-2xl md:text-3xl font-black text-slate-900 mt-10 mb-4 leading-tight tracking-tight border-b border-slate-100 pb-3">{children}</h2>
++  ),
++  h3: ({ children }) => (
++    <h3 className="text-xl font-black text-slate-800 mt-8 mb-3 leading-snug">{children}</h3>
++  ),
++  h4: ({ children }) => (
++    <h4 className="text-lg font-bold text-slate-800 mt-6 mb-2">{children}</h4>
++  ),
++  p: ({ children }) => (
++    <p className="text-slate-700 text-lg leading-[1.85] mb-5 font-normal">{children}</p>
++  ),
++  ul: ({ children }) => (
++    <ul className="my-5 space-y-2 pl-0 list-none">{children}</ul>
++  ),
++  ol: ({ children }) => (
++    <ol className="my-5 space-y-2 pl-6 list-decimal">{children}</ol>
++  ),
++  li: ({ children }) => (
++    <li className="text-slate-700 text-lg leading-relaxed flex gap-3">
++      <span className="mt-[11px] w-1.5 h-1.5 rounded-full bg-nb-green flex-shrink-0" />
++      <span>{children}</span>
++    </li>
++  ),
++  strong: ({ children }) => <strong className="font-bold text-slate-900">{children}</strong>,
++  em: ({ children }) => <em className="italic text-slate-600">{children}</em>,
++  a: ({ href, children }) => (
++    <a href={href} className="text-nb-green font-semibold underline underline-offset-2 hover:text-nb-green-deep transition-colors"
++       rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
++       target={href?.startsWith('http') ? '_blank' : undefined}>
++      {children}
++    </a>
++  ),
++  blockquote: ({ children }) => (
++    <blockquote className="my-6 pl-5 border-l-4 border-nb-green bg-nb-green/5 py-4 pr-4 rounded-r-xl">
++      <div className="text-slate-700 text-lg italic leading-relaxed">{children}</div>
++    </blockquote>
++  ),
++  code: ({ children, className }) => {
++    const isBlock = className?.includes('language-');
++    if (isBlock) {
++      return (
++        <pre className="bg-slate-900 text-slate-100 rounded-2xl p-6 my-6 overflow-x-auto text-sm font-mono">
++          <code>{children}</code>
++        </pre>
++      );
++    }
++    return <code className="bg-slate-100 text-nb-green-deep px-1.5 py-0.5 rounded text-sm font-mono">{children}</code>;
++  },
++  hr: () => <hr className="my-10 border-0 border-t border-slate-100" />,
++  table: ({ children }) => (
++    <div className="overflow-x-auto my-8 rounded-2xl border border-slate-100 shadow-sm">
++      <table className="w-full text-left text-slate-700 text-sm">{children}</table>
++    </div>
++  ),
++  thead: ({ children }) => <thead className="bg-slate-50 text-slate-900 font-bold text-xs uppercase tracking-widest">{children}</thead>,
++  tbody: ({ children }) => <tbody className="divide-y divide-slate-50">{children}</tbody>,
++  tr: ({ children }) => <tr className="hover:bg-slate-50/50 transition-colors">{children}</tr>,
++  th: ({ children }) => <th className="px-4 py-3 font-bold">{children}</th>,
++  td: ({ children }) => <td className="px-4 py-3">{children}</td>,
++};
++
++function PlaceholderImageBlock() {
++  return (
++    <div className="w-full aspect-video bg-gradient-to-br from-slate-100 to-slate-200 rounded-3xl shadow-2xl ring-1 ring-slate-200 flex flex-col items-center justify-center gap-4 relative overflow-hidden">
++      <div className="absolute inset-0 opacity-[0.04]"
++        style={{ backgroundImage: 'repeating-linear-gradient(45deg, #15803d 0, #15803d 1px, transparent 0, transparent 50%)', backgroundSize: '20px 20px' }} />
++      <div className="relative z-10 flex flex-col items-center gap-3 text-center px-8">
++        <div className="w-14 h-14 bg-white rounded-2xl shadow-md flex items-center justify-center">
++          <ImageIcon size={24} className="text-slate-300" />
++        </div>
++        <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">Cover image not set</p>
++        <p className="text-slate-400 text-sm max-w-xs">
++          Go to <span className="font-bold text-nb-green">/admin/blogs</span> → edit this post → upload a cover image
++        </p>
++      </div>
++    </div>
++  );
++}
++
++function RelatedCard({ blog }: { blog: any }) {
++  return (
++    <Link href={`/blogs/${blog.slug}`}
++      className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-slate-100 hover:border-nb-green/30 hover:shadow-lg transition-all duration-300">
++      <div className="aspect-video bg-slate-100 relative overflow-hidden">
++        {blog.coverImage ? (
++          <img src={blog.coverImage} alt={blog.title}
++            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
++        ) : (
++          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
++            <ImageIcon size={28} className="text-slate-200" />
++          </div>
++        )}
++      </div>
++      <div className="p-5 flex flex-col flex-1">
++        <h4 className="font-black text-slate-900 leading-tight mb-2 group-hover:text-nb-green transition-colors line-clamp-2 text-base">{blog.title}</h4>
++        {blog.excerpt && (
++          <p className="text-slate-500 text-sm leading-relaxed line-clamp-2 mb-4">{blog.excerpt}</p>
++        )}
++        <div className="mt-auto flex items-center gap-1 text-nb-green text-xs font-black uppercase tracking-widest group-hover:gap-3 transition-all">
++          Read <ArrowRight size={12} />
++        </div>
++      </div>
++    </Link>
++  );
++}
++
++export default function BlogPostClient({ slug, initialBlog, initialSettings }: BlogPostClientProps) {
++  const blog = useQuery(api.blogs.getBlogBySlug, { slug });
++  const allBlogs = useQuery(api.blogs.listBlogs);
++
++  if (blog === undefined && initialBlog === undefined) return <PageSkeleton />;
++
++  const displayBlog = blog === undefined ? initialBlog : blog;
++
++  if (!displayBlog) {
++    return (
++      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 px-4">
++        <div className="w-16 h-16 bg-white rounded-2xl shadow-lg flex items-center justify-center mb-6">
++          <ImageIcon size={28} className="text-slate-300" />
++        </div>
++        <h1 className="text-4xl font-black text-slate-900 mb-4 text-center">Article Not Found</h1>
++        <p className="text-slate-500 font-medium mb-8 text-center max-w-md">
++          This article doesn't exist or may have been moved.
++        </p>
++        <Link href="/blogs"
++          className="flex items-center gap-2 bg-nb-green text-white px-8 py-3 rounded-2xl font-black shadow-lg hover:scale-[1.03] transition-all">
++          <ArrowLeft size={18} /> Back to All Articles
++        </Link>
++      </div>
++    );
++  }
++
++  let markdownContent = displayBlog.content || '';
++  if (markdownContent.startsWith('{') && markdownContent.includes('"content"')) {
++    try {
++      const parsed = JSON.parse(markdownContent);
++      markdownContent = parsed.content
++        ?.map((block: any) => block.props?.text || block.props?.heading || '')
++        .filter(Boolean).join('\n\n') || '';
++    } catch { /* leave as-is */ }
++  }
++
++  const related = allBlogs?.filter((b: any) => b.slug !== slug).slice(0, 3) || [];
++  const publishedDate = displayBlog.publishedAt || displayBlog._creationTime;
++  const tags = displayBlog.keywords
++    ? displayBlog.keywords.split(',').map((k: string) => k.trim()).filter(Boolean).slice(0, 5)
++    : [];
++
++  return (
++    <div className="bg-white min-h-screen">
++      <SiteHeader initialSettings={initialSettings} />
++
++      <article>
++        {/* Hero */}
++        <header className="relative w-full pt-28 pb-16 overflow-hidden bg-slate-950">
++          {displayBlog.coverImage ? (
++            <div className="absolute inset-0 z-0">
++              <img src={displayBlog.coverImage} alt="" className="w-full h-full object-cover opacity-15 scale-110 blur-2xl" />
++              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-slate-950/40" />
++            </div>
++          ) : (
++            <div className="absolute inset-0 z-0 opacity-[0.06]"
++              style={{ backgroundImage: 'repeating-linear-gradient(45deg, #15803d 0, #15803d 1px, transparent 0, transparent 50%)', backgroundSize: '24px 24px' }} />
++          )}
++
++          <div className="container mx-auto px-4 sm:px-8 relative z-10">
++            <div className="max-w-3xl mx-auto">
++              <Link href="/blogs"
++                className="inline-flex items-center gap-2 text-nb-green/70 hover:text-nb-green font-bold text-xs uppercase tracking-widest mb-8 transition-colors group">
++                <ArrowLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" />
++                All Articles
++              </Link>
++
++              {displayBlog.category === 'seo-page' && (
++                <div className="mb-5">
++                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-nb-green/20 border border-nb-green/30 text-nb-green text-[10px] font-black uppercase tracking-widest">
++                    Manufacturing Guide
++                  </span>
++                </div>
++              )}
++
++              <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white leading-[1.1] tracking-tight mb-5">
++                {displayBlog.title}
++              </h1>
++
++              {displayBlog.excerpt && (
++                <p className="text-slate-300 text-lg leading-relaxed max-w-2xl mb-8">{displayBlog.excerpt}</p>
++              )}
++
++              <div className="flex flex-wrap items-center gap-5 pt-6 border-t border-slate-800">
++                {displayBlog.author && (
++                  <div className="flex items-center gap-2">
++                    <div className="w-8 h-8 rounded-full bg-nb-green flex items-center justify-center text-white font-black text-sm shadow">
++                      {displayBlog.author.charAt(0)}
++                    </div>
++                    <div>
++                      <div className="text-[9px] font-black uppercase tracking-widest text-slate-500 leading-none">Author</div>
++                      <div className="text-sm font-bold text-white">{displayBlog.author}</div>
++                    </div>
++                  </div>
++                )}
++                {publishedDate && (
++                  <div className="flex items-center gap-2 text-slate-400">
++                    <Calendar size={13} />
++                    <span className="text-sm font-medium">
++                      {new Date(publishedDate).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}
++                    </span>
++                  </div>
++                )}
++              </div>
++            </div>
++          </div>
++        </header>
++
++        {/* Cover image OR placeholder */}
++        <div className="max-w-4xl mx-auto px-4 sm:px-8 -mt-8 relative z-10 mb-12">
++          {displayBlog.coverImage ? (
++            <img src={displayBlog.coverImage} alt={displayBlog.title}
++              className="w-full aspect-video object-cover rounded-3xl shadow-2xl ring-1 ring-slate-200" />
++          ) : (
++            <PlaceholderImageBlock />
++          )}
++        </div>
++
++        {/* Article body */}
++        <div className="max-w-[760px] mx-auto px-4 sm:px-8 pb-8">
++          <ReactMarkdown components={markdownComponents}>{markdownContent}</ReactMarkdown>
++        </div>
++
++        {/* Tags */}
++        {tags.length > 0 && (
++          <div className="max-w-[760px] mx-auto px-4 sm:px-8 pb-12">
++            <div className="flex flex-wrap gap-2 pt-8 border-t border-slate-100">
++              <Tag size={14} className="text-slate-400 mt-0.5 flex-shrink-0" />
++              {tags.map((tag: string) => (
++                <span key={tag} className="px-3 py-1 bg-slate-50 border border-slate-100 rounded-full text-xs font-bold text-slate-600">
++                  {tag}
++                </span>
++              ))}
++            </div>
++          </div>
++        )}
++      </article>
++
++      {/* CTA */}
++      <div className="max-w-[760px] mx-auto px-4 sm:px-8 pb-16">
++        <div className="bg-slate-900 rounded-3xl p-8 md:p-12 text-center relative overflow-hidden">
++          <div className="relative z-10">
++            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-nb-green/20 border border-nb-green/30 text-nb-green text-[10px] font-black uppercase tracking-widest mb-5">
++              Start Today
++            </span>
++            <h2 className="text-2xl md:text-3xl font-black text-white mb-4 leading-tight">
++              Ready to Start Your Private Label Brand?
++            </h2>
++            <p className="text-slate-400 mb-8 max-w-lg mx-auto leading-relaxed">
++              Discuss your requirements, MOQ, and formulation with our manufacturing team.
++            </p>
++            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
++              <Link href="/contact"
++                className="inline-flex items-center gap-2 bg-nb-green text-white px-8 py-3.5 rounded-2xl font-black shadow-lg hover:bg-nb-green-deep hover:scale-[1.03] transition-all">
++                Get a Free Quote <ArrowRight size={16} />
++              </Link>
++              <Link href="/products"
++                className="inline-flex items-center gap-2 bg-white/10 text-white px-8 py-3.5 rounded-2xl font-bold hover:bg-white/20 transition-all">
++                Browse Products
++              </Link>
++            </div>
++          </div>
++          <div className="absolute top-0 right-0 w-64 h-64 bg-nb-green/10 rounded-full blur-[80px] -mr-32 -mt-32 pointer-events-none" />
++          <div className="absolute bottom-0 left-0 w-64 h-64 bg-nb-green/5 rounded-full blur-[80px] -ml-32 -mb-32 pointer-events-none" />
++        </div>
++      </div>
++
++      {/* Related articles */}
++      {related.length > 0 && (
++        <div className="bg-slate-50 border-t border-slate-100 py-16">
++          <div className="max-w-5xl mx-auto px-4 sm:px-8">
++            <div className="flex items-center justify-between mb-8">
++              <h3 className="text-2xl font-black text-slate-900">Related Articles</h3>
++              <Link href="/blogs" className="text-nb-green font-bold text-sm flex items-center gap-1 hover:gap-3 transition-all">
++                All articles <ArrowRight size={14} />
++              </Link>
++            </div>
++            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
++              {related.map((b: any) => <RelatedCard key={b._id} blog={b} />)}
++            </div>
++          </div>
++        </div>
++      )}
++
++      <SiteFooter initialSettings={initialSettings} />
++    </div>
++  );
++}
+diff --git a/app/blogs/blog/[slug]/page.tsx b/app/blogs/[slug]/page.tsx
+similarity index 92%
+rename from app/blogs/blog/[slug]/page.tsx
+rename to app/blogs/[slug]/page.tsx
+index 368cb7e..9232104 100644
+--- a/app/blogs/blog/[slug]/page.tsx
++++ b/app/blogs/[slug]/page.tsx
+@@ -16,7 +16,7 @@ export async function generateMetadata({
+     if (!blog) {
+         return {};
+     }
+-    return generateBlogMetadata(blog as BlogRecord, `/blogs/blog/${slug}`);
++    return generateBlogMetadata(blog as BlogRecord, `/blogs/${slug}`);
+ }
+ 
+ interface BlogPostPageProps {
+@@ -25,7 +25,6 @@ interface BlogPostPageProps {
+ 
+ export default async function BlogPostPage({ params }: BlogPostPageProps) {
+     const { slug } = await params;
+-
+     const initialBlog = await fetchQuery(api.blogs.getBlogBySlug, { slug });
+ 
+     return (
+diff --git a/app/blogs/blog/[slug]/BlogPostClient.tsx b/app/blogs/blog/[slug]/BlogPostClient.tsx
+deleted file mode 100644
+index fcb0bb8..0000000
+--- a/app/blogs/blog/[slug]/BlogPostClient.tsx
++++ /dev/null
+@@ -1,196 +0,0 @@
+-'use client';
+-
+-import { useQuery } from 'convex/react';
+-import { api } from '@/convex/_generated/api';
+-import ReactMarkdown from 'react-markdown';
+-import { ArrowLeft, ArrowRight } from 'lucide-react';
+-import { PageSkeleton } from '@/components/ui/Skeleton';
+-import { SiteHeader } from '@/components/SiteHeader';
+-import { SiteFooter } from '@/components/SiteFooter';
+-import Link from 'next/link';
+-import React from 'react';
+-
+-interface BlogPostClientProps {
+-  slug: string;
+-  initialBlog: any;
+-  initialSettings?: any;
+-}
+-
+-export default function BlogPostClient({
+-  slug,
+-  initialBlog,
+-  initialSettings,
+-}: BlogPostClientProps) {
+-  const blog = useQuery(api.blogs.getBlogBySlug, { slug });
+-
+-  if (blog === undefined && initialBlog === undefined) {
+-    return <PageSkeleton />;
+-  }
+-
+-  const displayBlog = blog === undefined ? initialBlog : blog;
+-
+-  if (!displayBlog) {
+-    return (
+-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 px-4">
+-        <h1 className="text-4xl font-black text-slate-900 mb-4 text-center">
+-          Story Not Found
+-        </h1>
+-        <p className="text-slate-500 font-medium mb-8 text-center max-w-md">
+-          The requested blog post doesn't exist or has been moved.
+-        </p>
+-        <Link
+-          href="/blogs"
+-          className="flex items-center gap-2 bg-nb-green text-slate-900 px-8 py-3 rounded-2xl font-black shadow-lg shadow-nb-green/20 hover:scale-[1.05] transition-all"
+-        >
+-          <ArrowLeft size={20} />
+-          Back to Blogs
+-        </Link>
+-      </div>
+-    );
+-  }
+-
+-  let markdownContent = displayBlog.content || '';
+-  // Check if it's legacy Puck JSON and extract text if possible
+-  if (markdownContent.startsWith('{') && markdownContent.includes('"content"')) {
+-    try {
+-      const parsedData = JSON.parse(markdownContent);
+-      markdownContent =
+-        parsedData.content
+-          ?.map((block: any) => block.props?.text || '')
+-          .join('\n\n') || '';
+-    } catch (e) {
+-      console.error('Failed to parse legacy JSON blog content', e);
+-    }
+-  }
+-
+-  return (
+-    <div className="bg-white min-h-screen font-outfit">
+-      <SiteHeader initialSettings={initialSettings} />
+-      <article>
+-        <header className="relative w-full pt-32 pb-20 overflow-hidden bg-slate-900 border-b-[16px] border-nb-green">
+-          {/* Background Image / Pattern */}
+-          {displayBlog.coverImage ? (
+-            <>
+-              <div className="absolute inset-0 z-0">
+-                <img
+-                  src={displayBlog.coverImage}
+-                  alt={displayBlog.title}
+-                  className="w-full h-full object-cover opacity-20 blur-xl scale-110"
+-                />
+-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/80 to-slate-900/40" />
+-              </div>
+-            </>
+-          ) : (
+-            <div className="absolute inset-0 z-0 bg-[url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2560&auto=format&fit=crop')] bg-cover bg-center opacity-10" />
+-          )}
+-
+-          <div className="container mx-auto px-4 sm:px-8 relative z-10">
+-            <div className="max-w-4xl mx-auto text-center">
+-              <Link
+-                href="/blogs"
+-                className="inline-flex items-center gap-2 text-nb-green/80 font-black uppercase tracking-widest text-[10px] hover:text-nb-green transition-colors mb-8 group bg-nb-green/10 px-4 py-2 rounded-full border border-nb-green/20"
+-              >
+-                <ArrowLeft
+-                  size={14}
+-                  className="group-hover:-translate-x-1 transition-transform"
+-                />
+-                Back to Editorial
+-              </Link>
+-
+-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-[1.1] tracking-tight mb-6">
+-                {displayBlog.title}
+-              </h1>
+-
+-              {displayBlog.excerpt && (
+-                <p className="text-xl md:text-2xl text-slate-300 font-medium leading-relaxed max-w-3xl mx-auto mb-10">
+-                  {displayBlog.excerpt}
+-                </p>
+-              )}
+-
+-              <div className="flex flex-wrap items-center justify-center gap-6 mt-12 pt-12 border-t border-slate-700/50">
+-                {displayBlog.author && (
+-                  <div className="flex items-center gap-3">
+-                    <div className="w-10 h-10 rounded-full bg-nb-green flex items-center justify-center text-slate-900 font-black shadow-lg">
+-                      {displayBlog.author.charAt(0)}
+-                    </div>
+-                    <div className="text-left">
+-                      <div className="text-[10px] font-black uppercase tracking-widest text-nb-green/80 leading-none mb-1">
+-                        Written By
+-                      </div>
+-                      <div className="text-sm font-bold text-white">
+-                        {displayBlog.author}
+-                      </div>
+-                    </div>
+-                  </div>
+-                )}
+-
+-                {displayBlog.author && (
+-                  <div className="hidden sm:block w-px h-8 bg-slate-700" />
+-                )}
+-
+-                {(displayBlog.publishedAt || displayBlog._creationTime) && (
+-                  <div className="text-left">
+-                    <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 leading-none mb-1">
+-                      Published On
+-                    </div>
+-                    <div className="text-sm font-bold text-white">
+-                      {new Date(
+-                        displayBlog.publishedAt || displayBlog._creationTime
+-                      ).toLocaleDateString(undefined, {
+-                        year: 'numeric',
+-                        month: 'long',
+-                        day: 'numeric',
+-                      })}
+-                    </div>
+-                  </div>
+-                )}
+-              </div>
+-            </div>
+-          </div>
+-        </header>
+-
+-        {/* Cover Image Feature (Overlapping Header) */}
+-        {displayBlog.coverImage && (
+-          <div className="max-w-5xl mx-auto px-4 sm:px-8 -mt-16 relative z-20 mb-8 sm:mb-16">
+-            <img
+-              src={displayBlog.coverImage}
+-              alt={displayBlog.title}
+-              className="w-full aspect-video object-cover rounded-3xl shadow-2xl border-4 border-white"
+-            />
+-          </div>
+-        )}
+-
+-        {/* Reading Column */}
+-        <div className="max-w-[800px] mx-auto px-4 sm:px-8 py-12 md:py-20 prose prose-lg prose-slate prose-headings:font-black prose-p:font-medium prose-p:leading-[1.8] prose-a:text-nb-green hover:prose-a:text-nb-green-deep">
+-          <ReactMarkdown>{markdownContent}</ReactMarkdown>
+-        </div>
+-      </article>
+-
+-      {/* CTA Footer */}
+-      <div className="max-w-[800px] mx-auto px-4 sm:px-8 pb-32">
+-        <div className="bg-slate-900 rounded-[40px] p-8 md:p-12 text-center relative overflow-hidden">
+-          <div className="relative z-10">
+-            <h2 className="text-3xl font-black text-white mb-4">
+-              Interested in these insights?
+-            </h2>
+-            <p className="text-slate-400 font-medium mb-8 max-w-lg mx-auto">
+-              Connect with our expert team for detailed technical discussions
+-              and customized formulation support.
+-            </p>
+-            <Link
+-              href="/contact"
+-              className="inline-flex items-center gap-2 bg-nb-green text-slate-900 px-10 py-4 rounded-2xl font-black shadow-xl shadow-nb-green/20 hover:scale-[1.05] transition-all"
+-            >
+-              Discuss Your Project
+-              <ArrowRight size={18} />
+-            </Link>
+-          </div>
+-          {/* Abstract background decorative elements */}
+-          <div className="absolute top-0 right-0 w-64 h-64 bg-nb-green/10 rounded-full blur-[100px] -mr-32 -mt-32" />
+-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-nb-green-deep/10 rounded-full blur-[100px] -ml-32 -mb-32" />
+-        </div>
+-      </div>
+-      <SiteFooter initialSettings={initialSettings} />
+-    </div>
+-  );
+-}
+diff --git a/lib/generatePageMetadata.ts b/lib/generatePageMetadata.ts
+index 0d62793..5b35921 100644
+--- a/lib/generatePageMetadata.ts
++++ b/lib/generatePageMetadata.ts
+@@ -53,17 +53,19 @@ export function generateProductMetadata(product: ProductRecord, path: string): M
+       description: product.description,
+       url,
+       siteName: BRAND_NAME,
++      // Product photos are square — declare 800x800 so Discord/WhatsApp render
++      // them correctly instead of stretching to fit a 1200x630 container.
+       images: [{
+         url: imageUrl,
+-        width: 1200,
+-        height: 630,
++        width: 800,
++        height: 800,
+         alt: product.name,
+         secureUrl: imageUrl,
+       }],
+       type: "website",
+     },
+     twitter: {
+-      card: "summary_large_image",
++      card: "summary",         // square thumbnail — correct for product photos
+       title: cleanTitle,
+       description: product.description,
+       images: [imageUrl],
+diff --git a/next.config.ts b/next.config.ts
+index fb3f107..043c726 100644
+--- a/next.config.ts
++++ b/next.config.ts
+@@ -76,7 +76,9 @@ const nextConfig: NextConfig = {
+ 
+       // Blog
+       { source: '/blog', destination: '/blogs', permanent: true },
+-      { source: '/blog/:slug', destination: '/blogs/blog/:slug', permanent: true },
++      { source: '/blog/:slug', destination: '/blogs/:slug', permanent: true },
++      // Redirect old /blogs/blog/:slug to the clean /blogs/:slug path
++      { source: '/blogs/blog/:slug', destination: '/blogs/:slug', permanent: true },
+ 
+       // Product category pages → products page with hash anchors
+       { source: '/skin-care-products', destination: '/products#skin-care', permanent: true },
+@@ -88,11 +90,37 @@ const nextConfig: NextConfig = {
+       { source: '/personal-care', destination: '/products#personal-care', permanent: true },
+       { source: '/personal-care/:path*', destination: '/products', permanent: true },
+ 
+-      // OLD keyword landing pages → new dedicated pages (CREATE THESE FIRST - see Phase 2)
+-      { source: '/private-label-skin-care-products-manufacturer', destination: '/services#private-label', permanent: true },
+-      { source: '/private-label-skin-care-products-:slug', destination: '/services#private-label', permanent: true },
+-      { source: '/top-derma-products-manufacturers-india', destination: '/services#derma', permanent: true },
+-      { source: '/top-derma-products-m', destination: '/services#derma', permanent: true },
++      // Old SEO landing pages → blog posts (301 authority transfer)
++      { source: '/best-face-wash-manufacturers-in-india', destination: '/blogs/best-face-wash-manufacturers-in-india', permanent: true },
++      { source: '/best-face-wash-manufacturers-in-india/', destination: '/blogs/best-face-wash-manufacturers-in-india', permanent: true },
++      { source: '/best-facial-kit-manufacturers-in-india', destination: '/blogs/best-facial-kit-manufacturers-in-india', permanent: true },
++      { source: '/best-facial-kit-manufacturers-in-india/', destination: '/blogs/best-facial-kit-manufacturers-in-india', permanent: true },
++      { source: '/best-hair-serum-manufacturers-in-india', destination: '/blogs/best-hair-serum-manufacturers-in-india', permanent: true },
++      { source: '/best-hair-serum-manufacturers-in-india/', destination: '/blogs/best-hair-serum-manufacturers-in-india', permanent: true },
++      { source: '/best-shampoo-manufacturers-in-india', destination: '/blogs/best-shampoo-manufacturers-in-india', permanent: true },
++      { source: '/best-shampoo-manufacturers-in-india/', destination: '/blogs/best-shampoo-manufacturers-in-india', permanent: true },
++      { source: '/best-body-lotion-manufacturers-in-india', destination: '/blogs/best-body-lotion-manufacturers-in-india', permanent: true },
++      { source: '/best-body-lotion-manufacturers-in-india/', destination: '/blogs/best-body-lotion-manufacturers-in-india', permanent: true },
++      { source: '/best-body-scrub-manufacturers-in-india', destination: '/blogs/best-body-scrub-manufacturers-in-india', permanent: true },
++      { source: '/best-body-scrub-manufacturers-in-india/', destination: '/blogs/best-body-scrub-manufacturers-in-india', permanent: true },
++      { source: '/best-face-serum-manufacturers-in-india', destination: '/blogs/best-face-serum-manufacturers-in-india', permanent: true },
++      { source: '/best-face-serum-manufacturers-in-india/', destination: '/blogs/best-face-serum-manufacturers-in-india', permanent: true },
++      { source: '/best-sunscreen-manufacturers-in-india', destination: '/blogs/best-sunscreen-manufacturers-in-india', permanent: true },
++      { source: '/best-sunscreen-manufacturers-in-india/', destination: '/blogs/best-sunscreen-manufacturers-in-india', permanent: true },
++      { source: '/hair-oil-manufacturers-in-india', destination: '/blogs/hair-oil-manufacturers-in-india', permanent: true },
++      { source: '/hair-oil-manufacturers-in-india/', destination: '/blogs/hair-oil-manufacturers-in-india', permanent: true },
++      { source: '/private-label-skin-care-products-manufacturers-in-india', destination: '/blogs/private-label-skin-care-products-manufacturers-in-india', permanent: true },
++      { source: '/private-label-skin-care-products-manufacturers-in-india/', destination: '/blogs/private-label-skin-care-products-manufacturers-in-india', permanent: true },
++      { source: '/private-label-skin-care-products-manufacturer', destination: '/blogs/private-label-skin-care-products-manufacturers-in-india', permanent: true },
++      { source: '/private-label-skin-care-products-:slug', destination: '/blogs/private-label-skin-care-products-manufacturers-in-india', permanent: true },
++      { source: '/private-label-third-party-beard-oil-manufacturers-in-india', destination: '/blogs/private-label-third-party-beard-oil-manufacturers-in-india', permanent: true },
++      { source: '/private-label-third-party-beard-oil-manufacturers-in-india/', destination: '/blogs/private-label-third-party-beard-oil-manufacturers-in-india', permanent: true },
++      { source: '/third-party-contract-cosmetics-products-manufacturers-in-india', destination: '/blogs/third-party-contract-cosmetics-products-manufacturers-in-india', permanent: true },
++      { source: '/third-party-contract-cosmetics-products-manufacturers-in-india/', destination: '/blogs/third-party-contract-cosmetics-products-manufacturers-in-india', permanent: true },
++      { source: '/top-derma-products-manufacturers-in-india', destination: '/blogs/top-derma-products-manufacturers-in-india', permanent: true },
++      { source: '/top-derma-products-manufacturers-in-india/', destination: '/blogs/top-derma-products-manufacturers-in-india', permanent: true },
++      { source: '/top-derma-products-manufacturers-india', destination: '/blogs/top-derma-products-manufacturers-in-india', permanent: true },
++      { source: '/top-derma-products-m', destination: '/blogs/top-derma-products-manufacturers-in-india', permanent: true },
+       { source: '/customised-finished-product', destination: '/services#custom-formulation', permanent: true },
+ 
+       // Case study → blog or about (no exact equivalent yet)
+diff --git a/scripts/seed-seo-blogs.mjs b/scripts/seed-seo-blogs.mjs
+new file mode 100644
+index 0000000..a3a156c
+--- /dev/null
++++ b/scripts/seed-seo-blogs.mjs
+@@ -0,0 +1,216 @@
++/**
++ * seed-seo-blogs.mjs
++ * Creates all 13 SEO landing pages as blog posts in Convex.
++ * Reads from: nb scraped data/output/content/
++ * Run: node scripts/seed-seo-blogs.mjs
++ */
++import { ConvexHttpClient } from "convex/browser";
++import { api } from "../convex/_generated/api.js";
++import fs from "fs";
++import path from "path";
++import { fileURLToPath } from "url";
++
++const __dirname = path.dirname(fileURLToPath(import.meta.url));
++const CONTENT_DIR = path.join(__dirname, "../nb scraped data/output/content");
++const CONVEX_URL = process.env.NEXT_PUBLIC_CONVEX_URL;
++const ADMIN_TOKEN = process.env.ADMIN_TOKEN;
++
++if (!CONVEX_URL) { console.error("Missing NEXT_PUBLIC_CONVEX_URL"); process.exit(1); }
++if (!ADMIN_TOKEN) { console.error("Missing ADMIN_TOKEN"); process.exit(1); }
++
++const client = new ConvexHttpClient(CONVEX_URL);
++
++function extractCleanContent(raw) {
++  // Remove nav/header junk, deduplicate lines, build clean markdown
++  const lines = raw.split("\n").map(l => l.replace(/\t+/g, " ").trim()).filter(Boolean);
++  
++  let title = "";
++  let bodyLines = [];
++  let seenLines = new Set();
++  let skipUntilContent = true;
++  
++  for (const line of lines) {
++    if (line.startsWith("Title:")) { title = line.replace("Title:", "").trim(); continue; }
++    if (line.startsWith("URL:")) continue;
++    if (line.length < 30) continue; // skip short nav fragments
++    
++    // Skip obvious nav/menu duplicates
++    if (line.includes("Skip to content") || line.includes("Toggle website")) continue;
++    if (line.match(/^\+91|naturesboon@yahoo|naturesboon\.net\/wp-content/)) continue;
++    
++    // Deduplicate exact lines
++    if (seenLines.has(line)) continue;
++    seenLines.add(line);
++    
++    bodyLines.push(line);
++  }
++  
++  return { title, bodyLines };
++}
++
++function buildMarkdown(title, bodyLines) {
++  const md = [];
++  md.push(`# ${title}\n`);
++  
++  let i = 0;
++  while (i < bodyLines.length) {
++    const line = bodyLines[i];
++    
++    // Detect section headings (usually short, end with ?, or are repeated)
++    const isHeading = line.length < 80 && (
++      line.endsWith("?") || 
++      line.match(/^(Why|How|What|Benefits|Features|Process|Contact|About|FAQ|Our|Best|Top|Private|Face|Hair|Body|Men|Skin)/i) ||
++      line.match(/^[A-Z][^a-z]{0,5}[A-Z]/) // ALL CAPS
++    );
++    
++    if (isHeading && i < bodyLines.length - 1) {
++      md.push(`\n## ${line}\n`);
++    } else {
++      md.push(line + "\n");
++    }
++    i++;
++  }
++  
++  // Add CTA at end
++  md.push(`\n---\n\n## Get in Touch\n\nLooking for a trusted manufacturing partner in India? [Contact Nature's Boon](/contact) today to discuss your private label requirements, MOQ, and pricing.\n`);
++  
++  return md.join("\n");
++}
++
++function buildExcerpt(bodyLines) {
++  // Find first real paragraph-length line
++  const first = bodyLines.find(l => l.length > 80 && !l.match(/^\+91|Title:|URL:/));
++  return first ? first.substring(0, 200) + "..." : "";
++}
++
++const SEO_PAGES = [
++  {
++    slug: "best-face-wash-manufacturers-in-india",
++    title: "Best Face Wash Manufacturers in India",
++    keywords: "face wash manufacturers india, private label face wash, face wash OEM manufacturer, best face wash company india"
++  },
++  {
++    slug: "best-facial-kit-manufacturers-in-india", 
++    title: "Best Facial Kit Manufacturers in India",
++    keywords: "facial kit manufacturers india, private label facial kit, facial kit OEM, 5 step facial kit manufacturer"
++  },
++  {
++    slug: "best-hair-serum-manufacturers-in-india",
++    title: "Best Hair Serum Manufacturers in India", 
++    keywords: "hair serum manufacturers india, private label hair serum, hair serum OEM, argan oil serum manufacturer"
++  },
++  {
++    slug: "best-shampoo-manufacturers-in-india",
++    title: "Best Shampoo Manufacturers in India",
++    keywords: "shampoo manufacturers india, private label shampoo, sulphate free shampoo manufacturer, OEM shampoo india"
++  },
++  {
++    slug: "best-body-lotion-manufacturers-in-india",
++    title: "Best Body Lotion Manufacturers in India",
++    keywords: "body lotion manufacturers india, private label body lotion, moisturizer manufacturer india"
++  },
++  {
++    slug: "best-body-scrub-manufacturers-in-india",
++    title: "Best Body Scrub Manufacturers in India",
++    keywords: "body scrub manufacturers india, private label body scrub, coffee scrub manufacturer, walnut scrub OEM"
++  },
++  {
++    slug: "best-face-serum-manufacturers-in-india",
++    title: "Best Face Serum Manufacturers in India",
++    keywords: "face serum manufacturers india, vitamin C serum manufacturer, hyaluronic acid serum OEM, private label serum"
++  },
++  {
++    slug: "best-sunscreen-manufacturers-in-india",
++    title: "Best Sunscreen Manufacturers in India",
++    keywords: "sunscreen manufacturers india, SPF sunscreen manufacturer, private label sunscreen, sunblock OEM india"
++  },
++  {
++    slug: "hair-oil-manufacturers-in-india",
++    title: "Best Hair Oil Manufacturers in India",
++    keywords: "hair oil manufacturers india, ayurvedic hair oil manufacturer, private label hair oil, coconut hair oil OEM"
++  },
++  {
++    slug: "private-label-skin-care-products-manufacturers-in-india",
++    title: "Best Skin Care Products Manufacturers in India",
++    keywords: "skin care manufacturers india, private label skincare, skincare OEM manufacturer, cosmetics manufacturer india"
++  },
++  {
++    slug: "private-label-third-party-beard-oil-manufacturers-in-india",
++    title: "Best Beard Oil Manufacturers in India",
++    keywords: "beard oil manufacturers india, private label beard oil, men grooming manufacturer, beard care OEM"
++  },
++  {
++    slug: "third-party-contract-cosmetics-products-manufacturers-in-india",
++    title: "Top Third Party Cosmetics Manufacturers in India",
++    keywords: "contract cosmetics manufacturers india, third party cosmetics, white label cosmetics manufacturer, OEM cosmetics india"
++  },
++  {
++    slug: "top-derma-products-manufacturers-in-india",
++    title: "Top Derma Products Manufacturers in India",
++    keywords: "derma products manufacturers india, dermatology products OEM, private label derma, skin clinic products manufacturer"
++  },
++];
++
++async function run() {
++  console.log(`Seeding ${SEO_PAGES.length} SEO blog posts...\n`);
++  
++  for (const page of SEO_PAGES) {
++    const filePath = path.join(CONTENT_DIR, page.slug + ".txt");
++    
++    if (!fs.existsSync(filePath)) {
++      console.log(`  ⚠  File not found: ${page.slug}.txt — skipping`);
++      continue;
++    }
++    
++    const raw = fs.readFileSync(filePath, "utf-8");
++    const { bodyLines } = extractCleanContent(raw);
++    const content = buildMarkdown(page.title, bodyLines);
++    const excerpt = buildExcerpt(bodyLines);
++    
++    try {
++      // Check if already exists
++      const existing = await client.query(api.blogs.getBlogBySlug, { slug: page.slug });
++      
++      if (existing) {
++        console.log(`  → Already exists: ${page.slug} — updating content`);
++        await client.mutation(api.blogs.updateBlog, {
++          id: existing._id,
++          title: page.title,
++          content,
++          excerpt,
++          keywords: page.keywords,
++          status: "published",
++          category: "seo-page",
++          token: ADMIN_TOKEN,
++        });
++        console.log(`  ✓  Updated: ${page.slug}`);
++      } else {
++        const id = await client.mutation(api.blogs.createDraft, {
++          title: page.title,
++          slug: page.slug,
++          author: "Nature's Boon Team",
++          token: ADMIN_TOKEN,
++        });
++        
++        await client.mutation(api.blogs.updateBlog, {
++          id,
++          content,
++          excerpt,
++          keywords: page.keywords,
++          status: "published",
++          category: "seo-page",
++          token: ADMIN_TOKEN,
++        });
++        console.log(`  ✓  Created: /blogs/${page.slug}`);
++      }
++    } catch (err) {
++      console.error(`  ✗  Failed: ${page.slug} — ${err.message}`);
++    }
++  }
++  
++  console.log("\nDone. All SEO blog posts seeded.");
++  console.log("Run this command in GSC to request indexing:");
++  console.log("  https://search.google.com/search-console → URL Inspection → request each /blogs/[slug]");
++}
++
++run().catch(console.error);
+-- 
+2.43.0
+
