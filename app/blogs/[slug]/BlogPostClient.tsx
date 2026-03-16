@@ -1,6 +1,6 @@
 'use client';
 
-import { useQuery } from 'convex/react';
+import { useQuery, usePreloadedQuery, Preloaded } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import ReactMarkdown from 'react-markdown';
 import type { Components } from 'react-markdown';
@@ -9,13 +9,14 @@ import { PageSkeleton } from '@/components/ui/Skeleton';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { PuckRenderer } from '@/components/PuckRenderer';
+import { blogConfig } from '@/components/puck/blog-config';
 import Link from 'next/link';
 import React from 'react';
 
 interface BlogPostClientProps {
   slug: string;
-  initialBlog: any;
-  initialSettings?: any;
+  preloadedBlog: Preloaded<typeof api.blogs.getBlogBySlug>;
+  preloadedSettings: Preloaded<typeof api.siteSettings.getSiteSettings>;
 }
 
 const markdownComponents: Components = {
@@ -84,6 +85,50 @@ const markdownComponents: Components = {
   td: ({ children }) => <td className="px-4 py-3">{children}</td>,
 };
 
+// Heuristic: detect if legacy blog content is mostly raw HTML from the old site
+const isLikelyHtml = (content: string) => {
+  if (!content) return false;
+  const sample = content.slice(0, 2000);
+  return /<(p|h1|h2|h3|h4|h5|h6|ul|ol|li|strong|em|span|div|table|thead|tbody|tr|td|th)[\s>]/i.test(sample);
+};
+
+// Clean legacy HTML while preserving its structure for rendering
+const cleanHtmlContent = (content: string) => {
+  if (!content) return "";
+
+  let cleaned = content;
+
+  // Remove JSON-LD / tracking script blobs that often come from WordPress/SEO plugins
+  cleaned = cleaned.replace(
+    /<script[^>]*type=["']application\/ld\+json["'][^>]*>[\s\S]*?<\/script>/gi,
+    "",
+  );
+  // Strip any other script/style tags just in case
+  cleaned = cleaned.replace(/<script[\s\S]*?<\/script>/gi, "");
+  cleaned = cleaned.replace(/<style[\s\S]*?<\/style>/gi, "");
+
+  // Some scrapes inline FAQ JSON fragments directly into visible HTML.
+  // Example: {"@type":"Question","name":"...","acceptedAnswer":{"@type":"Answer","text":" ... "}}
+  cleaned = cleaned.replace(
+    /\{\s*"@type"\s*:\s*"Question"[\s\S]*?"@type"\s*:\s*"Answer"[\s\S]*?"text"\s*:\s*".*?"\s*\}\s*\}\s*\}?/gi,
+    "",
+  );
+
+  // Remove leftover top-level JSON-ish noise like {"@context": ... } that escaped the script tags
+  cleaned = cleaned.replace(/\{[\s]*"@context"[\s\S]*?\}[\s]*/gi, "");
+  cleaned = cleaned.replace(/\{[\s]*"@type"[\s\S]*?\}[\s]*/gi, "");
+
+  // Normalize common HTML entities and excessive whitespace
+  cleaned = cleaned
+    .replace(/&nbsp;/g, " ")
+    .replace(/\u00A0/g, " ")
+    .replace(/\r\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+
+  return cleaned;
+};
+
 function PlaceholderImageBlock() {
   return (
     <div className="w-full aspect-video bg-gradient-to-br from-slate-100 to-slate-200 rounded-3xl shadow-2xl ring-1 ring-slate-200 flex flex-col items-center justify-center gap-4 relative overflow-hidden">
@@ -129,13 +174,14 @@ function RelatedCard({ blog }: { blog: any }) {
   );
 }
 
-export default function BlogPostClient({ slug, initialBlog, initialSettings }: BlogPostClientProps) {
-  const blog = useQuery(api.blogs.getBlogBySlug, { slug });
+export default function BlogPostClient({ slug, preloadedBlog, preloadedSettings }: BlogPostClientProps) {
+  const blog = usePreloadedQuery(preloadedBlog);
+  const settings = usePreloadedQuery(preloadedSettings);
   const allBlogs = useQuery(api.blogs.listBlogs);
 
-  if (blog === undefined && initialBlog === undefined) return <PageSkeleton />;
+  if (blog === undefined) return <PageSkeleton />;
 
-  const displayBlog = blog === undefined ? initialBlog : blog;
+  const displayBlog = blog;
 
   if (!displayBlog) {
     return (
@@ -157,36 +203,52 @@ export default function BlogPostClient({ slug, initialBlog, initialSettings }: B
 
   const cleanMarkdownContent = (content: string) => {
     if (!content) return "";
-    return content
-      .split('\n')
-      .map(line => line.trim()) // Remove leading/trailing spaces that trigger code blocks
-      .map(line => line.replace(/\u00A0/g, ' ')) // Replace NBSP with space
-      .join('\n')
-      .replace(/\n{3,}/g, '\n\n') // Normalize multiple newlines
+
+    let cleaned = content;
+
+    // 1. Remove obvious JSON-LD / schema fragments that might have been inlined as text
+    cleaned = cleaned.replace(/\{(\s*)"@context":[\s\S]*?\}/g, "");
+    cleaned = cleaned.replace(/\{(\s*)"@type":[\s\S]*?\}/g, "");
+    cleaned = cleaned.replace(/["']@type["']:\s*["'].*?["']/g, "");
+    cleaned = cleaned.replace(/["']@context["']:\s*["'].*?["']/g, "");
+
+    // 2. Line-by-line normalization for plain text content
+    return cleaned
+      .split("\n")
+      .map((line) => line.trim()) // avoid accidental code blocks from indented lines
+      .filter((line) => {
+        const t = line.trim();
+        if (t === "}" || t === "}," || t === "]" || t === "],"
+          || t === "{" || t === "[" || t === "}}") return false;
+        if (t.startsWith('"') && t.includes('": "') && (t.endsWith('"') || t.endsWith('",'))) return false;
+        return t.length > 0;
+      })
+      .join("\n")
+      .replace(/&nbsp;/g, " ")
+      .replace(/\u00A0/g, " ")
+      .replace(/\n{3,}/g, "\n\n")
       .trim();
   };
 
-  let markdownContent = displayBlog.content || '';
+  let rawContent = displayBlog.content || "";
+  let markdownContent = "";
+  let htmlContent: string | null = null;
   let puckData = null;
 
-  if (markdownContent.trim().startsWith('{')) {
+  if (rawContent.trim().startsWith("{")) {
     try {
-      puckData = JSON.parse(markdownContent);
-      if (puckData.content) {
-        markdownContent = puckData.content
-          .map((block: any) => {
-            const p = block.props || {};
-            // For rich content components, extract the core text values
-            return p.text || p.heading || p.title || p.subtitle || p.description || '';
-          })
-          .filter(Boolean)
-          .join('\n\n');
-      }
-    } catch { /* parse failed */ }
+      puckData = JSON.parse(rawContent);
+      // Valid Puck JSON — use PuckRenderer, no need to flatten to markdown
+    } catch {
+      // parse failed, treat as non-Puck content below
+    }
   }
 
-  // Sanitize the content for all renderers to remove scraping artifacts
-  markdownContent = cleanMarkdownContent(markdownContent);
+  if (!puckData && isLikelyHtml(rawContent)) {
+    htmlContent = cleanHtmlContent(rawContent);
+  } else {
+    markdownContent = cleanMarkdownContent(rawContent);
+  }
 
   const related = allBlogs?.filter((b: any) => b.slug !== slug).slice(0, 3) || [];
   const publishedDate = displayBlog.publishedAt || displayBlog._creationTime;
@@ -196,7 +258,7 @@ export default function BlogPostClient({ slug, initialBlog, initialSettings }: B
 
   return (
     <div className="bg-white min-h-screen">
-      <SiteHeader initialSettings={initialSettings} />
+      <SiteHeader initialSettings={settings} />
 
       <article>
         {/* Hero */}
@@ -273,11 +335,21 @@ export default function BlogPostClient({ slug, initialBlog, initialSettings }: B
         {/* Article body */}
         <div className="max-w-[760px] mx-auto px-4 sm:px-8 pb-8">
           {puckData ? (
-            <div className="prose-container prose-nb">
-              <PuckRenderer data={puckData} siteSettings={initialSettings} />
-            </div>
+            <PuckRenderer
+              data={puckData}
+              siteSettings={settings}
+              configOverride={blogConfig}
+              hideHeader
+            />
+          ) : htmlContent ? (
+            <div
+              className="prose prose-lg max-w-none prose-headings:font-black prose-headings:text-slate-900 prose-p:text-slate-700 prose-p:leading-[1.85] prose-li:text-slate-700 prose-li:leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: htmlContent }}
+            />
           ) : (
-            <ReactMarkdown components={markdownComponents}>{markdownContent}</ReactMarkdown>
+            <ReactMarkdown components={markdownComponents}>
+              {markdownContent}
+            </ReactMarkdown>
           )}
         </div>
 
@@ -342,7 +414,7 @@ export default function BlogPostClient({ slug, initialBlog, initialSettings }: B
         </div>
       )}
 
-      <SiteFooter initialSettings={initialSettings} />
+      <SiteFooter initialSettings={settings} />
     </div>
   );
 }

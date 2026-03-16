@@ -108,7 +108,7 @@ function CategoryMegaMenu({ featuredProductSlug }: { featuredProductSlug?: strin
                         <Link href={`/products/${featuredProduct.slug}`} className="block group">
                             <div className="aspect-[4/3] rounded-2xl bg-slate-100 overflow-hidden relative mb-4">
                                 {featuredProduct.images?.[0] && (
-                                    <Image 
+                                    <Image
                                         src={featuredProduct.images[0].startsWith('http') ? featuredProduct.images[0] : `/api/storage/${featuredProduct.images[0]}`}
                                         alt={featuredProduct.name}
                                         fill
@@ -117,9 +117,9 @@ function CategoryMegaMenu({ featuredProductSlug }: { featuredProductSlug?: strin
                                 )}
                             </div>
                             <h5 className="font-bold text-slate-900 group-hover:text-nb-green transition-colors">{featuredProduct.name}</h5>
-                            <Link href={`/products/${featuredProduct.slug}`} className="text-nb-green text-xs font-bold flex items-center gap-1 mt-1">
+                            <span className="text-nb-green text-xs font-bold flex items-center gap-1 mt-1">
                                 View product <ArrowRight size={12} />
-                            </Link>
+                            </span>
                         </Link>
                     </div>
                 ) : (

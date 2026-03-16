@@ -230,10 +230,6 @@ export default function ProductDetail({
                                     <span className="px-3 py-1 bg-nb-green/10 text-nb-green text-[9px] font-black uppercase tracking-[0.2em] rounded-full border border-nb-green/20">
                                         {product.tags?.[0] || 'Exclusive Formulation'}
                                     </span>
-                                    <div className="flex items-center gap-1.5 text-[9px] font-bold text-nb-green bg-nb-green/5 px-2.5 py-1 rounded-full border border-nb-green/10">
-                                        <div className="h-1.5 w-1.5 rounded-full bg-nb-green animate-pulse" />
-                                        B2B Verified
-                                    </div>
                                 </div>
 
                                 <h1 className="text-3xl sm:text-5xl font-black text-slate-900 leading-[1.1] tracking-tight">
@@ -402,8 +398,14 @@ export default function ProductDetail({
                 </div>
             </div>
 
-            {showHeaderFooter && <SiteFooter />}
-        </div>
+                <ShowcaseSection 
+                    productId={product._id} 
+                    categoryId={product.categoryId} 
+                    showcaseTitle={product.showcaseTitle} 
+                    showcaseProductIds={product.showcaseProductIds} 
+                />
+                {showHeaderFooter && <SiteFooter />}
+            </div>
     );
 
     if (isModal) {
@@ -411,4 +413,68 @@ export default function ProductDetail({
     }
 
     return content;
+}
+
+function ShowcaseSection({ productId, categoryId, showcaseTitle, showcaseProductIds }: { productId: string, categoryId?: string, showcaseTitle?: string, showcaseProductIds?: string[] }) {
+    const category = useQuery(api.categories.getById, categoryId ? { id: categoryId as any } : "skip");
+    
+    const finalIds = (showcaseProductIds && showcaseProductIds.length > 0) 
+        ? showcaseProductIds 
+        : (category?.defaultShowcaseProductIds && category?.defaultShowcaseProductIds.length > 0)
+            ? category.defaultShowcaseProductIds
+            : [];
+            
+    const finalTitle = showcaseTitle || category?.defaultShowcaseTitle || "Related Formulations";
+    
+    // Filter out current product
+    const idsToFetch = finalIds.filter(id => id !== productId).slice(0, 4);
+    
+    const products = useQuery(api.products.getMany, idsToFetch.length > 0 ? { ids: idsToFetch as any } : "skip");
+
+    if (!products || products.length === 0) return null;
+
+    return (
+        <section className="py-24 border-t border-slate-100 mt-24">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+                    <div className="space-y-4">
+                        <span className="text-nb-green font-black uppercase tracking-[0.3em] text-[10px] bg-nb-green/10 px-4 py-1.5 rounded-full border border-nb-green/20">Recommended For You</span>
+                        <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight leading-tight">{finalTitle}</h2>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    {products.map((p: any) => p && (
+                        <Link 
+                            key={p._id} 
+                            href={`/products/${p.slug}`}
+                            className="group block"
+                        >
+                            <div className="relative aspect-square rounded-[32px] overflow-hidden bg-white border border-slate-100 shadow-sm transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-nb-green/10 group-hover:-translate-y-2">
+                                {p.images?.[0] ? (
+                                    <NextImage 
+                                        src={p.images[0].startsWith('http') ? p.images[0] : `/api/storage/${p.images[0]}`}
+                                        fill
+                                        className="object-cover transition-transform duration-700 group-hover:scale-110"
+                                        alt={p.name}
+                                    />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-4xl opacity-10">🌿</div>
+                                )}
+                                <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/60 to-transparent translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                                    <span className="inline-flex items-center gap-2 text-xs font-bold text-white">
+                                        View Details <ArrowRight size={14} />
+                                    </span>
+                                </div>
+                            </div>
+                            <div className="mt-6 space-y-1 px-2">
+                                <h3 className="text-lg font-black text-slate-900 group-hover:text-nb-green transition-colors line-clamp-1">{p.name}</h3>
+                                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{p.tags?.[0] || 'Exclusive Formulation'}</p>
+                            </div>
+                        </Link>
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
 }

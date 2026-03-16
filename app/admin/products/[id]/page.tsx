@@ -33,9 +33,18 @@ export default function ProductEditorPage() {
     const { token } = useAuth();
     const router = useRouter();
     const isNew = id === "new";
+    const isSlugRoute = !isNew && id.includes("-");
 
-    const product = useQuery(api.products.getById, isNew ? "skip" : { id: id as any });
+    const product = useQuery(
+        isSlugRoute ? api.products.getBySlug : api.products.getById,
+        isNew
+            ? "skip"
+            : isSlugRoute
+                ? { slug: id, token: token ?? undefined }
+                : { id: id as any }
+    );
     const categories = useQuery(api.categories.list);
+    const listNames = useQuery(api.products.listNames);
     const createProduct = useMutation(api.products.create);
     const updateProduct = useMutation(api.products.update);
     const deleteProduct = useMutation(api.products.remove);
@@ -58,6 +67,8 @@ export default function ProductEditorPage() {
         activeCompounds: "",
         pricingTiers: [],
         documents: [],
+        showcaseTitle: "",
+        showcaseProductIds: [],
     });
 
     const [tagInput, setTagInput] = useState("");
@@ -85,6 +96,8 @@ export default function ProductEditorPage() {
                 activeCompounds: product.activeCompounds || "",
                 pricingTiers: product.pricingTiers || [],
                 documents: product.documents || [],
+                showcaseTitle: product.showcaseTitle || "",
+                showcaseProductIds: product.showcaseProductIds || [],
             });
             // reset dirtiness when loaded
             setTimeout(() => setHasUnsavedChanges(false), 100);
@@ -139,11 +152,24 @@ export default function ProductEditorPage() {
         setIsSaving(true);
         try {
             if (isNew) {
-                const newId = await createProduct({ ...formData, token: token ?? undefined });
+                const newId = await createProduct({ 
+                    ...formData, 
+                    showcaseProductIds: formData.showcaseProductIds as any,
+                    token: token ?? undefined 
+                });
                 setHasUnsavedChanges(false);
                 router.push(`/admin/products/${newId}`);
             } else {
-                await updateProduct({ id: id as any, ...formData, token: token ?? undefined });
+                const targetId = isSlugRoute ? (product as any)?._id : (id as any);
+                if (!targetId) {
+                    throw new Error("Unable to resolve product id for update.");
+                }
+                await updateProduct({ 
+                    id: targetId, 
+                    ...formData, 
+                    showcaseProductIds: formData.showcaseProductIds as any,
+                    token: token ?? undefined 
+                });
                 setHasUnsavedChanges(false);
             }
         } catch (error) {
@@ -158,7 +184,11 @@ export default function ProductEditorPage() {
     const handleDelete = async () => {
         if (confirm("Are you sure you want to delete this product?")) {
             try {
-                await deleteProduct({ id: id as any, token: token ?? undefined });
+                const targetId = isSlugRoute ? (product as any)?._id : (id as any);
+                if (!targetId) {
+                    throw new Error("Unable to resolve product id for delete.");
+                }
+                await deleteProduct({ id: targetId, token: token ?? undefined });
                 router.push("/admin/products");
             } catch (error) {
                 const message = error instanceof ConvexError ? (error.data as { message: string }).message || error.data : "Error deleting product.";
@@ -487,6 +517,62 @@ export default function ProductEditorPage() {
                                     <Button variant="outline" size="sm" className="h-8 text-xs font-medium">Browse Files</Button>
                                 </div>
                             )}
+                        </CardContent>
+                    </Card>
+
+                    {/* Product Showcase Configuration */}
+                    <Card className="shadow-sm border-slate-200 rounded-xl overflow-hidden bg-white">
+                        <CardHeader className="py-4 px-6 border-b border-slate-100 flex flex-row items-center gap-2">
+                             <Plus className="w-4 h-4 text-nb-green" />
+                             <CardTitle className="text-sm font-semibold text-slate-800">Product Showcase Section</CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-6 space-y-6">
+                            <div className="space-y-1.5">
+                                <label className="text-sm font-medium text-slate-800">Showcase Section Title</label>
+                                <Input
+                                    placeholder="e.g. Products Made With This Formula"
+                                    value={formData.showcaseTitle}
+                                    onChange={(e) => updateField("showcaseTitle", e.target.value)}
+                                    className="h-9 focus:ring-nb-green/20"
+                                />
+                                <p className="text-xs text-slate-500">Defaults to "Related Formulations" if left empty or category default if available.</p>
+                            </div>
+
+                            <div className="space-y-3">
+                                <label className="text-sm font-medium text-slate-800">Selected Products</label>
+                                <div className="space-y-2">
+                                    {formData.showcaseProductIds.map((pid: string) => {
+                                        const p = listNames?.find(n => n._id === pid);
+                                        return (
+                                            <div key={pid} className="flex items-center justify-between p-2 rounded-md border border-slate-200 bg-slate-50">
+                                                <span className="text-sm font-medium text-slate-700">{p?.name || pid}</span>
+                                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-slate-400 hover:text-red-600" onClick={() => {
+                                                    updateField("showcaseProductIds", formData.showcaseProductIds.filter((id: string) => id !== pid));
+                                                }}>
+                                                    <X className="w-4 h-4" />
+                                                </Button>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                                
+                                <select 
+                                    title="Add product to showcase"
+                                    className="w-full h-9 px-3 bg-white border border-slate-300 rounded-md text-sm outline-none focus:border-nb-green"
+                                    onChange={(e) => {
+                                        if (e.target.value && !formData.showcaseProductIds.includes(e.target.value)) {
+                                            updateField("showcaseProductIds", [...formData.showcaseProductIds, e.target.value]);
+                                        }
+                                        e.target.value = "";
+                                    }}
+                                    value=""
+                                >
+                                    <option value="">+ Add Product to Showcase</option>
+                                    {listNames?.filter(n => n._id !== id && !formData.showcaseProductIds.includes(n._id)).map(p => (
+                                        <option key={p._id} value={p._id}>{p.name}</option>
+                                    ))}
+                                </select>
+                            </div>
                         </CardContent>
                     </Card>
 
