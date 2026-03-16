@@ -95,8 +95,8 @@ export const updateBlog = mutation({
         token: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
-        await validateAdmin(ctx, args.token, "updateBlog");
-        const { id, token, ...updates } = args;
+    await validateAdmin(ctx, args.token, "updateBlog");
+    const { id, token, ...updates } = args;
         const now = Date.now();
         const patch: any = { ...updates };
 
@@ -114,4 +114,36 @@ export const deleteBlog = mutation({
         await validateAdmin(ctx, args.token, "deleteBlog");
         await ctx.db.delete(args.id);
     },
+});
+
+export const batchImportSeoBlogs = mutation({
+  args: {
+    blogs: v.array(v.object({
+      title: v.string(),
+      slug: v.string(),
+      content: v.string(),
+      excerpt: v.optional(v.string()),
+      author: v.string(),
+      status: v.union(v.literal("draft"), v.literal("published")),
+      category: v.optional(v.union(v.literal("article"), v.literal("seo-page"))),
+      publishedAt: v.optional(v.number()),
+    })),
+    token: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    await validateAdmin(ctx, args.token, "batchImportSeoBlogs");
+    let count = 0;
+    for (const blog of args.blogs) {
+      const existing = await ctx.db
+        .query("blogs")
+        .withIndex("by_slug", (q) => q.eq("slug", blog.slug))
+        .unique();
+      
+      if (!existing) {
+        await ctx.db.insert("blogs", blog);
+        count++;
+      }
+    }
+    return { imported: count };
+  },
 });

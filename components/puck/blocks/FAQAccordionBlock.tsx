@@ -46,7 +46,7 @@ export const FAQAccordionBlockConfig: ComponentConfig<FAQAccordionBlockProps> = 
                     gap="4"
                     className="w-full"
                 >
-                    {(props.questions || []).map((item: any, i: number) => (
+                    {(props.items || []).map((item: any, i: number) => (
                         <Flex
                             key={i}
                             direction="col"
