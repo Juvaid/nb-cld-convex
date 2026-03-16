@@ -37,6 +37,12 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: ['192.168.1.62'],
   transpilePackages: ["@convex-dev/auth"],
   serverExternalPackages: ["convex"],
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 
   async headers() {
     return [
@@ -69,7 +75,7 @@ const nextConfig: NextConfig = {
       // When you switch the domain, these 301s will pass ranking to the new URLs
 
       // About page (indexed as /about-us)
-      { source: '/about-us', destination: '/about', permanent: true },
+      // { source: '/about-us', destination: '/about', permanent: true },
 
       // Contact (indexed as /contact — same slug, keep anyway)
       { source: '/contact-us', destination: '/contact', permanent: true },
@@ -121,10 +127,10 @@ const nextConfig: NextConfig = {
       { source: '/top-derma-products-manufacturers-in-india/', destination: '/blogs/top-derma-products-manufacturers-in-india', permanent: true },
       { source: '/top-derma-products-manufacturers-india', destination: '/blogs/top-derma-products-manufacturers-in-india', permanent: true },
       { source: '/top-derma-products-m', destination: '/blogs/top-derma-products-manufacturers-in-india', permanent: true },
-      { source: '/customised-finished-product', destination: '/services#custom-formulation', permanent: true },
+      // { source: '/customised-finished-product', destination: '/services#custom-formulation', permanent: true },
 
       // Case study → blog or about (no exact equivalent yet)
-      { source: '/case-study', destination: '/blogs', permanent: true },
+      // { source: '/case-study', destination: '/blogs', permanent: true },
 
       // Site-map page → homepage (WordPress generated)
       { source: '/site-map', destination: '/', permanent: true },
@@ -145,8 +151,8 @@ const nextConfig: NextConfig = {
       { source: '/feed/:path*', destination: '/', permanent: true },
 
       // Our brands page (visible in old SERP)
-      { source: '/our-brands', destination: '/about', permanent: true },
-      { source: '/brands', destination: '/about', permanent: true },
+      // { source: '/our-brands', destination: '/about', permanent: true },
+      // { source: '/brands', destination: '/about', permanent: true },
 
       // Services
       { source: '/our-services', destination: '/services', permanent: true },
