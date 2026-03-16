@@ -92,6 +92,8 @@ export const saveIngestedBlog = mutation({
         excerpt: v.optional(v.string()),
         author: v.optional(v.string()),
         coverImage: v.optional(v.string()),
+        keywords: v.optional(v.string()),
+        category: v.optional(v.union(v.literal("article"), v.literal("seo-page"))),
     },
     handler: async (ctx, args) => {
         const existing = await ctx.db
