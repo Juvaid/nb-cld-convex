@@ -9,6 +9,7 @@ import { PageSkeleton } from '@/components/ui/Skeleton';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { PuckRenderer } from '@/components/PuckRenderer';
+import { blogConfig } from '@/components/puck/blog-config';
 import Link from 'next/link';
 import React from 'react';
 
@@ -198,16 +199,7 @@ export default function BlogPostClient({ slug, initialBlog, initialSettings }: B
   if (markdownContent.trim().startsWith('{')) {
     try {
       puckData = JSON.parse(markdownContent);
-      if (puckData.content) {
-        markdownContent = puckData.content
-          .map((block: any) => {
-            const p = block.props || {};
-            // For rich content components, extract the core text values
-            return p.text || p.heading || p.title || p.subtitle || p.description || '';
-          })
-          .filter(Boolean)
-          .join('\n\n');
-      }
+      // Valid Puck JSON — use PuckRenderer, no need to flatten to markdown
     } catch { /* parse failed */ }
   }
 
@@ -299,9 +291,7 @@ export default function BlogPostClient({ slug, initialBlog, initialSettings }: B
         {/* Article body */}
         <div className="max-w-[760px] mx-auto px-4 sm:px-8 pb-8">
           {puckData ? (
-            <div className="prose-container prose-nb">
-              <PuckRenderer data={puckData} siteSettings={initialSettings} />
-            </div>
+            <PuckRenderer data={puckData} siteSettings={initialSettings} configOverride={blogConfig} />
           ) : (
             <ReactMarkdown components={markdownComponents}>{markdownContent}</ReactMarkdown>
           )}
