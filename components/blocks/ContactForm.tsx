@@ -43,6 +43,7 @@ export default function ContactForm({
     });
     const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
     const [messageError, setMessageError] = useState<string | null>(null);
+    const [fieldError, setFieldError] = useState<string | null>(null);
     const submitInquiry = useMutation(api.inquiries.submit);
 
     const isRFQ = !!form.requestType || !!productId;
@@ -57,20 +58,43 @@ export default function ContactForm({
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Word count guard — only for general queries (waived for RFQ)
-        if (needsMoreWords && form.message.trim().length > 0) {
+        // Basic required field validation (client-side safety)
+        const name = form.name.trim();
+        const email = form.email.trim();
+        const phone = form.phone.trim();
+        const message = form.message.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!name || !email || !phone) {
+            setFieldError("Please fill in your name, email, and phone.");
+            return;
+        }
+
+        if (!emailRegex.test(email)) {
+            setFieldError("Please enter a valid email address.");
+            return;
+        }
+
+        if (!isRFQ && wordCount(message) < MIN_WORDS) {
             setMessageError(`Please describe your query in at least ${MIN_WORDS} words. (${words} / ${MIN_WORDS})`);
             return;
         }
 
+        if (isRFQ && message.length === 0) {
+            setMessageError("Please add at least a short description of your requirements.");
+            return;
+        }
+
+        setFieldError(null);
+
         setStatus('sending');
         try {
             await submitInquiry({
-                name: form.name,
+                name,
                 brandName: form.brandName,
-                email: form.email,
-                phone: form.phone,
-                message: form.message,
+                email,
+                phone,
+                message,
                 productId,
                 productName,
                 productCategory: form.productCategory,

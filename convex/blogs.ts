@@ -147,3 +147,13 @@ export const batchImportSeoBlogs = mutation({
     return { imported: count };
   },
 });
+
+export const internalUpdateBlog = mutation({
+  args: {
+    id: v.id("blogs"),
+    updates: v.any(),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.id, args.updates);
+  },
+});

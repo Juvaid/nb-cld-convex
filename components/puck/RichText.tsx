@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 
 interface RichTextProps {
     value: string;
@@ -11,6 +11,33 @@ interface RichTextProps {
 export const RichText = ({ value, onChange, label }: RichTextProps) => {
     const editorRef = useRef<HTMLDivElement>(null);
 
+    const sanitizeHtml = useMemo(() => {
+        const stripDangerous = (html: string) => {
+            if (!html) return "";
+
+            let out = html;
+
+            // Hard strip script/style
+            out = out.replace(/<script[\s\S]*?<\/script>/gi, "");
+            out = out.replace(/<style[\s\S]*?<\/style>/gi, "");
+
+            // Remove inline event handlers (onload, onclick, etc)
+            out = out.replace(/\son\w+="[^"]*"/gi, "");
+            out = out.replace(/\son\w+='[^']*'/gi, "");
+
+            // Remove inline FAQ/schema JSON fragments that sometimes get pasted into the editor
+            out = out.replace(/\{\s*"@type"\s*:\s*"Question"[\s\S]*?\}\s*\}?/gi, "");
+            out = out.replace(/\{\s*"@context"[\s\S]*?\}\s*/gi, "");
+
+            // Normalize nbsp
+            out = out.replace(/&nbsp;/g, " ").replace(/\u00A0/g, " ");
+
+            return out.trim();
+        };
+
+        return stripDangerous;
+    }, []);
+
     useEffect(() => {
         if (editorRef.current && editorRef.current.innerHTML !== value) {
             editorRef.current.innerHTML = value || "";
@@ -19,7 +46,7 @@ export const RichText = ({ value, onChange, label }: RichTextProps) => {
 
     const handleInput = () => {
         if (editorRef.current) {
-            onChange(editorRef.current.innerHTML);
+            onChange(sanitizeHtml(editorRef.current.innerHTML));
         }
     };
 
@@ -27,6 +54,22 @@ export const RichText = ({ value, onChange, label }: RichTextProps) => {
         document.execCommand(command, false, value);
         handleInput();
     };
+
+    const setBlock = (tag: "p" | "h2" | "h3" | "h4") => {
+        execCommand("formatBlock", tag);
+    };
+
+    const setLink = () => {
+        const url = prompt("Enter link URL:");
+        if (!url) return;
+        execCommand("createLink", url);
+    };
+
+    const removeLink = () => execCommand("unlink");
+
+    const insertHr = () => execCommand("insertHorizontalRule");
+
+    const insertInlineCode = () => execCommand("formatBlock", "pre");
 
     return (
         <div className="space-y-2">
@@ -51,6 +94,14 @@ export const RichText = ({ value, onChange, label }: RichTextProps) => {
                     </button>
                     <button
                         type="button"
+                        onClick={() => execCommand("underline")}
+                        className="p-1.5 hover:bg-white rounded-md transition-colors text-slate-600 underline w-8 h-8 flex items-center justify-center border border-transparent hover:border-slate-200"
+                        title="Underline"
+                    >
+                        U
+                    </button>
+                    <button
+                        type="button"
                         onClick={() => execCommand("insertUnorderedList")}
                         className="p-1.5 hover:bg-white rounded-md transition-colors text-slate-600 w-8 h-8 flex items-center justify-center border border-transparent hover:border-slate-200 text-lg"
                         title="Bullet List"
@@ -59,38 +110,87 @@ export const RichText = ({ value, onChange, label }: RichTextProps) => {
                     </button>
                     <button
                         type="button"
-                        onClick={() => {
-                            const url = prompt("Enter link URL:");
-                            if (url) execCommand("createLink", url);
-                        }}
+                        onClick={() => execCommand("insertOrderedList")}
+                        className="p-1.5 hover:bg-white rounded-md transition-colors text-slate-600 w-8 h-8 flex items-center justify-center border border-transparent hover:border-slate-200 text-sm font-bold"
+                        title="Numbered List"
+                    >
+                        1.
+                    </button>
+                    <button
+                        type="button"
+                        onClick={setLink}
                         className="p-1.5 hover:bg-white rounded-md transition-colors text-slate-600 w-8 h-8 flex items-center justify-center border border-transparent hover:border-slate-200"
                         title="Link"
                     >
                         🔗
                     </button>
+                    <button
+                        type="button"
+                        onClick={removeLink}
+                        className="p-1.5 hover:bg-white rounded-md transition-colors text-slate-600 w-8 h-8 flex items-center justify-center border border-transparent hover:border-slate-200"
+                        title="Remove Link"
+                    >
+                        ⛓️
+                    </button>
                     <div className="w-px h-4 bg-slate-200 mx-1" />
                     <button
                         type="button"
-                        onClick={() => execCommand("formatBlock", "h2")}
+                        onClick={() => setBlock("h2")}
                         className="p-1.5 hover:bg-white rounded-md transition-colors text-slate-600 font-bold text-[10px] w-8 h-8 flex items-center justify-center border border-transparent hover:border-slate-200"
-                        title="Heading 1"
+                        title="Heading (H2)"
                     >
-                        H1
+                        H2
                     </button>
                     <button
                         type="button"
-                        onClick={() => execCommand("formatBlock", "h3")}
+                        onClick={() => setBlock("h3")}
                         className="p-1.5 hover:bg-white rounded-md transition-colors text-slate-600 font-bold text-[10px] w-8 h-8 flex items-center justify-center border border-transparent hover:border-slate-200"
-                        title="Heading 2"
+                        title="Heading (H3)"
                     >
-                        H2
+                        H3
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setBlock("h4")}
+                        className="p-1.5 hover:bg-white rounded-md transition-colors text-slate-600 font-bold text-[10px] w-8 h-8 flex items-center justify-center border border-transparent hover:border-slate-200"
+                        title="Heading (H4)"
+                    >
+                        H4
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => execCommand("formatBlock", "blockquote")}
+                        className="p-1.5 hover:bg-white rounded-md transition-colors text-slate-600 w-8 h-8 flex items-center justify-center border border-transparent hover:border-slate-200"
+                        title="Quote"
+                    >
+                        ❝
+                    </button>
+                    <button
+                        type="button"
+                        onClick={insertHr}
+                        className="p-1.5 hover:bg-white rounded-md transition-colors text-slate-600 w-8 h-8 flex items-center justify-center border border-transparent hover:border-slate-200"
+                        title="Divider"
+                    >
+                        ―
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => execCommand("removeFormat")}
+                        className="p-1.5 hover:bg-white rounded-md transition-colors text-slate-600 w-8 h-8 flex items-center justify-center border border-transparent hover:border-slate-200"
+                        title="Clear formatting"
+                    >
+                        Tx
                     </button>
                 </div>
                 <div
                     ref={editorRef}
                     contentEditable
                     onInput={handleInput}
-                    className="p-4 min-h-[200px] outline-none prose prose-slate prose-nb max-w-none text-slate-700 font-medium whitespace-pre-wrap"
+                    onPaste={() => {
+                        // allow paste, but normalize afterwards
+                        setTimeout(handleInput, 0);
+                    }}
+                    className="p-4 min-h-[260px] outline-none max-w-none text-slate-700 font-medium whitespace-pre-wrap"
                 />
             </div>
         </div>

@@ -85,6 +85,50 @@ const markdownComponents: Components = {
   td: ({ children }) => <td className="px-4 py-3">{children}</td>,
 };
 
+// Heuristic: detect if legacy blog content is mostly raw HTML from the old site
+const isLikelyHtml = (content: string) => {
+  if (!content) return false;
+  const sample = content.slice(0, 2000);
+  return /<(p|h1|h2|h3|h4|h5|h6|ul|ol|li|strong|em|span|div|table|thead|tbody|tr|td|th)[\s>]/i.test(sample);
+};
+
+// Clean legacy HTML while preserving its structure for rendering
+const cleanHtmlContent = (content: string) => {
+  if (!content) return "";
+
+  let cleaned = content;
+
+  // Remove JSON-LD / tracking script blobs that often come from WordPress/SEO plugins
+  cleaned = cleaned.replace(
+    /<script[^>]*type=["']application\/ld\+json["'][^>]*>[\s\S]*?<\/script>/gi,
+    "",
+  );
+  // Strip any other script/style tags just in case
+  cleaned = cleaned.replace(/<script[\s\S]*?<\/script>/gi, "");
+  cleaned = cleaned.replace(/<style[\s\S]*?<\/style>/gi, "");
+
+  // Some scrapes inline FAQ JSON fragments directly into visible HTML.
+  // Example: {"@type":"Question","name":"...","acceptedAnswer":{"@type":"Answer","text":" ... "}}
+  cleaned = cleaned.replace(
+    /\{\s*"@type"\s*:\s*"Question"[\s\S]*?"@type"\s*:\s*"Answer"[\s\S]*?"text"\s*:\s*".*?"\s*\}\s*\}\s*\}?/gi,
+    "",
+  );
+
+  // Remove leftover top-level JSON-ish noise like {"@context": ... } that escaped the script tags
+  cleaned = cleaned.replace(/\{[\s]*"@context"[\s\S]*?\}[\s]*/gi, "");
+  cleaned = cleaned.replace(/\{[\s]*"@type"[\s\S]*?\}[\s]*/gi, "");
+
+  // Normalize common HTML entities and excessive whitespace
+  cleaned = cleaned
+    .replace(/&nbsp;/g, " ")
+    .replace(/\u00A0/g, " ")
+    .replace(/\r\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+
+  return cleaned;
+};
+
 function PlaceholderImageBlock() {
   return (
     <div className="w-full aspect-video bg-gradient-to-br from-slate-100 to-slate-200 rounded-3xl shadow-2xl ring-1 ring-slate-200 flex flex-col items-center justify-center gap-4 relative overflow-hidden">
@@ -158,53 +202,52 @@ export default function BlogPostClient({ slug, initialBlog, initialSettings }: B
 
   const cleanMarkdownContent = (content: string) => {
     if (!content) return "";
-    
+
     let cleaned = content;
-    
-    // 1. Remove JSON-LD and Schema artifacts (common in scraped WordPress data)
-    // Target blocks starting with {"@context" or {"@type"
-    cleaned = cleaned.replace(/\{(\s*)"@context":[\s\S]*?\}/g, '');
-    cleaned = cleaned.replace(/\{(\s*)"@type":[\s\S]*?\}/g, '');
-    
-    // Remove hanging JSON fragments often found in poor scrapes
-    cleaned = cleaned.replace(/["']@type["']:\s*["'].*?["']/g, '');
-    cleaned = cleaned.replace(/["']@context["']:\s*["'].*?["']/g, '');
-    
-    // 2. Strip HTML tags to ensure clean rendering in standard markdown
-    // Many scraped blogs have nested spans and inline styles that break the design system
-    cleaned = cleaned.replace(/<[^>]*>?/gm, '');
-    
-    // 3. Line-by-line normalization
+
+    // 1. Remove obvious JSON-LD / schema fragments that might have been inlined as text
+    cleaned = cleaned.replace(/\{(\s*)"@context":[\s\S]*?\}/g, "");
+    cleaned = cleaned.replace(/\{(\s*)"@type":[\s\S]*?\}/g, "");
+    cleaned = cleaned.replace(/["']@type["']:\s*["'].*?["']/g, "");
+    cleaned = cleaned.replace(/["']@context["']:\s*["'].*?["']/g, "");
+
+    // 2. Line-by-line normalization for plain text content
     return cleaned
-      .split('\n')
-      .map(line => line.trim()) // Crucial: Remove leading spaces that trigger code blocks
-      .filter(line => {
+      .split("\n")
+      .map((line) => line.trim()) // avoid accidental code blocks from indented lines
+      .filter((line) => {
         const t = line.trim();
-        // Remove lines that are just JSON punctuation leftover after cleaning
-        if (t === '}' || t === '},' || t === ']' || t === '],' || t === '{' || t === '[' || t === '}}') return false;
-        // Skip obvious JSON property lines if they somehow survived
+        if (t === "}" || t === "}," || t === "]" || t === "],"
+          || t === "{" || t === "[" || t === "}}") return false;
         if (t.startsWith('"') && t.includes('": "') && (t.endsWith('"') || t.endsWith('",'))) return false;
         return t.length > 0;
       })
-      .join('\n')
-      .replace(/&nbsp;/g, ' ')
-      .replace(/\u00A0/g, ' ')
-      .replace(/\n{3,}/g, '\n\n')
+      .join("\n")
+      .replace(/&nbsp;/g, " ")
+      .replace(/\u00A0/g, " ")
+      .replace(/\n{3,}/g, "\n\n")
       .trim();
   };
 
-  let markdownContent = displayBlog.content || '';
+  let rawContent = displayBlog.content || "";
+  let markdownContent = "";
+  let htmlContent: string | null = null;
   let puckData = null;
 
-  if (markdownContent.trim().startsWith('{')) {
+  if (rawContent.trim().startsWith("{")) {
     try {
-      puckData = JSON.parse(markdownContent);
+      puckData = JSON.parse(rawContent);
       // Valid Puck JSON — use PuckRenderer, no need to flatten to markdown
-    } catch { /* parse failed */ }
+    } catch {
+      // parse failed, treat as non-Puck content below
+    }
   }
 
-  // Sanitize the content for all renderers to remove scraping artifacts
-  markdownContent = cleanMarkdownContent(markdownContent);
+  if (!puckData && isLikelyHtml(rawContent)) {
+    htmlContent = cleanHtmlContent(rawContent);
+  } else {
+    markdownContent = cleanMarkdownContent(rawContent);
+  }
 
   const related = allBlogs?.filter((b: any) => b.slug !== slug).slice(0, 3) || [];
   const publishedDate = displayBlog.publishedAt || displayBlog._creationTime;
@@ -291,9 +334,21 @@ export default function BlogPostClient({ slug, initialBlog, initialSettings }: B
         {/* Article body */}
         <div className="max-w-[760px] mx-auto px-4 sm:px-8 pb-8">
           {puckData ? (
-            <PuckRenderer data={puckData} siteSettings={initialSettings} configOverride={blogConfig} />
+            <PuckRenderer
+              data={puckData}
+              siteSettings={initialSettings}
+              configOverride={blogConfig}
+              hideHeader
+            />
+          ) : htmlContent ? (
+            <div
+              className="prose prose-lg max-w-none prose-headings:font-black prose-headings:text-slate-900 prose-p:text-slate-700 prose-p:leading-[1.85] prose-li:text-slate-700 prose-li:leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: htmlContent }}
+            />
           ) : (
-            <ReactMarkdown components={markdownComponents}>{markdownContent}</ReactMarkdown>
+            <ReactMarkdown components={markdownComponents}>
+              {markdownContent}
+            </ReactMarkdown>
           )}
         </div>
 
