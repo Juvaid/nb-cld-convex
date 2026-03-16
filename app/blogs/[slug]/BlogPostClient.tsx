@@ -157,12 +157,38 @@ export default function BlogPostClient({ slug, initialBlog, initialSettings }: B
 
   const cleanMarkdownContent = (content: string) => {
     if (!content) return "";
-    return content
+    
+    let cleaned = content;
+    
+    // 1. Remove JSON-LD and Schema artifacts (common in scraped WordPress data)
+    // Target blocks starting with {"@context" or {"@type"
+    cleaned = cleaned.replace(/\{(\s*)"@context":[\s\S]*?\}/g, '');
+    cleaned = cleaned.replace(/\{(\s*)"@type":[\s\S]*?\}/g, '');
+    
+    // Remove hanging JSON fragments often found in poor scrapes
+    cleaned = cleaned.replace(/["']@type["']:\s*["'].*?["']/g, '');
+    cleaned = cleaned.replace(/["']@context["']:\s*["'].*?["']/g, '');
+    
+    // 2. Strip HTML tags to ensure clean rendering in standard markdown
+    // Many scraped blogs have nested spans and inline styles that break the design system
+    cleaned = cleaned.replace(/<[^>]*>?/gm, '');
+    
+    // 3. Line-by-line normalization
+    return cleaned
       .split('\n')
-      .map(line => line.trim()) // Remove leading/trailing spaces that trigger code blocks
-      .map(line => line.replace(/\u00A0/g, ' ')) // Replace NBSP with space
+      .map(line => line.trim()) // Crucial: Remove leading spaces that trigger code blocks
+      .filter(line => {
+        const t = line.trim();
+        // Remove lines that are just JSON punctuation leftover after cleaning
+        if (t === '}' || t === '},' || t === ']' || t === '],' || t === '{' || t === '[' || t === '}}') return false;
+        // Skip obvious JSON property lines if they somehow survived
+        if (t.startsWith('"') && t.includes('": "') && (t.endsWith('"') || t.endsWith('",'))) return false;
+        return t.length > 0;
+      })
       .join('\n')
-      .replace(/\n{3,}/g, '\n\n') // Normalize multiple newlines
+      .replace(/&nbsp;/g, ' ')
+      .replace(/\u00A0/g, ' ')
+      .replace(/\n{3,}/g, '\n\n')
       .trim();
   };
 
