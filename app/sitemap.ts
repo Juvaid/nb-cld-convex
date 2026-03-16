@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 import { ConvexHttpClient } from 'convex/browser';
 import { api } from '@/convex/_generated/api';
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL || "";
     if (!convexUrl) {
         console.warn("NEXT_PUBLIC_CONVEX_URL is not set for sitemap generation");
@@ -51,4 +51,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     return [...pageUrls, ...productUrls, ...blogUrls];
 }
+
+export default sitemap;
+
 
