@@ -1,6 +1,7 @@
 import { mutation } from "./_generated/server";
 import { v } from "convex/values";
->>>>>>> b856db2f9083dcb27cc3a4b3b771b1e01e90ceea
+
+
 
 /**
  * Migration to update existing product images from legacy storage IDs to direct R2 public URLs.
@@ -69,7 +70,8 @@ export const migrateProductImagesToUrls = mutation({
 export const executePhase4AdminTasks = mutation({
     args: {},
     handler: async (ctx) => {
-        let updatedCount = 0;
+        let productUpdates = 0;
+        let blogUpdates = 0;
         const messages: string[] = [];
 
         // 1. Migrate Products
