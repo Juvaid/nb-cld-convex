@@ -118,7 +118,7 @@ export const saveR2Media = mutation({
         filename: v.string(),
         r2Key: v.string(),       // R2 object key (used for deletion)
         url: v.string(),          // Public CDN URL from R2
-        type: v.string(),         // "image" | "video"
+        type: v.string(),         // "image" | "video" | "pdf"
         size: v.optional(v.number()),
         folder: v.optional(v.string()), // Media folder/group label
         token: v.optional(v.string()),

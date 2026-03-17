@@ -337,7 +337,7 @@ export default function BlogPostClient({ slug, preloadedBlog, preloadedSettings 
         </div>
 
         {/* Article body */}
-        <div className="max-w-4xl mx-auto px-4 sm:px-8 pb-8">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 pb-8">
           {puckData ? (
             <PuckRenderer
               data={puckData}
@@ -365,7 +365,7 @@ export default function BlogPostClient({ slug, preloadedBlog, preloadedSettings 
 
         {/* Tags */}
         {tags.length > 0 && (
-          <div className="max-w-4xl mx-auto px-4 sm:px-8 pb-12">
+          <div className="max-w-[1400px] mx-auto px-4 sm:px-8 pb-12">
             <div className="flex flex-wrap gap-2 pt-8 border-t border-slate-100">
               <Tag size={14} className="text-slate-400 mt-0.5 flex-shrink-0" />
               {tags.map((tag: string) => (
@@ -379,7 +379,7 @@ export default function BlogPostClient({ slug, preloadedBlog, preloadedSettings 
       </article>
 
       {/* CTA */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-8 pb-16">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-8 pb-16">
         <div className="bg-slate-900 rounded-3xl p-8 md:p-12 text-center relative overflow-hidden">
           <div className="relative z-10">
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-nb-green/20 border border-nb-green/30 text-nb-green text-[10px] font-black uppercase tracking-widest mb-5">

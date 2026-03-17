@@ -6,9 +6,11 @@ import { uploadToR2 } from "@/lib/r2";
 const ALLOWED_TYPES = [
     "image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml",
     "video/mp4", "video/webm",
+    "application/pdf",
 ];
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024;   // 10 MB
 const MAX_VIDEO_SIZE = 100 * 1024 * 1024;  // 100 MB
+const MAX_PDF_SIZE = 20 * 1024 * 1024;    // 20 MB
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -33,9 +35,18 @@ function validateFile(file: File): string | null {
     if (!ALLOWED_TYPES.includes(file.type)) {
         return `File type '${file.type}' is not allowed.`;
     }
-    const maxSize = file.type.startsWith("video/") ? MAX_VIDEO_SIZE : MAX_IMAGE_SIZE;
+    let maxSize = MAX_IMAGE_SIZE;
+    let label = "10 MB";
+
+    if (file.type.startsWith("video/")) {
+        maxSize = MAX_VIDEO_SIZE;
+        label = "100 MB";
+    } else if (file.type === "application/pdf") {
+        maxSize = MAX_PDF_SIZE;
+        label = "20 MB";
+    }
+
     if (file.size > maxSize) {
-        const label = file.type.startsWith("video/") ? "100 MB" : "10 MB";
         return `'${file.name}' exceeds the ${label} limit.`;
     }
     return null;
@@ -50,11 +61,18 @@ async function uploadSingleFile(file: File, client: ConvexHttpClient, token: str
     const publicUrl = await uploadToR2(key, buffer, file.type);
     console.log(`[R2 Upload] Successfully uploaded ${file.name}. Public URL: ${publicUrl}`);
 
+    let mediaType = "image";
+    if (file.type.startsWith("video/")) {
+        mediaType = "video";
+    } else if (file.type === "application/pdf") {
+        mediaType = "pdf";
+    }
+
     const mediaId = await client.mutation(api.media.saveR2Media, {
         filename: file.name,
         r2Key: key,
         url: publicUrl,
-        type: file.type.startsWith("video/") ? "video" : "image",
+        type: mediaType,
         size: file.size,
         folder,
         token,
