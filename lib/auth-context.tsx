@@ -23,24 +23,17 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-    if (typeof window === "undefined") {
-        return (
-            <AuthContext.Provider
-                value={{
-                    user: null,
-                    login: async () => { },
-                    logout: async () => { },
-                    token: null,
-                    isLoading: true,
-                }}
-            >
-                {children}
-            </AuthContext.Provider>
-        );
-    }
     const [token, setToken] = useState<string | null>(null);
     const [isHydrated, setIsHydrated] = useState(false);
     const router = useRouter();
+
+    const currentUser = useQuery(
+        api.auth.getCurrentUser,
+        token && isHydrated ? { token } : "skip"
+    );
+
+    const loginMutation = useMutation(api.auth.login);
+    const logoutMutation = useMutation(api.auth.logout);
 
     // Load token from localStorage on mount
     useEffect(() => {
@@ -50,14 +43,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         setIsHydrated(true);
     }, []);
-
-    const currentUser = useQuery(
-        api.auth.getCurrentUser,
-        token && isHydrated ? { token } : "skip" // Token is string | null, args expects optional string.
-    );
-
-    const loginMutation = useMutation(api.auth.login);
-    const logoutMutation = useMutation(api.auth.logout);
 
     const login = async (email: string, password: string) => {
         const result = await loginMutation({ email, password });
@@ -78,6 +63,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setToken(null);
         router.push("/login"); // Redirect to login after logout
     };
+
+    if (typeof window === "undefined") {
+        return (
+            <AuthContext.Provider
+                value={{
+                    user: null,
+                    login: async () => { },
+                    logout: async () => { },
+                    token: null,
+                    isLoading: true,
+                }}
+            >
+                {children}
+            </AuthContext.Provider>
+        );
+    }
 
     return (
         <AuthContext.Provider

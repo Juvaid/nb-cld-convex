@@ -34,7 +34,9 @@ interface FloatingActionHubProps {
         vAlign?: "top" | "middle" | "bottom";
         whatsapp?: string;
         phone?: string;
-        catalogStorageId?: string;
+        catalogStorageId?: string; // Legacy
+        catalogs?: { name: string; storageId: string }[];
+        guidedMessages?: { label: string; link: string }[];
         popupDelay?: number;
         enableSearch?: boolean;
         isDismissible?: boolean;
@@ -49,7 +51,8 @@ export function FloatingActionHub({ settings, whatsappMessage }: FloatingActionH
     const [isVisible, setIsVisible] = useState(false);
     const [isDismissed, setIsDismissed] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
-    const searchResults = useQuery(api.search.globalSearch, { query: searchQuery });
+    // @ts-ignore - search api is generated during build
+    const searchResults = useQuery(api.search?.globalSearch, { query: searchQuery });
 
     useEffect(() => {
         setMounted(true);
@@ -83,12 +86,12 @@ export function FloatingActionHub({ settings, whatsappMessage }: FloatingActionH
         vAlign = "bottom",
         whatsapp,
         phone,
-        catalogStorageId
+        catalogs = [],
+        guidedMessages = []
     } = settings;
 
     const hasWhatsApp = !!whatsapp;
     const hasPhone = !!phone;
-    const hasCatalog = !!catalogStorageId;
 
     const encodedMessage = encodeURIComponent(whatsappMessage || "Hi, I'd like to enquire about manufacturing services.");
     const whatsappUrl = `https://wa.me/${whatsapp?.replace(/\D/g, '')}?text=${encodedMessage}`;
@@ -155,7 +158,7 @@ export function FloatingActionHub({ settings, whatsappMessage }: FloatingActionH
                                             exit={{ opacity: 0, height: 0 }}
                                             className="mt-3 space-y-2 max-h-[200px] overflow-y-auto pr-2 scrollbar-hide"
                                         >
-                                            {searchResults?.map((res, i) => (
+                                            {searchResults?.map((res: any, i: number) => (
                                                 <Link
                                                     key={i}
                                                     href={res.href}
@@ -186,37 +189,80 @@ export function FloatingActionHub({ settings, whatsappMessage }: FloatingActionH
                             </div>
                         )}
 
-                        {/* Quick Actions */}
-                        <div className="p-6 space-y-3 bg-white">
-                            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Quick Actions</h4>
-                            <div className="grid grid-cols-2 gap-3">
-                                {hasWhatsApp && (
-                                    <Link href={whatsappUrl} target="_blank" className="flex flex-col items-center justify-center p-4 rounded-2xl bg-[#25D366]/10 border border-[#25D366]/20 hover:bg-[#25D366]/20 transition-all group">
-                                        <div className="p-3 bg-[#25D366] text-white rounded-xl shadow-lg shadow-[#25D366]/20 mb-3 group-hover:scale-110 transition-transform">
-                                            <WhatsAppIcon size={20} />
-                                        </div>
-                                        <span className="text-[10px] font-black text-[#128C7E] uppercase tracking-widest">WhatsApp</span>
-                                    </Link>
-                                )}
-                                {hasPhone && (
-                                    <Link href={`tel:${phone}`} className="flex flex-col items-center justify-center p-4 rounded-2xl bg-blue-50 border border-blue-100 hover:bg-blue-100 transition-all group">
-                                        <div className="p-3 bg-blue-600 text-white rounded-xl shadow-lg shadow-blue-600/20 mb-3 group-hover:scale-110 transition-transform">
-                                            <Phone size={18} />
-                                        </div>
-                                        <span className="text-[10px] font-black text-blue-700 uppercase tracking-widest">Call Us</span>
-                                    </Link>
-                                )}
-                                {hasCatalog && (
-                                    <Link href={catalogStorageId?.startsWith('http') ? catalogStorageId : `/api/storage/${catalogStorageId}`} className="flex flex-col items-center justify-center p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-slate-100 transition-all group col-span-2">
-                                        <div className="flex items-center gap-4">
-                                            <div className="p-2.5 bg-nb-green text-white rounded-lg shadow-lg shadow-nb-green/20 group-hover:scale-110 transition-transform">
-                                                <FileText size={18} />
+                        {/* Scrollable Content */}
+                        <div className="flex-1 overflow-y-auto max-h-[400px] scrollbar-hide">
+                            {/* Guided Messages */}
+                            {guidedMessages.length > 0 && (
+                                <div className="p-6 pb-2 space-y-2">
+                                    {guidedMessages.map((msg, idx) => (
+                                        <Link
+                                            key={idx}
+                                            href={msg.link}
+                                            className="flex items-center justify-between p-3 rounded-2xl bg-white border border-slate-100 hover:border-nb-green/30 hover:shadow-md transition-all group"
+                                        >
+                                            <span className="text-[11px] font-bold text-slate-700">{msg.label}</span>
+                                            <div className="p-1.5 rounded-lg bg-slate-50 text-slate-400 group-hover:bg-nb-green/10 group-hover:text-nb-green transition-all">
+                                                <ArrowRight size={14} />
                                             </div>
-                                            <span className="text-[10px] font-black text-slate-700 uppercase tracking-widest">Download Full Catalog</span>
-                                        </div>
-                                    </Link>
-                                )}
+                                        </Link>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* Quick Actions */}
+                            <div className="p-6 space-y-4 bg-white">
+                                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Support & Contact</h4>
+                                <div className="grid grid-cols-2 gap-3">
+                                    {hasWhatsApp && (
+                                        <Link href={whatsappUrl} target="_blank" className="flex flex-col items-center justify-center p-4 rounded-2xl bg-[#25D366]/10 border border-[#25D366]/20 hover:bg-[#25D366]/20 transition-all group">
+                                            <div className="p-3 bg-[#25D366] text-white rounded-xl shadow-lg shadow-[#25D366]/20 mb-3 group-hover:scale-110 transition-transform">
+                                                <WhatsAppIcon size={20} />
+                                            </div>
+                                            <span className="text-[10px] font-black text-[#128C7E] uppercase tracking-widest">WhatsApp</span>
+                                        </Link>
+                                    )}
+                                    {hasPhone && (
+                                        <Link href={`tel:${phone}`} className="flex flex-col items-center justify-center p-4 rounded-2xl bg-blue-50 border border-blue-100 hover:bg-blue-100 transition-all group">
+                                            <div className="p-3 bg-blue-600 text-white rounded-xl shadow-lg shadow-blue-600/20 mb-3 group-hover:scale-110 transition-transform">
+                                                <Phone size={18} />
+                                            </div>
+                                            <span className="text-[10px] font-black text-blue-700 uppercase tracking-widest">Call Us</span>
+                                        </Link>
+                                    )}
+                                </div>
                             </div>
+
+                            {/* Catalogs */}
+                            {catalogs.length > 0 && (
+                                <div className="px-6 pb-6 space-y-3">
+                                    <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Catalogs & Downloads</h4>
+                                    <div className="space-y-2">
+                                        {catalogs.map((cat, idx) => (
+                                            <Link
+                                                key={idx}
+                                                href={cat.storageId.startsWith('http') ? cat.storageId : `/api/storage/${cat.storageId}`}
+                                                target="_blank"
+                                                className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-nb-green/5 hover:border-nb-green/20 transition-all group relative"
+                                            >
+                                                <div className="p-2 bg-nb-green text-white rounded-lg shadow-lg shadow-nb-green/20 group-hover:scale-110 transition-transform">
+                                                    <FileText size={16} />
+                                                </div>
+                                                <div className="flex-1 overflow-hidden">
+                                                    <span className="text-[11px] font-black text-slate-700 truncate block">{cat.name}</span>
+                                                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tight">PDF Download</span>
+                                                </div>
+                                                <Download size={14} className="text-slate-300 group-hover:text-nb-green transition-colors" />
+                                                
+                                                {/* Tooltip */}
+                                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-slate-900 text-white text-[9px] font-black uppercase tracking-widest rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl">
+                                                    View {cat.name}
+                                                    <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-slate-900" />
+                                                </div>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* Footer Info */}
