@@ -29,13 +29,24 @@ interface MegaMenuProps {
 export function MegaMenu({ config, isOpen, onClose }: MegaMenuProps) {
     if (!isOpen) return null;
 
+    // Determine width based on content
+    let widthClass = "w-[800px]"; // Default
+    if (config.type === "custom") {
+        const colCount = config.customColumns?.length || 0;
+        if (colCount === 1) widthClass = "w-[300px]";
+        else if (colCount === 2) widthClass = "w-[550px]";
+    }
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 10, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.98 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[800px] bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden z-[100]"
+            className={cn(
+                "absolute top-full left-1/2 -translate-x-1/2 mt-2 bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden z-[100]",
+                widthClass
+            )}
         >
             <div className="p-8">
                 {config.type === "categories" && <CategoryMegaMenu featuredProductSlug={config.featuredProductSlug} />}
@@ -163,8 +174,11 @@ function PagePreviewMenu({ config }: { config: MegaMenuConfig }) {
 }
 
 function CustomColumnMenu({ config }: { config: MegaMenuConfig }) {
+    const colCount = config.customColumns?.length || 0;
+    const gridCols = colCount === 1 ? "grid-cols-1" : colCount === 2 ? "grid-cols-2" : "grid-cols-3";
+
     return (
-        <div className="grid grid-cols-3 gap-8">
+        <div className={cn("grid gap-8", gridCols)}>
             {config.customColumns?.map((col, idx) => (
                 <div key={idx} className="space-y-4">
                     <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400">{col.heading}</h4>

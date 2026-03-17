@@ -277,9 +277,9 @@ export default function SettingsPage() {
     if (!localTheme) return <div>Loading...</div>;
 
     return (
-        <div className="space-y-8 pb-32 max-w-[1400px] mx-auto px-6">
+        <div className="space-y-6 pb-24 max-w-[1200px] mx-auto px-6">
             {/* High-End Command Center Header */}
-            <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-white/70 backdrop-blur-2xl p-8 rounded-[32px] border border-white/40 shadow-[0_8px_32px_rgba(0,0,0,0.05)] sticky top-6 z-50">
+            <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-white/70 backdrop-blur-2xl p-6 rounded-[24px] border border-white/40 shadow-[0_8px_32px_rgba(0,0,0,0.05)] sticky top-6 z-50">
                 <div className="flex items-center gap-5">
                     <div className="relative">
                         <div className="w-12 h-12 bg-nb-green/10 rounded-2xl flex items-center justify-center transform rotate-3">
@@ -330,16 +330,16 @@ export default function SettingsPage() {
             <div className="grid gap-8 lg:grid-cols-12">
                 {/* Visual Branding Card */}
                 <div className="lg:col-span-4 group">
-                    <Card className="h-full rounded-[32px] overflow-hidden border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] group-hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] transition-all duration-500 bg-white">
-                        <CardHeader className="p-8 border-b border-slate-50 bg-slate-50/30">
-                            <CardTitle className="text-lg font-bold tracking-tight text-slate-800 flex items-center gap-3">
-                                <div className="p-2 bg-nb-green/10 rounded-xl">
-                                    <Palette className="w-5 h-5 text-nb-green" />
+                    <Card className="h-full rounded-[24px] overflow-hidden border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] group-hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] transition-all duration-500 bg-white">
+                        <CardHeader className="p-6 border-b border-slate-50 bg-slate-50/30">
+                            <CardTitle className="text-base font-bold tracking-tight text-slate-800 flex items-center gap-3">
+                                <div className="p-1.5 bg-nb-green/10 rounded-lg">
+                                    <Palette className="w-4 h-4 text-nb-green" />
                                 </div>
                                 Visual Branding
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="p-10 flex flex-col items-center justify-center text-center space-y-8 h-[calc(100%-80px)]">
+                        <CardContent className="p-6 flex flex-col items-center justify-center text-center space-y-6 h-[calc(100%-60px)]">
                             <div className="relative">
                                 <div className="w-24 h-24 bg-nb-green/5 rounded-[32px] flex items-center justify-center transform group-hover:rotate-6 transition-transform duration-500">
                                     <Palette className="w-12 h-12 text-nb-green" />
@@ -365,47 +365,46 @@ export default function SettingsPage() {
 
                 {/* Snapshots / History Card */}
                 <div className="lg:col-span-8 grid md:grid-cols-2 gap-8 h-full">
-                    <Card className="rounded-[32px] border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] bg-white overflow-hidden flex flex-col">
-                        <CardHeader className="p-8 border-b border-slate-50 bg-slate-50/30">
-                            <CardTitle className="text-lg font-bold tracking-tight text-slate-800 flex items-center gap-3">
-                                <div className="p-2 bg-nb-green/10 rounded-xl">
-                                    <Bookmark className="w-5 h-5 text-nb-green" />
+                    <Card className="rounded-[24px] border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] bg-white overflow-hidden flex flex-col">
+                        <CardHeader className="p-6 border-b border-slate-50 bg-slate-50/30">
+                            <CardTitle className="text-base font-bold tracking-tight text-slate-800 flex items-center gap-3">
+                                <div className="p-1.5 bg-nb-green/10 rounded-lg">
+                                    <Bookmark className="w-4 h-4 text-nb-green" />
                                 </div>
                                 Quick Backup
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="p-8 space-y-6 flex-1 flex flex-col justify-center">
+                        <CardContent className="p-6 space-y-4 flex-1 flex flex-col justify-center">
                             <div className="space-y-2">
-                                <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Snapshot Label</label>
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Snapshot Label</label>
                                 <Input
-                                    placeholder="Enter a descriptive name..."
+                                    placeholder="Enter name..."
                                     value={snapshotName}
                                     onChange={(e) => setSnapshotName(e.target.value)}
-                                    className="h-14 px-6 text-base font-bold rounded-2xl border-slate-200 focus:ring-4 focus:ring-nb-green/10 transition-all placeholder:text-slate-300"
+                                    className="h-12 px-4 text-sm font-bold rounded-xl border-slate-200 focus:ring-4 focus:ring-nb-green/10 transition-all placeholder:text-slate-300"
                                 />
                             </div>
                             <Button
-                                className="w-full h-14 rounded-2xl bg-nb-green hover:bg-nb-green/90 text-white font-black tracking-wide shadow-lg shadow-nb-green/20 transition-all hover:scale-[1.02] active:scale-95"
+                                className="w-full h-12 rounded-xl bg-nb-green hover:bg-nb-green/90 text-white font-black text-[11px] tracking-wide shadow-lg shadow-nb-green/20 transition-all hover:scale-[1.02] active:scale-95"
                                 onClick={() => handleCreateSnapshot(false)}
                                 disabled={isCreatingSnapshot || !snapshotName}
                             >
-                                {isCreatingSnapshot ? <Loader2 className="w-5 h-5 animate-spin mr-3" /> : <Clock className="w-5 h-5 mr-3" />}
+                                {isCreatingSnapshot ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Clock className="w-4 h-4 mr-2" />}
                                 CREATE SNAPSHOT
                             </Button>
-                            <p className="text-[10px] text-slate-400 font-bold text-center uppercase tracking-widest">Capture entire site state instantly</p>
                         </CardContent>
                     </Card>
 
-                    <Card className="rounded-[32px] border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] bg-white overflow-hidden flex flex-col">
-                        <CardHeader className="p-8 border-b border-slate-50 bg-slate-50/30">
-                            <CardTitle className="text-lg font-bold tracking-tight text-slate-800 flex items-center gap-3">
-                                <div className="p-2 bg-nb-green/10 rounded-xl">
-                                    <Clock className="w-5 h-5 text-nb-green" />
+                    <Card className="rounded-[24px] border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] bg-white overflow-hidden flex flex-col">
+                        <CardHeader className="p-6 border-b border-slate-50 bg-slate-50/30">
+                            <CardTitle className="text-base font-bold tracking-tight text-slate-800 flex items-center gap-3">
+                                <div className="p-1.5 bg-nb-green/10 rounded-lg">
+                                    <Clock className="w-4 h-4 text-nb-green" />
                                 </div>
                                 System History
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="p-0 flex-1 overflow-y-auto max-h-[300px] scrollbar-hide">
+                        <CardContent className="p-0 flex-1 overflow-y-auto max-h-[250px] scrollbar-hide">
                             <div className="divide-y divide-slate-50">
                                 {snapshots?.map((snap) => (
                                     <div key={snap._id} className="group p-6 hover:bg-slate-50 transition-all flex items-center justify-between">
@@ -785,84 +784,78 @@ export default function SettingsPage() {
                     </Card>
                 </div>
 
-                <div className="lg:col-span-4">
+                <div className="lg:col-span-12">
                     {/* Navigation - Site Map */}
-                    <Card className="h-full rounded-[32px] border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] bg-white overflow-hidden flex flex-col">
-                        <CardHeader className="p-8 border-b border-slate-50 bg-slate-50/30 flex flex-row items-center justify-between">
+                    <Card className="rounded-[24px] border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] bg-white overflow-hidden">
+                        <CardHeader className="p-6 border-b border-slate-50 bg-slate-50/30 flex flex-row items-center justify-between">
                             <div className="flex items-center gap-3">
-                                <div className="p-2 bg-nb-green/10 rounded-xl">
-                                    <Layout className="w-5 h-5 text-nb-green" />
+                                <div className="p-1.5 bg-nb-green/10 rounded-lg">
+                                    <Layout className="w-4 h-4 text-nb-green" />
                                 </div>
-                                <CardTitle className="text-lg font-bold tracking-tight text-slate-800">Navigation Nodes</CardTitle>
+                                <CardTitle className="text-base font-bold tracking-tight text-slate-800">Navigation Nodes</CardTitle>
                             </div>
-                            <Button variant="outline" size="sm" onClick={addLink} className="h-10 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest bg-white border-slate-200 hover:border-nb-green transition-all">
+                            <Button variant="outline" size="sm" onClick={addLink} className="h-9 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest bg-white border-slate-200 hover:border-nb-green transition-all">
                                 <Plus className="w-4 h-4 mr-1.5" /> ADD NODE
                             </Button>
                         </CardHeader>
-                        <CardContent className="p-0 flex-1">
-                            <div className="overflow-x-auto">
-                                <table className="w-full text-left">
-                                    <thead>
-                                        <tr className="bg-slate-50/50 border-b border-slate-50">
-                                            <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Label</th>
-                                            <th className="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Target Path</th>
-                                            <th className="px-8 py-4 text-right"></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-slate-50">
-                                        {navLinks.map((link, i) => (
-                                            <tr key={i} className="group hover:bg-slate-50 transition-all">
-                                                <td className="px-8 py-4">
-                                                    <Input
-                                                        className="h-10 text-sm font-bold border-transparent bg-transparent hover:bg-white hover:border-slate-100 focus:bg-white focus:border-nb-green/20 focus:ring-4 focus:ring-nb-green/5 transition-all p-0 px-3 -ml-3"
-                                                        value={link.label}
-                                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateLink(i, "label", e.target.value)}
-                                                    />
-                                                </td>
-                                                <td className="px-8 py-4">
-                                                    <Input
-                                                        className="h-10 text-sm font-medium text-slate-500 border-transparent bg-transparent hover:bg-white hover:border-slate-100 focus:bg-white focus:border-nb-green/20 focus:ring-4 focus:ring-nb-green/5 transition-all p-0 px-3 -ml-3"
-                                                        value={link.href}
-                                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateLink(i, "href", e.target.value)}
-                                                    />
-                                                </td>
-                                                <td className="px-8 py-4 text-right">
-                                                    <div className="flex justify-end items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            className={cn(
-                                                                "h-9 px-4 rounded-xl text-[9px] font-black uppercase tracking-tighter border-slate-200 transition-all",
-                                                                link.megaMenu?.enabled 
-                                                                    ? "text-nb-green border-nb-green/20 bg-nb-green/5 ring-4 ring-nb-green/5" 
-                                                                    : "text-slate-500 hover:text-nb-green hover:border-nb-green/20"
-                                                            )}
-                                                            onClick={() => setEditingMegaMenuIdx(i)}
-                                                        >
-                                                            {link.megaMenu?.enabled ? "MEGA MENU: ON" : "CONFIG MENU"}
-                                                        </Button>
-                                                        <div className="w-px h-6 bg-slate-100 mx-1" />
-                                                        <button 
-                                                            onClick={() => moveLink(i, 'up')} 
-                                                            disabled={i === 0} 
-                                                            className="p-2 text-slate-300 hover:text-slate-900 disabled:opacity-0 transition-colors"
-                                                            title="Move Up"
-                                                        >
-                                                            <ArrowUp size={16} />
-                                                        </button>
-                                                        <button 
-                                                            onClick={() => removeLink(i)} 
-                                                            className="p-2 text-slate-300 hover:text-rose-500 transition-colors"
-                                                            title="Remove Node"
-                                                        >
-                                                            <Trash2 size={16} />
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                        <CardContent className="p-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {navLinks.map((link, i) => (
+                                    <div key={i} className="group relative bg-slate-50/50 p-4 rounded-2xl border border-slate-100 hover:border-nb-green/20 hover:bg-white hover:shadow-lg transition-all">
+                                        <div className="space-y-3">
+                                            <div className="space-y-1">
+                                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Node Label</label>
+                                                <Input
+                                                    className="h-10 text-sm font-bold border-slate-100 bg-white focus:ring-nb-green/10 transition-all rounded-xl"
+                                                    value={link.label}
+                                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateLink(i, "label", e.target.value)}
+                                                />
+                                            </div>
+                                            <div className="space-y-1">
+                                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Target path</label>
+                                                <Input
+                                                    className="h-9 text-xs font-medium text-slate-500 border-slate-100 bg-white/50 focus:ring-nb-green/10 transition-all rounded-xl"
+                                                    value={link.href}
+                                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateLink(i, "href", e.target.value)}
+                                                />
+                                            </div>
+                                            
+                                            <div className="flex items-center justify-between pt-2">
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    className={cn(
+                                                        "h-8 px-3 rounded-lg text-[9px] font-black uppercase tracking-tighter border-slate-200 transition-all bg-white",
+                                                        link.megaMenu?.enabled 
+                                                            ? "text-nb-green border-nb-green/20 bg-nb-green/5" 
+                                                            : "text-slate-500 hover:text-nb-green"
+                                                    )}
+                                                    onClick={() => setEditingMegaMenuIdx(i)}
+                                                >
+                                                    {link.megaMenu?.enabled ? "MEGA MENU: ON" : "CONFIG MENU"}
+                                                </Button>
+                                                
+                                                <div className="flex items-center gap-1">
+                                                    <button 
+                                                        onClick={() => moveLink(i, 'up')} 
+                                                        disabled={i === 0} 
+                                                        className="p-1.5 text-slate-300 hover:text-slate-600 disabled:opacity-0 transition-colors"
+                                                        title="Move Left"
+                                                    >
+                                                        <ArrowUpDown size={14} className="rotate-90" />
+                                                    </button>
+                                                    <button 
+                                                        onClick={() => removeLink(i)} 
+                                                        className="p-1.5 text-slate-300 hover:text-rose-500 transition-colors"
+                                                        title="Remove Node"
+                                                    >
+                                                        <Trash2 size={14} />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         </CardContent>
                     </Card>

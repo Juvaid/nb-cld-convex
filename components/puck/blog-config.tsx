@@ -14,7 +14,6 @@ import { SuccessStoryBlockConfig } from "./blocks/SuccessStoryBlock";
 export const blogConfig: Config = {
     components: {
         TextBlock: TextBlockConfig,
-        InlineImage: InlineImageBlockConfig,
         Spacer: SpacerBlockConfig,
         FAQ: FAQBlockConfig,
         ModernHero: ModernHeroBlockConfig,
@@ -34,10 +33,10 @@ export const blogConfig: Config = {
         render: ({ children }: import("@puckeditor/core").DefaultRootProps) => {
             return (
                 <div className="flex flex-col min-h-screen font-sans bg-white overflow-hidden max-w-[800px] mx-auto pt-10">
-                        <main className="flex-grow">
-                            {children}
-                        </main>
-                    </div>
+                    <main className="flex-grow">
+                        {children}
+                    </main>
+                </div>
             );
         }
     }

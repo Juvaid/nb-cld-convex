@@ -16,7 +16,7 @@ export const execute = mutation({
       }
     };
 
-    await updateSetting("contactEmail", "naturesboon@yahoo.com");
+    await updateSetting("contactEmail", "info@naturesboon.net");
     await updateSetting("contactPhone", "+91-9877659808");
     await updateSetting("workingHours", "Mon - Fri: 9:00 AM - 6:00 PM");
     await updateSetting("footerCopyrightText", `© ${new Date().getFullYear()} Nature's Boon. All rights reserved.`);
@@ -37,16 +37,16 @@ export const execute = mutation({
             console.log("Updating ContactSection block...");
             block.props.infoItems = [
               { label: 'Phone', value: '+91-9877659808', icon: 'Phone' },
-              { label: 'Email', value: 'naturesboon@yahoo.com', icon: 'Mail' },
+              { label: 'Email', value: 'info@naturesboon.net', icon: 'Mail' },
               { label: 'Factory Address', value: 'Pakhowal Rd, adj. Sri Chaitanya Techno School, Thakkarwal, Ludhiana, Punjab - 142022', icon: 'MapPin' },
               { label: 'Working Hours', value: 'Mon - Fri: 9:00 AM - 6:00 PM', icon: 'Clock' },
             ];
             block.props.departmentEmails = [
-              { label: 'Inquiry/Info', email: 'naturesboon@yahoo.com' },
-              { label: 'Accounts', email: 'accounts.naturesboon@yahoo.com' },
-              { label: 'Purchase', email: 'purchase.naturesboon@yahoo.com' },
-              { label: 'Sales', email: 'sales.naturesboon@yahoo.com' },
-              { label: 'Artwork/Designing', email: 'artwork.naturesboon@yahoo.com' },
+              { label: 'Inquiry/Info', email: 'info@naturesboon.net' },
+              { label: 'Accounts', email: 'accounts.info@naturesboon.net' },
+              { label: 'Purchase', email: 'purchase.info@naturesboon.net' },
+              { label: 'Sales', email: 'sales.info@naturesboon.net' },
+              { label: 'Artwork/Designing', email: 'artwork.info@naturesboon.net' },
               { label: 'Exports', email: 'Exports@lustercosmetics.in' },
               { label: 'Sales (Exports)', email: 'Sales@chitkaraexports.com' },
             ];

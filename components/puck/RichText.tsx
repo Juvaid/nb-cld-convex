@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { MediaPickerModal } from "../admin/MediaPickerModal";
 
 interface RichTextProps {
     value: string;
@@ -10,31 +11,22 @@ interface RichTextProps {
 
 export const RichText = ({ value, onChange, label }: RichTextProps) => {
     const editorRef = useRef<HTMLDivElement>(null);
+    const [isMediaPickerOpen, setIsMediaPickerOpen] = useState(false);
+    const [targetImage, setTargetImage] = useState<HTMLImageElement | null>(null);
 
     const sanitizeHtml = useMemo(() => {
         const stripDangerous = (html: string) => {
             if (!html) return "";
-
             let out = html;
-
-            // Hard strip script/style
             out = out.replace(/<script[\s\S]*?<\/script>/gi, "");
             out = out.replace(/<style[\s\S]*?<\/style>/gi, "");
-
-            // Remove inline event handlers (onload, onclick, etc)
             out = out.replace(/\son\w+="[^"]*"/gi, "");
             out = out.replace(/\son\w+='[^']*'/gi, "");
-
-            // Remove inline FAQ/schema JSON fragments that sometimes get pasted into the editor
             out = out.replace(/\{\s*"@type"\s*:\s*"Question"[\s\S]*?\}\s*\}?/gi, "");
             out = out.replace(/\{\s*"@context"[\s\S]*?\}\s*/gi, "");
-
-            // Normalize nbsp
             out = out.replace(/&nbsp;/g, " ").replace(/\u00A0/g, " ");
-
             return out.trim();
         };
-
         return stripDangerous;
     }, []);
 
@@ -43,6 +35,28 @@ export const RichText = ({ value, onChange, label }: RichTextProps) => {
             editorRef.current.innerHTML = value || "";
         }
     }, [value]);
+
+    // Handle clicks inside the editor to detect image selection for replacement
+    useEffect(() => {
+        const handleClick = (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            if (target.tagName === "IMG") {
+                setTargetImage(target as HTMLImageElement);
+                setIsMediaPickerOpen(true);
+            }
+        };
+
+        const currentEditor = editorRef.current;
+        if (currentEditor) {
+            currentEditor.addEventListener("click", handleClick);
+        }
+
+        return () => {
+            if (currentEditor) {
+                currentEditor.removeEventListener("click", handleClick);
+            }
+        };
+    }, []);
 
     const handleInput = () => {
         if (editorRef.current) {
@@ -55,144 +69,84 @@ export const RichText = ({ value, onChange, label }: RichTextProps) => {
         handleInput();
     };
 
-    const setBlock = (tag: "p" | "h2" | "h3" | "h4") => {
-        execCommand("formatBlock", tag);
-    };
-
+    const setBlock = (tag: "p" | "h2" | "h3" | "h4") => execCommand("formatBlock", tag);
     const setLink = () => {
         const url = prompt("Enter link URL:");
-        if (!url) return;
-        execCommand("createLink", url);
+        if (url) execCommand("createLink", url);
     };
 
-    const removeLink = () => execCommand("unlink");
+    const insertImage = () => {
+        setTargetImage(null);
+        setIsMediaPickerOpen(true);
+    };
 
-    const insertHr = () => execCommand("insertHorizontalRule");
+    const handleMediaSelect = (urls: string[]) => {
+        if (urls.length > 0) {
+            const url = urls[0];
+            if (targetImage) {
+                // Replacing existing image
+                targetImage.src = url;
+                targetImage.alt = "Article image";
+                handleInput();
+            } else {
+                // Inserting new image
+                const imgHtml = `<img src="${url}" alt="Article image" />`;
+                execCommand("insertHTML", imgHtml);
+            }
+        }
+        setIsMediaPickerOpen(false);
+        setTargetImage(null);
+    };
 
-    const insertInlineCode = () => execCommand("formatBlock", "pre");
+    const insertFAQ = () => {
+        const faqHtml = `<details><summary>What is your frequently asked question?</summary><div><p>Type the detailed answer to the question right here.</p></div></details><p><br></p>`;
+        execCommand("insertHTML", faqHtml);
+    };
 
     return (
         <div className="space-y-2">
             {label && <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">{label}</label>}
             <div className="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm focus-within:ring-2 focus-within:ring-nb-green/20 focus-within:border-nb-green transition-all">
-                <div className="flex items-center gap-1 p-2 border-b border-slate-100 bg-slate-50">
-                    <button
-                        type="button"
-                        onClick={() => execCommand("bold")}
-                        className="p-1.5 hover:bg-white rounded-md transition-colors text-slate-600 font-bold w-8 h-8 flex items-center justify-center border border-transparent hover:border-slate-200"
-                        title="Bold"
-                    >
-                        B
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => execCommand("italic")}
-                        className="p-1.5 hover:bg-white rounded-md transition-colors text-slate-600 italic w-8 h-8 flex items-center justify-center border border-transparent hover:border-slate-200"
-                        title="Italic"
-                    >
-                        I
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => execCommand("underline")}
-                        className="p-1.5 hover:bg-white rounded-md transition-colors text-slate-600 underline w-8 h-8 flex items-center justify-center border border-transparent hover:border-slate-200"
-                        title="Underline"
-                    >
-                        U
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => execCommand("insertUnorderedList")}
-                        className="p-1.5 hover:bg-white rounded-md transition-colors text-slate-600 w-8 h-8 flex items-center justify-center border border-transparent hover:border-slate-200 text-lg"
-                        title="Bullet List"
-                    >
-                        •
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => execCommand("insertOrderedList")}
-                        className="p-1.5 hover:bg-white rounded-md transition-colors text-slate-600 w-8 h-8 flex items-center justify-center border border-transparent hover:border-slate-200 text-sm font-bold"
-                        title="Numbered List"
-                    >
-                        1.
-                    </button>
-                    <button
-                        type="button"
-                        onClick={setLink}
-                        className="p-1.5 hover:bg-white rounded-md transition-colors text-slate-600 w-8 h-8 flex items-center justify-center border border-transparent hover:border-slate-200"
-                        title="Link"
-                    >
-                        🔗
-                    </button>
-                    <button
-                        type="button"
-                        onClick={removeLink}
-                        className="p-1.5 hover:bg-white rounded-md transition-colors text-slate-600 w-8 h-8 flex items-center justify-center border border-transparent hover:border-slate-200"
-                        title="Remove Link"
-                    >
-                        ⛓️
-                    </button>
+                <div className="flex flex-wrap items-center gap-1 p-2 border-b border-slate-100 bg-slate-50">
+                    <button type="button" onClick={() => execCommand("bold")} className="p-1.5 hover:bg-white rounded-md text-slate-600 font-bold w-8 h-8 flex items-center justify-center">B</button>
+                    <button type="button" onClick={() => execCommand("italic")} className="p-1.5 hover:bg-white rounded-md text-slate-600 italic w-8 h-8 flex items-center justify-center">I</button>
+                    <button type="button" onClick={() => execCommand("insertUnorderedList")} className="p-1.5 hover:bg-white rounded-md text-slate-600 w-8 h-8 flex items-center justify-center text-lg">•</button>
+                    <button type="button" onClick={() => execCommand("insertOrderedList")} className="p-1.5 hover:bg-white rounded-md text-slate-600 w-8 h-8 flex items-center justify-center text-sm font-bold">1.</button>
+                    <button type="button" onClick={setLink} className="p-1.5 hover:bg-white rounded-md text-slate-600 w-8 h-8 flex items-center justify-center">🔗</button>
+
                     <div className="w-px h-4 bg-slate-200 mx-1" />
-                    <button
-                        type="button"
-                        onClick={() => setBlock("h2")}
-                        className="p-1.5 hover:bg-white rounded-md transition-colors text-slate-600 font-bold text-[10px] w-8 h-8 flex items-center justify-center border border-transparent hover:border-slate-200"
-                        title="Heading (H2)"
-                    >
-                        H2
+
+                    <button type="button" onClick={() => setBlock("h2")} className="p-1.5 hover:bg-white rounded-md text-slate-600 font-bold text-[10px] w-8 h-8 flex items-center justify-center">H2</button>
+                    <button type="button" onClick={() => setBlock("h3")} className="p-1.5 hover:bg-white rounded-md text-slate-600 font-bold text-[10px] w-8 h-8 flex items-center justify-center">H3</button>
+                    <button type="button" onClick={() => execCommand("formatBlock", "blockquote")} className="p-1.5 hover:bg-white rounded-md text-slate-600 w-8 h-8 flex items-center justify-center">❝</button>
+
+                    <div className="w-px h-4 bg-slate-200 mx-1" />
+
+                    <button type="button" onClick={insertImage} className="p-1.5 hover:bg-white rounded-md text-slate-600 text-xs font-bold px-2 flex items-center border border-slate-200 bg-white shadow-sm ml-1" title="Insert Image Library">
+                        🖼️ Add Image
                     </button>
-                    <button
-                        type="button"
-                        onClick={() => setBlock("h3")}
-                        className="p-1.5 hover:bg-white rounded-md transition-colors text-slate-600 font-bold text-[10px] w-8 h-8 flex items-center justify-center border border-transparent hover:border-slate-200"
-                        title="Heading (H3)"
-                    >
-                        H3
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => setBlock("h4")}
-                        className="p-1.5 hover:bg-white rounded-md transition-colors text-slate-600 font-bold text-[10px] w-8 h-8 flex items-center justify-center border border-transparent hover:border-slate-200"
-                        title="Heading (H4)"
-                    >
-                        H4
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => execCommand("formatBlock", "blockquote")}
-                        className="p-1.5 hover:bg-white rounded-md transition-colors text-slate-600 w-8 h-8 flex items-center justify-center border border-transparent hover:border-slate-200"
-                        title="Quote"
-                    >
-                        ❝
-                    </button>
-                    <button
-                        type="button"
-                        onClick={insertHr}
-                        className="p-1.5 hover:bg-white rounded-md transition-colors text-slate-600 w-8 h-8 flex items-center justify-center border border-transparent hover:border-slate-200"
-                        title="Divider"
-                    >
-                        ―
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => execCommand("removeFormat")}
-                        className="p-1.5 hover:bg-white rounded-md transition-colors text-slate-600 w-8 h-8 flex items-center justify-center border border-transparent hover:border-slate-200"
-                        title="Clear formatting"
-                    >
-                        Tx
+                    <button type="button" onClick={insertFAQ} className="p-1.5 hover:bg-white rounded-md text-slate-600 text-xs font-bold px-2 flex items-center border border-slate-200 bg-white shadow-sm ml-1" title="Insert FAQ Accordion">
+                        ❓ Add FAQ
                     </button>
                 </div>
                 <div
                     ref={editorRef}
                     contentEditable
                     onInput={handleInput}
-                    onPaste={() => {
-                        // allow paste, but normalize afterwards
-                        setTimeout(handleInput, 0);
-                    }}
-                    className="p-4 min-h-[260px] outline-none max-w-none text-slate-700 font-medium whitespace-pre-wrap"
+                    onPaste={() => setTimeout(handleInput, 0)}
+                    className="p-4 min-h-[400px] outline-none max-w-none text-slate-700 font-medium whitespace-pre-wrap prose prose-sm sm:prose-base"
                 />
             </div>
+
+            <MediaPickerModal
+                isOpen={isMediaPickerOpen}
+                onClose={() => {
+                    setIsMediaPickerOpen(false);
+                    setTargetImage(null);
+                }}
+                onSelect={handleMediaSelect}
+                selectedIds={[]}
+            />
         </div>
     );
 };

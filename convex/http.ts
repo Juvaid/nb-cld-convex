@@ -9,12 +9,13 @@ http.route({
     method: "POST",
     handler: httpAction(async (ctx, request) => {
         const body = await request.json();
-        const { path, title, data } = body;
-
+        const { path, title, data, draftData, description } = body;
+        
         await ctx.runMutation(api.ingestion_mutations.saveIngestedPage, {
             path,
             title,
-            draftData: data,
+            description,
+            draftData: draftData || data,
         });
 
         return new Response(JSON.stringify({ success: true }), {
