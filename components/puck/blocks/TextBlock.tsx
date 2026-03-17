@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 export interface TextBlockProps extends SharedFieldProps {
     content: string;
     alignment?: "left" | "center" | "right" | "justify";
-    maxWidth?: "none" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "full";
+    maxWidth?: "none" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "full";
 }
 
 export const TextBlockConfig: ComponentConfig<TextBlockProps> = {
@@ -37,6 +37,7 @@ export const TextBlockConfig: ComponentConfig<TextBlockProps> = {
                 { label: "Large (lg)", value: "lg" },
                 { label: "X-Large (xl)", value: "xl" },
                 { label: "2X-Large (2xl)", value: "2xl" },
+                { label: "5X-Large (5xl)", value: "5xl" },
             ]
         },
         ...sharedFields
@@ -72,8 +73,11 @@ export const TextBlockConfig: ComponentConfig<TextBlockProps> = {
                             "[&_ol]:pl-6 [&_ol]:my-6 [&_ol>li]:list-decimal [&_ol>li]:text-slate-700 [&_ol>li]:text-lg [&_ol>li]:mb-2 [&_ol>li]:pl-2",
                             "[&_blockquote]:border-l-4 [&_blockquote]:border-nb-green [&_blockquote]:bg-slate-50 [&_blockquote]:px-6 [&_blockquote]:py-4 [&_blockquote]:rounded-r-2xl [&_blockquote]:my-8 [&_blockquote>p]:text-slate-800 [&_blockquote>p]:italic [&_blockquote>p]:text-xl [&_blockquote>p]:mb-0",
 
-                            // Image Magic
-                            "[&_img]:w-full [&_img]:rounded-2xl [&_img]:my-10 [&_img]:border [&_img]:border-slate-200/60 [&_img]:shadow-sm [&_img]:object-cover [&_img]:bg-slate-50",
+                            // Image Magic - Support for inline styles and floating
+                            "[&_img]:max-w-full [&_img]:rounded-2xl [&_img]:my-6 sm:[&_img]:my-10 [&_img]:border [&_img]:border-slate-200/60 [&_img]:shadow-sm [&_img]:object-cover [&_img]:relative [&_img]:z-10",
+                            "[&_.float-img-left]:float-left [&_.float-img-left]:mr-8 [&_.float-img-left]:mb-4",
+                            "[&_.float-img-right]:float-right [&_.float-img-right]:ml-8 [&_.float-img-right]:mb-4",
+                            "[&_.block-img-center]:block [&_.block-img-center]:mx-auto",
 
                             // Native FAQ Accordion Magic
                             "[&_details]:mb-4 [&_details]:border [&_details]:border-slate-200 [&_details]:rounded-2xl [&_details]:bg-white [&_details]:shadow-sm [&_details]:overflow-hidden [&_details]:group",

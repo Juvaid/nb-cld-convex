@@ -12,6 +12,7 @@ import { PuckRenderer } from '@/components/PuckRenderer';
 import { blogConfig } from '@/components/puck/blog-config';
 import Link from 'next/link';
 import React from 'react';
+import { cn } from '@/lib/utils';
 
 interface BlogPostClientProps {
   slug: string;
@@ -336,7 +337,7 @@ export default function BlogPostClient({ slug, preloadedBlog, preloadedSettings 
         </div>
 
         {/* Article body */}
-        <div className="max-w-[760px] mx-auto px-4 sm:px-8 pb-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-8 pb-8">
           {puckData ? (
             <PuckRenderer
               data={puckData}
@@ -346,7 +347,13 @@ export default function BlogPostClient({ slug, preloadedBlog, preloadedSettings 
             />
           ) : htmlContent ? (
             <div
-              className="prose prose-lg max-w-none prose-headings:font-black prose-headings:text-slate-900 prose-p:text-slate-700 prose-p:leading-[1.85] prose-li:text-slate-700 prose-li:leading-relaxed"
+              className={cn(
+                "prose prose-lg max-w-none prose-headings:font-black prose-headings:text-slate-900 prose-p:text-slate-700 prose-p:leading-[1.85] prose-li:text-slate-700 prose-li:leading-relaxed",
+                "prose-img:rounded-2xl prose-img:border prose-img:border-slate-100 prose-img:shadow-sm",
+                "[&_.float-img-left]:float-left [&_.float-img-left]:mr-8 [&_.float-img-left]:mb-4 [&_.float-img-left]:max-w-[40%]",
+                "[&_.float-img-right]:float-right [&_.float-img-right]:ml-8 [&_.float-img-right]:mb-4 [&_.float-img-right]:max-w-[40%]",
+                "[&_.block-img-center]:block [&_.block-img-center]:mx-auto"
+              )}
               dangerouslySetInnerHTML={{ __html: htmlContent }}
             />
           ) : (
@@ -358,7 +365,7 @@ export default function BlogPostClient({ slug, preloadedBlog, preloadedSettings 
 
         {/* Tags */}
         {tags.length > 0 && (
-          <div className="max-w-[760px] mx-auto px-4 sm:px-8 pb-12">
+          <div className="max-w-4xl mx-auto px-4 sm:px-8 pb-12">
             <div className="flex flex-wrap gap-2 pt-8 border-t border-slate-100">
               <Tag size={14} className="text-slate-400 mt-0.5 flex-shrink-0" />
               {tags.map((tag: string) => (
@@ -372,7 +379,7 @@ export default function BlogPostClient({ slug, preloadedBlog, preloadedSettings 
       </article>
 
       {/* CTA */}
-      <div className="max-w-[760px] mx-auto px-4 sm:px-8 pb-16">
+      <div className="max-w-4xl mx-auto px-4 sm:px-8 pb-16">
         <div className="bg-slate-900 rounded-3xl p-8 md:p-12 text-center relative overflow-hidden">
           <div className="relative z-10">
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-nb-green/20 border border-nb-green/30 text-nb-green text-[10px] font-black uppercase tracking-widest mb-5">
