@@ -54,6 +54,9 @@ export default function SettingsPage() {
         whatsapp: "",
         phone: "",
         catalogStorageId: "",
+        popupDelay: 0,
+        enableSearch: true,
+        isDismissible: true,
     });
     const [isSavingSite, setIsSavingSite] = useState(false);
 
@@ -106,6 +109,9 @@ export default function SettingsPage() {
                 whatsapp: "",
                 phone: "",
                 catalogStorageId: "",
+                popupDelay: 0,
+                enableSearch: true,
+                isDismissible: true,
             });
         }
     }, [siteSettings]);
@@ -752,20 +758,48 @@ export default function SettingsPage() {
                                     </Card>
 
                                     <Card className="rounded-[32px] border-slate-100 shadow-sm bg-white p-8 space-y-6 flex flex-col">
-                                        <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Interaction Logic</h4>
+                                        <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Interaction & UX</h4>
                                         <div className="flex-1 space-y-6">
-                                            <div className="space-y-2">
-                                                <label className="text-[10px] font-black text-slate-500 flex items-center gap-2 uppercase">
-                                                    <Sparkles className="w-3 h-3 text-nb-green" /> Custom Greeting
-                                                </label>
-                                                <textarea
-                                                    value={whatsappMessage}
-                                                    onChange={(e) => setWhatsappMessage(e.target.value)}
-                                                    placeholder="Hello! I'm interested in..."
-                                                    className="w-full h-24 p-5 text-sm font-medium rounded-2xl border-slate-200 focus:ring-4 focus:ring-nb-green/10 focus:border-nb-green/30 resize-none transition-all placeholder:text-slate-300"
-                                                />
+                                            <div className="space-y-4 pt-2">
+                                                <div className="flex items-center justify-between">
+                                                    <label className="text-[10px] font-black text-slate-500 uppercase">Enable Global Search</label>
+                                                    <Button
+                                                        size="sm"
+                                                        onClick={() => setFloatingWidget({ ...floatingWidget, enableSearch: !floatingWidget.enableSearch })}
+                                                        className={cn("h-8 px-4 rounded-lg text-[9px] font-black", floatingWidget.enableSearch ? "bg-nb-green text-white" : "bg-slate-100 text-slate-400")}
+                                                    >
+                                                        {floatingWidget.enableSearch ? "ACTIVE" : "DISABLED"}
+                                                    </Button>
+                                                </div>
+                                                <div className="flex items-center justify-between">
+                                                    <label className="text-[10px] font-black text-slate-500 uppercase">Mobile Swipe Dismiss</label>
+                                                    <Button
+                                                        size="sm"
+                                                        onClick={() => setFloatingWidget({ ...floatingWidget, isDismissible: !floatingWidget.isDismissible })}
+                                                        className={cn("h-8 px-4 rounded-lg text-[9px] font-black", floatingWidget.isDismissible ? "bg-nb-green text-white" : "bg-slate-100 text-slate-400")}
+                                                    >
+                                                        {floatingWidget.isDismissible ? "ACTIVE" : "DISABLED"}
+                                                    </Button>
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <div className="flex justify-between items-center">
+                                                        <label className="text-[10px] font-black text-slate-500 uppercase">Popup Delay (Seconds)</label>
+                                                        <span className="text-xs font-black text-nb-green">{floatingWidget.popupDelay || 0}s</span>
+                                                    </div>
+                                                    <input
+                                                        id="popup-delay-slider"
+                                                        title="Adjust Popup Delay"
+                                                        type="range"
+                                                        min="0"
+                                                        max="30"
+                                                        step="1"
+                                                        value={floatingWidget.popupDelay || 0}
+                                                        onChange={(e) => setFloatingWidget({ ...floatingWidget, popupDelay: parseInt(e.target.value) })}
+                                                        className="w-full h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-nb-green"
+                                                    />
+                                                </div>
                                             </div>
-                                            <div className="space-y-2">
+                                            <div className="space-y-2 border-t border-slate-50 pt-4">
                                                 <label className="text-[10px] font-black text-slate-500 flex items-center gap-2 uppercase">
                                                     <FileText className="w-3 h-3 text-nb-green" /> Digital Catalog
                                                 </label>
