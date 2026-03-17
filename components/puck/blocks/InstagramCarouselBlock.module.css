@@ -3,8 +3,8 @@
     transition: transform 500ms ease-out;
 
     /* Default (Mobile) */
-    --items-per-row: 1.25;
-    --gap-size: 12;
+    --items-per-row: 1.6;
+    --gap-size: 8;
 
     /* Tablet (sm) */
     @media (min-width: 640px) {
