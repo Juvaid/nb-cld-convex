@@ -75,7 +75,7 @@ const nextConfig: any = {
       // When you switch the domain, these 301s will pass ranking to the new URLs
 
       // About page (indexed as /about-us)
-      // { source: '/about-us', destination: '/about', permanent: true },
+      { source: '/about-us', destination: '/about', permanent: true },
 
       // Contact (indexed as /contact — same slug, keep anyway)
       { source: '/contact-us', destination: '/contact', permanent: true },
@@ -93,8 +93,10 @@ const nextConfig: any = {
       { source: '/mens-grooming', destination: '/products#mens-grooming', permanent: true },
       { source: '/hair-care-products', destination: '/products#hair-care', permanent: true },
       { source: '/hair-care', destination: '/products#hair-care', permanent: true },
-      { source: '/personal-care', destination: '/products#personal-care', permanent: true },
-      { source: '/personal-care/:path*', destination: '/products', permanent: true },
+      { source: '/personal-care', destination: '/products#body-personal-care', permanent: true },
+      { source: '/personal-care/:path*', destination: '/products#body-personal-care', permanent: true },
+      { source: '/body-personal-care', destination: '/products#body-personal-care', permanent: true },
+      { source: '/body-care', destination: '/products#body-personal-care', permanent: true },
 
       // Old SEO landing pages → blog posts (301 authority transfer)
       { source: '/best-face-wash-manufacturers-in-india', destination: '/blogs/best-face-wash-manufacturers-in-india', permanent: true },
@@ -127,7 +129,8 @@ const nextConfig: any = {
       { source: '/top-derma-products-manufacturers-in-india/', destination: '/blogs/top-derma-products-manufacturers-in-india', permanent: true },
       { source: '/top-derma-products-manufacturers-india', destination: '/blogs/top-derma-products-manufacturers-in-india', permanent: true },
       { source: '/top-derma-products-m', destination: '/blogs/top-derma-products-manufacturers-in-india', permanent: true },
-      // { source: '/customised-finished-product', destination: '/services#custom-formulation', permanent: true },
+      { source: '/customised-finished-product', destination: '/services#custom-formulation', permanent: true },
+      { source: '/customised-finished-product/', destination: '/services#custom-formulation', permanent: true },
 
       // Case study → blog or about (no exact equivalent yet)
       // { source: '/case-study', destination: '/blogs', permanent: true },
