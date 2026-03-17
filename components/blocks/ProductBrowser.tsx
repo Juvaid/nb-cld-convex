@@ -106,9 +106,9 @@ export default function ProductBrowser({ categories: initialCategories = [], use
                         <Skeleton className="flex-1 h-10 rounded-xl" />
                     </div>
                     {/* Grid Skeleton */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
                         {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
-                            <Skeleton key={i} className="w-full h-80 rounded-[32px]" />
+                            <Skeleton key={i} className="w-full h-64 sm:h-80 rounded-2xl md:rounded-[32px]" />
                         ))}
                     </div>
                 </section>
@@ -224,70 +224,72 @@ export default function ProductBrowser({ categories: initialCategories = [], use
                                     )}
                                 </div>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
                                     {(cat.products || []).map((product, idx) => {
-                                        const sharedClass = "group rounded-[32px] border border-slate-900/5 bg-white hover:shadow-premium transition-all duration-500 hover:-translate-y-2 overflow-hidden flex flex-col";
+                                        const sharedClass = "group rounded-[28px] border border-slate-100 bg-white hover:shadow-[0_24px_60px_-15px_rgba(0,0,0,0.08)] transition-all duration-700 hover:-translate-y-2 overflow-hidden flex flex-col";
                                         const inner = (
                                             <>
-                                                <div className="aspect-square bg-slate-50 flex items-center justify-center relative overflow-hidden h-64 sm:h-auto">
+                                                <div className="aspect-square bg-[#F9FAFB] flex items-center justify-center relative overflow-hidden">
                                                     {product.images && product.images.length > 0 && typeof product.images[0] === 'string' && product.images[0] !== "[object Object]" ? (
                                                         <Image
                                                             src={product.images[0].startsWith('http') ? product.images[0] : `/api/storage/${product.images[0]}`}
                                                             alt={product.name}
                                                             fill
-                                                            className="object-cover relative z-10 group-hover:scale-110 transition-transform duration-1000"
-                                                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                                                            className="object-cover relative z-10 group-hover:scale-105 transition-transform duration-[1200ms] ease-out"
+                                                            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                                                         />
                                                     ) : (
-                                                        <span className="text-4xl opacity-30 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">🌿</span>
+                                                        <span className="text-3xl opacity-20 group-hover:scale-110 group-hover:rotate-6 transition-all duration-700 font-serif italic text-nb-green">NB</span>
                                                     )}
-                                                    <div className="absolute inset-0 bg-gradient-to-br from-nb-green-soft/10 to-nb-green-deep/10 opacity-50" />
-                                                </div>
-                                                <div className="p-4 sm:p-5 flex flex-col flex-1">
-                                                    <div className="flex-1">
-                                                        {product.usp && (
-                                                            <span className="inline-block px-3 py-1 text-[10px] font-black text-nb-green bg-nb-green/5 rounded-full mb-3 tracking-widest uppercase border border-nb-green/10">
+                                                    
+                                                    {/* Floating USP Badge */}
+                                                    {product.usp && (
+                                                        <div className="absolute top-2 left-2 z-30">
+                                                            <span className="backdrop-blur-sm bg-white/90 text-nb-green text-[7px] font-bold uppercase tracking-[0.1em] px-2 py-0.5 rounded-full border border-nb-green/5 shadow-sm">
                                                                 {product.usp}
                                                             </span>
-                                                        )}
-                                                        <h3 className="text-lg font-black text-slate-900 mb-1 line-clamp-2 leading-snug">
+                                                        </div>
+                                                    )}
+                                                    
+                                                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-slate-900/5 opacity-40 z-20" />
+                                                </div>
+                                                <div className="p-3 sm:p-4 flex flex-col flex-1 items-center text-center">
+                                                    <div className="flex-1 w-full flex flex-col items-center">
+                                                        <h3 className="text-xs sm:text-sm font-black text-slate-900 mb-0.5 line-clamp-1 leading-tight tracking-tight uppercase group-hover:text-nb-green transition-colors duration-500">
                                                             {product.name}
                                                         </h3>
-                                                        {product.sku && (
-                                                            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
-                                                                SKU: {product.sku}
-                                                            </div>
-                                                        )}
-                                                        {product.moq && (
-                                                            <div className="text-[10px] font-bold text-nb-green uppercase tracking-widest mb-4 flex items-center gap-1.5">
-                                                                <span className="w-1.5 h-1.5 rounded-full bg-nb-green" />
-                                                                MOQ: {product.moq} Units
-                                                            </div>
-                                                        )}
+                                                        
+                                                        <div className="flex items-center justify-center gap-1.5 mb-2.5">
+                                                            {product.moq && (
+                                                                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">
+                                                                    Min. {product.moq}
+                                                                </span>
+                                                            )}
+                                                            {product.sku && (
+                                                                <span className="text-[8px] font-medium text-slate-300 uppercase tracking-widest">
+                                                                    • {product.sku}
+                                                                </span>
+                                                            )}
+                                                        </div>
+
                                                         {product.pricingTiers && product.pricingTiers.length > 0 && (
-                                                            <div className="mb-4">
-                                                                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Wholesale Tiers:</div>
-                                                                <div className="flex flex-wrap gap-1.5">
-                                                                    {product.pricingTiers.map((tier, i) => (
-                                                                        <div key={i} className="text-[10px] font-bold bg-slate-50 border border-slate-900/5 px-2 py-0.5 rounded-md text-slate-600">
-                                                                            {tier.minQty}+: ₹{tier.price}
-                                                                        </div>
-                                                                    ))}
-                                                                </div>
+                                                            <div className="mb-3.5 flex flex-col items-center">
+                                                                <span className="text-[10px] sm:text-xs font-black text-nb-green">
+                                                                    ₹{product.pricingTiers[0].price}
+                                                                </span>
+                                                                <span className="text-[7px] font-bold text-slate-300 uppercase tracking-widest mt-0.5">Wholesale</span>
                                                             </div>
                                                         )}
                                                     </div>
+                                                    
                                                     <div
-                                                        className="inline-flex items-center h-12 gap-2 text-sm font-bold text-white bg-slate-900 px-6 rounded-2xl hover:bg-gradient-to-r hover:from-nb-green hover:to-nb-green-deep hover:shadow-xl hover:shadow-nb-green/20 transition-all w-full justify-center group/btn relative overflow-hidden"
+                                                        className="flex items-center h-8 sm:h-9 gap-1.5 text-[9px] font-bold text-white bg-slate-900 px-4 rounded-full hover:bg-nb-green transition-all duration-500 w-fit justify-center group/btn relative overflow-hidden shadow-lg shadow-slate-900/10"
                                                     >
-                                                        {/* Premium Sheen Effect */}
-                                                        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                                                            <div className="absolute inset-0 w-2/3 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-25deg] -translate-x-[150%] group-hover/btn:animate-premium-sheen" />
-                                                        </div>
-                                                        <span className="relative z-10">Details</span>
-                                                        <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform relative z-10" />
+                                                        <span className="relative z-10 uppercase tracking-[0.15em]">Explore</span>
+                                                        <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform duration-500 relative z-10" />
                                                     </div>
                                                 </div>
+
                                             </>
                                         );
                                         return product.slug
