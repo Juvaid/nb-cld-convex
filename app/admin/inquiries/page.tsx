@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Mail, Search, Loader2, Eye, Trash2, CheckCircle2, MessageSquare, Clock, Copy, Check, Phone, Filter, Calendar, Tag, ChevronDown, Download } from "lucide-react";
