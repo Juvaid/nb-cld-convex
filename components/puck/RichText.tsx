@@ -113,13 +113,13 @@ export const RichText = ({ value, onChange, label }: RichTextProps) => {
                     <button type="button" onClick={() => execCommand("insertUnorderedList")} className="p-1.5 hover:bg-white rounded-md text-slate-600 w-8 h-8 flex items-center justify-center text-lg">•</button>
                     <button type="button" onClick={() => execCommand("insertOrderedList")} className="p-1.5 hover:bg-white rounded-md text-slate-600 w-8 h-8 flex items-center justify-center text-sm font-bold">1.</button>
                     <button type="button" onClick={setLink} className="p-1.5 hover:bg-white rounded-md text-slate-600 w-8 h-8 flex items-center justify-center">🔗</button>
-                    
+
                     <div className="w-px h-4 bg-slate-200 mx-1" />
-                    
+
                     <button type="button" onClick={() => setBlock("h2")} className="p-1.5 hover:bg-white rounded-md text-slate-600 font-bold text-[10px] w-8 h-8 flex items-center justify-center">H2</button>
                     <button type="button" onClick={() => setBlock("h3")} className="p-1.5 hover:bg-white rounded-md text-slate-600 font-bold text-[10px] w-8 h-8 flex items-center justify-center">H3</button>
                     <button type="button" onClick={() => execCommand("formatBlock", "blockquote")} className="p-1.5 hover:bg-white rounded-md text-slate-600 w-8 h-8 flex items-center justify-center">❝</button>
-                    
+
                     <div className="w-px h-4 bg-slate-200 mx-1" />
 
                     <button type="button" onClick={insertImage} className="p-1.5 hover:bg-white rounded-md text-slate-600 text-xs font-bold px-2 flex items-center border border-slate-200 bg-white shadow-sm ml-1" title="Insert Image Library">
@@ -138,7 +138,7 @@ export const RichText = ({ value, onChange, label }: RichTextProps) => {
                 />
             </div>
 
-            <MediaPickerModal 
+            <MediaPickerModal
                 isOpen={isMediaPickerOpen}
                 onClose={() => {
                     setIsMediaPickerOpen(false);

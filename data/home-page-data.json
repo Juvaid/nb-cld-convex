@@ -22,10 +22,6 @@
                 {
                     "label": "About",
                     "href": "/about"
-                },
-                {
-                    "label": "Blogs",
-                    "href": "/blogs"
                 }
             ]
         },

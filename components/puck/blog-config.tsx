@@ -4,6 +4,8 @@ import { Config } from "@puckeditor/core";
 // Blocks
 import { TextBlockConfig } from "./blocks/TextBlock";
 import { SpacerBlockConfig } from "./blocks/SpacerBlock";
+import { InlineImageBlockConfig } from "./blocks/InlineImageBlock";
+import { FAQBlockConfig } from "./blocks/FAQBlock";
 import { ModernHeroBlockConfig } from "./blocks/ModernHeroBlock";
 import { CTABlockConfig } from "./blocks/CTABlock";
 import { ModernServicesBlockConfig } from "./blocks/ModernServicesBlock";
@@ -13,6 +15,7 @@ export const blogConfig: Config = {
     components: {
         TextBlock: TextBlockConfig,
         Spacer: SpacerBlockConfig,
+        FAQ: FAQBlockConfig,
         ModernHero: ModernHeroBlockConfig,
         CTA: CTABlockConfig,
         ModernServices: ModernServicesBlockConfig,
@@ -20,7 +23,7 @@ export const blogConfig: Config = {
     },
     categories: {
         "Blog Content": {
-            components: ["TextBlock", "Spacer"],
+            components: ["TextBlock", "InlineImage", "FAQ", "Spacer"],
         },
         "Marketing": {
             components: ["ModernHero", "CTA", "ModernServices", "SuccessStory"],
@@ -30,10 +33,10 @@ export const blogConfig: Config = {
         render: ({ children }: import("@puckeditor/core").DefaultRootProps) => {
             return (
                 <div className="flex flex-col min-h-screen font-sans bg-white overflow-hidden max-w-[800px] mx-auto pt-10">
-                        <main className="flex-grow">
-                            {children}
-                        </main>
-                    </div>
+                    <main className="flex-grow">
+                        {children}
+                    </main>
+                </div>
             );
         }
     }

@@ -71,16 +71,16 @@ export const TextBlockConfig: ComponentConfig<TextBlockProps> = {
                             "[&_ul]:pl-6 [&_ul]:my-6 [&_ul>li]:list-disc [&_ul>li]:text-slate-700 [&_ul>li]:text-lg [&_ul>li]:mb-2 [&_ul>li]:pl-2",
                             "[&_ol]:pl-6 [&_ol]:my-6 [&_ol>li]:list-decimal [&_ol>li]:text-slate-700 [&_ol>li]:text-lg [&_ol>li]:mb-2 [&_ol>li]:pl-2",
                             "[&_blockquote]:border-l-4 [&_blockquote]:border-nb-green [&_blockquote]:bg-slate-50 [&_blockquote]:px-6 [&_blockquote]:py-4 [&_blockquote]:rounded-r-2xl [&_blockquote]:my-8 [&_blockquote>p]:text-slate-800 [&_blockquote>p]:italic [&_blockquote>p]:text-xl [&_blockquote>p]:mb-0",
-                            
+
                             // Image Magic
                             "[&_img]:w-full [&_img]:rounded-2xl [&_img]:my-10 [&_img]:border [&_img]:border-slate-200/60 [&_img]:shadow-sm [&_img]:object-cover [&_img]:bg-slate-50",
-                            
+
                             // Native FAQ Accordion Magic
                             "[&_details]:mb-4 [&_details]:border [&_details]:border-slate-200 [&_details]:rounded-2xl [&_details]:bg-white [&_details]:shadow-sm [&_details]:overflow-hidden [&_details]:group",
                             "[&_summary]:font-bold [&_summary]:text-lg [&_summary]:text-slate-900 [&_summary]:p-6 [&_summary]:cursor-pointer [&_summary]:bg-slate-50/50 hover:[&_summary]:bg-slate-50 transition-colors [&_summary]:outline-none",
                             "[&_details>div]:px-6 [&_details>div]:pb-6 [&_details>div]:pt-2 [&_details>div]:text-slate-700",
                             "[&_details[open]_summary]:border-b [&_details[open]_summary]:border-slate-100",
-                            
+
                             "focus:outline-none",
                             maxWidthClass
                         )}

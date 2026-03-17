@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import type { PageRecord, BlogRecord, ProductRecord } from "@/types"
 
-const SITE_URL = "https://new.naturesboon.net";
+const SITE_URL = "https://naturesboon.net";
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.jpg`;
 
 /**
@@ -30,11 +30,15 @@ const BRAND_NAME = "Nature's Boon";
  * to prevent doubling up when the root layout template is applied.
  */
 function sanitizeTitle(title?: string): string {
-  if (!title) return "";
-  return title
-    .replace(new RegExp(`\\s*\\|\\s*${BRAND_NAME.replace(/'/g, "[''\"'\"']")}\\s*$`, "i"), "")
-    .replace(/\s*\|\s*$/, "")
-    .trim();
+    if (!title) return "";
+    
+    // Remove existing brand name suffix and any trailing pipes
+    const clean = title
+        .split('|')[0] // Take only the first part before any pipes
+        .replace(new RegExp(`${BRAND_NAME}$`, 'i'), '') // Remove brand name if it's at the end
+        .trim();
+    
+    return clean;
 }
 
 export function generateProductMetadata(product: ProductRecord, path: string): Metadata {

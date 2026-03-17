@@ -41,40 +41,35 @@ export async function CmsPageRenderer({ path, fallbackData, useDynamicData }: Cm
     try {
         // DEFENSIVE FETCH: Wrap all fetches in a single try/catch with a timeout
         // This ensures the page renders within a reasonable time even if Convex is slow.
-        const timeout = (ms: number) => new Promise((_, reject) => 
+        const timeoutPromise = (ms: number) => new Promise((_, reject) => 
             setTimeout(() => reject(new Error("Convex fetch timeout")), ms)
         );
         
         // Fetch core site data
-        const coreData = await Promise.race([
-            Promise.all([
-                fetchQuery(api.pages.getPublishedPage, { path }),
-                fetchQuery(api.siteSettings.getSiteSettings),
-                fetchQuery(api.siteData.getStats),
-            ]),
-            timeout(5000).then(() => [null, null, null])
-        ]) as [any, any, any];
+        // We use a shorter timeout for core data to ensure we have time for dynamic data if needed
+        const coreData = await Promise.all([
+            Promise.race([fetchQuery(api.pages.getPublishedPage, { path }), timeoutPromise(3000).catch(() => null)]),
+            Promise.race([fetchQuery(api.siteSettings.getSiteSettings), timeoutPromise(3000).catch(() => null)]),
+            Promise.race([fetchQuery(api.siteData.getStats), timeoutPromise(3000).catch(() => null)]),
+        ]);
 
         [initialPage, initialSettings, initialStats] = coreData;
 
-        // Fetch dynamic product data if needed
+        // Fetch dynamic product data if needed (parallelized with its own timeout)
         if (useDynamicData || path === "/products") {
-            const dynamicData = await Promise.race([
-                Promise.all([
-                    fetchQuery(api.categories.list),
-                    fetchQuery(api.products.listAll, { status: "active" }),
-                ]),
-                timeout(5000).then(() => [null, null])
-            ]) as [any, any];
+            const dynamicData = await Promise.all([
+                Promise.race([fetchQuery(api.categories.list), timeoutPromise(3000).catch(() => null)]),
+                Promise.race([fetchQuery(api.products.listAll, { status: "active" }), timeoutPromise(3000).catch(() => null)]),
+            ]);
 
             [initialCategories, initialProducts] = dynamicData;
         }
     } catch (e) {
-        console.error(`[CmsPageRenderer] SSR fetch failed for ${path} after 5s or error:`, e);
+        console.error(`[CmsPageRenderer] SSR fetch failed for ${path}:`, e);
         // All initial* vars stay null — client will hydrate with live data via preloaded handles
     }
 
-    const schema = initialPage ? getPageSchema(initialPage.schemaType || "none", initialPage as PageRecord, "https://new.naturesboon.net") : null;
+    const schema = (initialPage as any)?.schemaType ? getPageSchema((initialPage as any).schemaType || "none", initialPage as PageRecord, "https://naturesboon.net") : null;
 
     return (
         <>
