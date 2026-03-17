@@ -262,7 +262,7 @@ export default function BlogPostClient({ slug, preloadedBlog, preloadedSettings 
 
       <article>
         {/* Hero */}
-        <header className="relative w-full pt-28 pb-16 overflow-hidden bg-slate-950">
+        <header className="relative w-full pt-20 pb-10 overflow-hidden bg-slate-950">
           {displayBlog.coverImage ? (
             <div className="absolute inset-0 z-0">
               <img src={displayBlog.coverImage} alt="" className="w-full h-full object-cover opacity-15 scale-110 blur-2xl" />
@@ -276,28 +276,28 @@ export default function BlogPostClient({ slug, preloadedBlog, preloadedSettings 
           <div className="container mx-auto px-4 sm:px-8 relative z-10">
             <div className="max-w-3xl mx-auto">
               <Link href="/blogs"
-                className="inline-flex items-center gap-2 text-nb-green/70 hover:text-nb-green font-bold text-xs uppercase tracking-widest mb-8 transition-colors group">
-                <ArrowLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" />
+                className="inline-flex items-center gap-2 text-nb-green/70 hover:text-nb-green font-bold text-[10px] uppercase tracking-widest mb-4 transition-colors group">
+                <ArrowLeft size={12} className="group-hover:-translate-x-0.5 transition-transform" />
                 All Articles
               </Link>
 
               {displayBlog.category === 'seo-page' && (
-                <div className="mb-5">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-nb-green/20 border border-nb-green/30 text-nb-green text-[10px] font-black uppercase tracking-widest">
+                <div className="mb-4">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-nb-green/20 border border-nb-green/30 text-nb-green text-[9px] font-black uppercase tracking-widest">
                     Manufacturing Guide
                   </span>
                 </div>
               )}
 
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white leading-[1.1] tracking-tight mb-5">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white leading-[1.15] tracking-tight mb-4">
                 {displayBlog.title}
               </h1>
 
               {displayBlog.excerpt && (
-                <p className="text-slate-300 text-lg leading-relaxed max-w-2xl mb-8">{displayBlog.excerpt}</p>
+                <p className="text-slate-400 text-base sm:text-lg leading-relaxed max-w-2xl mb-6 line-clamp-2">{displayBlog.excerpt}</p>
               )}
 
-              <div className="flex flex-wrap items-center gap-5 pt-6 border-t border-slate-800">
+              <div className="flex flex-wrap items-center gap-5 pt-4 border-t border-slate-800/50">
                 {displayBlog.author && (
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-full bg-nb-green flex items-center justify-center text-white font-black text-sm shadow">
@@ -322,11 +322,14 @@ export default function BlogPostClient({ slug, preloadedBlog, preloadedSettings 
           </div>
         </header>
 
-        {/* Cover image OR placeholder */}
-        <div className="max-w-4xl mx-auto px-4 sm:px-8 -mt-8 relative z-10 mb-12">
+        {/* Cover image banner */}
+        <div className="max-w-5xl mx-auto px-4 sm:px-8 -mt-6 relative z-10 mb-10">
           {displayBlog.coverImage ? (
-            <img src={displayBlog.coverImage} alt={displayBlog.title}
-              className="w-full aspect-video object-cover rounded-3xl shadow-2xl ring-1 ring-slate-200" />
+            <div className="relative group">
+              <img src={displayBlog.coverImage} alt={displayBlog.title}
+                className="w-full aspect-[21/9] sm:aspect-[2.4/1] object-cover rounded-2xl shadow-xl ring-1 ring-white/10" />
+              <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-slate-900/10 pointer-events-none" />
+            </div>
           ) : (
             <PlaceholderImageBlock />
           )}
