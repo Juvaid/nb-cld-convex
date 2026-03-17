@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { MediaPickerModal } from "../admin/MediaPickerModal";
 
 interface RichTextProps {
     value: string;
@@ -10,6 +11,8 @@ interface RichTextProps {
 
 export const RichText = ({ value, onChange, label }: RichTextProps) => {
     const editorRef = useRef<HTMLDivElement>(null);
+    const [isMediaPickerOpen, setIsMediaPickerOpen] = useState(false);
+    const [targetImage, setTargetImage] = useState<HTMLImageElement | null>(null);
 
     const sanitizeHtml = useMemo(() => {
         const stripDangerous = (html: string) => {
@@ -33,6 +36,28 @@ export const RichText = ({ value, onChange, label }: RichTextProps) => {
         }
     }, [value]);
 
+    // Handle clicks inside the editor to detect image selection for replacement
+    useEffect(() => {
+        const handleClick = (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            if (target.tagName === "IMG") {
+                setTargetImage(target as HTMLImageElement);
+                setIsMediaPickerOpen(true);
+            }
+        };
+
+        const currentEditor = editorRef.current;
+        if (currentEditor) {
+            currentEditor.addEventListener("click", handleClick);
+        }
+
+        return () => {
+            if (currentEditor) {
+                currentEditor.removeEventListener("click", handleClick);
+            }
+        };
+    }, []);
+
     const handleInput = () => {
         if (editorRef.current) {
             onChange(sanitizeHtml(editorRef.current.innerHTML));
@@ -50,9 +75,27 @@ export const RichText = ({ value, onChange, label }: RichTextProps) => {
         if (url) execCommand("createLink", url);
     };
 
-    const insertImagePlaceholder = () => {
-        const imgHtml = `<img src="https://placehold.co/800x450/f8fafc/94a3b8?text=Image+Placeholder+(Replace+URL)" alt="Placeholder" />`;
-        execCommand("insertHTML", imgHtml);
+    const insertImage = () => {
+        setTargetImage(null);
+        setIsMediaPickerOpen(true);
+    };
+
+    const handleMediaSelect = (urls: string[]) => {
+        if (urls.length > 0) {
+            const url = urls[0];
+            if (targetImage) {
+                // Replacing existing image
+                targetImage.src = url;
+                targetImage.alt = "Article image";
+                handleInput();
+            } else {
+                // Inserting new image
+                const imgHtml = `<img src="${url}" alt="Article image" />`;
+                execCommand("insertHTML", imgHtml);
+            }
+        }
+        setIsMediaPickerOpen(false);
+        setTargetImage(null);
     };
 
     const insertFAQ = () => {
@@ -79,7 +122,7 @@ export const RichText = ({ value, onChange, label }: RichTextProps) => {
                     
                     <div className="w-px h-4 bg-slate-200 mx-1" />
 
-                    <button type="button" onClick={insertImagePlaceholder} className="p-1.5 hover:bg-white rounded-md text-slate-600 text-xs font-bold px-2 flex items-center border border-slate-200 bg-white shadow-sm ml-1" title="Insert Image Placeholder">
+                    <button type="button" onClick={insertImage} className="p-1.5 hover:bg-white rounded-md text-slate-600 text-xs font-bold px-2 flex items-center border border-slate-200 bg-white shadow-sm ml-1" title="Insert Image Library">
                         🖼️ Add Image
                     </button>
                     <button type="button" onClick={insertFAQ} className="p-1.5 hover:bg-white rounded-md text-slate-600 text-xs font-bold px-2 flex items-center border border-slate-200 bg-white shadow-sm ml-1" title="Insert FAQ Accordion">
@@ -94,6 +137,16 @@ export const RichText = ({ value, onChange, label }: RichTextProps) => {
                     className="p-4 min-h-[400px] outline-none max-w-none text-slate-700 font-medium whitespace-pre-wrap prose prose-sm sm:prose-base"
                 />
             </div>
+
+            <MediaPickerModal 
+                isOpen={isMediaPickerOpen}
+                onClose={() => {
+                    setIsMediaPickerOpen(false);
+                    setTargetImage(null);
+                }}
+                onSelect={handleMediaSelect}
+                selectedIds={[]}
+            />
         </div>
     );
 };
