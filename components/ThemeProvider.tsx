@@ -58,13 +58,14 @@ function flattenToCssVars(obj: any, prefix = "--nb-"): string {
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  if (typeof window === "undefined") {
-    return <>{children}</>;
-  }
-  const themeData = useQuery(api.theme.getThemeSettings);
+  const themeData = useQuery(typeof window === "undefined" ? "skip" as any : api.theme.getThemeSettings);
   // Initialize cssVars with the default theme immediately for SSR and initial render
   const [cssVars, setCssVars] = useState(() => flattenToCssVars(defaultTheme));
   const [mounted, setMounted] = useState(false);
+
+  if (typeof window === "undefined") {
+    return <>{children}</>;
+  }
 
   useEffect(() => {
     setMounted(true);
