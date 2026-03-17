@@ -224,7 +224,7 @@ export function InstagramCarouselBlock({
         const handleResize = () => {
             if (window.innerWidth >= 1024) setItemsPerRow(5);
             else if (window.innerWidth >= 640) setItemsPerRow(2.5);
-            else setItemsPerRow(1.25);
+            else setItemsPerRow(1.6);
         };
 
         // Initial setup
@@ -334,7 +334,7 @@ export function InstagramCarouselBlock({
                                 return (
                                     <div
                                         key={`${post.id}-${i}`}
-                                        className={`w-[80vw] sm:w-[calc(40%-12px)] lg:w-[calc(20%-19.2px)] shrink-0 flex flex-col group`}
+                                        className={`w-[60vw] sm:w-[calc(40%-12px)] lg:w-[calc(20%-19.2px)] shrink-0 flex flex-col group`}
                                     >
                                         <a
                                             href={post.link || "https://www.instagram.com/naturesboon.cosmeticsmfg"}

@@ -131,7 +131,7 @@ export const HeroCarouselBlock = ({ useDesignSystem = true, autoPlay, interval, 
 
 
                 {/* The card itself - adjusted aspect ratios for more panoramic feel */}
-                <div className="relative w-full aspect-[4/3] md:aspect-[21/8] xl:aspect-[25/8] min-h-[320px] xl:min-h-[450px] rounded-none md:rounded-[2.5rem] overflow-hidden group shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] ring-1 ring-black/5">
+                <div className="relative w-full aspect-square md:aspect-[21/8] xl:aspect-[25/8] min-h-[300px] xl:min-h-[450px] rounded-none md:rounded-[2.5rem] overflow-hidden group shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] ring-1 ring-black/5">
                     <AnimatePresence initial={false} custom={direction}>
                         <motion.div
                             key={activeIndex}
