@@ -1,7 +1,5 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-
 import { useTheme } from "@/components/ThemeProvider";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";

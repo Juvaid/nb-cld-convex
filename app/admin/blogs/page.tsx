@@ -1,7 +1,5 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Plus, Search, PenTool, Loader2, Eye, Trash2, Globe, Lock } from "lucide-react";

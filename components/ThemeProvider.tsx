@@ -63,10 +63,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [cssVars, setCssVars] = useState(() => flattenToCssVars(defaultTheme));
   const [mounted, setMounted] = useState(false);
 
-  if (typeof window === "undefined") {
-    return <>{children}</>;
-  }
-
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -108,12 +104,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       link.href = href;
       document.head.appendChild(link);
     }
-
-    return () => {
-      // Optional: Remove font if theme changes (often better to leave it cached though)
-      // For now, we leave it to avoid FOUC on rapid theme toggles, but ensure no dups above.
-    };
-  }, [themeData?.typography]);
+  }, [themeData?.typography, mounted]);
 
   useEffect(() => {
     if (themeData) {
@@ -121,6 +112,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       setCssVars(vars);
     }
   }, [themeData]);
+
+  if (typeof window === "undefined") {
+    return <>{children}</>;
+  }
 
   const headingFont = themeData?.typography?.headingFont || defaultTheme.typography.headingFont;
   const bodyFont = themeData?.typography?.bodyFont || defaultTheme.typography.bodyFont;

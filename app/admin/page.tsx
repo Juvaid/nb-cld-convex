@@ -1,7 +1,5 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { LayoutDashboard, FileText, ShoppingBag, Image as ImageIcon, PenTool } from "lucide-react";
