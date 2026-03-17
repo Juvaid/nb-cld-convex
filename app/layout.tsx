@@ -1,5 +1,7 @@
 import './globals.css';
 
+export const dynamic = "force-dynamic";
+
 import { ConvexHttpClient } from 'convex/browser';
 import { Inter } from 'next/font/google';
 
