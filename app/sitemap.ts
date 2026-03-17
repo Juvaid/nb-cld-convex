@@ -16,7 +16,7 @@ async function sitemap(): Promise<MetadataRoute.Sitemap> {
     let productUrls: any[] = [];
     let blogUrls: any[] = [];
 
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://new.naturesboon.net';
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://naturesboon.net';
 
     try {
         const [pages, products, blogs] = await Promise.all([

@@ -69,7 +69,7 @@ export async function CmsPageRenderer({ path, fallbackData, useDynamicData }: Cm
         // All initial* vars stay null — client will hydrate with live data via preloaded handles
     }
 
-    const schema = (initialPage as any)?.schemaType ? getPageSchema((initialPage as any).schemaType || "none", initialPage as PageRecord, "https://new.naturesboon.net") : null;
+    const schema = (initialPage as any)?.schemaType ? getPageSchema((initialPage as any).schemaType || "none", initialPage as PageRecord, "https://naturesboon.net") : null;
 
     return (
         <>

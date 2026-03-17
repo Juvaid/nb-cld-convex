@@ -18,8 +18,8 @@
 import { useState } from "react";
 import { Monitor, MessageCircle, X, ExternalLink, AlertCircle, CheckCircle2 } from "lucide-react";
 
-const SITE_URL = "https://new.naturesboon.net";
-const SITE_NAME = "new.naturesboon.net";
+const SITE_URL = "https://naturesboon.net";
+const SITE_NAME = "naturesboon.net";
 const DEFAULT_OG = `${SITE_URL}/og-image.jpg`;
 
 function resolveImageUrl(imageUrl?: string): string {

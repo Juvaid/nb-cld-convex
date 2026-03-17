@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 
 const SITE_CONFIG = {
   name: "Nature's Boon",
-  url: process.env.NEXT_PUBLIC_SITE_URL || 'https://new.naturesboon.net',
-  ogImage: 'https://new.naturesboon.net/og-image.jpg',
+  url: process.env.NEXT_PUBLIC_SITE_URL || 'https://naturesboon.net',
+  ogImage: 'https://naturesboon.net/og-image.jpg',
   title: "Nature's Boon",
   description: "Your Global Partner in Personal Care Excellence - OEM, Private Label & Contract Manufacturing.",
   keywords: ['Private Label Cosmetics', 'OEM Skincare Manufacturer India', 'Contract Manufacturing Punjab'],
