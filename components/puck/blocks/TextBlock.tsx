@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 export interface TextBlockProps extends SharedFieldProps {
     content: string;
     alignment?: "left" | "center" | "right" | "justify";
-    maxWidth?: "none" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "full";
+    maxWidth?: "none" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "6xl" | "7xl" | "full";
 }
 
 export const TextBlockConfig: ComponentConfig<TextBlockProps> = {
@@ -38,6 +38,8 @@ export const TextBlockConfig: ComponentConfig<TextBlockProps> = {
                 { label: "X-Large (xl)", value: "xl" },
                 { label: "2X-Large (2xl)", value: "2xl" },
                 { label: "5X-Large (5xl)", value: "5xl" },
+                { label: "6X-Large (6xl)", value: "6xl" },
+                { label: "7X-Large (7xl)", value: "7xl" },
             ]
         },
         ...sharedFields
