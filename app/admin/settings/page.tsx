@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useTheme } from "@/components/ThemeProvider";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
@@ -15,7 +17,7 @@ import {
     Loader2, Save, Undo, Clock, RotateCcw, Layout,
     Star, FileText, Download, Bookmark, Sparkles,
     Settings as SettingsIcon, Package, Palette, Mail, MessageSquare, Globe,
-    Trash2, Plus, ArrowUp, ArrowDown, ArrowUpDown, Image as ImageIcon, Phone
+    Trash2, Plus, ArrowUp, ArrowDown, ArrowUpDown, Image as ImageIcon, Phone, X
 } from "lucide-react";
 import Link from "next/link";
 import { ImagePicker } from "@/components/ImagePicker";
@@ -53,7 +55,8 @@ export default function SettingsPage() {
         vAlign: "bottom",
         whatsapp: "",
         phone: "",
-        catalogStorageId: "",
+        catalogs: [],
+        guidedMessages: [],
         popupDelay: 0,
         enableSearch: true,
         isDismissible: true,
@@ -108,7 +111,8 @@ export default function SettingsPage() {
                 vAlign: "bottom",
                 whatsapp: "",
                 phone: "",
-                catalogStorageId: "",
+                catalogs: [],
+                guidedMessages: [],
                 popupDelay: 0,
                 enableSearch: true,
                 isDismissible: true,
@@ -192,6 +196,40 @@ export default function SettingsPage() {
         const newLinks = [...navLinks];
         newLinks[index] = { ...newLinks[index], [key]: value };
         setNavLinks(newLinks);
+    };
+
+    const addCatalog = () => {
+        const catalogs = floatingWidget.catalogs || [];
+        setFloatingWidget({ ...floatingWidget, catalogs: [...catalogs, { name: "New Catalog", storageId: "" }] });
+    };
+
+    const removeCatalog = (index: number) => {
+        const catalogs = [...(floatingWidget.catalogs || [])];
+        catalogs.splice(index, 1);
+        setFloatingWidget({ ...floatingWidget, catalogs });
+    };
+
+    const updateCatalog = (index: number, key: string, value: string) => {
+        const catalogs = [...(floatingWidget.catalogs || [])];
+        catalogs[index] = { ...catalogs[index], [key]: value };
+        setFloatingWidget({ ...floatingWidget, catalogs });
+    };
+
+    const addGuidedMessage = () => {
+        const guidedMessages = floatingWidget.guidedMessages || [];
+        setFloatingWidget({ ...floatingWidget, guidedMessages: [...guidedMessages, { label: "New Message", link: "/" }] });
+    };
+
+    const removeGuidedMessage = (index: number) => {
+        const guidedMessages = [...(floatingWidget.guidedMessages || [])];
+        guidedMessages.splice(index, 1);
+        setFloatingWidget({ ...floatingWidget, guidedMessages });
+    };
+
+    const updateGuidedMessage = (index: number, key: string, value: string) => {
+        const guidedMessages = [...(floatingWidget.guidedMessages || [])];
+        guidedMessages[index] = { ...guidedMessages[index], [key]: value };
+        setFloatingWidget({ ...floatingWidget, guidedMessages });
     };
 
     const moveLink = (index: number, direction: 'up' | 'down') => {
@@ -799,15 +837,83 @@ export default function SettingsPage() {
                                                     />
                                                 </div>
                                             </div>
-                                            <div className="space-y-2 border-t border-slate-50 pt-4">
-                                                <label className="text-[10px] font-black text-slate-500 flex items-center gap-2 uppercase">
-                                                    <FileText className="w-3 h-3 text-nb-green" /> Digital Catalog
-                                                </label>
-                                                <div className="p-2 bg-slate-50 rounded-2xl border border-slate-100">
-                                                    <ImagePicker
-                                                        value={floatingWidget.catalogStorageId}
-                                                        onChange={(val) => setFloatingWidget({ ...floatingWidget, catalogStorageId: val })}
-                                                    />
+                                            <div className="space-y-4 pt-4 border-t border-slate-50">
+                                                <div className="flex items-center justify-between">
+                                                    <label className="text-[10px] font-black text-slate-500 uppercase flex items-center gap-2">
+                                                        <FileText className="w-3 h-3 text-nb-green" /> Digital Catalogs
+                                                    </label>
+                                                    <Button variant="outline" size="sm" onClick={addCatalog} title="Add New Catalog" className="h-7 px-3 rounded-lg text-[8px] font-black uppercase tracking-widest bg-white border-slate-200">
+                                                        <Plus className="w-3 h-3 mr-1" /> ADD
+                                                    </Button>
+                                                </div>
+                                                <div className="space-y-3">
+                                                    {(floatingWidget.catalogs || []).map((cat: any, idx: number) => (
+                                                        <div key={idx} className="p-3 bg-slate-50 rounded-2xl border border-slate-100 space-y-3 relative group/cat">
+                                                            <button 
+                                                                onClick={() => removeCatalog(idx)}
+                                                                title="Remove Catalog"
+                                                                className="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover/cat:opacity-100 transition-opacity shadow-lg"
+                                                            >
+                                                                <X className="w-3 h-3" />
+                                                            </button>
+                                                            <Input 
+                                                                value={cat.name}
+                                                                onChange={(e) => updateCatalog(idx, "name", e.target.value)}
+                                                                placeholder="Catalog Name (e.g. Summer 2024)"
+                                                                className="h-9 text-xs font-bold rounded-xl border-slate-200"
+                                                            />
+                                                            <ImagePicker 
+                                                                value={cat.storageId}
+                                                                onChange={(val) => updateCatalog(idx, "storageId", val)}
+                                                            />
+                                                        </div>
+                                                    ))}
+                                                    {(floatingWidget.catalogs || []).length === 0 && (
+                                                        <p className="text-center py-2 text-[10px] font-bold text-slate-300 uppercase italic">No catalogs added</p>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-4 pt-4 border-t border-slate-50">
+                                                <div className="flex items-center justify-between">
+                                                    <label className="text-[10px] font-black text-slate-500 uppercase flex items-center gap-2">
+                                                        <Sparkles className="w-3 h-3 text-nb-green" /> Guided Messages
+                                                    </label>
+                                                    <Button variant="outline" size="sm" onClick={addGuidedMessage} title="Add Guided Message" className="h-7 px-3 rounded-lg text-[8px] font-black uppercase tracking-widest bg-white border-slate-200">
+                                                        <Plus className="w-3 h-3 mr-1" /> ADD
+                                                    </Button>
+                                                </div>
+                                                <div className="space-y-2">
+                                                    {(floatingWidget.guidedMessages || []).map((msg: any, idx: number) => (
+                                                        <div key={idx} className="flex gap-2 items-start group/msg">
+                                                            <div className="flex-1 grid grid-cols-2 gap-2">
+                                                                <Input 
+                                                                    value={msg.label}
+                                                                    onChange={(e) => updateGuidedMessage(idx, "label", e.target.value)}
+                                                                    placeholder="Label (e.g. Our Services)"
+                                                                    className="h-9 text-[10px] font-bold rounded-xl"
+                                                                />
+                                                                <Input 
+                                                                    value={msg.link}
+                                                                    onChange={(e) => updateGuidedMessage(idx, "link", e.target.value)}
+                                                                    placeholder="Link (e.g. /services)"
+                                                                    className="h-9 text-[10px] font-bold rounded-xl"
+                                                                />
+                                                            </div>
+                                                            <Button 
+                                                                variant="outline" 
+                                                                size="sm" 
+                                                                onClick={() => removeGuidedMessage(idx)}
+                                                                title="Remove Message"
+                                                                className="h-9 w-9 rounded-xl border-slate-100 hover:border-rose-100 hover:bg-rose-50 hover:text-rose-500 p-0 flex items-center justify-center"
+                                                            >
+                                                                <Trash2 className="w-4 h-4" />
+                                                            </Button>
+                                                        </div>
+                                                    ))}
+                                                    {(floatingWidget.guidedMessages || []).length === 0 && (
+                                                        <p className="text-center py-2 text-[10px] font-bold text-slate-300 uppercase italic">No messages added</p>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>

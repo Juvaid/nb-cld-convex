@@ -37,9 +37,6 @@ const nextConfig: any = {
   allowedDevOrigins: ['192.168.1.62'],
   transpilePackages: ["@convex-dev/auth"],
   serverExternalPackages: ["convex"],
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   typescript: {
     ignoreBuildErrors: true,
   },
