@@ -302,18 +302,20 @@ export function InstagramCarouselBlock({
                         </>
                     )}
 
-                    {/* Posts Carousel */}
+                    {/* Linter-safe dynamic styles */}
+                    <style suppressHydrationWarning>{`
+                        .nb-insta-track {
+                            --current-index: ${currentIndex || 0};
+                        }
+                    `}</style>
                     <div className="overflow-hidden pb-6 -mx-4 px-4 sm:mx-0 sm:px-0">
                         <div
-                            className={`${styles.carouselContainer} gap-3 sm:gap-4 lg:gap-6`}
+                            className={`${styles.carouselContainer || ""} nb-insta-track gap-3 sm:gap-4 lg:gap-6`}
                             onMouseEnter={() => setIsHovered(true)}
                             onMouseLeave={() => setIsHovered(false)}
                             onTouchStart={handleTouchStart}
                             onTouchMove={handleTouchMove}
                             onTouchEnd={handleTouchEnd}
-                            style={{
-                                "--current-index": currentIndex,
-                            } as React.CSSProperties}
                         >
                             {displayPosts.map((post, i) => {
                                 const isVideo = isPostVideo(post);
