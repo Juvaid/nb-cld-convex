@@ -52,7 +52,7 @@ export function FloatingActionHub({ settings, whatsappMessage }: FloatingActionH
     const [isDismissed, setIsDismissed] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     // @ts-ignore - search api is generated during build
-    const searchResults = useQuery(api.search?.globalSearch, { query: searchQuery });
+    const searchResults = useQuery(api.search?.globalSearch || "skip" as any, { query: searchQuery });
 
     useEffect(() => {
         setMounted(true);
