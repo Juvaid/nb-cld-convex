@@ -292,6 +292,32 @@ export function FloatingActionHub({ settings, whatsappMessage }: FloatingActionH
                 )}
             </AnimatePresence>
 
+            {/* Quick Contact Bubbles */}
+            <AnimatePresence>
+                {!isOpen && (
+                    <motion.div 
+                        initial={{ opacity: 0, y: 20, scale: 0.8 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 20, scale: 0.8 }}
+                        className="flex flex-col gap-3 mb-2"
+                    >
+                        {hasWhatsApp && (
+                            <motion.a
+                                href={whatsappUrl}
+                                target="_blank"
+                                whileHover={{ scale: 1.1, y: -2 }}
+                                whileTap={{ scale: 0.9 }}
+                                className="w-14 h-14 bg-white text-[#25D366] rounded-full flex items-center justify-center shadow-[0_10px_25px_rgba(37,211,102,0.2)] hover:shadow-[0_15px_35px_rgba(37,211,102,0.3)] transition-all border-2 border-[#25D366]/10 relative group/wa"
+                                title="WhatsApp Us"
+                            >
+                                <div className="absolute inset-0 bg-[#25D366]/5 rounded-full animate-pulse group-hover/wa:animate-none" />
+                                <WhatsAppIcon size={28} />
+                            </motion.a>
+                        )}
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             <div className="relative group">
                 {/* Dismiss Hint on Mobile */}
                 {settings.isDismissible && isVisible && !isOpen && (
@@ -311,8 +337,8 @@ export function FloatingActionHub({ settings, whatsappMessage }: FloatingActionH
                     onClick={() => setIsOpen(!isOpen)}
                     title={isOpen ? "Close Support Nest" : "Open Support Nest"}
                     className={cn(
-                        "w-20 h-20 !rounded-full flex items-center justify-center text-white shadow-[0_10px_40px_rgba(0,0,0,0.1)] transition-all duration-500 relative group overflow-hidden bg-white border-4 border-white/80 ring-4 ring-nb-green/10 p-1 aspect-square shrink-0 flex-none",
-                        isOpen ? "rotate-180 !bg-slate-900 !ring-slate-900/10 shadow-none border-slate-800" : "hover:ring-nb-green/30 hover:scale-105 active:scale-95 hover:shadow-[0_15px_45px_rgba(22,163,74,0.2)]"
+                        "w-14 h-14 !rounded-full flex items-center justify-center text-white shadow-[0_10px_25px_rgba(0,0,0,0.1)] transition-all duration-500 relative group overflow-hidden bg-white border-2 border-white/80 ring-4 ring-nb-green/10 p-0.5 aspect-square shrink-0 flex-none",
+                        isOpen ? "rotate-180 !bg-slate-900 !ring-slate-900/10 shadow-none border-slate-800" : "hover:ring-nb-green/30 hover:scale-105 active:scale-95 hover:shadow-[0_15px_35px_rgba(22,163,74,0.2)]"
                     )}
                 >
                     <AnimatePresence mode="wait">
@@ -323,7 +349,7 @@ export function FloatingActionHub({ settings, whatsappMessage }: FloatingActionH
                                 animate={{ opacity: 1, scale: 1, rotate: 0 }}
                                 exit={{ opacity: 0, scale: 0.5, rotate: 90 }}
                             >
-                                <X size={32} />
+                                <X size={24} />
                             </motion.div>
                         ) : (
                             <motion.div
