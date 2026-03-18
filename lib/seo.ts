@@ -14,8 +14,16 @@ export function generateBaseMetadata(settings?: any): Metadata {
   const description = settings?.footerDescription || SITE_CONFIG.description;
   const faviconUrl = settings?.faviconUrl;
 
+  let metadataBase: URL | undefined;
+  try {
+    metadataBase = new URL(SITE_CONFIG.url);
+  } catch (error) {
+    console.error("Invalid NEXT_PUBLIC_SITE_URL, falling back to default site URL for metadataBase");
+    metadataBase = new URL('https://naturesboon.net');
+  }
+
   return {
-    metadataBase: new URL(SITE_CONFIG.url),
+    metadataBase,
     title: {
       default: title,
       template: `%s | ${SITE_CONFIG.name}`,
