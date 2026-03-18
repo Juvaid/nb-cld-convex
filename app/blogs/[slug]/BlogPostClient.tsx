@@ -133,8 +133,7 @@ const cleanHtmlContent = (content: string) => {
 function PlaceholderImageBlock() {
   return (
     <div className="w-full aspect-video bg-gradient-to-br from-slate-100 to-slate-200 rounded-3xl shadow-2xl ring-1 ring-slate-200 flex flex-col items-center justify-center gap-4 relative overflow-hidden">
-      <div className="absolute inset-0 opacity-[0.04]"
-        style={{ backgroundImage: 'repeating-linear-gradient(45deg, #15803d 0, #15803d 1px, transparent 0, transparent 50%)', backgroundSize: '20px 20px' }} />
+      <div className="absolute inset-0 opacity-[0.04] bg-diagonal-grid bg-[length:20px_20px]" />
       <div className="relative z-10 flex flex-col items-center gap-3 text-center px-8">
         <div className="w-14 h-14 bg-white rounded-2xl shadow-md flex items-center justify-center">
           <ImageIcon size={24} className="text-slate-300" />
@@ -270,8 +269,7 @@ export default function BlogPostClient({ slug, preloadedBlog, preloadedSettings 
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-slate-950/40" />
             </div>
           ) : (
-            <div className="absolute inset-0 z-0 opacity-[0.06]"
-              style={{ backgroundImage: 'repeating-linear-gradient(45deg, #15803d 0, #15803d 1px, transparent 0, transparent 50%)', backgroundSize: '24px 24px' }} />
+            <div className="absolute inset-0 z-0 opacity-[0.06] bg-diagonal-grid bg-[length:24px_24px]" />
           )}
 
           <div className="container mx-auto px-4 sm:px-8 relative z-10">

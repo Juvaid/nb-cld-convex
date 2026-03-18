@@ -23,13 +23,39 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [token, setToken] = useState<string | null>(null);
     const [isHydrated, setIsHydrated] = useState(false);
+
+    useEffect(() => {
+        setIsHydrated(true);
+    }, []);
+
+    if (!isHydrated) {
+        return (
+            <AuthContext.Provider
+                value={{
+                    user: null,
+                    login: async () => { },
+                    logout: async () => { },
+                    token: null,
+                    isLoading: true,
+                }}
+            >
+                {/* Do not render children on server to prevent SSR hook crashes */}
+                {typeof window !== 'undefined' ? children : null}
+            </AuthContext.Provider>
+        );
+    }
+
+    return <AuthClientProvider children={children} />;
+}
+
+function AuthClientProvider({ children }: { children: React.ReactNode }) {
+    const [token, setToken] = useState<string | null>(null);
     const router = useRouter();
 
     const currentUser = useQuery(
         api.auth.getCurrentUser,
-        token && isHydrated ? { token } : "skip"
+        token ? { token } : "skip"
     );
 
     const loginMutation = useMutation(api.auth.login);
@@ -37,11 +63,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Load token from localStorage on mount
     useEffect(() => {
-        if (typeof window !== "undefined") {
-            const stored = localStorage.getItem("auth_token");
-            if (stored) setToken(stored);
-        }
-        setIsHydrated(true);
+        const stored = localStorage.getItem("auth_token");
+        if (stored) setToken(stored);
     }, []);
 
     const login = async (email: string, password: string) => {
@@ -61,24 +84,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Clear cookie
         document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
         setToken(null);
-        router.push("/login"); // Redirect to login after logout
+        router.push("/login");
     };
-
-    if (typeof window === "undefined") {
-        return (
-            <AuthContext.Provider
-                value={{
-                    user: null,
-                    login: async () => { },
-                    logout: async () => { },
-                    token: null,
-                    isLoading: true,
-                }}
-            >
-                {children}
-            </AuthContext.Provider>
-        );
-    }
 
     return (
         <AuthContext.Provider
@@ -87,7 +94,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 login,
                 logout,
                 token,
-                isLoading: !isHydrated || (currentUser === undefined && !!token), // Wait for hydration before judging auth
+                isLoading: currentUser === undefined && !!token,
             }}
         >
             {children}

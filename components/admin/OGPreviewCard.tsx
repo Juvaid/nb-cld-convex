@@ -317,6 +317,7 @@ function OGPreviewModal({
                     </div>
                     <button
                         onClick={onClose}
+                        title="Close"
                         className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:bg-slate-100 transition-colors"
                     >
                         <X size={16} />
