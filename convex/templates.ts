@@ -1,5 +1,6 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { validateAdmin } from "./auth_utils";
 
 export interface PageTemplate {
   id: string;
@@ -416,8 +417,10 @@ export const saveSavedBlock = mutation({
     componentType: v.string(),
     props: v.any(),
     category: v.optional(v.string()),
+    token: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    await validateAdmin(ctx, args.token, "saveSavedBlock");
     const templateId = await ctx.db.insert("componentTemplates", {
       name: args.name,
       componentType: args.componentType,
@@ -436,8 +439,12 @@ export const listSavedBlocks = query({
 });
 
 export const deleteSavedBlock = mutation({
-  args: { id: v.id("componentTemplates") },
+  args: { 
+    id: v.id("componentTemplates"),
+    token: v.optional(v.string()),
+  },
   handler: async (ctx, args) => {
+    await validateAdmin(ctx, args.token, "deleteSavedBlock");
     await ctx.db.delete(args.id);
   },
 });

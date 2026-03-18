@@ -40,8 +40,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     isLoading: true,
                 }}
             >
-                {/* Do not render children on server to prevent SSR hook crashes */}
-                {typeof window !== 'undefined' ? children : null}
+                {/* Do not render children until after hydration to prevent SSR hook crashes and hydration mismatches */}
+                {null}
             </AuthContext.Provider>
         );
     }
