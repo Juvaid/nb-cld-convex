@@ -1,6 +1,6 @@
 'use client';
 
-import { useQuery } from 'convex/react';
+import { useQuery, usePreloadedQuery, Preloaded } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import ReactMarkdown from 'react-markdown';
 import type { Components } from 'react-markdown';
@@ -12,11 +12,12 @@ import { PuckRenderer } from '@/components/PuckRenderer';
 import { blogConfig } from '@/components/puck/blog-config';
 import Link from 'next/link';
 import React from 'react';
+import { cn } from '@/lib/utils';
 
 interface BlogPostClientProps {
   slug: string;
-  initialBlog: any;
-  initialSettings?: any;
+  preloadedBlog: Preloaded<typeof api.blogs.getBlogBySlug>;
+  preloadedSettings: Preloaded<typeof api.siteSettings.getSiteSettings>;
 }
 
 const markdownComponents: Components = {
@@ -132,8 +133,7 @@ const cleanHtmlContent = (content: string) => {
 function PlaceholderImageBlock() {
   return (
     <div className="w-full aspect-video bg-gradient-to-br from-slate-100 to-slate-200 rounded-3xl shadow-2xl ring-1 ring-slate-200 flex flex-col items-center justify-center gap-4 relative overflow-hidden">
-      <div className="absolute inset-0 opacity-[0.04]"
-        style={{ backgroundImage: 'repeating-linear-gradient(45deg, #15803d 0, #15803d 1px, transparent 0, transparent 50%)', backgroundSize: '20px 20px' }} />
+      <div className="absolute inset-0 opacity-[0.04] bg-diagonal-grid bg-[length:20px_20px]" />
       <div className="relative z-10 flex flex-col items-center gap-3 text-center px-8">
         <div className="w-14 h-14 bg-white rounded-2xl shadow-md flex items-center justify-center">
           <ImageIcon size={24} className="text-slate-300" />
@@ -174,13 +174,14 @@ function RelatedCard({ blog }: { blog: any }) {
   );
 }
 
-export default function BlogPostClient({ slug, initialBlog, initialSettings }: BlogPostClientProps) {
-  const blog = useQuery(api.blogs.getBlogBySlug, { slug });
+export default function BlogPostClient({ slug, preloadedBlog, preloadedSettings }: BlogPostClientProps) {
+  const blog = usePreloadedQuery(preloadedBlog);
+  const settings = usePreloadedQuery(preloadedSettings);
   const allBlogs = useQuery(api.blogs.listBlogs);
 
-  if (blog === undefined && initialBlog === undefined) return <PageSkeleton />;
+  if (blog === undefined) return <PageSkeleton />;
 
-  const displayBlog = blog === undefined ? initialBlog : blog;
+  const displayBlog = blog;
 
   if (!displayBlog) {
     return (
@@ -257,46 +258,45 @@ export default function BlogPostClient({ slug, initialBlog, initialSettings }: B
 
   return (
     <div className="bg-white min-h-screen">
-      <SiteHeader initialSettings={initialSettings} />
+      <SiteHeader initialSettings={settings} />
 
       <article>
         {/* Hero */}
-        <header className="relative w-full pt-28 pb-16 overflow-hidden bg-slate-950">
+        <header className="relative w-full pt-20 pb-10 overflow-hidden bg-slate-950">
           {displayBlog.coverImage ? (
             <div className="absolute inset-0 z-0">
               <img src={displayBlog.coverImage} alt="" className="w-full h-full object-cover opacity-15 scale-110 blur-2xl" />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-slate-950/40" />
             </div>
           ) : (
-            <div className="absolute inset-0 z-0 opacity-[0.06]"
-              style={{ backgroundImage: 'repeating-linear-gradient(45deg, #15803d 0, #15803d 1px, transparent 0, transparent 50%)', backgroundSize: '24px 24px' }} />
+            <div className="absolute inset-0 z-0 opacity-[0.06] bg-diagonal-grid bg-[length:24px_24px]" />
           )}
 
           <div className="container mx-auto px-4 sm:px-8 relative z-10">
             <div className="max-w-3xl mx-auto">
               <Link href="/blogs"
-                className="inline-flex items-center gap-2 text-nb-green/70 hover:text-nb-green font-bold text-xs uppercase tracking-widest mb-8 transition-colors group">
-                <ArrowLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" />
+                className="inline-flex items-center gap-2 text-nb-green/70 hover:text-nb-green font-bold text-[10px] uppercase tracking-widest mb-4 transition-colors group">
+                <ArrowLeft size={12} className="group-hover:-translate-x-0.5 transition-transform" />
                 All Articles
               </Link>
 
               {displayBlog.category === 'seo-page' && (
-                <div className="mb-5">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-nb-green/20 border border-nb-green/30 text-nb-green text-[10px] font-black uppercase tracking-widest">
+                <div className="mb-4">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-nb-green/20 border border-nb-green/30 text-nb-green text-[9px] font-black uppercase tracking-widest">
                     Manufacturing Guide
                   </span>
                 </div>
               )}
 
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white leading-[1.1] tracking-tight mb-5">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white leading-[1.15] tracking-tight mb-4">
                 {displayBlog.title}
               </h1>
 
               {displayBlog.excerpt && (
-                <p className="text-slate-300 text-lg leading-relaxed max-w-2xl mb-8">{displayBlog.excerpt}</p>
+                <p className="text-slate-400 text-base sm:text-lg leading-relaxed max-w-2xl mb-6 line-clamp-2">{displayBlog.excerpt}</p>
               )}
 
-              <div className="flex flex-wrap items-center gap-5 pt-6 border-t border-slate-800">
+              <div className="flex flex-wrap items-center gap-5 pt-4 border-t border-slate-800/50">
                 {displayBlog.author && (
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-full bg-nb-green flex items-center justify-center text-white font-black text-sm shadow">
@@ -321,28 +321,37 @@ export default function BlogPostClient({ slug, initialBlog, initialSettings }: B
           </div>
         </header>
 
-        {/* Cover image OR placeholder */}
-        <div className="max-w-4xl mx-auto px-4 sm:px-8 -mt-8 relative z-10 mb-12">
+        {/* Cover image banner */}
+        <div className="max-w-5xl mx-auto px-4 sm:px-8 -mt-6 relative z-10 mb-10">
           {displayBlog.coverImage ? (
-            <img src={displayBlog.coverImage} alt={displayBlog.title}
-              className="w-full aspect-video object-cover rounded-3xl shadow-2xl ring-1 ring-slate-200" />
+            <div className="relative group">
+              <img src={displayBlog.coverImage} alt={displayBlog.title}
+                className="w-full aspect-[21/9] sm:aspect-[2.4/1] object-cover rounded-2xl shadow-xl ring-1 ring-white/10" />
+              <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-slate-900/10 pointer-events-none" />
+            </div>
           ) : (
             <PlaceholderImageBlock />
           )}
         </div>
 
         {/* Article body */}
-        <div className="max-w-[760px] mx-auto px-4 sm:px-8 pb-8">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 pb-8">
           {puckData ? (
             <PuckRenderer
               data={puckData}
-              siteSettings={initialSettings}
+              siteSettings={settings}
               configOverride={blogConfig}
               hideHeader
             />
           ) : htmlContent ? (
             <div
-              className="prose prose-lg max-w-none prose-headings:font-black prose-headings:text-slate-900 prose-p:text-slate-700 prose-p:leading-[1.85] prose-li:text-slate-700 prose-li:leading-relaxed"
+              className={cn(
+                "prose prose-lg max-w-none prose-headings:font-black prose-headings:text-slate-900 prose-p:text-slate-700 prose-p:leading-[1.85] prose-li:text-slate-700 prose-li:leading-relaxed",
+                "prose-img:rounded-2xl prose-img:border prose-img:border-slate-100 prose-img:shadow-sm",
+                "[&_.float-img-left]:float-left [&_.float-img-left]:mr-8 [&_.float-img-left]:mb-4 [&_.float-img-left]:max-w-[40%]",
+                "[&_.float-img-right]:float-right [&_.float-img-right]:ml-8 [&_.float-img-right]:mb-4 [&_.float-img-right]:max-w-[40%]",
+                "[&_.block-img-center]:block [&_.block-img-center]:mx-auto"
+              )}
               dangerouslySetInnerHTML={{ __html: htmlContent }}
             />
           ) : (
@@ -354,7 +363,7 @@ export default function BlogPostClient({ slug, initialBlog, initialSettings }: B
 
         {/* Tags */}
         {tags.length > 0 && (
-          <div className="max-w-[760px] mx-auto px-4 sm:px-8 pb-12">
+          <div className="max-w-[1400px] mx-auto px-4 sm:px-8 pb-12">
             <div className="flex flex-wrap gap-2 pt-8 border-t border-slate-100">
               <Tag size={14} className="text-slate-400 mt-0.5 flex-shrink-0" />
               {tags.map((tag: string) => (
@@ -368,7 +377,7 @@ export default function BlogPostClient({ slug, initialBlog, initialSettings }: B
       </article>
 
       {/* CTA */}
-      <div className="max-w-[760px] mx-auto px-4 sm:px-8 pb-16">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-8 pb-16">
         <div className="bg-slate-900 rounded-3xl p-8 md:p-12 text-center relative overflow-hidden">
           <div className="relative z-10">
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-nb-green/20 border border-nb-green/30 text-nb-green text-[10px] font-black uppercase tracking-widest mb-5">
@@ -413,7 +422,7 @@ export default function BlogPostClient({ slug, initialBlog, initialSettings }: B
         </div>
       )}
 
-      <SiteFooter initialSettings={initialSettings} />
+      <SiteFooter initialSettings={settings} />
     </div>
   );
 }

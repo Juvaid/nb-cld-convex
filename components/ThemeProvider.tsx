@@ -58,10 +58,7 @@ function flattenToCssVars(obj: any, prefix = "--nb-"): string {
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  if (typeof window === "undefined") {
-    return <>{children}</>;
-  }
-  const themeData = useQuery(api.theme.getThemeSettings);
+  const themeData = useQuery(typeof window === "undefined" ? "skip" as any : api.theme.getThemeSettings);
   // Initialize cssVars with the default theme immediately for SSR and initial render
   const [cssVars, setCssVars] = useState(() => flattenToCssVars(defaultTheme));
   const [mounted, setMounted] = useState(false);
@@ -107,12 +104,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       link.href = href;
       document.head.appendChild(link);
     }
-
-    return () => {
-      // Optional: Remove font if theme changes (often better to leave it cached though)
-      // For now, we leave it to avoid FOUC on rapid theme toggles, but ensure no dups above.
-    };
-  }, [themeData?.typography]);
+  }, [themeData?.typography, mounted]);
 
   useEffect(() => {
     if (themeData) {
@@ -120,6 +112,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       setCssVars(vars);
     }
   }, [themeData]);
+
+  if (typeof window === "undefined") {
+    return <>{children}</>;
+  }
 
   const headingFont = themeData?.typography?.headingFont || defaultTheme.typography.headingFont;
   const bodyFont = themeData?.typography?.bodyFont || defaultTheme.typography.bodyFont;

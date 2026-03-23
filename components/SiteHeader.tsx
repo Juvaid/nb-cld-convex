@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, Phone, Mail } from "lucide-react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { motion, AnimatePresence } from "framer-motion";
@@ -139,7 +139,6 @@ export function SiteHeader({
         { label: "About", href: "/about" },
         { label: "Services", href: "/services" },
         { label: "Products", href: "/products" },
-        // { label: "Blogs", href: "/blogs" },
     ];
     const defaultPortalText = "Blogs";
     const defaultContactText = "Contact Sales";
@@ -152,6 +151,21 @@ export function SiteHeader({
 
     return (
         <header className="bg-slate-50/95 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100/50">
+            {/* Contact Strip */}
+            <div className="bg-slate-900 text-slate-100 py-1.5 px-4 overflow-x-auto whitespace-nowrap scrollbar-none">
+                <div className="container mx-auto flex items-center justify-center gap-4 text-[10px] sm:text-xs font-medium">
+                    <a href="tel:+91-9877659808" className="flex items-center gap-1.5 hover:text-nb-green transition-colors">
+                        <Phone size={12} className="text-nb-green" />
+                        <span>+91-9877659808</span>
+                    </a>
+                    <span className="text-slate-700">|</span>
+                    <a href="mailto:naturesboon@yahoo.com" className="flex items-center gap-1.5 hover:text-nb-green transition-colors">
+                        <Mail size={12} className="text-nb-green" />
+                        <span>naturesboon@yahoo.com</span>
+                    </a>
+                </div>
+            </div>
+
             {typeof window !== "undefined" && (
                 <LiveHeaderSettings onSettingsFound={setCurrentSettings} initialSettings={initialSettings} />
             )}
@@ -175,7 +189,7 @@ export function SiteHeader({
                         <AnimatedLogo />
                     )}
                     {!isLoading && (
-                        <span className="hidden sm:inline bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent font-bold tracking-tight font-logo">
+                        <span className="inline-block bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent font-bold tracking-tight font-logo text-lg sm:text-xl lg:text-2xl">
                             {logoText}
                         </span>
                     )}
@@ -217,7 +231,7 @@ export function SiteHeader({
 
             {/* Mobile Nav Overlay */}
             {isMenuOpen && (
-                <div className="md:hidden absolute top-14 left-0 w-full bg-white border-b shadow-xl px-4 py-8 z-40 animate-in slide-in-from-top duration-200">
+                <div className="md:hidden absolute top-auto left-0 w-full bg-white border-b shadow-xl px-4 py-8 z-40 animate-in slide-in-from-top duration-200">
                     <nav className="flex flex-col gap-6 mb-8">
                         {links.map((link: NavLink, i: number) => (
                             <Link

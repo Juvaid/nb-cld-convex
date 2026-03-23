@@ -19,7 +19,8 @@ export const saveIngestedPage = mutation({
                 title: args.title,
                 description: args.description,
                 draftData: args.draftData,
-                status: existing.status || "draft",
+                publishedData: args.draftData, // Ensure it's immediately visible
+                status: "published",
                 lastModified: Date.now(),
             });
         } else {
@@ -28,7 +29,8 @@ export const saveIngestedPage = mutation({
                 title: args.title,
                 description: args.description,
                 draftData: args.draftData,
-                status: "draft",
+                publishedData: args.draftData, // Ensure it's immediately visible
+                status: "published",
                 lastModified: Date.now(),
             });
         }

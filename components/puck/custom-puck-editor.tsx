@@ -216,12 +216,13 @@ const HistoryPanel = ({ pageId }: { pageId: Id<"pages"> }) => {
     const snapshots = useQuery(api.pages.listPageSnapshots, { pageId });
     const restore = useMutation(api.pages.restorePageSnapshot);
     const createSnapshot = useMutation(api.pages.createPageSnapshot);
+    const { token } = useAuth();
     const [isCreating, setIsCreating] = useState(false);
 
     const handleCreateBackup = async () => {
         setIsCreating(true);
         try {
-            await createSnapshot({ pageId });
+            await createSnapshot({ pageId, token: token ?? undefined });
         } catch (error) {
             console.error("Failed to create backup:", error);
         } finally {
@@ -231,7 +232,7 @@ const HistoryPanel = ({ pageId }: { pageId: Id<"pages"> }) => {
 
     const handleRestore = async (snapshotId: Id<"pageSnapshots">) => {
         if (confirm("Are you sure? Current changes will be backed up before restoring.")) {
-            await restore({ snapshotId });
+            await restore({ snapshotId, token: token ?? undefined });
             window.location.reload(); // Reload to fetch restored data cleanly
         }
     };
@@ -286,6 +287,7 @@ const HistoryPanel = ({ pageId }: { pageId: Id<"pages"> }) => {
 const LibraryPanel = ({ onInsert }: { onInsert: (type: string, props: any) => void }) => {
     const templates = useQuery(api.templates.listSavedBlocks);
     const deleteTemplate = useMutation(api.templates.deleteSavedBlock);
+    const { token } = useAuth();
     const [searchTerm, setSearchTerm] = useState("");
 
     const filtered = templates?.filter((t: any) =>
@@ -322,7 +324,7 @@ const LibraryPanel = ({ onInsert }: { onInsert: (type: string, props: any) => vo
                             <div className="flex justify-between items-start mb-1">
                                 <h4 className="font-black text-slate-900 text-[11px] truncate pr-8">{tpl.name}</h4>
                                 <button
-                                    onClick={() => deleteTemplate({ id: tpl._id })}
+                                    onClick={() => deleteTemplate({ id: tpl._id, token: token ?? undefined })}
                                     className="text-slate-300 hover:text-red-500 transition-colors absolute top-4 right-4"
                                     title="Delete block template"
                                 >
@@ -364,6 +366,7 @@ export function CustomPuckEditor({
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const currentPageId = pages.find(p => p.path === currentPath)?._id;
     const saveTemplate = useMutation(api.templates.saveSavedBlock);
+    const { token } = useAuth();
 
     return (
         <div className="h-screen w-full relative admin-editor-custom flex bg-slate-100 overflow-hidden">
@@ -688,7 +691,8 @@ export function CustomPuckEditor({
                                                                     await saveTemplate({
                                                                         name: tplName,
                                                                         componentType: match.type,
-                                                                        props: match.props
+                                                                        props: match.props,
+                                                                        token: token ?? undefined
                                                                     });
                                                                     alert("Block saved to Library!");
                                                                     setActiveTab("library");

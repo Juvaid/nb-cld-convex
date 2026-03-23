@@ -224,7 +224,7 @@ export function InstagramCarouselBlock({
         const handleResize = () => {
             if (window.innerWidth >= 1024) setItemsPerRow(5);
             else if (window.innerWidth >= 640) setItemsPerRow(2.5);
-            else setItemsPerRow(1.25);
+            else setItemsPerRow(1.6);
         };
 
         // Initial setup
@@ -302,18 +302,20 @@ export function InstagramCarouselBlock({
                         </>
                     )}
 
-                    {/* Posts Carousel */}
+                    {/* Linter-safe dynamic styles */}
+                    <style suppressHydrationWarning>{`
+                        .nb-insta-track {
+                            --current-index: ${currentIndex || 0};
+                        }
+                    `}</style>
                     <div className="overflow-hidden pb-6 -mx-4 px-4 sm:mx-0 sm:px-0">
                         <div
-                            className={`${styles.carouselContainer} gap-3 sm:gap-4 lg:gap-6`}
+                            className={`${styles.carouselContainer || ""} nb-insta-track gap-3 sm:gap-4 lg:gap-6`}
                             onMouseEnter={() => setIsHovered(true)}
                             onMouseLeave={() => setIsHovered(false)}
                             onTouchStart={handleTouchStart}
                             onTouchMove={handleTouchMove}
                             onTouchEnd={handleTouchEnd}
-                            style={{
-                                "--current-index": currentIndex,
-                            } as React.CSSProperties}
                         >
                             {displayPosts.map((post, i) => {
                                 const isVideo = isPostVideo(post);
@@ -332,7 +334,7 @@ export function InstagramCarouselBlock({
                                 return (
                                     <div
                                         key={`${post.id}-${i}`}
-                                        className={`w-[80vw] sm:w-[calc(40%-12px)] lg:w-[calc(20%-19.2px)] shrink-0 flex flex-col group`}
+                                        className={`w-[60vw] sm:w-[calc(40%-12px)] lg:w-[calc(20%-19.2px)] shrink-0 flex flex-col group`}
                                     >
                                         <a
                                             href={post.link || "https://www.instagram.com/naturesboon.cosmeticsmfg"}

@@ -23,7 +23,13 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-    if (typeof window === "undefined") {
+    const [isHydrated, setIsHydrated] = useState(false);
+
+    useEffect(() => {
+        setIsHydrated(true);
+    }, []);
+
+    if (!isHydrated) {
         return (
             <AuthContext.Provider
                 value={{
@@ -34,30 +40,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     isLoading: true,
                 }}
             >
-                {children}
+                {/* Do not render children until after hydration to prevent SSR hook crashes and hydration mismatches */}
+                {null}
             </AuthContext.Provider>
         );
     }
-    const [token, setToken] = useState<string | null>(null);
-    const [isHydrated, setIsHydrated] = useState(false);
-    const router = useRouter();
 
-    // Load token from localStorage on mount
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            const stored = localStorage.getItem("auth_token");
-            if (stored) setToken(stored);
-        }
-        setIsHydrated(true);
-    }, []);
+    return <AuthClientProvider children={children} />;
+}
+
+function AuthClientProvider({ children }: { children: React.ReactNode }) {
+    const [token, setToken] = useState<string | null>(null);
+    const router = useRouter();
 
     const currentUser = useQuery(
         api.auth.getCurrentUser,
-        token && isHydrated ? { token } : "skip" // Token is string | null, args expects optional string.
+        token ? { token } : "skip"
     );
 
     const loginMutation = useMutation(api.auth.login);
     const logoutMutation = useMutation(api.auth.logout);
+
+    // Load token from localStorage on mount
+    useEffect(() => {
+        const stored = localStorage.getItem("auth_token");
+        if (stored) setToken(stored);
+    }, []);
 
     const login = async (email: string, password: string) => {
         const result = await loginMutation({ email, password });
@@ -76,7 +84,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Clear cookie
         document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
         setToken(null);
-        router.push("/login"); // Redirect to login after logout
+        router.push("/login");
     };
 
     return (
@@ -86,7 +94,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 login,
                 logout,
                 token,
-                isLoading: !isHydrated || (currentUser === undefined && !!token), // Wait for hydration before judging auth
+                isLoading: currentUser === undefined && !!token,
             }}
         >
             {children}

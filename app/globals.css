@@ -63,6 +63,10 @@
     background-size: 32px 32px;
   }
 
+  .bg-diagonal-grid {
+    background-image: repeating-linear-gradient(45deg, #15803d 0, #15803d 1px, transparent 0, transparent 50%);
+  }
+
   .bg-dynamic {
     background-color: var(--dynamic-bg);
   }

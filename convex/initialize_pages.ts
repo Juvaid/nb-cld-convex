@@ -19,8 +19,7 @@ export const setupCorePages = mutation({
                                     { label: "Home", href: "/" },
                                     { label: "Services", href: "/services" },
                                     { label: "Products", href: "/products" },
-                                    { label: "About", href: "/about" },
-                                    { label: "Blogs", href: "/blogs" }
+                                    { label: "About", href: "/about" }
                                 ]
                             }
                         }
@@ -181,8 +180,7 @@ export const setupCorePages = mutation({
                                     { label: "Home", href: "/" },
                                     { label: "Services", href: "/services" },
                                     { label: "Products", href: "/products" },
-                                    { label: "About", href: "/about" },
-                                    { label: "Blogs", href: "/blogs" }
+                                    { label: "About", href: "/about" }
                                 ]
                             }
                         }
@@ -287,8 +285,7 @@ export const setupCorePages = mutation({
                                     { label: "Home", href: "/" },
                                     { label: "Services", href: "/services" },
                                     { label: "Products", href: "/products" },
-                                    { label: "About", href: "/about" },
-                                    { label: "Blogs", href: "/blogs" }
+                                    { label: "About", href: "/about" }
                                 ]
                             }
                         }
@@ -408,8 +405,7 @@ export const setupCorePages = mutation({
                                     { label: "Home", href: "/" },
                                     { label: "Services", href: "/services" },
                                     { label: "Products", href: "/products" },
-                                    { label: "About", href: "/about" },
-                                    { label: "Blogs", href: "/blogs" }
+                                    { label: "About", href: "/about" }
                                 ]
                             }
                         }
@@ -438,16 +434,16 @@ export const setupCorePages = mutation({
                                 heading: "Get in Touch",
                                 infoItems: [
                                     { label: 'Phone', value: '+91-9877659808', icon: 'Phone' },
-                                    { label: 'Email', value: 'naturesboon@yahoo.com', icon: 'Mail' },
+                                    { label: 'Email', value: 'info@naturesboon.net', icon: 'Mail' },
                                     { label: 'Factory Address', value: 'Pakhowal Road, Thakkarwal, Ludhiana, Punjab - 141013', icon: 'MapPin' },
                                     { label: 'Working Hours', value: 'Mon - Sat: 9:00 AM - 6:30 PM', icon: 'Clock' },
                                 ],
                                 departmentEmails: [
-                                { label: 'Inquiry/Info', email: 'naturesboon@yahoo.com' },
-                                { label: 'Accounts', email: 'accounts.naturesboon@yahoo.com' },
-                                { label: 'Purchase', email: 'purchase.naturesboon@yahoo.com' },
-                                { label: 'Sales', email: 'sales.naturesboon@yahoo.com' },
-                                { label: 'Artwork/Designing', email: 'artwork.naturesboon@yahoo.com' },
+                                { label: 'Inquiry/Info', email: 'info@naturesboon.net' },
+                                { label: 'Accounts', email: 'accounts.info@naturesboon.net' },
+                                { label: 'Purchase', email: 'purchase.info@naturesboon.net' },
+                                { label: 'Sales', email: 'sales.info@naturesboon.net' },
+                                { label: 'Artwork/Designing', email: 'artwork.info@naturesboon.net' },
                                 { label: 'Exports', email: 'Exports@lustercosmetics.in' },
                                 { label: 'Sales (Exports)', email: 'Sales@chitkaraexports.com' },
                                 ]
@@ -480,8 +476,7 @@ export const setupCorePages = mutation({
                                     { label: "Home", href: "/" },
                                     { label: "Services", href: "/services" },
                                     { label: "Products", href: "/products" },
-                                    { label: "About", href: "/about" },
-                                    { label: "Blogs", href: "/blogs" }
+                                    { label: "About", href: "/about" }
                                 ]
                             }
                         }
@@ -509,7 +504,7 @@ export const setupCorePages = mutation({
                                     <h2>3. Data Security</h2>
                                     <p>We implement appropriate technical and organizational measures to protect your personal data against unauthorized access or disclosure.</p>
                                     <h2>4. Contact Us</h2>
-                                    <p>If you have any questions about this Privacy Policy, please contact us at naturesboon@yahoo.com.</p>
+                                    <p>If you have any questions about this Privacy Policy, please contact us at info@naturesboon.net.</p>
                                 `,
                                 alignment: "left",
                                 maxWidth: "3xl"

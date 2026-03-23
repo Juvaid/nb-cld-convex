@@ -156,7 +156,7 @@ export const Footer = ({
                         <h4 className={`text-base sm:text-lg font-bold mb-6 sm:mb-8 tracking-tight ${textColor}`}>Get in Touch</h4>
                         <ul className="space-y-4 sm:space-y-6">
                             {[
-                                { icon: Mail, text: 'naturesboon@yahoo.com', sub: 'General Inquiries', href: 'mailto:naturesboon@yahoo.com' },
+                                { icon: Mail, text: 'info@naturesboon.net', sub: 'General Inquiries', href: 'mailto:info@naturesboon.net' },
                                 { icon: Phone, text: '+91-9877659808', sub: 'WhatsApp Available', href: 'https://wa.me/919877659808' },
                                 { icon: MapPin, text: 'Pakhowal Rd, adj. Sri Chaitanya Techno School, Thakkarwal, Ludhiana, Punjab', sub: 'Manufacturing H.O.', href: 'https://www.google.com/maps/dir/?api=1&destination=Nature%27s+Boon%2C+Pakhowal+Rd%2C+Thakkarwal%2C+Ludhiana%2C+Punjab+India' },
                             ].map((item, i) => (

@@ -1,5 +1,7 @@
 import './globals.css';
 
+export const dynamic = "force-dynamic";
+
 import { ConvexHttpClient } from 'convex/browser';
 import { Inter } from 'next/font/google';
 
@@ -59,8 +61,10 @@ export default async function RootLayout({
         />
       </head>
       <body className={`${inter.variable} font-sans antialiased text-slate-900`}>
-        <Providers children={children} modal={modal} />
-        <FloatingActionHub settings={settings?.floating_widget} whatsappMessage={settings?.whatsapp_message} />
+        <Providers modal={modal}>
+          {children}
+          <FloatingActionHub settings={settings?.floating_widget} whatsappMessage={settings?.whatsapp_message} />
+        </Providers>
       </body>
     </html>
   );

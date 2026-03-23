@@ -1,4 +1,4 @@
-import { fetchQuery } from "convex/nextjs";
+import { fetchQuery, preloadQuery } from "convex/nextjs";
 import { api } from "@/convex/_generated/api";
 import BlogPostClient from "./BlogPostClient";
 import { Metadata } from "next";
@@ -22,13 +22,16 @@ export default async function BlogPostPage({
     params: Promise<{ slug: string }>;
 }) {
     const { slug } = await params;
-    const blog = await fetchQuery(api.blogs.getBlogBySlug, { slug });
-    const settings = await fetchQuery(api.siteSettings.getSiteSettings);
+    
+    // Preload data for initial SSR and instant client hydration
+    const preloadedBlog = await preloadQuery(api.blogs.getBlogBySlug, { slug });
+    const preloadedSettings = await preloadQuery(api.siteSettings.getSiteSettings);
+    
     return (
         <BlogPostClient
             slug={slug}
-            initialBlog={blog}
-            initialSettings={settings}
+            preloadedBlog={preloadedBlog}
+            preloadedSettings={preloadedSettings}
         />
     );
 }

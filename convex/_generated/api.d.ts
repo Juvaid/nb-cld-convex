@@ -27,6 +27,7 @@ import type * as pages from "../pages.js";
 import type * as product_mutations from "../product_mutations.js";
 import type * as products from "../products.js";
 import type * as revert_contact_info from "../revert_contact_info.js";
+import type * as search from "../search.js";
 import type * as seed from "../seed.js";
 import type * as seed_admin from "../seed_admin.js";
 import type * as seed_catalog from "../seed_catalog.js";
@@ -63,6 +64,7 @@ declare const fullApi: ApiFromModules<{
   product_mutations: typeof product_mutations;
   products: typeof products;
   revert_contact_info: typeof revert_contact_info;
+  search: typeof search;
   seed: typeof seed;
   seed_admin: typeof seed_admin;
   seed_catalog: typeof seed_catalog;

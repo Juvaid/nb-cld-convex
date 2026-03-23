@@ -1,19 +1,33 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { FileText, Edit2, ExternalLink, Plus } from "lucide-react";
+import { FileText, Edit2, ExternalLink, Plus, FolderTree } from "lucide-react";
 import { OGPreviewCard } from "@/components/admin/OGPreviewCard";
 import { TemplateSelector } from "@/components/editor/TemplateSelector";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
+
+type PageType = "core" | "blog" | "service" | "product" | "seo" | "other";
+
+function inferPageType(path: string): PageType {
+    if (path === "/" || path === "/about" || path === "/contact") return "core";
+    if (path === "/services" || path.startsWith("/services")) return "service";
+    if (path === "/products" || path.startsWith("/products")) return "product";
+    if (path === "/blogs" || path.startsWith("/blogs")) return "blog";
+    if (path.startsWith("/best-") || path.startsWith("/top-")) return "seo";
+    return "other";
+}
 
 export default function PagesAdmin() {
     const pages = useQuery(api.pages.listPages);
     const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState<"all" | "published" | "draft">("all");
+    const [typeFilter, setTypeFilter] = useState<"all" | PageType>("all");
     const { token } = useAuth();
     const createPage = useMutation(api.pages.createPageFromTemplate);
     const toggleStatus = useMutation(api.pages.updatePageStatus);
@@ -32,18 +46,30 @@ export default function PagesAdmin() {
         router.push(`/admin/editor?path=/${pagePath}`);
     };
 
-    const filteredPages = pages?.filter((page: any) => {
-        const matchesSearch =
-            page.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            page.path.toLowerCase().includes(searchQuery.toLowerCase());
+    const filteredPages = useMemo(() => {
+        if (!pages) return undefined;
 
-        const matchesStatus =
-            statusFilter === "all" ||
-            (statusFilter === "published" && page.status === "published") ||
-            (statusFilter === "draft" && (!page.status || page.status === "draft"));
+        return pages
+            .map((page: any) => ({
+                ...page,
+                _type: inferPageType(page.path as string),
+            }))
+            .filter((page: any) => {
+                const matchesSearch =
+                    page.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    page.path.toLowerCase().includes(searchQuery.toLowerCase());
 
-        return matchesSearch && matchesStatus;
-    });
+                const matchesStatus =
+                    statusFilter === "all" ||
+                    (statusFilter === "published" && page.status === "published") ||
+                    (statusFilter === "draft" && (!page.status || page.status === "draft"));
+
+                const matchesType =
+                    typeFilter === "all" || page._type === typeFilter;
+
+                return matchesSearch && matchesStatus && matchesType;
+            });
+    }, [pages, searchQuery, statusFilter, typeFilter]);
 
     return (
         <div className="space-y-6">
@@ -74,7 +100,8 @@ export default function PagesAdmin() {
                     />
                 </div>
 
-                <div className="flex items-center gap-1 p-1 bg-slate-50 rounded-xl border border-slate-200 w-full sm:w-auto overflow-x-auto">
+                <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+                    <div className="flex items-center gap-1 p-1 bg-slate-50 rounded-xl border border-slate-200 w-full sm:w-auto overflow-x-auto">
                     {(["all", "published", "draft"] as const).map((status) => (
                         <button
                             key={status}
@@ -87,6 +114,23 @@ export default function PagesAdmin() {
                             {status}
                         </button>
                     ))}
+                    </div>
+
+                    <div className="flex items-center gap-1 p-1 bg-slate-50 rounded-xl border border-slate-200 w-full sm:w-auto overflow-x-auto">
+                        {(["all", "core", "service", "product", "blog", "seo", "other"] as const).map((type) => (
+                            <button
+                                key={type}
+                                onClick={() => setTypeFilter(type === "all" ? "all" : type)}
+                                className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold capitalize transition-all whitespace-nowrap ${
+                                    typeFilter === (type === "all" ? "all" : type)
+                                        ? "bg-white text-slate-900 shadow-sm border border-slate-200"
+                                        : "text-slate-500 hover:text-slate-900 hover:bg-slate-100/50"
+                                }`}
+                            >
+                                {type === "seo" ? "SEO / Landing" : type}
+                            </button>
+                        ))}
+                    </div>
                 </div>
             </div>
 
@@ -97,6 +141,7 @@ export default function PagesAdmin() {
                             <tr className="bg-slate-50/50 border-b border-slate-200">
                                 <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-widest">Page Name</th>
                                 <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-widest hidden sm:table-cell">Path</th>
+                                <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-widest hidden md:table-cell">Type</th>
                                 <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-widest">Status</th>
                                 <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-widest hidden md:table-cell">SEO</th>
                                 <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-widest text-right">Actions</th>
@@ -118,6 +163,36 @@ export default function PagesAdmin() {
                                     </td>
                                     <td className="px-6 py-4 hidden sm:table-cell">
                                         <code className="text-xs font-medium bg-slate-50 text-slate-600 px-2 py-1 rounded-md border border-slate-200">{page.path}</code>
+                                    </td>
+                                    <td className="px-6 py-4 hidden md:table-cell">
+                                        {(() => {
+                                            const type = inferPageType(page.path as string);
+                                            const labelMap: Record<PageType, string> = {
+                                                core: "Core",
+                                                blog: "Blog",
+                                                service: "Service",
+                                                product: "Product",
+                                                seo: "SEO / Landing",
+                                                other: "Other",
+                                            };
+                                            const colorMap: Record<PageType, string> = {
+                                                core: "bg-slate-100 text-slate-700",
+                                                blog: "bg-emerald-50 text-emerald-700",
+                                                service: "bg-sky-50 text-sky-700",
+                                                product: "bg-indigo-50 text-indigo-700",
+                                                seo: "bg-amber-50 text-amber-700",
+                                                other: "bg-slate-50 text-slate-500",
+                                            };
+                                            return (
+                                                <button
+                                                    onClick={() => setTypeFilter(type)}
+                                                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${colorMap[type]}`}
+                                                >
+                                                    <FolderTree size={10} />
+                                                    {labelMap[type]}
+                                                </button>
+                                            );
+                                        })()}
                                     </td>
                                     <td className="px-6 py-4">
                                         <button

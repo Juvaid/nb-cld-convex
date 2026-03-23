@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useTheme } from "@/components/ThemeProvider";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/input";
@@ -195,13 +197,13 @@ export default function ThemePage() {
     return (
         <div className="space-y-6 pb-20 max-w-6xl mx-auto">
             {/* Design Header */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white/80 p-6 rounded-2xl border border-slate-200 shadow-sm backdrop-blur-md sticky top-0 z-50">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white/80 p-5 rounded-xl border border-slate-200 shadow-sm backdrop-blur-md sticky top-0 z-50">
                 <div>
-                    <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-3">
-                        <Palette className="w-6 h-6 text-nb-green" />
+                    <h1 className="text-xl font-bold tracking-tight text-slate-900 flex items-center gap-3">
+                        <Palette className="w-5 h-5 text-nb-green" />
                         Theme & Design System
                     </h1>
-                    <p className="text-sm text-slate-500 font-medium ml-9">Manage brand identity, colors, and typography</p>
+                    <p className="text-[11px] text-slate-500 font-medium ml-8">Manage brand identity, colors, and typography</p>
                 </div>
                 <div className="flex gap-3 w-full md:w-auto">
                     <Button variant="outline" onClick={handleResetTheme} disabled={isSaving || isDoomed} className="flex-1 md:flex-none bg-white hover:text-rose-600">
@@ -219,14 +221,14 @@ export default function ThemePage() {
                 {/* Visual Preview - Stickily moves with the user */}
                 <div className="lg:col-span-12">
                     <Card className="shadow-sm border-slate-200 overflow-hidden">
-                        <CardHeader className="p-5 border-b border-slate-100 bg-slate-50/50 flex flex-row items-center justify-between">
+                        <CardHeader className="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-row items-center justify-between">
                             <CardTitle className="text-sm font-semibold tracking-tight text-slate-800 flex items-center gap-2">
                                 <Sparkles className="w-4 h-4 text-nb-green" />
                                 Live Design Preview
                             </CardTitle>
-                            <span className="text-[10px] bg-nb-green/10 text-nb-green px-2 py-1 rounded font-bold uppercase tracking-wider">Real-time</span>
+                            <span className="text-[9px] bg-nb-green/10 text-nb-green px-2 py-0.5 rounded font-bold uppercase tracking-wider">Real-time</span>
                         </CardHeader>
-                        <CardContent className="p-8 bg-slate-50/30">
+                        <CardContent className="p-6 bg-slate-50/30">
                             <div className="max-w-4xl mx-auto space-y-12">
                                 {/* Headings Preview */}
                                 <div className="space-y-4">
@@ -236,15 +238,15 @@ export default function ThemePage() {
                                         <div className="h-px flex-1 bg-slate-200" />
                                     </div>
 
-                                    <div className="space-y-8">
+                                    <div className="space-y-6">
                                         <div className="group relative">
-                                            <Typography variant="h1" className="mb-2">The Nature's Boon Heritage</Typography>
-                                            <span className="text-[10px] text-slate-400 font-medium">Hero / H1 - {localTheme.typography?.headingFont}</span>
+                                            <Typography variant="h1" className="mb-2 text-4xl">The Nature's Boon Heritage</Typography>
+                                            <span className="text-[9px] text-slate-400 font-medium">Hero / H1 - {localTheme.typography?.headingFont}</span>
                                         </div>
 
                                         <div className="group relative">
                                             <Typography variant="section-title" className="mb-2">Sustainable Manufacturing Expertise</Typography>
-                                            <span className="text-[10px] text-slate-400 font-medium">Section Title - {localTheme.typography?.headingFont}</span>
+                                            <span className="text-[9px] text-slate-400 font-medium">Section Title - {localTheme.typography?.headingFont}</span>
                                         </div>
 
                                         <div className="group relative">
@@ -279,30 +281,36 @@ export default function ThemePage() {
                                 {/* Color Swatches */}
                                 <div className="pt-8 border-t border-slate-200/60">
                                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-4">Core Palette</span>
+                                    <style suppressHydrationWarning>{`
+                                        .swatch-primary { background-color: ${localTheme.colors?.primary}; }
+                                        .swatch-secondary { background-color: ${localTheme.colors?.secondary}; }
+                                        .swatch-muted { background-color: ${localTheme.colors?.textMuted}; }
+                                        .swatch-accent { background-color: ${localTheme.colors?.accent}; }
+                                    `}</style>
                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                         <div className="space-y-2">
-                                            <div className="h-16 rounded-xl border border-black/5 shadow-inner" style={{ backgroundColor: localTheme.colors?.primary }} />
+                                            <div className="h-16 rounded-xl border border-black/5 shadow-inner swatch-primary" />
                                             <div className="flex flex-col">
                                                 <span className="text-xs font-bold text-slate-800">Brand Green</span>
                                                 <span className="text-[10px] text-slate-400 font-mono uppercase">{localTheme.colors?.primary}</span>
                                             </div>
                                         </div>
                                         <div className="space-y-2">
-                                            <div className="h-16 rounded-xl border border-black/5 shadow-inner" style={{ backgroundColor: localTheme.colors?.secondary }} />
+                                            <div className="h-16 rounded-xl border border-black/5 shadow-inner swatch-secondary" />
                                             <div className="flex flex-col">
                                                 <span className="text-xs font-bold text-slate-800">Ebony / Dark</span>
                                                 <span className="text-[10px] text-slate-400 font-mono uppercase">{localTheme.colors?.secondary}</span>
                                             </div>
                                         </div>
                                         <div className="space-y-2">
-                                            <div className="h-16 rounded-xl border border-black/5 shadow-inner" style={{ backgroundColor: localTheme.colors?.textMuted }} />
+                                            <div className="h-16 rounded-xl border border-black/5 shadow-inner swatch-muted" />
                                             <div className="flex flex-col">
                                                 <span className="text-xs font-bold text-slate-800">Steel / Muted</span>
                                                 <span className="text-[10px] text-slate-400 font-mono uppercase">{localTheme.colors?.textMuted}</span>
                                             </div>
                                         </div>
                                         <div className="space-y-2">
-                                            <div className="h-16 rounded-xl border border-black/5 shadow-inner" style={{ backgroundColor: localTheme.colors?.accent }} />
+                                            <div className="h-16 rounded-xl border border-black/5 shadow-inner swatch-accent" />
                                             <div className="flex flex-col">
                                                 <span className="text-xs font-bold text-slate-800">Highlight Green</span>
                                                 <span className="text-[10px] text-slate-400 font-mono uppercase">{localTheme.colors?.accent}</span>
@@ -333,10 +341,15 @@ export default function ThemePage() {
                                         onClick={() => applyPreset(p.colors)}
                                         className="flex flex-col items-start p-3 rounded-xl bg-white border border-slate-200 hover:border-nb-green/40 hover:bg-nb-green/5 transition-all text-left"
                                     >
+                                        <style suppressHydrationWarning>{`
+                                            .preset-${index}-0 { background-color: ${p.colors.primary}; }
+                                            .preset-${index}-1 { background-color: ${p.colors.accent}; }
+                                            .preset-${index}-2 { background-color: ${p.colors.secondary}; }
+                                        `}</style>
                                         <div className="flex gap-1 mb-2">
-                                            <div className="w-3 h-3 rounded-full border border-black/5" style={{ backgroundColor: p.colors.primary }} />
-                                            <div className="w-3 h-3 rounded-full border border-black/5" style={{ backgroundColor: p.colors.accent }} />
-                                            <div className="w-3 h-3 rounded-full border border-black/5" style={{ backgroundColor: p.colors.secondary }} />
+                                            <div className={`w-3 h-3 rounded-full border border-black/5 preset-${index}-0`} />
+                                            <div className={`w-3 h-3 rounded-full border border-black/5 preset-${index}-1`} />
+                                            <div className={`w-3 h-3 rounded-full border border-black/5 preset-${index}-2`} />
                                         </div>
                                         <span className="text-[10px] font-bold text-slate-700 leading-tight">{p.name}</span>
                                     </button>

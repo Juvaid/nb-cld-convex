@@ -72,19 +72,11 @@ export default function LogoMarquee({
                     -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%);
                     mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%);
                     overflow: hidden;
+                    padding-top: ${paddingTop}rem;
+                    padding-bottom: ${paddingBottom}rem;
                 }
             `}</style>
-            <div
-                className="nb-marquee-wrap"
-                style={
-                    {
-                        "--pt": `${paddingTop}rem`,
-                        "--pb": `${paddingBottom}rem`,
-                        paddingTop: "var(--pt)",
-                        paddingBottom: "var(--pb)"
-                    } as React.CSSProperties
-                }
-            >
+            <div className="nb-marquee-wrap">
                 {title && (
                     <p className="text-center text-xs sm:text-sm font-bold text-nb-green uppercase tracking-[0.2em] pb-8">
                         {title}
