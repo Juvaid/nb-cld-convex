@@ -38,6 +38,16 @@ export function generateBaseMetadata(settings?: any): Metadata {
       "geo.placename": "Ludhiana, Punjab, India",
       "geo.position": "30.8467;75.8197",
       "ICBM": "30.8467, 75.8197",
+      "twitter:label1": "Industry",
+      "twitter:data1": "Cosmetic Manufacturing",
+      "twitter:label2": "Specialty",
+      "twitter:data2": "Private Label & OEM",
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [SITE_CONFIG.ogImage],
     },
     openGraph: {
       title,
