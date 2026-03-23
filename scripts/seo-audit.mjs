@@ -29,7 +29,7 @@ const CONVEX_URL =
   process.env.NEXT_PUBLIC_CONVEX_URL ||
   "https://placeholder-url-for-build.convex.cloud";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://new.naturesboon.net";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://naturesboon.net";
 const HERO_BANNER_FILENAME = "herobannerv2.png"; // known wrong image
 const BRAND_SUFFIX_RE = /\|\s*Nature['']s Boon\s*$/i;
 const DOUBLE_PIPE_RE = /\|\s*\|/;

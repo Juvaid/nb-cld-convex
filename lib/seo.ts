@@ -2,11 +2,11 @@ import type { Metadata } from 'next';
 
 const SITE_CONFIG = {
   name: "Nature's Boon",
-  url: process.env.NEXT_PUBLIC_SITE_URL || 'https://new.naturesboon.net',
-  ogImage: 'https://new.naturesboon.net/og-image.jpg',
-  title: "Nature's Boon | Manufacturing Excellence",
+  url: process.env.NEXT_PUBLIC_SITE_URL || 'https://naturesboon.net',
+  ogImage: 'https://naturesboon.net/og-image.jpg',
+  title: "Nature's Boon | Private Label & Cosmetic Manufacturing",
   description: "A global leader in personal care manufacturing, specializing in OEM, Private Label, and innovative R&D solutions.",
-  keywords: ['Private Label Cosmetics', 'OEM Skincare Manufacturer India', 'Contract Manufacturing Punjab'],
+  keywords: ['Private Label Cosmetics', 'OEM Skincare Manufacturer India', 'Contract Manufacturing Punjab', 'Cosmetic Third Party Manufacturing'],
 };
 
 export function generateBaseMetadata(settings?: any): Metadata {
@@ -30,6 +30,16 @@ export function generateBaseMetadata(settings?: any): Metadata {
       "geo.placename": "Ludhiana, Punjab, India",
       "geo.position": "30.8467;75.8197",
       "ICBM": "30.8467, 75.8197",
+      "twitter:label1": "Industry",
+      "twitter:data1": "Cosmetic Manufacturing",
+      "twitter:label2": "Specialty",
+      "twitter:data2": "Private Label & OEM",
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [SITE_CONFIG.ogImage],
     },
     openGraph: {
       title,

@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import type { PageRecord, BlogRecord, ProductRecord } from "@/types"
 
-const SITE_URL = "https://new.naturesboon.net";
+const SITE_URL = "https://naturesboon.net";
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.jpg`;
 
 /**
